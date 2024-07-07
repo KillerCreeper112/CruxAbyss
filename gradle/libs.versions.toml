@@ -1,0 +1,13 @@
+[plugins]
+runPaper = { id = "xyz.jpenilla.run-paper", version.ref = "run_paper" }
+paperweight = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight" }
+shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
+
+[libraries]
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
+
+[versions]
+shadow = "8.1.7"
+paperweight = "1.7.1"
+paper = "1.20.6-R0.1-SNAPSHOT"
+run_paper = "2.3.0"

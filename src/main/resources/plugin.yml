@@ -1,0 +1,6 @@
+name: CruxAbyss
+version: 1.0
+author: killercreepr
+main: killercreepr.cruxabyss.CruxAbyss
+api-version: 1.18
+depend: [CruxCore]
