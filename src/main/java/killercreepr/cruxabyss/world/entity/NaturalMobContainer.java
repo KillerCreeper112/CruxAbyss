@@ -2,8 +2,6 @@ package killercreepr.cruxabyss.world.entity;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.loot.SimpleWeighted;
-import killercreepr.crux.loot.WeightedObject;
-import killercreepr.crux.util.CruxEntity;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxentities.entity.CruxMob;

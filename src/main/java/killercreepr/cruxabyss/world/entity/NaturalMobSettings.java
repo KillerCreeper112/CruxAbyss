@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.world.entity;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.loot.SimpleWeighted;
-import killercreepr.crux.loot.WeightedObject;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;

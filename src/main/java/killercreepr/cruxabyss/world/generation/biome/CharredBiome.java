@@ -5,7 +5,6 @@ import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.block.CruxBlock;
-import org.bukkit.Axis;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Orientable;

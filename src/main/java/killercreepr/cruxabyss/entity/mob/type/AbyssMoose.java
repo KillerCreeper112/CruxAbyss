@@ -6,7 +6,6 @@ import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;

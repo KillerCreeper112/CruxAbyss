@@ -12,7 +12,6 @@ import java.util.Random;
 
 public abstract class GrimBiome{
     protected final GrimPopulator master;
-
     public GrimBiome(@NotNull GrimPopulator master) {
         this.master = master;
     }

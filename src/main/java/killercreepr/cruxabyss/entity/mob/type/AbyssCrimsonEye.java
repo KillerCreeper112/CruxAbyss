@@ -8,7 +8,6 @@ import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
-import net.minecraft.world.entity.monster.Zombie;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;

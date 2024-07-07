@@ -1,0 +1,33 @@
+package killercreepr.cruxabyss.entity.mob.goal;
+
+import killercreepr.crux.event.CruxEntityDamageEvent;
+import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.jetbrains.annotations.NotNull;
+
+public class CharredBonesGoal extends CruxMobModeledGoal {
+    public CharredBonesGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
+        super(mob, model);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void entityDamage(CruxEntityDamageEvent event){
+        if(mob.equals(event.getDamager())){
+            playAnimation("attack", true);
+            return;
+        }
+        if(mob.equals(event.getEntity()) && event.getDamager() != null){
+            playAnimation("hit_by", true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        switch (event.getCause()){
+            case FIRE, FIRE_TICK, LAVA -> event.setCancelled(true);
+        }
+    }
+}
