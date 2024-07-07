@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.game;
 
+import killercreepr.crux.game.GenericStatus;
+import killercreepr.crux.game.Statutable;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
@@ -9,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,43 +25,24 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
 
-public class GameManager implements Listener {
-    private static final Map<UUID, GameManager> REGISTRY = new HashMap<>();
-    public static @NotNull Map<UUID, GameManager> getRegistry(){ return REGISTRY; }
-    public static @Nullable GameManager register(@NotNull GameManager manager){
-        return REGISTRY.put(manager.getWorld().getUID(), manager);
-    }
-
-    public static @Nullable GameManager get(@NotNull UUID uuid){
-        return REGISTRY.getOrDefault(uuid, null);
-    }
-
-    public static @Nullable GameManager get(@NotNull World world){
-        return get(world.getUID());
-    }
-
-    public static @Nullable GameManager get(@NotNull Entity e){
-        return get(e.getWorld());
-    }
-
-    public static @Nullable GameManager unregister(@NotNull GameManager manager){
-        return REGISTRY.remove(manager.getWorld().getUID());
-    }
-    public static void clearRegistry(){
-        REGISTRY.clear();
-    }
-
+public class GameManager implements Statutable, Listener {
     protected final @NotNull CruxPlugin plugin;
-    private final World world;
-    private final NaturalEntitySpawner naturalEntitySpawner = new NaturalEntitySpawner(this);
-    private int wave = 1;
-    private float difficulty = 1f;
-    private boolean stop = true;
+    protected final World world;
+    protected final NaturalEntitySpawner naturalEntitySpawner = new NaturalEntitySpawner(this);
+    protected int wave = 1;
+    protected float difficulty = 1f;
+    protected GenericStatus state = GenericStatus.IDLE;
+
+    protected int naturalSpawnTick = 0;
+    protected final Set<Location> recentlyCheckedMobSpawns = new HashSet<>();
+    protected int daysPassed = 0;
+
+    protected int lastMobAmount;
+    protected long lastCheckedMobAmount;
     public GameManager(@NotNull CruxPlugin plugin, @NotNull World world) {
         this.plugin = plugin;
         this.world = world;
@@ -70,42 +52,25 @@ public class GameManager implements Listener {
         return world;
     }
 
-    private int naturalSpawnTick = 0;
-    private final Set<Location> recentlyChecked = new HashSet<>();
-    private int daysPassed = 0;
-    public void start(){
-        if(!stop) return;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-        stop = false;
-        loadSavedData();
-
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-                if(stop){
-                    cancel();
-                    return;
-                }
-                if(naturalSpawnTick != -1 && !world.getPlayers().isEmpty()){
-                    naturalSpawnTick++;
-                    if(naturalSpawnTick >= CruxMath.random(100, 200)){
-                        naturalSpawnTick = 0;
-                        if(naturalEntitySpawner.belowGlobalCap()){
-                            recentlyChecked.clear();
-                            plugin.log(Level.INFO, "Navigating natural mob spawns.");
-                            for(Player p : world.getPlayers()){
-                                if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
-                                recentlyChecked.add(p.getLocation());
-                                naturalEntitySpawner.navigate(p);
-                            }
-                        }
+    public void tick(){
+        if(naturalSpawnTick != -1 && !world.getPlayers().isEmpty()){
+            naturalSpawnTick++;
+            if(naturalSpawnTick >= CruxMath.random(100, 200)){
+                naturalSpawnTick = 0;
+                if(naturalEntitySpawner.belowGlobalCap()){
+                    recentlyCheckedMobSpawns.clear();
+                    plugin.log(Level.INFO, "Navigating natural mob spawns.");
+                    for(Player p : world.getPlayers()){
+                        if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
+                        recentlyCheckedMobSpawns.add(p.getLocation());
+                        naturalEntitySpawner.navigate(p);
                     }
                 }
-                if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
-                    dayEvent();
-                }
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }
+        if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
+            dayEvent();
+        }
     }
 
     public void loadSavedData(){
@@ -128,7 +93,7 @@ public class GameManager implements Listener {
     private boolean nearChecked(@NotNull Player p){
         Location x = p.getLocation();
         double radius = naturalEntitySpawner.getRadius() * .6D;
-        for(Location b : recentlyChecked){
+        for(Location b : recentlyCheckedMobSpawns){
             if(x.distanceSquared(b) < (radius*radius)) return true;
         }
         return false;
@@ -146,16 +111,8 @@ public class GameManager implements Listener {
         if(wave % 5 == 0) difficulty += .1f;
     }
 
-    public void start(@NotNull Set<Player> players){
-        if(!stop) return;
-        start();
-        for(Player p : players){
-            p.teleport(world.getSpawnLocation());
-        }
-    }
-
     public void stopAndSave(){
-        stop();
+        setStopped();
         save();
     }
 
@@ -168,12 +125,42 @@ public class GameManager implements Listener {
         cfg.save();*/
     }
 
-    public void stop(){
-        stop = true;
-        HandlerList.unregisterAll(this);
+    public @NotNull BukkitRunnable buildRunnable(){
+        return new BukkitRunnable(){
+            @Override
+            public void run() {
+                if(!isActive()){
+                    cancel();
+                    return;
+                }
+                tick();
+            }
+        };
     }
 
-    public boolean isStopped(){ return stop; }
+
+    @Override
+    public @NotNull GenericStatus getStatus() {
+        return state;
+    }
+
+    @Override
+    public void setStatus(@NotNull GenericStatus state) {
+        if(this.state == state) return;
+        this.state = state;
+
+        switch (getStatus()){
+            case STARTED ->{
+                Bukkit.getPluginManager().registerEvents(this, plugin);
+                loadSavedData();
+
+                buildRunnable().runTaskTimer(plugin, 0L, 1L);
+            }
+            case STOPPED, IDLE -> {
+                HandlerList.unregisterAll(this);
+            }
+        }
+    }
 
     public boolean join(@NotNull Player p){
         p.teleport(world.getSpawnLocation());
@@ -206,14 +193,6 @@ public class GameManager implements Listener {
         this.difficulty = difficulty;
     }
 
-    public boolean isStop() {
-        return stop;
-    }
-
-    public void setStop(boolean stop) {
-        this.stop = stop;
-    }
-
     public int getNaturalSpawnTick() {
         return naturalSpawnTick;
     }
@@ -222,8 +201,8 @@ public class GameManager implements Listener {
         this.naturalSpawnTick = naturalSpawnTick;
     }
 
-    public Set<Location> getRecentlyChecked() {
-        return recentlyChecked;
+    public Set<Location> getRecentlyCheckedMobSpawns() {
+        return recentlyCheckedMobSpawns;
     }
 
     public int getDaysPassed() {
@@ -242,12 +221,12 @@ public class GameManager implements Listener {
         this.lastMobAmount = lastMobAmount;
     }
 
-    public long getLastChecked() {
-        return lastChecked;
+    public long getLastCheckedMobAmount() {
+        return lastCheckedMobAmount;
     }
 
-    public void setLastChecked(long lastChecked) {
-        this.lastChecked = lastChecked;
+    public void setLastCheckedMobAmount(long lastCheckedMobAmount) {
+        this.lastCheckedMobAmount = lastCheckedMobAmount;
     }
 
     @EventHandler
@@ -270,15 +249,16 @@ public class GameManager implements Listener {
         Location center = event.getBlock().getLocation().toCenterLocation();
         int flung = 0;
         for(Block b : event.blockList()){
-            if(flung < blocksToFling){
-                Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
-                dir.setY(CruxMath.random(.8f, 1f));
-                dir.multiply(CruxMath.random(.7f, 1f));
-                FallingBlock falling = center.getWorld().spawnFallingBlock(b.getLocation().toCenterLocation(),
-                        b.getBlockData());
+            if(flung >= blocksToFling) break;
+            flung++;
+            Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
+            dir.setY(CruxMath.random(.8f, 1f));
+            dir.multiply(CruxMath.random(.7f, 1f));
+            center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling ->{
+                falling.setBlockData(b.getBlockData());
                 falling.setVelocity(dir);
                 if(CruxBlocksRegistries.BLOCKS.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
-            }
+            });
         }
     }
 
@@ -291,25 +271,25 @@ public class GameManager implements Listener {
         Location center = event.getLocation().toCenterLocation();
         int flung = 0;
         for(Block b : event.blockList()){
-            if(flung < blocksToFling){
-                Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
-                dir.setY(CruxMath.random(.8f, 1f));
-                dir.multiply(CruxMath.random(.7f, 1f));
-                FallingBlock falling = center.getWorld().spawnFallingBlock(b.getLocation().toCenterLocation(),
-                        b.getBlockData());
+            if(flung >= blocksToFling) break;
+            flung++;
+            Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
+            dir.setY(CruxMath.random(.8f, 1f));
+            dir.multiply(CruxMath.random(.7f, 1f));
+
+            center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling ->{
+                falling.setBlockData(b.getBlockData());
                 falling.setVelocity(dir);
                 if(CruxBlocksRegistries.BLOCKS.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
-            }
+            });
         }
     }
 
-    private int lastMobAmount;
-    private long lastChecked;
     @EventHandler(ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         if(!event.getEntity().getWorld().equals(world)) return;
-        if(System.currentTimeMillis() > lastChecked){
-            lastChecked = System.currentTimeMillis() + (50L*20);
+        if(System.currentTimeMillis() > lastCheckedMobAmount){
+            lastCheckedMobAmount = System.currentTimeMillis() + (50L*20);
             lastMobAmount = naturalEntitySpawner.getNaturalSpawnedMobs();
         }
         if(!naturalEntitySpawner.belowGlobalCap(lastMobAmount)){
