@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.util.CruxMath;

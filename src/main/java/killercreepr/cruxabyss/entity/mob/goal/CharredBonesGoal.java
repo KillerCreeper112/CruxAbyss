@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.entity.Mob;

@@ -24,7 +24,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         game = createNewGame();
-        game.start();
+        game.setStarted();
     }
 
     protected GameManager game;

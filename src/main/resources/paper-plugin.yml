@@ -1,0 +1,17 @@
+name: CruxAbyss
+version: 1.0
+author: killercreepr
+main: killercreepr.cruxabyss.CruxAbyss
+api-version: 1.19
+dependencies:
+  server:
+    CruxCore:
+      load: BEFORE
+      required: true # Defaults to true
+      join-classpath: true # Defaults to true
+    uSurvive:
+      load: BEFORE
+      required: false
+    FastAsyncWorldEdit:
+      load: BEFORE
+      required: true
