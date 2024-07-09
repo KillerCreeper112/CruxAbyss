@@ -34,7 +34,7 @@ public abstract class GrimPopulator extends BlockPopulator {
                     populateXYZ(worldInfo, random, chunkX, chunkZ, limitedRegion, xx, y, zz);
                     boolean noFunction = true;
                     Vector pos = new Vector(xx, y, zz);
-                    ChunkFunction function = DATA.getOrDefault(pos, null);
+                    ChunkFunction function = DATA.get(pos);
                     if(function != null){
                         function.accept(worldInfo, random, limitedRegion);
                         //cache clean up

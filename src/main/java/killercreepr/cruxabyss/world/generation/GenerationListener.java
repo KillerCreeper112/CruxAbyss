@@ -14,7 +14,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.Crux;
 import killercreepr.cruxabyss.world.generation.decoration.RockPopulator;
-import killercreepr.cruxabyss.world.generation.populator.MasterPopulator;
+import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +22,7 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.LimitedRegion;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class GenerationListener implements Listener {
@@ -73,14 +75,35 @@ public class GenerationListener implements Listener {
                     region.setType(x,y,z, Material.IRON_ORE);
                 }
             }));
-            MasterPopulator master = new MasterPopulator();
+            AbyssPopulator master = new AbyssPopulator();
             w.getPopulators().add(master);
             //initWorlds.remove(event.getWorld().getName());
         }
     }
-    @EventHandler
+/*    @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        if(!event.isNewChunk() || !initWorlds.contains(event.getWorld().getName())) return;
+        if(!event.isNewChunk() || !initWorlds.contains(event.getWorld().getUID())) return;
+        Chunk chunk = event.getChunk();
+        for(int x = 0; x < 16; x++){
+            for(int z = 0; z < 16; z++){
+                int xx = x + (chunk.getX() * 16);
+                int zz = z + (chunk.getZ() * 16);
+                for(int y = chunk.getWorld().getMinHeight(); y < chunk.getWorld().getMaxHeight() ; y++){
+                    if(xx == placeX && placeZ == zz && y == minY){
+                        //place
+                        try {
+                            placeSchematic(new Location(chunk.getWorld(), xx, y, zz), "test", false, true);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+        }
+    }*/
+
+    @EventHandler(ignoreCancelled = true)
+    public void onChunkPopulate(ChunkPopulateEvent event) {
         Chunk chunk = event.getChunk();
         for(int x = 0; x < 16; x++){
             for(int z = 0; z < 16; z++){

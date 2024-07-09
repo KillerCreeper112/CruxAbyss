@@ -16,17 +16,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class MasterPopulator extends GrimPopulator{
-    private final Vector crimsonCenter;
-    private final CharredBiome charredBiome = new CharredBiome(this);
-    private final CrimsonBiome crimsonBiome = new CrimsonBiome(this);
-    private final CorruptBiome corruptBiome = new CorruptBiome(this);
+public class AbyssPopulator extends GrimPopulator{
+    protected final Vector crimsonCenter;
+    protected final double crimsonRange = (125D*125D);
+    protected final double crimsonRandomRange = (135D*135D);
+    protected final CharredBiome charredBiome = new CharredBiome(this);
+    protected final CrimsonBiome crimsonBiome = new CrimsonBiome(this);
+    protected final CorruptBiome corruptBiome = new CorruptBiome(this);
 
-    private final FastNoiseLite temperature = new FastNoiseLite();
-    private final FastNoiseLite humidity = new FastNoiseLite();
-    private final FastNoiseLite continental = new FastNoiseLite();
+    protected final FastNoiseLite temperature = new FastNoiseLite();
+    protected final FastNoiseLite humidity = new FastNoiseLite();
+    protected final FastNoiseLite continental = new FastNoiseLite();
 
-    public MasterPopulator() {
+    public AbyssPopulator() {
         crimsonCenter = new Vector(CruxMath.random(-300D, 300D), 0D, CruxMath.random(-300D, 300D));
         temperature.SetFrequency(0.005f);
         temperature.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -59,10 +61,10 @@ public class MasterPopulator extends GrimPopulator{
 
         double crimsonDistance = BlockContainer.distanceSquared(x,y,z, crimsonCenter.getX(), crimsonCenter.getY(), crimsonCenter.getZ());
         if(crimsonDistance != -1D){
-            if(crimsonDistance < (125D*125D)){
+            if(crimsonDistance < crimsonRange){
                 crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
                 return;
-            }else if(CruxMath.random(1, 100) <= 25 && crimsonDistance < (135D*135D)){
+            }else if(CruxMath.random(1, 100) <= 25 && crimsonDistance < crimsonRandomRange){
                 crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
                 return;
             }
