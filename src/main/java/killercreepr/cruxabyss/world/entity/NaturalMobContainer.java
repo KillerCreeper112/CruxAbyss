@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.world.entity;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.loot.SimpleWeighted;
+import killercreepr.crux.nms.biome.BiomeUtils;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -42,7 +43,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 12) return false;
-                        NamespacedKey k = BiomeManager.getBiome(info.getBlock());
+                        NamespacedKey k = BiomeUtils.getBiome(info.getBlock());
                         return k.equals(Crux.key("crimson")) && getNearbyChunkEntitySpawns(info.getBlock().getChunk(), 4).size() < 16;
                     }
                 }
@@ -72,7 +73,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                             case BEACH, SNOWY_BEACH, SAVANNA, SAVANNA_PLATEAU, WINDSWEPT_SAVANNA, BADLANDS,
                                     ERODED_BADLANDS, WOODED_BADLANDS, DESERT -> biome = true;
                             case CUSTOM -> {
-                                NamespacedKey k = BiomeManager.getBiome(info.getBlock());
+                                NamespacedKey k = BiomeUtils.getBiome(info.getBlock());
                                 biome = k.equals(Crux.key("corruption"));
                             }
                         }
@@ -86,7 +87,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 60) return false;
-                        NamespacedKey k = BiomeManager.getBiome(info.getBlock());
+                        NamespacedKey k = BiomeUtils.getBiome(info.getBlock());
                         return k.equals(Crux.key("charred_wastes")) && getNearbyChunkEntitySpawns(info.getBlock().getChunk(), 8).size() < 6;
                     }
                 }

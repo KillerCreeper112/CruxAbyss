@@ -5,6 +5,7 @@ import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.world.WorldManager;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
+import killercreepr.cruxstructures.manager.StructureManager;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,15 +17,22 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     private static CruxAbyss instance;
     public static CruxAbyss inst(){ return instance; }
 
+    protected final StructureManager structureManager = new StructureManager(this);
     @Override
     public void enabled() {
         instance = this;
         BiomeManager.register();
-        getServer().getPluginManager().registerEvents(new GenerationListener(), this);
-        getServer().getPluginManager().registerEvents(this, this);
+        registerListeners(
+            new GenerationListener(),
+            this,
+            structureManager
+        );
 
         game = createNewGame();
         game.setStarted();
+
+        structureManager.load();
+        //StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), ""));
     }
 
     protected GameManager game;

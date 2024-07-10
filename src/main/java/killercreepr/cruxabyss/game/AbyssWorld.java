@@ -4,6 +4,7 @@ import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registry.MappedRegistry;
 import killercreepr.crux.registry.SimpleMappedRegistry;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
+import killercreepr.cruxstructures.manager.StructureManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
