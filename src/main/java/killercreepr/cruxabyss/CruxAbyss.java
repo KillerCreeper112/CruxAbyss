@@ -1,15 +1,24 @@
 package killercreepr.cruxabyss;
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.world.WorldManager;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
+import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.manager.StructureManager;
+import killercreepr.cruxstructures.registries.StructureRegistries;
+import killercreepr.cruxstructures.structure.Structure;
+import killercreepr.cruxstructures.structure.impl.FAWEStructure;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,11 +37,30 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             structureManager
         );
 
-        game = createNewGame();
-        game.setStarted();
+        getServer().getScheduler().runTaskLater(this, task ->{
+            game = createNewGame();
+            game.setStarted();
+        }, 100L);
+        super.enabled();
+        StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), "abyss_outpost"){
+            @Override
+            public boolean isPersistent() {
+                return true;
+            }
+        });
+    }
 
-        structureManager.load();
-        //StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), ""));
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player p = event.getPlayer();
+        Structure structure = StructureRegistries.STRUCTURES.get(Crux.key("abyss_outpost"));
+        structure.place(p.getLocation());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onStructurePlace(StructurePlaceEvent event) {
+        Location l = event.getLocation();
+        Bukkit.broadcast(Component.text("Structure spawned " + l.getX() + ", " + l.getY() + ", " + l.getZ()));
     }
 
     protected GameManager game;
@@ -54,10 +82,12 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     @Override
     public void disabled() {
         super.disabled();
+        structureManager.saveAllWorlds();
     }
 
     @Override
     public void reload() {
         super.reload();
+        structureManager.loadConfiguration();
     }
 }

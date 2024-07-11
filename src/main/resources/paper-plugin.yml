@@ -1,8 +1,9 @@
 name: CruxAbyss
-version: 1.0
+version: '1.0'
 author: killercreepr
 main: killercreepr.cruxabyss.CruxAbyss
-api-version: 1.19
+api-version: '1.19'
+load: STARTUP
 dependencies:
   server:
     CruxCore:
