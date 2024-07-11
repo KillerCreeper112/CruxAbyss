@@ -66,12 +66,12 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         structureManager.buildRunnable().runTaskTimer(this, 20L, 1L);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player p = event.getPlayer();
         Structure structure = StructureRegistries.STRUCTURES.get(Crux.key("abyss_outpost"));
         structure.place(p.getLocation());
-    }
+    }*/
 
     @EventHandler(ignoreCancelled = true)
     public void onStructurePlace(StructurePlaceEvent event) {
