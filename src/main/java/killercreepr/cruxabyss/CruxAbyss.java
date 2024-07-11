@@ -1,16 +1,23 @@
 package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.BlockPos;
+import killercreepr.crux.data.StoredChunk;
 import killercreepr.crux.plugin.CruxPlugin;
+import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxabyss.structure.AbyssOutpost;
 import killercreepr.cruxabyss.world.WorldManager;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
+import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.manager.StructureManager;
 import killercreepr.cruxstructures.registries.StructureRegistries;
 import killercreepr.cruxstructures.structure.Structure;
 import killercreepr.cruxstructures.structure.impl.FAWEStructure;
+import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
+import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CruxAbyss extends CruxPlugin implements Listener {
@@ -36,6 +44,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             this,
             structureManager
         );
+        CfgRegistries.JSON.registerHandler(AbyssOutpost.class, new FileAbyssOutpost());
 
         getServer().getScheduler().runTaskLater(this, task ->{
             game = createNewGame();
@@ -47,7 +56,14 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             public boolean isPersistent() {
                 return true;
             }
+
+            @Override
+            public @Nullable StoredStructure buildStored(@NotNull Location center) {
+                Bukkit.broadcastMessage("buildStored");
+                return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center));
+            }
         });
+        structureManager.buildRunnable().runTaskTimer(this, 20L, 1L);
     }
 
     @EventHandler(ignoreCancelled = true)
