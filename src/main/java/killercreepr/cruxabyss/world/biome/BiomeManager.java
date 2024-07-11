@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.biome.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.IdentityHashMap;
 import java.util.logging.Level;
@@ -43,14 +44,17 @@ public class BiomeManager {
         Biome plains = registrywritable.get(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath("minecraft", "plains")));
         Crux.log(Level.INFO, "Plains biome registry: " + (plains == null ? "null" : "FOUND"));
+        new Color(0x04B449);
+        new Color(0x03CB0D);
+        new Color(0x85A23F);
         Biome biome = new Biome.BiomeBuilder()
                 .specialEffects(new BiomeSpecialEffects.Builder()
-                        .fogColor(0xE32323)
-                        .foliageColorOverride(0xDE3030)
-                        .skyColor(0xE32323)
-                        .waterColor(0xE32323)
-                        .waterFogColor(0xE32323)
-                        .grassColorOverride(0xB22424)
+                        .fogColor(0x03CB0D)
+                        .foliageColorOverride(0x03CB0D)
+                        .skyColor(0x03CB0D)
+                        .waterColor(0x03CB0D)
+                        .waterFogColor(0x03CB0D)
+                        .grassColorOverride(0x03CB0D)
                         .ambientParticle(new AmbientParticleSettings(
                                 new ParticleOptions() {
                                     @Override

@@ -44,7 +44,7 @@ public abstract class GrimBiome{
         }
     }
 
-    protected void setBiome(@NotNull Holder<Biome> biome, @NotNull LimitedRegion limitedRegion, int x, int y, int z,
+    public void setBiome(@NotNull Holder<Biome> biome, @NotNull LimitedRegion limitedRegion, int x, int y, int z,
                             int minWidth, int minHeight, int maxWidth, int maxHeight){
         setBiome(biome, limitedRegion, x,y,z, minWidth, minHeight, minWidth, maxWidth, maxHeight, maxWidth);
     }

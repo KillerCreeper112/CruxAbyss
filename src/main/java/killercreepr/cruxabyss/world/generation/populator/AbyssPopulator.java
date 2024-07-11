@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.world.generation.populator;
 
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.FastNoiseLite;
+import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.BlockContainer;
 import killercreepr.cruxabyss.world.generation.biome.CharredBiome;
 import killercreepr.cruxabyss.world.generation.biome.CorruptBiome;
@@ -52,7 +53,10 @@ public class AbyssPopulator extends GrimPopulator{
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         if(b.getType() == Material.WATER || (b.getBlockData() instanceof Waterlogged w && w.isWaterlogged()) ||
                 b.getType() == Material.KELP_PLANT || b.getType() == Material.KELP){
-            limitedRegion.setType(x,y,z, Material.LAVA);
+            crimsonBiome.setBiome(BiomeManager.CRIMSON, limitedRegion, x,y,z,
+                -2, 0,
+                2, y > 61 ? 64 : 0);
+            //limitedRegion.setType(x,y,z, Material.LAVA);
             return;
         }else if(b.isReplaceable() && b.getType() != Material.SNOW){
             limitedRegion.setType(x,y,z, Material.AIR);
