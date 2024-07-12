@@ -50,6 +50,10 @@ public class AbyssPopulator extends GrimPopulator{
     public void populateXYZ(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion,
                             int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
+        if(b.getType() == Material.BEDROCK){
+            limitedRegion.setType(x,y,z, Material.AIR);
+            return;
+        }
         if(b.getType() == Material.WATER || (b.getBlockData() instanceof Waterlogged w && w.isWaterlogged()) ||
                 b.getType() == Material.KELP_PLANT || b.getType() == Material.KELP){
             crimsonBiome.setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z,

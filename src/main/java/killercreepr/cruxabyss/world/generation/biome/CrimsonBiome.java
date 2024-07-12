@@ -5,6 +5,7 @@ import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
+import killercreepr.cruxblocks.block.CruxBlock;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -34,15 +35,13 @@ public class CrimsonBiome extends GrimBiome {
                 2, y > 61 ? worldInfo.getMaxHeight() : 2);
         if(m == Material.BEDROCK) return;
         if(MaterialSetTag.LOGS.isTagged(m) && limitedRegion.getBlockData(x,y,z) instanceof Orientable orientable){
-            limitedRegion.setType(x,y,z,Material.CRIMSON_STEM);
-            BlockData d = limitedRegion.getBlockData(x,y,z);
-            if(d instanceof Orientable o){
-                o.setAxis(orientable.getAxis());
-                limitedRegion.setBlockData(x,y,z,o);
-            }
+            CruxBlock block = AbyssBlocks.PLAGUE_STEM.getBlock(orientable.getAxis());
+            if(block==null) return;
+            block.setBlock(limitedRegion, x, y, z);
             return;
         }else if(MaterialSetTag.LEAVES.isTagged(m)){
-            limitedRegion.setType(x,y,z, Material.NETHER_WART_BLOCK);
+            AbyssBlocks.PLAGUE_WART.getBaseBlock().setBlock(limitedRegion, x, y, z);
+            //limitedRegion.setType(x,y,z, Material.NETHER_WART_BLOCK);
             if(limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.SNOW){
                 limitedRegion.setType(x,y+1,z, Material.AIR);
             }
@@ -59,15 +58,22 @@ public class CrimsonBiome extends GrimBiome {
         if(!b.isSolid()) return;
 
         //float n = noise.GetNoise(x,y,z);
-        Material type;
+        if(limitedRegion.isInRegion(x,y+1,z) && MaterialSetTag.SMALL_FLOWERS.isTagged(limitedRegion.getType(x,y,z))){
+            flower(limitedRegion,x,y+1,z);
+            return;
+        }
         switch (m){
             default ->{
-                if(y > 61 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
+                if(y >= 62 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
                     return;
-                }else{
+                }else if(y >= 58){
+                    AbyssBlocks.PLAGUE_MOSS_DIRT.getBaseBlock().setBlock(
+                        limitedRegion, x, y, z
+                    );
+                } else{
                     AbyssBlocks.PLAGUE_STONE.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
@@ -75,10 +81,6 @@ public class CrimsonBiome extends GrimBiome {
                 }
             }
         }
-        if(limitedRegion.isInRegion(x,y+1,z) && MaterialSetTag.SMALL_FLOWERS.isTagged(limitedRegion.getType(x,y,z))){
-            flower(limitedRegion,x,y+1,z);
-        }
-        limitedRegion.setType(x,y,z,type);
     }
 
     private void flower(@NotNull LimitedRegion limitedRegion, int x, int y, int z){
