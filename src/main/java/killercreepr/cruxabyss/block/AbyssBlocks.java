@@ -28,4 +28,13 @@ public class AbyssBlocks {
             return 1.2f;
         }
     });
+
+    public static final CruxBlockGroup PLAGUE_STONE = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+        new GenericBlock(Crux.key("plague_stone"), new NoteTextureData.Builder(new Note(5), Instrument.BANJO).powered(false).build())
+    ) {
+        @Override
+        public float getHardness() {
+            return 2f;
+        }
+    });
 }
