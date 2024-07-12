@@ -32,8 +32,8 @@ public class CrimsonBiome extends GrimBiome {
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Material m = limitedRegion.getType(x,y,z);
         setBiome(BiomeManager.CRIMSON, limitedRegion, x,y,z,
-                -2, 0,
-                2, y > 61 ? 64 : 0);
+                -2, y > 61 ? worldInfo.getMaxHeight() : 0,
+                2, y > 61 ? worldInfo.getMaxHeight() : 2);
         if(m == Material.BEDROCK) return;
         if(MaterialSetTag.LOGS.isTagged(m) && limitedRegion.getBlockData(x,y,z) instanceof Orientable orientable){
             limitedRegion.setType(x,y,z,Material.CRIMSON_STEM);
