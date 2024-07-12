@@ -63,7 +63,7 @@ public class AbyssPopulator extends GrimPopulator{
             return;
         }else if(b.getType() == Material.ICE) limitedRegion.setType(x,y,z, Material.PACKED_ICE);
 
-        double crimsonDistance = BlockContainer.distanceSquared(x,y,z, crimsonCenter.getX(), crimsonCenter.getY(), crimsonCenter.getZ());
+        /*double crimsonDistance = BlockContainer.distanceSquared(x,y,z, crimsonCenter.getX(), crimsonCenter.getY(), crimsonCenter.getZ());
         if(crimsonDistance != -1D){
             if(crimsonDistance < crimsonRange){
                 crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
@@ -72,7 +72,7 @@ public class AbyssPopulator extends GrimPopulator{
                 crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
                 return;
             }
-        }
+        }*/
 
         if(!b.isSolid()) return;
         float t = temperature.GetNoise(x,y,z);
@@ -82,12 +82,15 @@ public class AbyssPopulator extends GrimPopulator{
         //charred
         if(t > .3f && h < 0f){
             charredBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
+            return;
         }else if(t < 0f && (h < -.02f || h > .02f) && c > .3f){ //corrupt
             corruptBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
+            return;
         }/*else if(crimsonContainer.isEmpty() && t >= 0f && t <= .5f && h > .05f && c > .3f){ //crimson
             crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
             crimsonContainer.addBlock(limitedRegion.getBlockState(x,y,z).getBlock(),-1);
         }*/
+        crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
     }
 
     private boolean isLava(int x, int y, int z, @NotNull LimitedRegion region){

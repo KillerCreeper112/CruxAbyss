@@ -18,7 +18,7 @@ import java.util.IdentityHashMap;
 import java.util.logging.Level;
 
 public class BiomeManager {
-    public static Holder<Biome> CRIMSON;
+    public static Holder<Biome> CRIMSON; //toxic mire
     public static Holder<Biome> CHARRED_WASTES;
     public static Holder<Biome> CORRUPT;
     public static void register(){
@@ -71,7 +71,7 @@ public class BiomeManager {
                 .build();
         registrywritable.createIntrusiveHolder(biome);
         CRIMSON = registrywritable.register(ResourceKey.create(Registries.BIOME,
-                        ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "crimson")),
+                        ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "toxic_mire")),
                 biome, RegistrationInfo.BUILT_IN);
 
         biome = new Biome.BiomeBuilder()

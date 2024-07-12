@@ -13,12 +13,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class AbyssOutpost extends SimpleStoredStructure {
     protected int lifeSpan = 200;
-    public AbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull BlockPos center) {
-        super(structure, chunk, center);
+    public AbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull BlockPos center, double rotation) {
+        super(structure, chunk, center, rotation);
     }
 
-    public AbyssOutpost(@NotNull Key structureKey, @NotNull StoredChunk chunk, @NotNull BlockPos center, @NotNull BoundingBox boundingBox) {
-        super(structureKey, chunk, center, boundingBox);
+    public AbyssOutpost(@NotNull Key structureKey, @NotNull StoredChunk chunk, @NotNull BlockPos center, @NotNull BoundingBox boundingBox, double rotation) {
+        super(structureKey, chunk, center, boundingBox, rotation);
     }
 
     @Override

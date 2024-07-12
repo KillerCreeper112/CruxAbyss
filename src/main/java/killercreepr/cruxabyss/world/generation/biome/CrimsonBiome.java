@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.util.CruxMath;
+import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
@@ -11,6 +12,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
+import org.geysermc.api.Geyser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -65,7 +67,10 @@ public class CrimsonBiome extends GrimBiome {
             case IRON_ORE, DEEPSLATE_IRON_ORE -> type = Material.NETHER_QUARTZ_ORE;
             default ->{
                 if(y > 61 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
-                    type = Material.CRIMSON_NYLIUM;
+                    AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
+                        limitedRegion, x, y, z
+                    );
+                    return;
                 }else type = Material.NETHERRACK;
             }
         }

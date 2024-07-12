@@ -14,11 +14,15 @@ public class ActiveAbyssOutpost extends SimpleActiveStructure {
         this.data = data;
     }
 
+    protected int tick = 0;
     @Override
     public void tick() {
         super.tick();
+        tick++;
+        if(tick % 60 == 0){
+        }
         //data.setLifeSpan(data.getLifeSpan() - 1);
-        Bukkit.broadcastMessage(data.getLifeSpan() + "");
+        //Bukkit.broadcastMessage(data.getLifeSpan() + "");
         new CreateRectangle(center.getWorld(), data.getBoundingBox(), true, true, .5D)
             .getLocations().forEach(l ->{
                 new ParticleBuilder(Particle.HAPPY_VILLAGER).location(l).spawn();

@@ -4,6 +4,7 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.StoredChunk;
 import killercreepr.crux.plugin.CruxPlugin;
+import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.structure.AbyssOutpost;
@@ -44,6 +45,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             this,
             structureManager
         );
+        AbyssBlocks.register();
         CfgRegistries.JSON.registerHandler(AbyssOutpost.class, new FileAbyssOutpost());
 
         getServer().getScheduler().runTaskLater(this, task ->{
@@ -58,9 +60,22 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             }
 
             @Override
-            public @Nullable StoredStructure buildStored(@NotNull Location center) {
+            public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
                 Bukkit.broadcastMessage("buildStored");
-                return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center));
+                return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
+            }
+        });
+
+        StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("test"), "test"){
+            @Override
+            public boolean isPersistent() {
+                return true;
+            }
+
+            @Override
+            public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
+                Bukkit.broadcastMessage("buildStored");
+                return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
             }
         });
         structureManager.buildRunnable().runTaskTimer(this, 20L, 1L);
