@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AbyssOutpost extends SimpleStoredStructure {
     protected int lifeSpan = 200;
+    protected boolean persist = true;
     public AbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull BlockPos center, double rotation) {
         super(structure, chunk, center, rotation);
     }
@@ -24,6 +25,12 @@ public class AbyssOutpost extends SimpleStoredStructure {
     @Override
     public @Nullable ActiveStructure buildActive(@NotNull Chunk chunk) {
         return new ActiveAbyssOutpost(this, chunk);
+    }
+
+
+    @Override
+    public boolean shouldPersist() {
+        return persist;
     }
 
     public int getLifeSpan() {

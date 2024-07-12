@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.structure;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Particle;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 public class ActiveAbyssOutpost extends SimpleActiveStructure {
@@ -20,13 +20,22 @@ public class ActiveAbyssOutpost extends SimpleActiveStructure {
         super.tick();
         tick++;
         if(tick % 60 == 0){
+
         }
-        //data.setLifeSpan(data.getLifeSpan() - 1);
+        data.setLifeSpan(data.getLifeSpan() - 1);
         //Bukkit.broadcastMessage(data.getLifeSpan() + "");
         new CreateRectangle(center.getWorld(), data.getBoundingBox(), true, true, .5D)
             .getLocations().forEach(l ->{
                 new ParticleBuilder(Particle.HAPPY_VILLAGER).location(l).spawn();
             });
+
+        if(shouldStop()){
+            data.persist = false;
+            for(Block b : CruxLoc.getNearbyBlocks(center, 15)){
+                b.setType(Material.AIR);
+            }
+            center.getWorld().playSound(center.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 3f, 1f);
+        }
     }
 
     @Override

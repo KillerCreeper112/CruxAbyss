@@ -48,11 +48,6 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         AbyssBlocks.register();
         CfgRegistries.JSON.registerHandler(AbyssOutpost.class, new FileAbyssOutpost());
 
-        getServer().getScheduler().runTaskLater(this, task ->{
-            game = createNewGame();
-            game.setStarted();
-        }, 100L);
-        super.enabled();
         StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), "abyss_outpost"){
             @Override
             public boolean isPersistent() {
@@ -78,6 +73,12 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                 return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
             }
         });
+
+        getServer().getScheduler().runTaskLater(this, task ->{
+            game = createNewGame();
+            game.setStarted();
+        }, 100L);
+        super.enabled();
         structureManager.buildRunnable().runTaskTimer(this, 20L, 1L);
     }
 
