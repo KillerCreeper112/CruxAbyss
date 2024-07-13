@@ -8,7 +8,6 @@ import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.block.CruxBlock;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
@@ -25,6 +24,12 @@ public class CrimsonBiome extends GrimBiome {
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         noise.SetFractalType(FastNoiseLite.FractalType.FBm);
         noise.SetFractalOctaves(5);
+    }
+
+    public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
+        setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z,
+            -2, y > 61 ? worldInfo.getMaxHeight() : 0,
+            2, y > 61 ? worldInfo.getMaxHeight() : 2);
     }
 
     @Override

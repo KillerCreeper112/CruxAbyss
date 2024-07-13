@@ -102,7 +102,7 @@ public class GenerationListener implements Listener {
         }
     }*/
 
-    @EventHandler(ignoreCancelled = true)
+/*    @EventHandler(ignoreCancelled = true)
     public void onChunkPopulate(ChunkPopulateEvent event) {
         Chunk chunk = event.getChunk();
         for(int x = 0; x < 16; x++){
@@ -121,7 +121,7 @@ public class GenerationListener implements Listener {
                 }
             }
         }
-    }
+    }*/
 
     public static void placeSchematic(@NotNull Location loc, @NotNull String filename, boolean ignoreAirBlocks, boolean randomRotation) throws IOException, WorldEditException {
         File schematicFile = new File(WorldEdit.getInstance().getSchematicsFolderPath().toString() + "/" + filename + ".schem");

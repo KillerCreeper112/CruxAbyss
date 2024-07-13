@@ -48,73 +48,73 @@ public class BiomeManager {
         new Color(0x03CB0D);
         new Color(0x85A23F);
         Biome biome = new Biome.BiomeBuilder()
-                .specialEffects(new BiomeSpecialEffects.Builder()
-                        .fogColor(0x03CB0D)
-                        .foliageColorOverride(0x03CB0D)
-                        .skyColor(0x03CB0D)
-                        .waterColor(0x03CB0D)
-                        .waterFogColor(0x03CB0D)
-                        .grassColorOverride(0x03CB0D)
-                        .ambientParticle(new AmbientParticleSettings(
-                                new ParticleOptions() {
-                                    @Override
-                                    public @NotNull ParticleType<?> getType() {
-                                        return ParticleTypes.CRIMSON_SPORE;
-                                    }
-                                }, .03f
-                        ))
-                        .build())
-                .downfall(.15f)
-                .temperature(0f)
-                .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
-                .generationSettings(BiomeGenerationSettings.EMPTY)
-                .build();
+            .specialEffects(new BiomeSpecialEffects.Builder()
+                .fogColor(0x03CB0D)
+                .foliageColorOverride(0x03CB0D)
+                .skyColor(0x03CB0D)
+                .waterColor(0x03CB0D)
+                .waterFogColor(0x03CB0D)
+                .grassColorOverride(0x03CB0D)
+                .ambientParticle(new AmbientParticleSettings(
+                    new ParticleOptions() {
+                        @Override
+                        public @NotNull ParticleType<?> getType() {
+                            return ParticleTypes.WHITE_ASH;
+                        }
+                    }, .03f
+                ))
+                .build())
+            .downfall(.15f)
+            .temperature(0f)
+            .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
+            .generationSettings(BiomeGenerationSettings.EMPTY)
+            .build();
         registrywritable.createIntrusiveHolder(biome);
         TOXIC_MIRE = registrywritable.register(ResourceKey.create(Registries.BIOME,
                         ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "toxic_mire")),
                 biome, RegistrationInfo.BUILT_IN);
 
         biome = new Biome.BiomeBuilder()
-                .specialEffects(new BiomeSpecialEffects.Builder()
-                        .fogColor(0x504C4A)
-                        .foliageColorOverride(0x62554F)
-                        .skyColor(0x62554F)
-                        .waterColor(0x332925)
-                        .waterFogColor(0x564942)
-                        .grassColorOverride(0x67504D)
-                        .ambientParticle(new AmbientParticleSettings(
-                                new ParticleOptions() {
-                                    @Override
-                                    public @NotNull ParticleType<?> getType() {
-                                        return ParticleTypes.ASH;
-                                    }
-                                }, .01f
-                        ))
-                        .build())
-                .downfall(0f)
-                .temperature(1f)
-                .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
-                .generationSettings(BiomeGenerationSettings.EMPTY)
-                .build();
+            .specialEffects(new BiomeSpecialEffects.Builder()
+                .fogColor(0x504C4A)
+                .foliageColorOverride(0x62554F)
+                .skyColor(0x62554F)
+                .waterColor(0x332925)
+                .waterFogColor(0x564942)
+                .grassColorOverride(0x67504D)
+                .ambientParticle(new AmbientParticleSettings(
+                    new ParticleOptions() {
+                        @Override
+                        public @NotNull ParticleType<?> getType() {
+                            return ParticleTypes.ASH;
+                        }
+                    }, .01f
+                ))
+                .build())
+            .downfall(0f)
+            .temperature(1f)
+            .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
+            .generationSettings(BiomeGenerationSettings.EMPTY)
+            .build();
         registrywritable.createIntrusiveHolder(biome);
         CHARRED_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "charred_wastes")),
                 biome, RegistrationInfo.BUILT_IN);
 
         biome = new Biome.BiomeBuilder()
-                .specialEffects(new BiomeSpecialEffects.Builder()
-                        .fogColor(0xB285A7)
-                        .foliageColorOverride(0x804D71)
-                        .skyColor(0x7D576A)
-                        .waterColor(0x8C5B8C)
-                        .waterFogColor(0x8C5B8C)
-                        .grassColorOverride(0xA86582)
-                        .build())
-                .downfall(.2f)
-                .temperature(.4f)
-                .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
-                .generationSettings(BiomeGenerationSettings.EMPTY)
-                .build();
+            .specialEffects(new BiomeSpecialEffects.Builder()
+                .fogColor(0xB285A7)
+                .foliageColorOverride(0x804D71)
+                .skyColor(0x7D576A)
+                .waterColor(0x8C5B8C)
+                .waterFogColor(0x8C5B8C)
+                .grassColorOverride(0xA86582)
+                .build())
+            .downfall(.2f)
+            .temperature(.4f)
+            .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
+            .generationSettings(BiomeGenerationSettings.EMPTY)
+            .build();
         registrywritable.createIntrusiveHolder(biome);
         CORRUPT = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "corruption")),
