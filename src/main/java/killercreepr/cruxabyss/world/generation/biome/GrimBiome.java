@@ -1,10 +1,13 @@
 package killercreepr.cruxabyss.world.generation.biome;
 
+import com.destroystokyo.paper.MaterialSetTag;
+import com.destroystokyo.paper.MaterialTags;
 import killercreepr.crux.nms.biome.BiomeUtils;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.generator.CraftLimitedRegion;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
@@ -15,6 +18,10 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public abstract class GrimBiome{
+    public static boolean isOre(@NotNull Material m){
+        return MaterialTags.ORES.isTagged(m);
+    }
+
     protected final GrimPopulator master;
     public GrimBiome(@NotNull GrimPopulator master) {
         this.master = master;

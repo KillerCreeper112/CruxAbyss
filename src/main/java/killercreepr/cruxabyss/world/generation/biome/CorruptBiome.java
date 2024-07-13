@@ -55,7 +55,7 @@ public class CorruptBiome extends GrimBiome {
         BlockGenerator gen = replace.getOrDefault(limitedRegion.getType(x,y,z), null);
         if(gen == null) return;
         gen.set(limitedRegion,x,y,z);
-        if(limitedRegion.getType(x,y,z) == Material.MYCELIUM && CruxMath.random(1f, 100f) <= 6.5f && limitedRegion.getType(x,y+1,z).isEmpty() &&
+        if(limitedRegion.getType(x,y,z) == Material.MYCELIUM && CruxMath.testChance(6.5) && limitedRegion.getType(x,y+1,z).isEmpty() &&
                 limitedRegion.getType(x,y+2,z).isEmpty()){
             generateSpike(worldInfo, random, limitedRegion, x,y,z);
         }

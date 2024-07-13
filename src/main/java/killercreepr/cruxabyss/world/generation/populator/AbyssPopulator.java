@@ -1,18 +1,14 @@
 package killercreepr.cruxabyss.world.generation.populator;
 
-import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.FastNoiseLite;
-import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.biome.CharredBiome;
 import killercreepr.cruxabyss.world.generation.biome.CorruptBiome;
-import killercreepr.cruxabyss.world.generation.biome.CrimsonBiome;
-import killercreepr.cruxabyss.world.generation.biome.GrimBiome;
+import killercreepr.cruxabyss.world.generation.biome.ToxicMireBiome;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -22,7 +18,7 @@ public class AbyssPopulator extends GrimPopulator{
    // protected final double crimsonRange = (125D*125D);
     //protected final double crimsonRandomRange = (135D*135D);
     protected final CharredBiome charredBiome = new CharredBiome(this);
-    protected final CrimsonBiome crimsonBiome = new CrimsonBiome(this);
+    protected final ToxicMireBiome toxicMireBiome = new ToxicMireBiome(this);
     protected final CorruptBiome corruptBiome = new CorruptBiome(this);
 
     protected final FastNoiseLite temperature = new FastNoiseLite();
@@ -49,7 +45,7 @@ public class AbyssPopulator extends GrimPopulator{
 
     public void defaultBiome(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion,
                              int x, int y, int z){
-        crimsonBiome.acceptBiomeSet(
+        toxicMireBiome.acceptBiomeSet(
             worldInfo, random, limitedRegion, x, y, z
         );
     }
@@ -100,7 +96,7 @@ public class AbyssPopulator extends GrimPopulator{
             crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
             crimsonContainer.addBlock(limitedRegion.getBlockState(x,y,z).getBlock(),-1);
         }*/
-        crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
+        toxicMireBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
     }
 
     private boolean isLava(int x, int y, int z, @NotNull LimitedRegion region){

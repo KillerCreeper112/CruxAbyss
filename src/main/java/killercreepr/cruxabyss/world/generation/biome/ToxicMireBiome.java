@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class CrimsonBiome extends GrimBiome {
+public class ToxicMireBiome extends GrimBiome {
     private final FastNoiseLite noise = new FastNoiseLite();
 
-    public CrimsonBiome(@NotNull GrimPopulator master) {
+    public ToxicMireBiome(@NotNull GrimPopulator master) {
         super(master);
         noise.SetFrequency(0.005f);
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);

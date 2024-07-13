@@ -20,7 +20,6 @@ import killercreepr.cruxconfig.config.common.yaml.element.YamlObject;
 import killercreepr.cruxconfig.config.common.yaml.parsed.CfgParsedObjectHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
-import killercreepr.cruxstructures.manager.StructureManager;
 import killercreepr.cruxstructures.registries.StructureRegistries;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxstructures.structure.impl.FAWEStructure;
@@ -36,8 +35,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.logging.Level;
 
 public class CruxAbyss extends CruxPlugin implements Listener {
     private static CruxAbyss instance;

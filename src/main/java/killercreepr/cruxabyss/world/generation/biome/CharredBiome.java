@@ -65,6 +65,7 @@ public class CharredBiome extends GrimBiome {
             }
             return;
         }
+        if(isOre(m)) return;
         /*for(int adjX = 1; adjX < 2; adjX++){
             for(int adjZ = 1; adjZ < 2; adjZ++){
                 if(isLava(x+adjX,y, z+adjZ,limitedRegion) ||
