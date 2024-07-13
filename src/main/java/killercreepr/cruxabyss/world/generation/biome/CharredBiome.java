@@ -20,9 +20,9 @@ import java.util.Random;
 public class CharredBiome extends GrimBiome {
     private final FastNoiseLite magma = new FastNoiseLite();
     private final FastNoiseLite noise = new FastNoiseLite();
-    private final CruxBlock CHARRED_LOG_X = USurviveBlocks.CHARRED_LOG.getBlock(Axis.X); //CustomBlock.CHARRED_LOG.get(Axis.X);
-    private final CruxBlock CHARRED_LOG_Y = USurviveBlocks.CHARRED_LOG.getBlock(Axis.Y); //CustomBlock.CHARRED_LOG.get(Axis.Y);
-    private final CruxBlock CHARRED_LOG_Z = USurviveBlocks.CHARRED_LOG.getBlock(Axis.Z); //todo CustomBlock.CHARRED_LOG.get(Axis.Z);
+    private final CruxBlock CHARRED_LOG_X = USurviveBlocks.CHARRED_LOG.getBlock(Axis.X);
+    private final CruxBlock CHARRED_LOG_Y = USurviveBlocks.CHARRED_LOG.getBlock(Axis.Y);
+    private final CruxBlock CHARRED_LOG_Z = USurviveBlocks.CHARRED_LOG.getBlock(Axis.Z);
 
     public CharredBiome(@NotNull GrimPopulator master) {
         super(master);
@@ -37,12 +37,14 @@ public class CharredBiome extends GrimBiome {
         magma.SetFractalOctaves(5);
     }
 
+    public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
+        setBiome(BiomeManager.CHARRED_WASTES, limitedRegion, x,y,z);
+    }
+
     @Override
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
-        setBiome(BiomeManager.CHARRED_WASTES, limitedRegion, x,y,z,
-                -2, 0,
-                2, y > 61 ? 64 : 0);
+        acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
         if(!b.isSolid()) return;
         Material m = limitedRegion.getType(x,y,z);
         if(m == Material.BEDROCK) return;

@@ -9,15 +9,23 @@ import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.structure.AbyssOutpost;
+import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
+import killercreepr.cruxabyss.structure.TestStructure;
 import killercreepr.cruxabyss.world.WorldManager;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
+import killercreepr.cruxconfig.config.common.yaml.context.YamlContext;
+import killercreepr.cruxconfig.config.common.yaml.element.YamlElement;
+import killercreepr.cruxconfig.config.common.yaml.element.YamlObject;
+import killercreepr.cruxconfig.config.common.yaml.parsed.CfgParsedObjectHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.manager.StructureManager;
 import killercreepr.cruxstructures.registries.StructureRegistries;
+import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxstructures.structure.impl.FAWEStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,7 +53,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         );
         AbyssBlocks.register();
         AbyssItems.register();
-        CfgRegistries.JSON.registerHandler(AbyssOutpost.class, new FileAbyssOutpost());
+        CfgRegistries.JSON.registerHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
 
         StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), "abyss_outpost"){
             @Override
@@ -56,20 +64,48 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             @Override
             public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
                 Bukkit.broadcastMessage("buildStored");
-                return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
+                return new StoredAbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
             }
         });
 
-        StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("test"), "test"){
+        CfgRegistries.YAML.PARSED_OBJECT_HANDLERS.register(new CfgParsedObjectHandler<CfgFAWEStructure>() {
             @Override
-            public boolean isPersistent() {
-                return true;
+            public int getPriority() {
+                return 0;
             }
 
             @Override
-            public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
-                Bukkit.broadcastMessage("buildStored");
-                return new AbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
+            public @NotNull Class<CfgFAWEStructure> getTargetType() {
+                return CfgFAWEStructure.class;
+            }
+
+            @Override
+            public @Nullable CfgFAWEStructure parse(@NotNull YamlElement e, @NotNull YamlContext ctx,
+                                                    @NotNull CfgFAWEStructure base,
+                                                    @Nullable CfgFAWEStructure current) {
+                if(!(e instanceof YamlObject o) || current == null) return current;
+                String type = ctx.getRegistry().deserialize(String.class, o.get("type"));
+                if(type==null) return current;
+                switch (type.toLowerCase()){
+                    case "test" ->{
+                        return new TestStructure(current.key(),
+                            ctx.getRegistry().deserialize(String.class, o.get("schematic")),
+                            ctx.getRegistry().deserialize(Boolean.class, o.get("persistent"))
+                        );
+                    }
+                    case "abyss_outpost" ->{
+                        return new AbyssOutpost(current.key(),
+                            ctx.getRegistry().deserialize(String.class, o.get("schematic")),
+                            ctx.getRegistry().deserialize(Boolean.class, o.get("persistent"))
+                        );
+                    }
+                }
+                return current;
+            }
+
+            @Override
+            public @NotNull Key key() {
+                return Crux.key("abyss_structures");
             }
         });
 

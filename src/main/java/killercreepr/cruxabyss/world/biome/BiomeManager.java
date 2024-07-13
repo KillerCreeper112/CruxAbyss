@@ -45,16 +45,16 @@ public class BiomeManager {
                 ResourceLocation.fromNamespaceAndPath("minecraft", "plains")));
         Crux.log(Level.INFO, "Plains biome registry: " + (plains == null ? "null" : "FOUND"));
         new Color(0x04B449);
-        new Color(0x03CB0D);
+        new Color(0x3BD545);
         new Color(0x85A23F);
         Biome biome = new Biome.BiomeBuilder()
             .specialEffects(new BiomeSpecialEffects.Builder()
-                .fogColor(0x03CB0D)
-                .foliageColorOverride(0x03CB0D)
-                .skyColor(0x03CB0D)
-                .waterColor(0x03CB0D)
-                .waterFogColor(0x03CB0D)
-                .grassColorOverride(0x03CB0D)
+                .fogColor(0x3BD545)
+                .foliageColorOverride(0x3BD545)
+                .skyColor(0x3BD545)
+                .waterColor(0x3BD545)
+                .waterFogColor(0x3BD545)
+                .grassColorOverride(0x3BD545)
                 .ambientParticle(new AmbientParticleSettings(
                     new ParticleOptions() {
                         @Override

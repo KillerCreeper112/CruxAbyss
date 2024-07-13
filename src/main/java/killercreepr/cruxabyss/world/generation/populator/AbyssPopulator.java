@@ -47,25 +47,24 @@ public class AbyssPopulator extends GrimPopulator{
         continental.SetFractalOctaves(3);
     }
 
-    @Override
-    public void populateXYZ(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion,
-                            int x, int y, int z) {
+    public void defaultBiome(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion,
+                             int x, int y, int z){
         crimsonBiome.acceptBiomeSet(
             worldInfo, random, limitedRegion, x, y, z
         );
+    }
+
+    @Override
+    public void populateXYZ(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion,
+                            int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         if(b.getType() == Material.BEDROCK){
             limitedRegion.setType(x,y,z, Material.AIR);
-            crimsonBiome.acceptBiomeSet(
-                worldInfo, random, limitedRegion, x, y, z
-            );
+            defaultBiome(worldInfo, random, limitedRegion, x, y, z);
             return;
         }
         if(b.getType() == Material.WATER || (b.getBlockData() instanceof Waterlogged w && w.isWaterlogged()) ||
                 b.getType() == Material.KELP_PLANT || b.getType() == Material.KELP){
-            crimsonBiome.acceptBiomeSet(
-                worldInfo, random, limitedRegion, x, y, z
-            );
             //limitedRegion.setType(x,y,z, Material.LAVA);
         }else if(b.isReplaceable() && b.getType() != Material.SNOW){
             limitedRegion.setType(x,y,z, Material.AIR);

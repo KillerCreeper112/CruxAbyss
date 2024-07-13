@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.world.generation.biome;
 
+import killercreepr.crux.nms.biome.BiomeUtils;
+import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
@@ -7,8 +9,10 @@ import org.bukkit.craftbukkit.generator.CraftLimitedRegion;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
+import java.util.function.Predicate;
 
 public abstract class GrimBiome{
     protected final GrimPopulator master;
@@ -55,6 +59,8 @@ public abstract class GrimBiome{
         for(int xx = -width; xx < width; xx++){
             for(int yy = -height; yy < height; yy++){
                 if(craftLimitedRegion.isInRegion(x+xx, y+yy, z+xx)){
+                    org.bukkit.block.Biome bio = craftLimitedRegion.getBiome(x+xx, y+yy, z+xx);
+                    if(bio == org.bukkit.block.Biome.CUSTOM) continue;
                     craftLimitedRegion.setBiome(x+xx,y+yy,z+xx, biome);
                 }
             }

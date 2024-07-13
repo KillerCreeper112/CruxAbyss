@@ -43,12 +43,14 @@ public class CorruptBiome extends GrimBiome {
         replace.put(Material.GRASS_BLOCK, gen);
     }
 
+    public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
+        setBiome(BiomeManager.CORRUPT, limitedRegion, x,y,z);
+    }
+
     @Override
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
-        setBiome(BiomeManager.CORRUPT, limitedRegion, x,y,z,
-                -2, 0,
-                2, y > 61 ? 64 : 0);
+        acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
         if(!b.isSolid() || b.getType() == Material.BEDROCK) return;
         BlockGenerator gen = replace.getOrDefault(limitedRegion.getType(x,y,z), null);
         if(gen == null) return;

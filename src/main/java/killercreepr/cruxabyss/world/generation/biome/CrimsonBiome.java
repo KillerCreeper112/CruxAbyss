@@ -27,17 +27,13 @@ public class CrimsonBiome extends GrimBiome {
     }
 
     public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
-        setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z,
-            -2, y > 61 ? worldInfo.getMaxHeight() : 0,
-            2, y > 61 ? worldInfo.getMaxHeight() : 2);
+        setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z);
     }
 
     @Override
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Material m = limitedRegion.getType(x,y,z);
-        setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z,
-                -2, y > 61 ? worldInfo.getMaxHeight() : 0,
-                2, y > 61 ? worldInfo.getMaxHeight() : 2);
+        acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
         if(m == Material.BEDROCK) return;
         if(MaterialSetTag.LOGS.isTagged(m) && limitedRegion.getBlockData(x,y,z) instanceof Orientable orientable){
             CruxBlock block = AbyssBlocks.PLAGUE_STEM.getBlock(orientable.getAxis());
