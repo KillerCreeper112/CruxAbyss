@@ -37,19 +37,19 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.logging.Level;
+
 public class CruxAbyss extends CruxPlugin implements Listener {
     private static CruxAbyss instance;
     public static CruxAbyss inst(){ return instance; }
 
-    protected final StructureManager structureManager = new StructureManager(this);
     @Override
     public void enabled() {
         instance = this;
         BiomeManager.register();
         registerListeners(
             new GenerationListener(),
-            this,
-            structureManager
+            this
         );
         AbyssBlocks.register();
         AbyssItems.register();
@@ -85,6 +85,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                                                     @Nullable CfgFAWEStructure current) {
                 if(!(e instanceof YamlObject o) || current == null) return current;
                 String type = ctx.getRegistry().deserialize(String.class, o.get("type"));
+                Crux.log(Level.WARNING, "AYYYYYY   " + type);
                 if(type==null) return current;
                 switch (type.toLowerCase()){
                     case "test" ->{
@@ -114,7 +115,6 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             game.setStarted();
         }, 100L);
         super.enabled();
-        structureManager.buildRunnable().runTaskTimer(this, 20L, 1L);
     }
 
     /*@EventHandler(ignoreCancelled = true)
@@ -149,12 +149,10 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     @Override
     public void disabled() {
         super.disabled();
-        structureManager.saveAllWorlds();
     }
 
     @Override
     public void reload() {
         super.reload();
-        structureManager.loadConfiguration();
     }
 }
