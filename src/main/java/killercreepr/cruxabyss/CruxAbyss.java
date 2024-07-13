@@ -85,7 +85,6 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                                                     @Nullable CfgFAWEStructure current) {
                 if(!(e instanceof YamlObject o) || current == null) return current;
                 String type = ctx.getRegistry().deserialize(String.class, o.get("type"));
-                Crux.log(Level.WARNING, "AYYYYYY   " + type);
                 if(type==null) return current;
                 switch (type.toLowerCase()){
                     case "test" ->{
