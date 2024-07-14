@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.structure;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.StoredChunk;
-import killercreepr.cruxstructures.structure.Structure;
 import killercreepr.cruxstructures.structure.active.ActiveStructure;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
@@ -11,7 +10,6 @@ import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

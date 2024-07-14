@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.item;
 
-import com.destroystokyo.paper.MaterialTags;
 import killercreepr.crux.Crux;
 import killercreepr.crux.tags.container.MergedTagContainer;
 import killercreepr.crux.util.CruxString;

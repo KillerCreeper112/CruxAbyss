@@ -2,7 +2,9 @@ package killercreepr.cruxabyss.structure;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 public class ActiveAbyssOutpost extends SimpleActiveStructure {

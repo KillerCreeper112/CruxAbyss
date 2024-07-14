@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.structure;
 import killercreepr.crux.location.DynamicLocation;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;

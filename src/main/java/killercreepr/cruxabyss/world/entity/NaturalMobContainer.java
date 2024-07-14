@@ -4,7 +4,6 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.loot.SimpleWeighted;
 import killercreepr.crux.nms.biome.BiomeUtils;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxentities.entity.CruxMob;
 import org.bukkit.Chunk;
 import org.bukkit.NamespacedKey;

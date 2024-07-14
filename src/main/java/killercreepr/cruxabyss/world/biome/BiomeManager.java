@@ -1,7 +1,10 @@
 package killercreepr.cruxabyss.world.biome;
 
 import killercreepr.crux.Crux;
-import net.minecraft.core.*;
+import net.minecraft.core.Holder;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistrationInfo;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;

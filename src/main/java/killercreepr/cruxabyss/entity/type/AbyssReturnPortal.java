@@ -4,7 +4,9 @@ import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.Crux;
-import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
+import killercreepr.crux.persistence.CruxPersistence;
+import killercreepr.crux.util.CruxTag;
+import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
@@ -19,9 +21,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class AbyssAltarPortal extends SimpleAbyssMob {
-    public static final AbyssAltarPortal TESTBOI = CruxEntityRegistries.ENTITIES.register(new AbyssAltarPortal());
-    public AbyssAltarPortal() {
+public class AbyssReturnPortal extends SimpleAbyssMob {
+    public static final AbyssReturnPortal TESTBOI = CruxEntityRegistries.ENTITIES.register(new AbyssReturnPortal());
+    public AbyssReturnPortal() {
         super(Crux.key("abyss_altar_portal"), EntityType.PIG);
     }
 
@@ -42,11 +44,17 @@ public class AbyssAltarPortal extends SimpleAbyssMob {
         };
     }
 
+    public @NotNull Entity spawn(@NotNull Location at, @NotNull Location returnTo){
+        Entity e = spawn(at);
+        CruxTag.get(e, "return_to", CruxPersistence.LOCATION, returnTo);
+        return e;
+    }
+
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         ModeledEntity modeled = ModelEngineAPI.getModeledEntity(e);
         ActiveModel active = modeled.getModel(key.value()).orElse(null);
-        if(active != null) return new AbyssAltarPortalGoal(e, active);
+        if(active != null) return new AbyssReturnPortalGoal(e, active);
         return null;
     }
 }

@@ -15,14 +15,11 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.Crux;
 import killercreepr.cruxabyss.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.LimitedRegion;
@@ -33,7 +30,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class GenerationListener implements Listener {
