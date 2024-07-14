@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.item;
 
 import killercreepr.crux.tags.container.MergedTagContainer;
-import killercreepr.cruxabyss.block.AbyssBlocks;
+import killercreepr.crux.util.CruxString;
 import killercreepr.cruxblocks.persistence.CruxBlocksPersistTags;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import killercreepr.cruxitems.item.CruxedItem;
@@ -22,7 +22,8 @@ public class BlockPluginItem extends GenericPluginItem {
     @Override
     public @NotNull CruxedItem build(@Nullable Entity entity, @Nullable MergedTagContainer mergedTagContainer) {
         CruxedItem item = new CruxedItem(Material.PAPER);
-        item.customModelData(customModelData)
+        item.displayName(CruxString.toTitleCase(key.value()))
+            .customModelData(customModelData)
             .edit(i -> CruxBlocksPersistTags.CRUX_BLOCK_GROUP.set(i, CruxBlocksRegistries.BLOCKS.getGroup(key)));
         return item;
     }
