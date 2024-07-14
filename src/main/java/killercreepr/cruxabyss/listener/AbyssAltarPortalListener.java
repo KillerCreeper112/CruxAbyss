@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.listener;
 
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxabyss.altar.AbyssAltar;
+import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
 import killercreepr.cruxabyss.item.AbyssItemTags;
 import org.bukkit.GameMode;
@@ -45,6 +46,6 @@ public class AbyssAltarPortalListener implements Listener {
         portalSpawn.setDirection(direction.getDirection());
         CruxLoc.relative(portalSpawn, 0D, 0D, 2D);
 
-        AbyssAltarPortal.TESTBOI.spawn(portalSpawn);
+        AbyssMob.ALTAR_PORTAL.spawn(portalSpawn);
     }
 }

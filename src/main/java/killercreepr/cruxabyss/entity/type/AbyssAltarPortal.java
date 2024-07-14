@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class AbyssAltarPortal extends SimpleAbyssMob {
-    public static final AbyssAltarPortal TESTBOI = CruxEntityRegistries.ENTITIES.register(new AbyssAltarPortal());
     public AbyssAltarPortal() {
         super(Crux.key("abyss_altar_portal"), EntityType.PIG);
     }

@@ -22,9 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class AbyssReturnPortal extends SimpleAbyssMob {
-    public static final AbyssReturnPortal TESTBOI = CruxEntityRegistries.ENTITIES.register(new AbyssReturnPortal());
     public AbyssReturnPortal() {
-        super(Crux.key("abyss_altar_portal"), EntityType.PIG);
+        super(Crux.key("abyss_return_portal"), EntityType.PIG);
     }
 
     @Nullable

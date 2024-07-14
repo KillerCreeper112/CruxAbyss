@@ -6,9 +6,11 @@ import killercreepr.crux.location.EntityLocation;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.crux.util.GetNear;
 import killercreepr.cruxabyss.CruxAbyss;
+import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.teleport.RandomTP;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Location;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +33,10 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
             Player p = (Player) e;
             p.sendMessage("seeya loser");
-            new RandomTP(CruxAbyss.inst().game.getWorld()).randomTeleport(p);
+            Location spawn = new RandomTP(CruxAbyss.inst().game.getWorld()).randomTeleport(p);
+            if(spawn==null) return;
+            AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+            mob.remove();
         });
     }
 }

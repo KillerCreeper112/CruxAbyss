@@ -2,6 +2,8 @@ package killercreepr.cruxabyss.entity.mob;
 
 import killercreepr.crux.registry.KeyedRegistry;
 import killercreepr.cruxabyss.entity.mob.type.*;
+import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
+import killercreepr.cruxabyss.entity.type.AbyssReturnPortal;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
@@ -17,6 +19,9 @@ public interface AbyssMob extends CruxMob {
     AbyssGroundDweller GROUND_DWELLER = REGISTRY.register(new AbyssGroundDweller());
     AbyssCharredBones CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());
     AbyssCapgras CAPGRAS = REGISTRY.register(new AbyssCapgras());
+
+    AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
+    AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());
 
     @NotNull
     default Entity spawn(@NotNull Location at){

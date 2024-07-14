@@ -36,9 +36,14 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
     }
 
     protected int lifeSpan = 200;
+    protected int cooldown = 100;
 
     @Override
     public void tick() {
+        if(cooldown > 0){
+            cooldown--;
+            return;
+        }
         lifeSpan--;
         if(lifeSpan < 0){
             mob.remove();
