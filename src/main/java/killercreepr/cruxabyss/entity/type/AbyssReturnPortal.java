@@ -30,9 +30,9 @@ public class AbyssReturnPortal extends SimpleAbyssMob {
     @Override
     public Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l) {
         return e ->{
-            ModeledEntity modeled = ModelEngineAPI.createModeledEntity(e);
+            ModeledEntity modeled = ModelEngineAPI.getOrCreateModeledEntity(e);
             modeled.setBaseEntityVisible(false);
-            ActiveModel model = ModelEngineAPI.createActiveModel(key.key().value());
+            ActiveModel model = ModelEngineAPI.createActiveModel("abyss_altar_portal");
             modeled.addModel(model, true);
             if(e instanceof Mob mob){
                 mob.setSilent(true);
@@ -44,15 +44,15 @@ public class AbyssReturnPortal extends SimpleAbyssMob {
     }
 
     public @NotNull Entity spawn(@NotNull Location at, @NotNull Location returnTo){
-        Entity e = spawn(at);
-        CruxTag.get(e, "return_to", CruxPersistence.LOCATION, returnTo);
-        return e;
+        return spawnAt(null, at, x ->{
+            CruxTag.set(x, "return_to", CruxPersistence.LOCATION, returnTo);
+        });
     }
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ModeledEntity modeled = ModelEngineAPI.getModeledEntity(e);
-        ActiveModel active = modeled.getModel(key.value()).orElse(null);
+        ModeledEntity modeled = ModelEngineAPI.getOrCreateModeledEntity(e);
+        ActiveModel active = modeled.getModel("abyss_altar_portal").orElse(null);
         if(active != null) return new AbyssReturnPortalGoal(e, active);
         return null;
     }

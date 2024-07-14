@@ -21,7 +21,7 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
     public AbyssReturnPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
         super(key, mob, model);
         returnTo = CruxTag.get(mob, "return_to", CruxPersistence.LOCATION, null);
-        Objects.requireNonNull(returnTo);
+        Objects.requireNonNull(returnTo, "Return portal does not have a return location!");
     }
 
     protected @NotNull Location returnTo;
@@ -36,7 +36,7 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
     }
 
     protected int lifeSpan = 200;
-    protected int cooldown = 100;
+    protected int cooldown = 60/2;
 
     @Override
     public void tick() {
@@ -51,6 +51,7 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
             return;
         }
         mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
+            mob.remove();
             Player p = (Player) e;
             p.sendMessage("get scared kid");
             p.teleport(returnTo);
