@@ -80,7 +80,7 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
             if(consumer != null) consumer.accept(e);
 
             //Mob goal
-            //todo test EntityManager.loadEntity(e);
+            load(e);
         });
     }
 
@@ -163,6 +163,7 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
         if(!(e instanceof Mob m)) return;
         CruxMobGoal goal = getGoal(m);
         if(goal==null) return;
+        if(Crux.getServer().getMobGoals().getGoal(m, goal.getKey()) != null) return;
         Crux.getServer().getMobGoals().addGoal(m, 0, goal);
     }
 

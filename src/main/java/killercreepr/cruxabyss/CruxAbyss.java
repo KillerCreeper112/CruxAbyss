@@ -8,6 +8,7 @@ import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.item.AbyssItems;
+import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.structure.AbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
 import killercreepr.cruxabyss.structure.TestStructure;
@@ -46,7 +47,8 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         BiomeManager.register();
         registerListeners(
             new GenerationListener(),
-            this
+            this,
+            new AbyssAltarPortalListener()
         );
         AbyssBlocks.register();
         AbyssItems.register();
@@ -126,7 +128,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         Bukkit.broadcast(Component.text("Structure spawned " + l.getX() + ", " + l.getY() + ", " + l.getZ()));
     }
 
-    protected GameManager game;
+    public GameManager game;
     @EventHandler(ignoreCancelled = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player p = event.getPlayer();

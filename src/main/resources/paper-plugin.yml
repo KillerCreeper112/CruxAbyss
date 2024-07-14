@@ -16,3 +16,5 @@ dependencies:
     FastAsyncWorldEdit:
       load: BEFORE
       required: true
+    ModelEngine:
+      load: BEFORE

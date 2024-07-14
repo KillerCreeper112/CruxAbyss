@@ -1,8 +1,10 @@
 package killercreepr.cruxabyss.entity.mob.type;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
+import killercreepr.cruxabyss.entity.mob.goal.CapgrasGoal;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
@@ -52,8 +54,8 @@ public class AbyssCapgras extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        /*todo ActiveModel active = activeModel(e, key.getKey());
-        if(active != null) return new CapgrasGoal(e, active);*/
+        ActiveModel active = null;//activeModel(e, key.getKey());
+        if(active != null) return new CapgrasGoal(e, active);
         return null;
     }
 }
