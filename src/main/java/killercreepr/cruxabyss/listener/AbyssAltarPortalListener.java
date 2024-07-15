@@ -1,21 +1,28 @@
 package killercreepr.cruxabyss.listener;
 
+import killercreepr.crux.Crux;
+import killercreepr.crux.data.BlockPos;
+import killercreepr.crux.util.CruxColor;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
 import killercreepr.cruxabyss.item.AbyssItemTags;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxstructures.structure.Structure;
+import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
+import killercreepr.cruxstructures.structure.stored.StoredStructure;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class AbyssAltarPortalListener implements Listener {
 
@@ -47,5 +54,20 @@ public class AbyssAltarPortalListener implements Listener {
         CruxLoc.relative(portalSpawn, 0D, 0D, 2D);
 
         AbyssMob.ALTAR_PORTAL.spawn(portalSpawn);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        Block b = event.getBlock();
+        BlockPos blockPos = BlockPos.from(b);
+        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        if (stored == null) return;
+
+        if (!(stored.getParent() instanceof CfgStoredBlocksStructure s)) return;
+
+        BlockPos structurePos = stored.fromWorldToStructurePos(blockPos);
+        if(s.getBlocks(stored.getRotation()).contains(structurePos)){
+            event.setCancelled(true);
+        }
     }
 }

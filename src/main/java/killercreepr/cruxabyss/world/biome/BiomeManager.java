@@ -89,7 +89,7 @@ public class BiomeManager {
                     new ParticleOptions() {
                         @Override
                         public @NotNull ParticleType<?> getType() {
-                            return ParticleTypes.ASH;
+                            return ParticleTypes.SMOKE;
                         }
                     }, .01f
                 ))

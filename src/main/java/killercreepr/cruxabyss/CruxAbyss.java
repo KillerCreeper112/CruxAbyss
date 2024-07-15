@@ -30,6 +30,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Structure;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,7 +55,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         AbyssItems.register();
         CfgRegistries.JSON.registerHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
 
-        StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), "abyss_outpost"){
+        /*StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), "abyss_outpost"){
             @Override
             public boolean isPersistent() {
                 return true;
@@ -65,7 +66,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                 Bukkit.broadcastMessage("buildStored");
                 return new StoredAbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
             }
-        });
+        });*/
 
         CfgRegistries.YAML.PARSED_OBJECT_HANDLERS.register(new CfgParsedObjectHandler<CfgFAWEStructure>() {
             @Override
