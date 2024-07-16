@@ -1,8 +1,6 @@
 package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
-import killercreepr.crux.data.BlockPos;
-import killercreepr.crux.data.StoredChunk;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
@@ -21,16 +19,12 @@ import killercreepr.cruxconfig.config.common.yaml.element.YamlObject;
 import killercreepr.cruxconfig.config.common.yaml.parsed.CfgParsedObjectHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
-import killercreepr.cruxstructures.registries.StructureRegistries;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
-import killercreepr.cruxstructures.structure.impl.FAWEStructure;
-import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Structure;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,18 +1,17 @@
 package killercreepr.cruxabyss.listener;
 
-import killercreepr.crux.Crux;
 import killercreepr.crux.data.BlockPos;
-import killercreepr.crux.util.CruxColor;
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
-import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
 import killercreepr.cruxabyss.item.AbyssItemTags;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxstructures.structure.Structure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemDisplay;
@@ -22,7 +21,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class AbyssAltarPortalListener implements Listener {
 
@@ -65,7 +63,7 @@ public class AbyssAltarPortalListener implements Listener {
 
         if (!(stored.getParent() instanceof CfgStoredBlocksStructure s)) return;
 
-        BlockPos structurePos = stored.fromWorldToStructurePos(blockPos);
+        CruxPosition structurePos = stored.fromWorldToStructurePos(blockPos);
         if(s.getBlocks(stored.getRotation()).contains(structurePos)){
             event.setCancelled(true);
         }

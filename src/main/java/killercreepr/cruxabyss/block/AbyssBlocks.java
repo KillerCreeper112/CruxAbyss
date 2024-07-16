@@ -3,15 +3,22 @@ package killercreepr.cruxabyss.block;
 import killercreepr.crux.Crux;
 import killercreepr.cruxblocks.block.GenericBlock;
 import killercreepr.cruxblocks.block.GenericDirectionalBlock;
+import killercreepr.cruxblocks.block.context.BlockContext;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
 import killercreepr.cruxblocks.block.group.GenericDirectionalBlockGroup;
 import killercreepr.cruxblocks.block.group.SingularBlockGroup;
 import killercreepr.cruxblocks.block.texture.NoteTextureData;
+import killercreepr.cruxblocks.block.texture.WireTextureData;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import org.bukkit.Axis;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class AbyssBlocks {
     public static void register(){}
@@ -66,6 +73,24 @@ public class AbyssBlocks {
         @Override
         public float getHardness() {
             return 1.2f;
+        }
+    });
+
+    public static final CruxBlockGroup PLAGUE_VEIL = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+        //north=true,east=false,south=false,west=false,attached=false,disarmed=false,powered=false
+        new GenericBlock(Crux.key("plague_veil"), new WireTextureData.Builder()
+            .faces(Set.of(BlockFace.NORTH))
+            .build())
+    ) {
+        @Override
+        public float getHardness() {
+            return 1.2f;
+        }
+
+        @Override
+        public boolean canPlace(@NotNull BlockContext ctx) {
+            Block b = ctx.getBlock();
+            return b.getRelative(BlockFace.DOWN).isSolid();
         }
     });
 }

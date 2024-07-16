@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.structure;
 
-import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.StoredChunk;
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.cruxstructures.structure.Structure;
 import killercreepr.cruxstructures.structure.active.ActiveStructure;
 import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
@@ -13,11 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class StoredAbyssOutpost extends SimpleStoredStructure {
     protected boolean persist = true;
-    public StoredAbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull BlockPos center, double rotation) {
+    public StoredAbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation) {
         super(structure, chunk, center, rotation);
     }
 
-    public StoredAbyssOutpost(@NotNull Key structureKey, @NotNull StoredChunk chunk, @NotNull BlockPos center, @NotNull BoundingBox boundingBox, double rotation) {
+    public StoredAbyssOutpost(@NotNull Key structureKey, @NotNull StoredChunk chunk, @NotNull CruxPosition center, @NotNull BoundingBox boundingBox, double rotation) {
         super(structureKey, chunk, center, boundingBox, rotation);
     }
 

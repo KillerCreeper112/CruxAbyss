@@ -24,6 +24,7 @@ public class BiomeManager {
     public static Holder<Biome> TOXIC_MIRE; //toxic mire
     public static Holder<Biome> CHARRED_WASTES;
     public static Holder<Biome> CORRUPT;
+    public static Holder<Biome> ELDRITCH_WASTES;
     public static void register(){
         WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer().registryAccess().registryOrThrow(Registries.BIOME);
 
@@ -122,6 +123,25 @@ public class BiomeManager {
         CORRUPT = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "corruption")),
                 biome, RegistrationInfo.BUILT_IN);
+
+        biome = new Biome.BiomeBuilder()
+            .specialEffects(new BiomeSpecialEffects.Builder()
+                .fogColor(0x151941)
+                .foliageColorOverride(0x0D1573)
+                .skyColor(0x151941)
+                .waterColor(0x371D81)
+                .waterFogColor(0x371D81)
+                .grassColorOverride(0x340D73)
+                .build())
+            .downfall(.1f)
+            .temperature(0f)
+            .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
+            .generationSettings(BiomeGenerationSettings.EMPTY)
+            .build();
+        registrywritable.createIntrusiveHolder(biome);
+        ELDRITCH_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
+                ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "eldritch_wastes")),
+            biome, RegistrationInfo.BUILT_IN);
 
         try {
             unregisteredIntrusiveHolders.set(registrywritable, null);

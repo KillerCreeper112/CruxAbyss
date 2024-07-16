@@ -4,7 +4,6 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.StoredChunk;
 import killercreepr.cruxstructures.structure.active.ActiveStructure;
-import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
 import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;

@@ -20,7 +20,7 @@ public class FileAbyssOutpost extends FileSimpleStoredStructure<StoredAbyssOutpo
         SimpleStoredStructure simple = super.deserializeFromFile(context, e);
         if(simple == null) return null;
         FileObject o = (FileObject) e;
-        StoredAbyssOutpost outpost = new StoredAbyssOutpost(simple.getStructureKey(), simple.getChunk(), simple.getBlockPos(), simple.getBoundingBox(), simple.getRotation());
+        StoredAbyssOutpost outpost = new StoredAbyssOutpost(simple.getStructureKey(), simple.getChunk(), simple.getPosition(), simple.getBoundingBox(), simple.getRotation());
         //outpost.setLifeSpan(o.get("lifeSpan").getAsInt());
         return outpost;
     }

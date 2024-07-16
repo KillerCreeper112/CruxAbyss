@@ -10,7 +10,6 @@ import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
-import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;

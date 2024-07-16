@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.world.generation.populator;
 import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.generation.biome.CharredBiome;
 import killercreepr.cruxabyss.world.generation.biome.CorruptBiome;
+import killercreepr.cruxabyss.world.generation.biome.EldritchWastesBiome;
 import killercreepr.cruxabyss.world.generation.biome.ToxicMireBiome;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,6 +21,7 @@ public class AbyssPopulator extends GrimPopulator{
     protected final CharredBiome charredBiome = new CharredBiome(this);
     protected final ToxicMireBiome toxicMireBiome = new ToxicMireBiome(this);
     protected final CorruptBiome corruptBiome = new CorruptBiome(this);
+    protected final EldritchWastesBiome eldritchWastesBiome = new EldritchWastesBiome(this);
 
     protected final FastNoiseLite temperature = new FastNoiseLite();
     protected final FastNoiseLite humidity = new FastNoiseLite();
@@ -92,10 +94,14 @@ public class AbyssPopulator extends GrimPopulator{
         }else if(t < 0f && (h < -.02f || h > .02f) && c > .3f){ //corrupt
             corruptBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
             return;
-        }/*else if(crimsonContainer.isEmpty() && t >= 0f && t <= .5f && h > .05f && c > .3f){ //crimson
+        }else if(t < .5f && h < 0f){
+            eldritchWastesBiome.accept(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);
+            return;
+            /*else if(crimsonContainer.isEmpty() && t >= 0f && t <= .5f && h > .05f && c > .3f){ //crimson
             crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
             crimsonContainer.addBlock(limitedRegion.getBlockState(x,y,z).getBlock(),-1);
         }*/
+        }
         toxicMireBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
     }
 

@@ -46,4 +46,6 @@ public class AbyssItems {
             return item;
         }
     });
+
+    public static final PluginItem PLAGUE_VEIL = CruxItemRegistries.ITEMS.register(new BlockPluginItem(Crux.key("plague_veil"), 6));
 }
