@@ -4,11 +4,13 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
+import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.structure.AbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
+import killercreepr.cruxabyss.structure.StoredTestStructure;
 import killercreepr.cruxabyss.structure.TestStructure;
 import killercreepr.cruxabyss.world.WorldManager;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
@@ -37,31 +39,10 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     public static CruxAbyss inst(){ return instance; }
 
     @Override
-    public void enabled() {
-        instance = this;
-        BiomeManager.register();
-        registerListeners(
-            new GenerationListener(),
-            this,
-            new AbyssAltarPortalListener()
-        );
-        AbyssBlocks.register();
-        AbyssItems.register();
+    public void onLoad() {
+        super.onLoad();
         CfgRegistries.JSON.registerHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
-
-        /*StructureRegistries.STRUCTURES.register(new FAWEStructure(Crux.key("abyss_outpost"), "abyss_outpost"){
-            @Override
-            public boolean isPersistent() {
-                return true;
-            }
-
-            @Override
-            public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
-                Bukkit.broadcastMessage("buildStored");
-                return new StoredAbyssOutpost(this, StoredChunk.from(center), BlockPos.from(center), rotation);
-            }
-        });*/
-
+        CfgRegistries.JSON.registerHandler(StoredTestStructure.class, new FileTestStructure());
         CfgRegistries.YAML.PARSED_OBJECT_HANDLERS.register(new CfgParsedObjectHandler<CfgFAWEStructure>() {
             @Override
             public int getPriority() {
@@ -82,16 +63,10 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                 if(type==null) return current;
                 switch (type.toLowerCase()){
                     case "test" ->{
-                        return new TestStructure(current.key(),
-                            ctx.getRegistry().deserialize(String.class, o.get("schematic")),
-                            ctx.getRegistry().deserialize(Boolean.class, o.get("persistent"))
-                        );
+                        return new TestStructure(current.key(), current.getHolder(), current.isPersistent());
                     }
                     case "abyss_outpost" ->{
-                        return new AbyssOutpost(current.key(),
-                            ctx.getRegistry().deserialize(String.class, o.get("schematic")),
-                            ctx.getRegistry().deserialize(Boolean.class, o.get("persistent"))
-                        );
+                        return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent());
                     }
                 }
                 return current;
@@ -102,6 +77,19 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                 return Crux.key("abyss_structures");
             }
         });
+    }
+
+    @Override
+    public void enabled() {
+        instance = this;
+        BiomeManager.register();
+        registerListeners(
+            new GenerationListener(),
+            this,
+            new AbyssAltarPortalListener()
+        );
+        AbyssBlocks.register();
+        AbyssItems.register();
 
         getServer().getScheduler().runTaskLater(this, task ->{
             game = createNewGame();
@@ -109,13 +97,6 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         }, 100L);
         super.enabled();
     }
-
-    /*@EventHandler(ignoreCancelled = true)
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        Player p = event.getPlayer();
-        Structure structure = StructureRegistries.STRUCTURES.get(Crux.key("abyss_outpost"));
-        structure.place(p.getLocation());
-    }*/
 
     @EventHandler(ignoreCancelled = true)
     public void onStructurePlace(StructurePlaceEvent event) {

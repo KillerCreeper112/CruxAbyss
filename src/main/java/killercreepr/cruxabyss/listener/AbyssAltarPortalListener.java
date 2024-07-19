@@ -62,7 +62,6 @@ public class AbyssAltarPortalListener implements Listener {
         if (stored == null) return;
 
         if (!(stored.getParent() instanceof CfgStoredBlocksStructure s)) return;
-
         CruxPosition structurePos = stored.fromWorldToStructurePos(blockPos);
         if(s.getBlocks(stored.getRotation()).contains(structurePos)){
             event.setCancelled(true);

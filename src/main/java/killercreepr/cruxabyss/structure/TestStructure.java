@@ -3,12 +3,9 @@ package killercreepr.cruxabyss.structure;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.StoredChunk;
-import killercreepr.cruxstructures.structure.active.ActiveStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
-import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +28,6 @@ public class TestStructure extends CfgStoredBlocksStructure {
 
     @Override
     public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
-        return new SimpleStoredStructure(this, StoredChunk.from(center), BlockPos.from(center), rotation){
-            @Override
-            public @Nullable ActiveStructure buildActive(@NotNull Chunk chunk) {
-                return new ActiveTestStructure(this, chunk);
-            }
-        };
+        return new StoredTestStructure(this, StoredChunk.from(center), BlockPos.from(center), rotation);
     }
 }
