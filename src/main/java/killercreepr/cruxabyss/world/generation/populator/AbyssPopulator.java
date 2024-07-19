@@ -66,7 +66,13 @@ public class AbyssPopulator extends GrimPopulator{
             //limitedRegion.setType(x,y,z, Material.LAVA);
         }else if(b.isReplaceable() && b.getType() != Material.SNOW){
             limitedRegion.setType(x,y,z, Material.AIR);
-        }else if(b.getType() == Material.ICE) limitedRegion.setType(x,y,z, Material.PACKED_ICE);
+        }
+
+        switch (b.getType()){
+            case ICE -> limitedRegion.setType(x,y,z, Material.PACKED_ICE);
+            case DEEPSLATE_DIAMOND_ORE -> limitedRegion.setType(x,y,z,Material.DEEPSLATE);
+            case DIAMOND_ORE -> limitedRegion.setType(x,y,z,Material.STONE);
+        }
 
         /*double crimsonDistance = BlockContainer.distanceSquared(x,y,z, crimsonCenter.getX(), crimsonCenter.getY(), crimsonCenter.getZ());
         if(crimsonDistance != -1D){

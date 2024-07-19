@@ -17,6 +17,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class AbyssAltarPortalListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(!event.getAction().isRightClick()) return;
         Player p = event.getPlayer();
@@ -38,6 +39,7 @@ public class AbyssAltarPortalListener implements Listener {
 
         AbyssAltar altar = new AbyssAltar(b);
         if(!altar.isValid()) return;
+        event.setCancelled(true);
         ItemStack clonedItem = item.clone();
         if(p.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount()-1);
 

@@ -1,8 +1,10 @@
 package killercreepr.cruxabyss.altar;
 
+import killercreepr.crux.util.CruxBlockFace;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Candle;
 import org.jetbrains.annotations.NotNull;
 
 public class AbyssAltar {
@@ -12,28 +14,24 @@ public class AbyssAltar {
     }
 
     public @NotNull BlockFace getDirection(){
-        if(center.getRelative(BlockFace.EAST).getType() == Material.OBSIDIAN && checkEastWest()){
-            return BlockFace.EAST;
-        }
+        if(check(BlockFace.EAST)) return BlockFace.EAST;
         return BlockFace.NORTH;
     }
 
     public boolean isValid(){
         if(center.getType() != Material.ENCHANTING_TABLE) return false;
-        if(center.getRelative(BlockFace.NORTH).getType() == Material.OBSIDIAN) return checkNorthSouth();
-        if(center.getRelative(BlockFace.EAST).getType() == Material.OBSIDIAN) return checkEastWest();
+        if(check(BlockFace.NORTH) || check(BlockFace.EAST)) return true;
         return false;
     }
 
-    public boolean checkNorthSouth(){
-        Block b = center.getRelative(BlockFace.SOUTH);
-        if(b.getType() != Material.OBSIDIAN) return false;
-        return !checkEastWest();
+    public boolean check(@NotNull BlockFace dir){
+        return checkBlock(center.getRelative(CruxBlockFace.rotateLeft(dir))) &&
+            checkBlock(center.getRelative(CruxBlockFace.rotateRight(dir)));
     }
 
-    public boolean checkEastWest(){
-        Block b = center.getRelative(BlockFace.WEST);
+    public boolean checkBlock(@NotNull Block b){
         if(b.getType() != Material.OBSIDIAN) return false;
-        return !checkNorthSouth();
+        if(!(b.getRelative(BlockFace.UP).getBlockData() instanceof Candle candle)) return false;
+        return candle.isLit();
     }
 }
