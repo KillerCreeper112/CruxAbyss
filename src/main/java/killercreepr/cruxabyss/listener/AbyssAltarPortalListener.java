@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.listener;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxLoc;

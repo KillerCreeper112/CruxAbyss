@@ -7,7 +7,7 @@ load: STARTUP
 dependencies:
   server:
     CruxCore:
-      load: AFTER
+      load: BEFORE
       required: true # Defaults to true
       join-classpath: true # Defaults to true
     uSurvive:
