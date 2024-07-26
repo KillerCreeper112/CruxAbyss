@@ -4,6 +4,7 @@ import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registry.MappedRegistry;
 import killercreepr.crux.registry.SimpleMappedRegistry;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
+import killercreepr.usurvive.persistence.USurvivePersist;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -22,6 +23,8 @@ public class AbyssWorld extends GameManager{
         GenerationListener.addInitWorld(worldName);
         world = new WorldCreator(worldName).type(WorldType.AMPLIFIED).createWorld();
         if(world==null) return null;
+
+        USurvivePersist.DIMENSION.set(world, "abyss");
 
         return new AbyssWorld(plugin, world);
     }
