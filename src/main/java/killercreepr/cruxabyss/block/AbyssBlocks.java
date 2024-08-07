@@ -22,34 +22,34 @@ import java.util.Set;
 
 public class AbyssBlocks {
     public static void register(){}
-    public static final CruxBlockGroup PLAGUE_MOSS = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+    public static final CruxBlockGroup PLAGUE_MOSS = CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_moss"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
         new GenericBlock(Crux.key("plague_moss"), new NoteTextureData.Builder(new Note(3), Instrument.BANJO).powered(false).build())
     ) {
         @Override
         public float getHardness() {
             return 1.5f;
         }
-    });
+    });*/
 
-    public static final CruxBlockGroup PLAGUE_MOSS_DIRT = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+    public static final CruxBlockGroup PLAGUE_MOSS_DIRT = CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_moss_dirt"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
         new GenericBlock(Crux.key("plague_moss_dirt"), new NoteTextureData.Builder(new Note(4), Instrument.BANJO).powered(false).build())
     ) {
         @Override
         public float getHardness() {
             return 1.2f;
         }
-    });
+    });*/
 
-    public static final CruxBlockGroup PLAGUE_STONE = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+    public static final CruxBlockGroup PLAGUE_STONE = CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_stone"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
         new GenericBlock(Crux.key("plague_stone"), new NoteTextureData.Builder(new Note(5), Instrument.BANJO).powered(false).build())
     ) {
         @Override
         public float getHardness() {
             return 2f;
         }
-    });
+    });*/
 
-    public static final CruxDirectionalBlockGroup PLAGUE_STEM = CruxBlocksRegistries.BLOCKS.registerGroup(new GenericDirectionalBlockGroup(
+    public static final CruxDirectionalBlockGroup PLAGUE_STEM = (CruxDirectionalBlockGroup) CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_stem")); /*CruxBlocksRegistries.BLOCKS.registerGroup(new GenericDirectionalBlockGroup(
         Crux.key("plague_stem"), true,
         new GenericDirectionalBlock(Crux.key("plague_stem_x"),
             new NoteTextureData.Builder(new Note(6), Instrument.BANJO).powered(false).build(),
@@ -65,16 +65,16 @@ public class AbyssBlocks {
         public float getHardness() {
             return 2f;
         }
-    });
+    });*/
 
-    public static final CruxBlockGroup PLAGUE_WART = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+    public static final CruxBlockGroup PLAGUE_WART =  CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_wart"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
         new GenericBlock(Crux.key("plague_wart"), new NoteTextureData.Builder(new Note(9), Instrument.BANJO).powered(false).build())
     ) {
         @Override
         public float getHardness() {
             return 1.2f;
         }
-    });
+    });*/
 
     public static final CruxBlockGroup PLAGUE_VEIL = CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
         //north=true,east=false,south=false,west=false,attached=false,disarmed=false,powered=false
