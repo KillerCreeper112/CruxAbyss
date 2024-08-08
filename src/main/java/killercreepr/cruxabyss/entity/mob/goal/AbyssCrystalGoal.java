@@ -29,12 +29,13 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
 
     protected int tick = 0;
     protected final int lifeSpan = 200;
-    protected double speed = .8D;
-    protected final double speedIncrease = .05;
+    protected double speed = .7D;
+    protected final double speedIncrease = .1;
 
     protected boolean explode = false;
     @Override
     public void tick() {
+        playAnimation("size", false);
         if(explode){
             if(isPlayingAnimation("portal_spawn")) return;
             mob.remove();
@@ -52,6 +53,7 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
             return;
         }
         setSpinSpeed(speed);
+        playAnimation("float", false);
 
         speed += speedIncrease;
         tick++;

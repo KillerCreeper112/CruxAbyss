@@ -31,6 +31,7 @@ public class AbyssCrystal extends GenericCruxMob {
             e.setInvisible(true); //todo remove this maybe if ModelEngine updates
             e.setSilent(true);
             e.setGravity(false);
+            e.setCollidable(false);
             load(e);
         });
     }
