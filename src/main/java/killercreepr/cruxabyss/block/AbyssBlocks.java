@@ -2,18 +2,12 @@ package killercreepr.cruxabyss.block;
 
 import killercreepr.crux.Crux;
 import killercreepr.cruxblocks.block.GenericBlock;
-import killercreepr.cruxblocks.block.GenericDirectionalBlock;
 import killercreepr.cruxblocks.block.context.BlockContext;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
-import killercreepr.cruxblocks.block.group.GenericDirectionalBlockGroup;
 import killercreepr.cruxblocks.block.group.SingularBlockGroup;
-import killercreepr.cruxblocks.block.texture.NoteTextureData;
 import killercreepr.cruxblocks.block.texture.WireTextureData;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
-import org.bukkit.Axis;
-import org.bukkit.Instrument;
-import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;

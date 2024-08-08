@@ -1,11 +1,12 @@
 package killercreepr.cruxabyss.listener;
 
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.entity.mob.goal.AbyssCrystalGoal;
 import killercreepr.cruxabyss.item.AbyssItemTags;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
@@ -15,7 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,9 +46,12 @@ public class AbyssAltarPortalListener implements Listener {
         if(p.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount()-1);
 
         Location spawn = b.getLocation().toCenterLocation().add(0, 1, 0);
-        spawn.getWorld().spawn(spawn, ItemDisplay.class, e ->{
+        Mob crystalMob = (Mob) AbyssMob.ABYSS_CRYSTAL.spawn(spawn);
+        AbyssCrystalGoal goal = CruxGoalUtil.getGoal(crystalMob, AbyssCrystalGoal.class);
+        goal.setItem(clonedItem);
+        /*spawn.getWorld().spawn(spawn, ItemDisplay.class, e ->{
             e.setItemStack(clonedItem);
-        });
+        });*/
 
         BlockFace direction = altar.getDirection();
         Location portalSpawn = b.getLocation();

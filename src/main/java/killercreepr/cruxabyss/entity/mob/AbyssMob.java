@@ -22,6 +22,7 @@ public interface AbyssMob extends CruxMob {
 
     AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
     AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());
+    AbyssCrystal ABYSS_CRYSTAL = REGISTRY.register(new AbyssCrystal());
 
     @NotNull
     default Entity spawn(@NotNull Location at){
