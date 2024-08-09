@@ -64,6 +64,7 @@ public class CrimsonEyeGoal extends CruxMobModeledGoal {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if(mob.equals(event.getDamager()) && strongAttack < 1){
+            event.setCancelled(true);
             playAnimation("attack", true);
             return;
         }
