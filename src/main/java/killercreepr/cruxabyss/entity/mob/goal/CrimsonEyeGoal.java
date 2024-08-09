@@ -10,7 +10,8 @@ import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Particle;
@@ -48,6 +49,11 @@ public class CrimsonEyeGoal extends CruxMobModeledGoal {
                 return new CreateSound(Sound.ENTITY_SLIME_DEATH, 1.5f);
             }
         });
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.MONSTER);
     }
 
     @EventHandler(ignoreCancelled = true)

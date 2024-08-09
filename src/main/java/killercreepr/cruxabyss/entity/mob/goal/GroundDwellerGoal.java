@@ -6,6 +6,8 @@ import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
@@ -71,6 +73,7 @@ public class GroundDwellerGoal extends CruxMobModeledGoal {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target){
+        if(CruxMob.isInCategory(target, MobCategory.MONSTER)) return false;
         if(goUnderGround) return isValidTarget(target);
         return isValidTarget(target) && hasLineOfSight(target);
     }

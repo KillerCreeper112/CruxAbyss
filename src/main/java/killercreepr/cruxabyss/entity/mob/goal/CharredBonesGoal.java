@@ -2,7 +2,10 @@ package killercreepr.cruxabyss.entity.mob.goal;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.event.CruxEntityDamageEvent;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -30,5 +33,10 @@ public class CharredBonesGoal extends CruxMobModeledGoal {
         switch (event.getCause()){
             case FIRE, FIRE_TICK, LAVA -> event.setCancelled(true);
         }
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.MONSTER);
     }
 }

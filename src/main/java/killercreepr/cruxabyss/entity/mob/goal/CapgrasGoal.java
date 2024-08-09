@@ -4,9 +4,12 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.util.CruxMath;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
@@ -91,5 +94,10 @@ public class CapgrasGoal extends CruxMobModeledGoal {
         if(mob.equals(event.getEntity()) && event.getDamager() != null){
             playAnimation("hit_by", true);
         }
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.MONSTER);
     }
 }
