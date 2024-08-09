@@ -10,6 +10,7 @@ import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Particle;
@@ -75,9 +76,15 @@ public class CrimsonEyeGoal extends CruxMobModeledGoal {
     public void tick() {
         if(CruxTag.has(mob, "hide")){
             if(!isPlayingAnimation("hide")) playAnimation("hide", true);
+            if(findTargetCooldown > 0){
+                findTargetCooldown--;
+                return;
+            }
+            findTargetCooldown = 5;
             if(!new GetEntityNear<>(LivingEntity.class)
                 .center(mob)
                 .range(3D)
+                .filter(this::isValidNaturalTarget)
                 .find().isEmpty()){
                 CruxTag.remove(mob, "hide");
                 playAnimation("expose", true);
