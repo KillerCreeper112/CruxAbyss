@@ -94,8 +94,9 @@ public class CrimsonEyeGoal extends CruxMobModeledGoal {
                 new ParticleBuilder(Particle.BLOCK)
                     .offset(.5, .5, .5)
                     .extra(.1)
-                    .color(10)
+                    //.color(10)
                     .location(mob.getLocation())
+                    .data(g.getBlockData())
                     .spawn()
                 ;
             }

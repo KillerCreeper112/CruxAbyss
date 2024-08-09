@@ -1,12 +1,18 @@
 package killercreepr.cruxabyss.entity.mob.type;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
+import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
+import killercreepr.cruxabyss.entity.mob.goal.MooseGoal;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -30,14 +36,12 @@ public class AbyssMoose extends SimpleAbyssMob {
         return e ->{
             Consumer<Entity> s = super.spawnFunction(game, l);
             if(s != null) s.accept(e);
-            /*todo ModeledEntity modeled = ModelEngineAPI.createModeledEntity(e);
+            ModeledEntity modeled = new ModelEntity(e, key.value()).getOrCreateModeledEntity();
             modeled.setBaseEntityVisible(false);
-            ActiveModel model = ModelEngineAPI.createActiveModel(key.getKey());
-            modeled.addModel(model, true);
-            modeled.setStepHeight(1D);*/
 
             if(e instanceof Mob mob){
                 mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30D);
+                mob.getAttribute(Attribute.GENERIC_STEP_HEIGHT).setBaseValue(1D);
                 mob.setHealth(30D);
             }
         };
@@ -61,8 +65,13 @@ public class AbyssMoose extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        /*todo ActiveModel active = activeModel(e, key.getKey());
-        if(active != null) return new MooseGoal(e, active);*/
+        ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
+        if(active != null) return new MooseGoal(e, active);
         return null;
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.ANIMAL};
     }
 }

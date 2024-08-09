@@ -13,6 +13,11 @@ public class AbyssAltar {
         this.center = center;
     }
 
+    @NotNull
+    public Block getCenter() {
+        return center;
+    }
+
     public @NotNull BlockFace getDirection(){
         if(check(BlockFace.EAST)) return BlockFace.EAST;
         return BlockFace.NORTH;

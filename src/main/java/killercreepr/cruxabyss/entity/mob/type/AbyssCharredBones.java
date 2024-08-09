@@ -1,12 +1,17 @@
 package killercreepr.cruxabyss.entity.mob.type;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
+import killercreepr.cruxabyss.entity.mob.goal.CharredBonesGoal;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -27,10 +32,7 @@ public class AbyssCharredBones extends SimpleAbyssMob {
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l) {
         return e ->{
-            /*todo ModeledEntity modeled = ModelEngineAPI.createModeledEntity(e);
-            modeled.setBaseEntityVisible(false);
-            ActiveModel model = ModelEngineAPI.createActiveModel(key.getKey());
-            modeled.addModel(model, true);*/
+            new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
 
             if(e instanceof Skeleton x) x.setShouldBurnInDay(false);
         };
@@ -51,8 +53,13 @@ public class AbyssCharredBones extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        /*todo ActiveModel active = activeModel(e, key.getKey());
-        if(active != null) return new CharredBonesGoal(e, active);*/
+        ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
+        if(active != null) return new CharredBonesGoal(e, active);
         return null;
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.UNDEAD};
     }
 }

@@ -1,8 +1,9 @@
-package killercreepr.cruxabyss.entity.mob.type;
+package killercreepr.cruxabyss.entity.type;
 
 import killercreepr.crux.Crux;
 import killercreepr.cruxabyss.entity.mob.goal.AbyssCrystalGoal;
 import killercreepr.cruxentities.entity.GenericCruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.key.Key;
@@ -43,5 +44,10 @@ public class AbyssCrystal extends GenericCruxMob {
         new DesignEntity(m).getModel(key.value()).ifPresent(model ->{
             Bukkit.getMobGoals().addGoal(m, 0, new AbyssCrystalGoal(m, model));
         });
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.OBJECT};
     }
 }

@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.game;
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.game.GenericStatus;
 import killercreepr.crux.game.Statutable;
 import killercreepr.crux.plugin.CruxPlugin;
@@ -58,7 +59,10 @@ public class GameManager implements Statutable, Listener {
             naturalSpawnTick++;
             if(naturalSpawnTick >= CruxMath.random(100, 200)){
                 naturalSpawnTick = 0;
-                if(naturalEntitySpawner.belowGlobalCap()){
+                naturalEntitySpawner.belowGlobalCapMainThread().whenComplete((value, throwable) ->{
+                    if(throwable !=  null) Crux.log(Level.WARNING, throwable.getMessage());
+                    if(!value) return;
+
                     recentlyCheckedMobSpawns.clear();
                     plugin.log(Level.INFO, "Navigating natural mob spawns.");
                     for(Player p : world.getPlayers()){
@@ -66,7 +70,16 @@ public class GameManager implements Statutable, Listener {
                         recentlyCheckedMobSpawns.add(p.getLocation());
                         naturalEntitySpawner.navigate(p);
                     }
-                }
+                });
+                /*if(naturalEntitySpawner.belowGlobalCap()){
+                    recentlyCheckedMobSpawns.clear();
+                    plugin.log(Level.INFO, "Navigating natural mob spawns.");
+                    for(Player p : world.getPlayers()){
+                        if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
+                        recentlyCheckedMobSpawns.add(p.getLocation());
+                        naturalEntitySpawner.navigate(p);
+                    }
+                }*/
             }
         }
         if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
@@ -155,7 +168,7 @@ public class GameManager implements Statutable, Listener {
                 Bukkit.getPluginManager().registerEvents(this, plugin);
                 loadSavedData();
 
-                buildRunnable().runTaskTimer(plugin, 0L, 1L);
+                buildRunnable().runTaskTimerAsynchronously(plugin, 0L, 1L);
             }
             case STOPPED, IDLE -> {
                 HandlerList.unregisterAll(this);

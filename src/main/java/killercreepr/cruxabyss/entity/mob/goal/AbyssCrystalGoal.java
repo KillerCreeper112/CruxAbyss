@@ -6,9 +6,14 @@ import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
+import killercreepr.crux.util.CruxLoc;
+import killercreepr.cruxabyss.altar.AbyssAltar;
+import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,29 +32,37 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
         model.getBone("base").orElseThrow().setModel(item);
     }
 
+    protected AbyssAltar altar;
+    public void setAltar(@NotNull AbyssAltar altar){
+        this.altar = altar;
+    }
+
     protected int tick = 0;
-    protected final int lifeSpan = 200;
+    protected final int lifeSpan = 100;
     protected double speed = .7D;
-    protected final double speedIncrease = .1;
+    protected final double speedIncrease = .2;
 
     protected boolean explode = false;
+    protected int checkValidCooldown = 0;
     @Override
     public void tick() {
+        if(altar != null){
+            if(checkValidCooldown > 0){
+                checkValidCooldown--;
+            }else{
+                checkValidCooldown = 10;
+                if(!altar.isValid()){
+                    explode();
+                    return;
+                }
+            }
+        }
+
         playAnimation("size", false);
         if(explode){
             if(isPlayingAnimation("portal_spawn")) return;
-            mob.remove();
-            new CreateSound(Sound.ENTITY_ITEM_BREAK, 1.2f).playAt(mob.getLocation());
-            new CreateSound(Sound.BLOCK_GLASS_BREAK, 1.1f).playAt(mob.getLocation());
-            new CreateSound(Sound.ENTITY_GENERIC_EXPLODE, 2f).playAt(mob.getLocation());
-            new ParticleBuilder(Particle.ITEM)
-                .location(mob.getLocation())
-                .count(20)
-                .offset(.1, .1, .1)
-                .extra(1.5)
-                .data(model.getBone("base").orElseThrow().getModel())
-                .spawn()
-            ;
+            explode();
+            spawnPortal();
             return;
         }
         setSpinSpeed(speed);
@@ -62,6 +75,32 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
             stopAnimation("spin");
             playAnimation("portal_spawn", true);
         }
+    }
+
+    public void explode(){
+        mob.remove();
+        new CreateSound(Sound.ENTITY_ITEM_BREAK, 1.2f).playAt(mob.getLocation());
+        new CreateSound(Sound.BLOCK_GLASS_BREAK, 1.1f).playAt(mob.getLocation());
+        new CreateSound(Sound.ENTITY_GENERIC_EXPLODE, 2f).playAt(mob.getLocation());
+        new ParticleBuilder(Particle.ITEM)
+            .location(mob.getLocation())
+            .count(20)
+            .offset(.1, .1, .1)
+            .extra(1.5)
+            .data(model.getBone("base").orElseThrow().getModel())
+            .spawn()
+        ;
+    }
+
+    public void spawnPortal(){
+        if(altar==null) return;
+
+        BlockFace direction = altar.getDirection();
+        Location portalSpawn = altar.getCenter().getLocation();
+        portalSpawn.setDirection(direction.getDirection());
+        CruxLoc.relative(portalSpawn, 0D, 0D, 2D);
+
+        AbyssMob.ALTAR_PORTAL.spawn(portalSpawn);
     }
 
     public void setSpinSpeed(double speed){

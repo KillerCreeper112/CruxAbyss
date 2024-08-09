@@ -43,7 +43,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 12) return false;
                         NamespacedKey k = BiomeUtils.getBiome(info.getBlock());
-                        return k.equals(Crux.key("crimson")) && getNearbyChunkEntitySpawns(info.getBlock().getChunk(), 4).size() < 16;
+                        return k.equals(Crux.key("toxic_mire")) && getNearbyChunkEntitySpawns(info.getBlock().getChunk(), 4).size() < 16;
                     }
                 }
         );

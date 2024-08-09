@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class NaturalEntitySpawner {
     private final GameManager game;
@@ -38,6 +39,16 @@ public class NaturalEntitySpawner {
 
     public boolean belowGlobalCap(int amount){
         return amount < GLOBAL_MOB_CAP;
+    }
+
+    public CompletableFuture<Boolean> belowGlobalCapMainThread(){
+        return CompletableFuture.supplyAsync(() ->{
+            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            game.getPlugin().getServer().getScheduler().runTask(game.getPlugin(), task ->{
+                future.complete(belowGlobalCap());
+            });
+            return future.join();
+        });
     }
 
     public boolean belowGlobalCap(){
@@ -109,9 +120,14 @@ public class NaturalEntitySpawner {
                         list = CACHE;
                     }else list = NaturalMobContainer.randomContainer(CruxMath.random(1, 5), info);
                     last = b;
-                    for(NaturalMobContainer m : list){
-                        NaturalMobContainer.spawn(m.random(CruxMath.random(1, 5), info), info);
-                    }
+                    new BukkitRunnable(){
+                        @Override
+                        public void run() {
+                            for(NaturalMobContainer m : list){
+                                NaturalMobContainer.spawn(m.random(CruxMath.random(1, 5), info), info);
+                            }
+                        }
+                    }.runTask(game.getPlugin());
                     amount--;
                     if(amount < 1) break;
                 }
@@ -120,7 +136,7 @@ public class NaturalEntitySpawner {
                     game.naturalSpawnerChecked(p);
                 }
             }
-        }.runTaskTimer(game.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(game.getPlugin(), 0L, 1L);
     }
 
     public @NotNull Collection<Entity> spawnAt(@NotNull Block l){

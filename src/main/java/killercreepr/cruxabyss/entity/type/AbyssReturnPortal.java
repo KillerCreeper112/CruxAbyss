@@ -9,6 +9,7 @@ import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -54,5 +55,10 @@ public class AbyssReturnPortal extends SimpleAbyssMob {
         ActiveModel active = modeled.getModel("abyss_altar_portal").orElse(null);
         if(active != null) return new AbyssReturnPortalGoal(e, active);
         return null;
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.OBJECT};
     }
 }

@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.entity.mob;
 import killercreepr.crux.registry.KeyedRegistry;
 import killercreepr.cruxabyss.entity.mob.type.*;
 import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
+import killercreepr.cruxabyss.entity.type.AbyssCrystal;
 import killercreepr.cruxabyss.entity.type.AbyssReturnPortal;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxentities.entity.CruxMob;

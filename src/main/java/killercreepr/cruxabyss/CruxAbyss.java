@@ -14,6 +14,8 @@ import killercreepr.cruxabyss.structure.StoredTestStructure;
 import killercreepr.cruxabyss.structure.TestStructure;
 import killercreepr.cruxabyss.world.WorldManager;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
+import killercreepr.cruxabyss.world.entity.NaturalMobContainer;
+import killercreepr.cruxabyss.world.entity.NaturalMobSettings;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
 import killercreepr.cruxconfig.config.common.yaml.context.YamlContext;
 import killercreepr.cruxconfig.config.common.yaml.element.YamlElement;
@@ -96,6 +98,8 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             game.setStarted();
         }, 100L);
         super.enabled();
+        NaturalMobSettings.register();
+        NaturalMobContainer.register();
     }
 
     @EventHandler(ignoreCancelled = true)

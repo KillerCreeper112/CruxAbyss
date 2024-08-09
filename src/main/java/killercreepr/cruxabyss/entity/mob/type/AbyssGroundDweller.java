@@ -1,25 +1,30 @@
 package killercreepr.cruxabyss.entity.mob.type;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
+import killercreepr.cruxabyss.entity.mob.goal.GroundDwellerGoal;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class AbyssGroundDweller extends SimpleAbyssMob {
     public AbyssGroundDweller() {
@@ -30,13 +35,10 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
     public @Nullable Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l) {
         return e ->{
             CruxTag.set(e, "hide", PersistentDataType.INTEGER, 1);
-            /*todo ModeledEntity modeled = ModelEngineAPI.createModeledEntity(e);
-            modeled.setBaseEntityVisible(false);
-            ActiveModel model = ModelEngineAPI.createActiveModel("ground_dweller");
-            modeled.addModel(model, true);
+            new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
                 mob.setSilent(true);
-            }*/
+            }
         };
     }
 
@@ -55,8 +57,14 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        /*todo ActiveModel active = activeModel(e, key.getKey());
-        if(active != null) return new GroundDwellerGoal(e, active);*/
+        ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
+
+        if(active != null) return new GroundDwellerGoal(e, active);
         return null;
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.MONSTER};
     }
 }
