@@ -17,10 +17,10 @@ import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.entity.NaturalMobContainer;
 import killercreepr.cruxabyss.world.entity.NaturalMobSettings;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
-import killercreepr.cruxconfig.config.common.yaml.context.YamlContext;
-import killercreepr.cruxconfig.config.common.yaml.element.YamlElement;
-import killercreepr.cruxconfig.config.common.yaml.element.YamlObject;
-import killercreepr.cruxconfig.config.common.yaml.parsed.CfgParsedObjectHandler;
+import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
+import killercreepr.cruxconfig.config.common.element.FileElement;
+import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
@@ -43,41 +43,46 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     @Override
     public void onLoad() {
         super.onLoad();
-        CfgRegistries.JSON.registerHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
-        CfgRegistries.JSON.registerHandler(StoredTestStructure.class, new FileTestStructure());
-        CfgRegistries.YAML.PARSED_OBJECT_HANDLERS.register(new CfgParsedObjectHandler<CfgFAWEStructure>() {
-            @Override
-            public int getPriority() {
-                return 0;
-            }
+        CfgRegistries.JSON_REGISTRY.forEach(registry ->{
+            registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
+            registry.registerFileHandler(StoredTestStructure.class, new FileTestStructure());
+        });
 
-            @Override
-            public @NotNull Class<CfgFAWEStructure> getTargetType() {
-                return CfgFAWEStructure.class;
-            }
-
-            @Override
-            public @Nullable CfgFAWEStructure parse(@NotNull YamlElement e, @NotNull YamlContext ctx,
-                                                    @NotNull CfgFAWEStructure base,
-                                                    @Nullable CfgFAWEStructure current) {
-                if(!(e instanceof YamlObject o) || current == null) return current;
-                String type = ctx.getRegistry().deserialize(String.class, o.get("type"));
-                if(type==null) return current;
-                switch (type.toLowerCase()){
-                    case "test" ->{
-                        return new TestStructure(current.key(), current.getHolder(), current.isPersistent());
-                    }
-                    case "abyss_outpost" ->{
-                        return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent());
-                    }
+        CfgRegistries.SIMPLE_REGISTRY.forEach(registry -> {
+            registry.getParsedObjectRegistry().register(new FileParsedObjectHandler<CfgFAWEStructure>() {
+                @Override
+                public int getPriority() {
+                    return 0;
                 }
-                return current;
-            }
 
-            @Override
-            public @NotNull Key key() {
-                return Crux.key("abyss_structures");
-            }
+                @Override
+                public @NotNull Class<CfgFAWEStructure> getTargetType() {
+                    return CfgFAWEStructure.class;
+                }
+
+                @Override
+                public @Nullable CfgFAWEStructure parse(@NotNull FileElement e, @NotNull FileContext<?> ctx,
+                                                        @NotNull CfgFAWEStructure base,
+                                                        @Nullable CfgFAWEStructure current) {
+                    if(!(e instanceof FileObject o) || current == null) return current;
+                    String type = ctx.getRegistry().deserializeFromFile(String.class, o.get("type"));
+                    if(type==null) return current;
+                    switch (type.toLowerCase()){
+                        case "test" ->{
+                            return new TestStructure(current.key(), current.getHolder(), current.isPersistent());
+                        }
+                        case "abyss_outpost" ->{
+                            return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent());
+                        }
+                    }
+                    return current;
+                }
+
+                @Override
+                public @NotNull Key key() {
+                    return Crux.key("abyss_structures");
+                }
+            });
         });
     }
 

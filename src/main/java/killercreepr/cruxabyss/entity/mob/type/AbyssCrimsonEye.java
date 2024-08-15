@@ -2,8 +2,16 @@ package killercreepr.cruxabyss.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.Holder;
+import killercreepr.crux.loot.SimpleLootContext;
+import killercreepr.crux.loot.api.LootTable;
+import killercreepr.crux.loot.item.SimpleItemLootPool;
+import killercreepr.crux.loot.item.SimpleItemLootTable;
+import killercreepr.crux.loot.item.functions.ItemEnchantFunction;
+import killercreepr.crux.loot.item.pool.SimpleItemLootPoolObject;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
+import killercreepr.crux.valueproviders.number.ConstantNumber;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.CrimsonEyeGoal;
 import killercreepr.cruxabyss.game.GameManager;
@@ -13,18 +21,19 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class AbyssCrimsonEye extends SimpleAbyssMob {
@@ -63,6 +72,35 @@ public class AbyssCrimsonEye extends SimpleAbyssMob {
         ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
         if(active != null) return new CrimsonEyeGoal(e, active);
         return null;
+    }
+
+
+    @Override
+    public void onDeath(@NotNull Entity e, @NotNull EntityDeathEvent event) {
+        super.onDeath(e, event);
+        event.getDrops().clear();
+        LootTable<ItemStack> lootTable = new SimpleItemLootTable(
+            Crux.key("test"), new ConstantNumber(1),
+            List.of(
+                new SimpleItemLootPool(
+                    10, 0f,
+                    null,
+                    List.of(
+                        new ItemEnchantFunction(new ConstantNumber(3), Set.of(
+                            new ItemEnchantFunction.Enchant(0, 0f, Key.key("protection"),
+                                new ConstantNumber(1))
+                        ))
+                    ),
+                    new ConstantNumber(1),
+                    List.of(
+                        new SimpleItemLootPoolObject(10, 0f, Holder.empty())
+                    )
+                )
+            )
+        );
+        event.getDrops().addAll(
+            lootTable.populateLoot(SimpleLootContext.builder().build())
+        );
     }
 
     @Override
