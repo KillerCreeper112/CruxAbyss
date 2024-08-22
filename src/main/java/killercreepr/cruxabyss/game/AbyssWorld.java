@@ -24,6 +24,9 @@ public class AbyssWorld extends GameManager{
         world = new WorldCreator(worldName).type(WorldType.AMPLIFIED).createWorld();
         if(world==null) return null;
 
+        world.getWorldBorder().setCenter(0, 0);
+        world.getWorldBorder().setSize(1000D);
+
         USurvivePersist.DIMENSION.set(world, "abyss");
 
         return new AbyssWorld(plugin, world);

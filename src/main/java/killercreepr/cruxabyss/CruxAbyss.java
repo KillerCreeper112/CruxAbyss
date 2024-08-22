@@ -5,6 +5,7 @@ import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
+import killercreepr.cruxabyss.game.AbyssWorld;
 import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
@@ -123,11 +124,9 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     }
 
     public @Nullable GameManager createNewGame(){
-        World gameWorld = WorldManager.getOrCreateGrimWorld("game_world_1");
-        if(gameWorld == null) return null;
-        gameWorld.getWorldBorder().setCenter(0, 0);
-        gameWorld.getWorldBorder().setSize(1000D);
-        GameManager game = new GameManager(this, gameWorld);
+        AbyssWorld abyssWorld = AbyssWorld.getOrCreate(this, "world_abyss");
+        if(abyssWorld==null) return null;
+        GameManager game = new GameManager(this, abyssWorld.getWorld());
         return game;
     }
 
