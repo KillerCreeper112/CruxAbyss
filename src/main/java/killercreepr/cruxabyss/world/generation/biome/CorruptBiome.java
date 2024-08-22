@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.FastNoiseLite;
@@ -12,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -70,20 +70,20 @@ public class CorruptBiome extends GrimBiome {
         l.setPitch(CruxMath.random(-90f, -35f));
         l.setYaw(CruxMath.random(-180f, 180f));
         for(; size > 0; size -= minus){
-            CruxLoc.shift(l, 1D, 0D, 0D);
+            l = CruxLoc.shift(l, 1D, 0D, 0D);
             for (float xx = -size; xx <= size; xx += minus) {
                 for (float yy = -size; yy <= size; yy += minus) {
                     for (float zz = -size; zz <= size; zz += minus) {
                         double equationResult = Math.pow(xx, 2) / Math.pow(size, 2)
                                 + Math.pow(yy, 2) / Math.pow(size, 2)
                                 + Math.pow(zz, 2) / Math.pow(size, 2);
-                        final Vector place = l.clone().add(xx, yy, zz).toVector();
-                        if (equationResult <= 1 + .7 * spikeNoise.GetNoise((float) place.getX(), (float) place.getY(), (float) place.getZ())) {
+                        final CruxPosition place = CruxPosition.block(l.clone().add(xx, yy, zz));
+                        if (equationResult <= 1 + .7 * spikeNoise.GetNoise((float) place.x(), (float) place.y(), (float) place.z())) {
                             master.function(worldInfo, random, region, place, new GrimPopulator.ChunkFunction() {
                                 @Override
                                 public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion) {
-                                    limitedRegion.setType(place.getBlockX(),
-                                            place.getBlockY(), place.getBlockZ(), block);
+                                    limitedRegion.setType(place.blockX(),
+                                            place.blockY(), place.blockZ(), block);
                                 }
                             });
                         }

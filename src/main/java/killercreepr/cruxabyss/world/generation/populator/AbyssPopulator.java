@@ -74,21 +74,6 @@ public class AbyssPopulator extends GrimPopulator{
             case DIAMOND_ORE -> limitedRegion.setType(x,y,z,Material.STONE);
         }
 
-        /*double crimsonDistance = BlockContainer.distanceSquared(x,y,z, crimsonCenter.getX(), crimsonCenter.getY(), crimsonCenter.getZ());
-        if(crimsonDistance != -1D){
-            if(crimsonDistance < crimsonRange){
-                crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
-                return;
-            }else if(CruxMath.random(1, 100) <= 25 && crimsonDistance < crimsonRandomRange){
-                crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
-                return;
-            }
-        }*/
-
-        /*if(!b.isSolid()){
-            crimsonBiome.acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
-            return;
-        }*/
         float t = temperature.GetNoise(x,y,z);
         float h = humidity.GetNoise(x,y,z);
         float c = continental.GetNoise(x,y,z);
@@ -103,10 +88,6 @@ public class AbyssPopulator extends GrimPopulator{
         }else if(t < .5f && h < 0f){
             eldritchWastesBiome.accept(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);
             return;
-            /*else if(crimsonContainer.isEmpty() && t >= 0f && t <= .5f && h > .05f && c > .3f){ //crimson
-            crimsonBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
-            crimsonContainer.addBlock(limitedRegion.getBlockState(x,y,z).getBlock(),-1);
-        }*/
         }
         toxicMireBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
     }

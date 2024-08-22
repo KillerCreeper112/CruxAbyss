@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.world.generation.populator;
 
+import killercreepr.crux.data.world.CruxPosition;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class GrimPopulator extends BlockPopulator {
-    private final ConcurrentHashMap<Vector, ChunkFunction> DATA = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<CruxPosition, ChunkFunction> DATA = new ConcurrentHashMap<>();
     //private final ConcurrentHashMap.KeySetView<LimitedRegion, Boolean> PREVIOUS = ConcurrentHashMap.newKeySet();
     private final int maxCache;
 
@@ -33,7 +33,7 @@ public abstract class GrimPopulator extends BlockPopulator {
                 for(int y = worldInfo.getMinHeight(); y < worldInfo.getMaxHeight() ; y++){
                     populateXYZ(worldInfo, random, chunkX, chunkZ, limitedRegion, xx, y, zz);
                     boolean noFunction = true;
-                    Vector pos = new Vector(xx, y, zz);
+                    CruxPosition pos = CruxPosition.block(xx, y, zz);
                     ChunkFunction function = DATA.get(pos);
                     if(function != null){
                         function.accept(worldInfo, random, limitedRegion);
@@ -79,8 +79,9 @@ public abstract class GrimPopulator extends BlockPopulator {
     /**
      * Uses the function, if it is in the limited region. Otherwise, stores the function in cache.
      */
-    public void function(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, @NotNull Vector position, @NotNull ChunkFunction function){
-        if(limitedRegion.isInRegion(position.getBlockX(), position.getBlockY(), position.getBlockZ())) {
+    public void function(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion,
+                         @NotNull CruxPosition position, @NotNull ChunkFunction function){
+        if(limitedRegion.isInRegion(position.blockX(), position.blockY(), position.blockZ())) {
             function.accept(worldInfo, random, limitedRegion);
             return;
         }
@@ -96,7 +97,7 @@ public abstract class GrimPopulator extends BlockPopulator {
         return floor == num ? floor : floor - (int) (Double.doubleToRawLongBits(num) >>> 63);
     }*/
 
-    public GrimPopulator addFunction(@NotNull Vector position, @NotNull ChunkFunction function){
+    public GrimPopulator addFunction(@NotNull CruxPosition position, @NotNull ChunkFunction function){
         /*if(DATA.size() >= maxCache){
             //Grimline.log(Level.INFO, "Cannot add to cache. Limit reached! (" + DATA.size() + ")");
             return this;
@@ -107,7 +108,7 @@ public abstract class GrimPopulator extends BlockPopulator {
     }
 
     public @Nullable ChunkFunction getFunction(int x, int y, int z){
-        return DATA.getOrDefault(new Vector(x, y, z), null);
+        return DATA.getOrDefault(CruxPosition.block(x,y,z), null);
     }
 
     public static abstract class ChunkFunction{

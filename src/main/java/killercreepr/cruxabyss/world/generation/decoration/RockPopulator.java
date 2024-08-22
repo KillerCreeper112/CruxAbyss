@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.world.generation.decoration;
 
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.generation.BlockGenerator;
@@ -11,7 +12,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -102,7 +102,7 @@ public class RockPopulator extends GrimPopulator {
                                 else limitedRegion.setType(rel.getBlockX(), rel.getBlockY(), rel.getBlockZ(), Material.STONE);
                             }
                         };
-                        function(worldInfo, random, limitedRegion, new Vector(rel.getBlockX(), rel.getBlockY(), rel.getBlockZ()), function);
+                        function(worldInfo, random, limitedRegion, CruxPosition.block(rel), function);
                     }
                 }
             }

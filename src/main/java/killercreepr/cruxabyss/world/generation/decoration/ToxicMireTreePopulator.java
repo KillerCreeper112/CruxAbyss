@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.world.generation.decoration;
 
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
@@ -25,7 +26,7 @@ public class ToxicMireTreePopulator extends GrimPopulator {
                     //limitedRegion.setType(rel.getBlockX(), rel.getBlockY(), rel.getBlockZ(), Material.STONE);
                 }
             };
-            function(worldInfo, random, region, rel.toVector(), function);
+            function(worldInfo, random, region, CruxPosition.block(rel), function);
 
             //reached max height
             if((h+1) == height){
@@ -62,7 +63,7 @@ public class ToxicMireTreePopulator extends GrimPopulator {
                                @NotNull Random random,
                                @NotNull LimitedRegion region,
                                @NotNull Location center){
-        int height = CruxMath.random(1, 3, random);
+        int height = CruxMath.random(1, 4, random);
         for(int h = 0; h < height; h++){
             Location pos = center.clone();
             pos.add(0, h, 0);
@@ -72,24 +73,27 @@ public class ToxicMireTreePopulator extends GrimPopulator {
                     AbyssBlocks.PLAGUE_WART.getBaseBlock().setBlock(region, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
                 }
             };
-            function(worldInfo, random, region, pos.toVector(), function);
+            function(worldInfo, random, region, CruxPosition.block(pos), function);
         }
         if(CruxMath.testChance(random, 35D)) return;
+        int amount = CruxMath.random(1, 3, random);
         int xAddon = CruxMath.random(-1, 1, random);
         int zAddon = CruxMath.random(-1, 1, random);
 
-        for(int x = xAddon; x < 1; x++){
-            for(int z = zAddon; z < 1; z++){
-                Location pos = center.clone();
-                pos.add(xAddon, 0, zAddon);
+        for(int i = 0; i < amount; i++){
+            for(int x = xAddon; x < 1; x++){
+                for(int z = zAddon; z < 1; z++){
+                    Location pos = center.clone();
+                    pos.add(xAddon, 0, zAddon);
 
-                ChunkFunction function = new ChunkFunction() {
-                    @Override
-                    public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion) {
-                        AbyssBlocks.PLAGUE_WART.getBaseBlock().setBlock(region, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
-                    }
-                };
-                function(worldInfo, random, region, pos.toVector(), function);
+                    ChunkFunction function = new ChunkFunction() {
+                        @Override
+                        public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion) {
+                            AbyssBlocks.PLAGUE_WART.getBaseBlock().setBlock(region, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
+                        }
+                    };
+                    function(worldInfo, random, region, CruxPosition.block(pos), function);
+                }
             }
         }
     }
@@ -115,6 +119,10 @@ public class ToxicMireTreePopulator extends GrimPopulator {
                 xAddon += CruxMath.random(-1, 1, random);
                 zAddon += CruxMath.random(-1, 1, random);
             }
+
+            if(xDir != 0 && xAddon != 0) xAddon--;
+            else if(zDir != 0 && zAddon != 0) zAddon--;
+
             pos.setX(pos.getX() + xAddon);
             pos.setZ(pos.getZ() + zAddon);
             ChunkFunction function = new ChunkFunction() {
@@ -123,7 +131,7 @@ public class ToxicMireTreePopulator extends GrimPopulator {
                     fromDirection(xDir, zDir).setBlock(region, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
                 }
             };
-            function(worldInfo, random, region, pos.toVector(), function);
+            function(worldInfo, random, region, CruxPosition.block(pos), function);
 
             if(CruxMath.testChance(random, 25D)){
                 generateLeaves(worldInfo, random, region, pos);

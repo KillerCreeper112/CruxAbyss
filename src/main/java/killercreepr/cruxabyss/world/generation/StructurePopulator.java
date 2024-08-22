@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.world.generation;
 
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import org.bukkit.Location;
@@ -9,7 +10,6 @@ import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.structure.Palette;
 import org.bukkit.structure.Structure;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -53,7 +53,7 @@ public class StructurePopulator extends GrimPopulator {
                 int x = corner.getBlockX() + s.getX();
                 int y = corner.getBlockY() + s.getY();
                 int z = corner.getBlockZ() + s.getZ();
-                function(worldInfo, random, limitedRegion, new Vector(x, y, z), new ChunkFunction() {
+                function(worldInfo, random, limitedRegion, CruxPosition.block(x, y, z), new ChunkFunction() {
                     @Override
                     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion) {
                         limitedRegion.setType(x, y, z, s.getType());

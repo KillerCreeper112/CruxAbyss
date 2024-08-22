@@ -46,7 +46,7 @@ public class ToxicMireBiome extends GrimBiome {
             block.setBlock(limitedRegion, x, y, z);*/
             if(limitedRegion.isInRegion(x, y-1, z)){
                 BlockState state = limitedRegion.getBlockState(x, y-1, z);
-                if(state.isCollidable()){
+                if(state.isCollidable() && random.nextBoolean()){
                     treePopulator.place(
                         worldInfo, random, limitedRegion,
                         new Location(null, x, y, z)

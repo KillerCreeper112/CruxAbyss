@@ -21,7 +21,7 @@ public class AbyssWorld extends GameManager{
         if(world != null) return new AbyssWorld(plugin, world);
 
         GenerationListener.addInitWorld(worldName);
-        world = new WorldCreator(worldName).type(WorldType.AMPLIFIED).createWorld();
+        world = new WorldCreator(worldName).type(WorldType.AMPLIFIED)/*.generator(new AbyssChunkGenerator())*/.createWorld();
         if(world==null) return null;
 
         world.getWorldBorder().setCenter(0, 0);

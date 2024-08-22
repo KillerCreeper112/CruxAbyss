@@ -13,13 +13,18 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.Crux;
+import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
+import killercreepr.cruxstructures.registries.StructureRegistries;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.LimitedRegion;
@@ -97,6 +102,24 @@ public class GenerationListener implements Listener {
             }
         }
     }*/
+
+    @EventHandler(ignoreCancelled = true)
+    public void onChunkPopulate(ChunkPopulateEvent event) {
+        Chunk chunk = event.getChunk();
+        if(!CruxMath.testChance(.3f)) return;
+
+        int chunkMovedX = chunk.getX() << 4;
+        int chunkMovedZ = chunk.getZ() << 4;
+
+        int x = chunkMovedX + CruxMath.random(0, 15);
+        int z = chunkMovedZ + CruxMath.random(0, 15);
+
+        Block b = chunk.getWorld().getHighestBlockAt(x, z);
+        StructureRegistries.STRUCTURES.get(Crux.key("abyss_outpost")).place(
+            b.getLocation()
+        );
+    }
+
 
 /*    @EventHandler(ignoreCancelled = true)
     public void onChunkPopulate(ChunkPopulateEvent event) {
