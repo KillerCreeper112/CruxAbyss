@@ -4,11 +4,13 @@ import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
+import killercreepr.cruxabyss.world.generation.decoration.ToxicMireTreePopulator;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
-import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Orientable;
+import org.bukkit.block.BlockState;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
@@ -30,18 +32,31 @@ public class ToxicMireBiome extends GrimBiome {
         setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z);
     }
 
+    public final ToxicMireTreePopulator treePopulator = new ToxicMireTreePopulator();
+
     @Override
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Material m = limitedRegion.getType(x,y,z);
         acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
         if(m == Material.BEDROCK) return;
-        if(MaterialSetTag.LOGS.isTagged(m) && limitedRegion.getBlockData(x,y,z) instanceof Orientable orientable){
-            CruxBlock block = AbyssBlocks.PLAGUE_STEM.getBlock(orientable.getAxis());
+        if(MaterialSetTag.LOGS.isTagged(m)){
+            limitedRegion.setType(x, y, z, Material.AIR);
+            /*CruxBlock block = AbyssBlocks.PLAGUE_STEM.getBlock(orientable.getAxis());
             if(block==null) return;
-            block.setBlock(limitedRegion, x, y, z);
+            block.setBlock(limitedRegion, x, y, z);*/
+            if(limitedRegion.isInRegion(x, y-1, z)){
+                BlockState state = limitedRegion.getBlockState(x, y-1, z);
+                if(state.isCollidable()){
+                    treePopulator.place(
+                        worldInfo, random, limitedRegion,
+                        new Location(null, x, y, z)
+                    );
+                }
+            }
             return;
         }else if(MaterialSetTag.LEAVES.isTagged(m)){
-            AbyssBlocks.PLAGUE_WART.getBaseBlock().setBlock(limitedRegion, x, y, z);
+            limitedRegion.setType(x, y, z, Material.AIR);
+            //AbyssBlocks.PLAGUE_WART.getBaseBlock().setBlock(limitedRegion, x, y, z);
             //limitedRegion.setType(x,y,z, Material.NETHER_WART_BLOCK);
             if(limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.SNOW){
                 limitedRegion.setType(x,y+1,z, Material.AIR);
@@ -65,6 +80,7 @@ public class ToxicMireBiome extends GrimBiome {
         }
         switch (m){
             default ->{
+                if(CruxBlocksRegistries.BLOCKS.getByBlockData(limitedRegion.getBlockData(x, y, z)) != null) return;
                 if(y >= 62 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
