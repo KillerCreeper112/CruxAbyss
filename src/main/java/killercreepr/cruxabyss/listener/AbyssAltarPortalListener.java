@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.listener;
 
-import killercreepr.crux.data.BlockPos;
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxabyss.altar.AbyssAltar;
@@ -56,7 +55,7 @@ public class AbyssAltarPortalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block b = event.getBlock();
-        BlockPos blockPos = BlockPos.from(b);
+        CruxPosition blockPos = CruxPosition.block(b);
         StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
 

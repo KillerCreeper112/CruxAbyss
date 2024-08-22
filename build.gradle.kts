@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     compileOnly(files(
         "E:\\Plugins\\YO\\CruxCore\\build\\libs\\CruxCore-1.0-all.jar",
         "E:\\Plugins\\YO\\uSurvive\\build\\libs\\uSurvive-1.0-all.jar",
