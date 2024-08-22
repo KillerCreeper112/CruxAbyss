@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class DisableElytraListener implements Listener {
     @EventHandler(ignoreCancelled = true)
@@ -21,6 +22,7 @@ public class DisableElytraListener implements Listener {
         if(!WorldUtil.getDimensionID(p.getWorld()).equalsIgnoreCase("abyss")) return;
         ItemStack elytra = p.getInventory().getChestplate();
         if(CruxItem.isEmpty(elytra) || elytra.getType() != Material.ELYTRA) return;
+        if(!(elytra.getItemMeta() instanceof Damageable d) || d.getDamage() == d.getMaxDamage()) return;
 
         elytra.editMeta(Damageable.class, meta -> meta.setDamage(CruxItem.getMaxDurability(elytra)));
         p.playEffect(EntityEffect.BREAK_EQUIPMENT_CHESTPLATE);
