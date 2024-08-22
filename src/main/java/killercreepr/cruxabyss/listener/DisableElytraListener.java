@@ -22,7 +22,7 @@ public class DisableElytraListener implements Listener {
         if(!WorldUtil.getDimensionID(p.getWorld()).equalsIgnoreCase("abyss")) return;
         ItemStack elytra = p.getInventory().getChestplate();
         if(CruxItem.isEmpty(elytra) || elytra.getType() != Material.ELYTRA) return;
-        if(!(elytra.getItemMeta() instanceof Damageable d) || d.getDamage() == d.getMaxDamage()) return;
+        if(!(elytra.getItemMeta() instanceof Damageable d) || d.getDamage() >= d.getMaxDamage()) return;
 
         elytra.editMeta(Damageable.class, meta -> meta.setDamage(CruxItem.getMaxDurability(elytra)));
         p.playEffect(EntityEffect.BREAK_EQUIPMENT_CHESTPLATE);
