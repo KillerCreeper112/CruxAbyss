@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxgeneration.util.FastNoiseLite;
 import killercreepr.usurvive.block.USurviveBlocks;
 import org.bukkit.Axis;
 import org.bukkit.Material;

@@ -2,11 +2,11 @@ package killercreepr.cruxabyss.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.cruxabyss.block.AbyssBlocks;
-import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.decoration.ToxicMireTreePopulator;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
+import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,14 +18,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class ToxicMireBiome extends GrimBiome {
-    private final FastNoiseLite noise = new FastNoiseLite();
+    private final CruxNoise noise = CruxNoise.fast()
+        .frequency(0.005f)
+        .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+        .fractalType(CruxNoise.FractalType.FBm)
+        .fractalOctaves(5)
+        ;
 
     public ToxicMireBiome(@NotNull GrimPopulator master) {
         super(master);
-        noise.SetFrequency(0.005f);
-        noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        noise.SetFractalType(FastNoiseLite.FractalType.FBm);
-        noise.SetFractalOctaves(5);
     }
 
     public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){

@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.world.generation.populator;
 
-import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.generation.biome.CharredBiome;
 import killercreepr.cruxabyss.world.generation.biome.CorruptBiome;
 import killercreepr.cruxabyss.world.generation.biome.EldritchWastesBiome;
 import killercreepr.cruxabyss.world.generation.biome.ToxicMireBiome;
+import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
@@ -23,26 +23,27 @@ public class AbyssPopulator extends GrimPopulator{
     protected final CorruptBiome corruptBiome = new CorruptBiome(this);
     protected final EldritchWastesBiome eldritchWastesBiome = new EldritchWastesBiome(this);
 
-    protected final FastNoiseLite temperature = new FastNoiseLite();
-    protected final FastNoiseLite humidity = new FastNoiseLite();
-    protected final FastNoiseLite continental = new FastNoiseLite();
+    protected final CruxNoise temperature = CruxNoise.fast()
+        .frequency(0.005f)
+        .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+        .fractalType(CruxNoise.FractalType.FBm)
+        .fractalOctaves(5)
+        ;
+    protected final CruxNoise humidity = CruxNoise.fast()
+        .frequency(0.002f)
+        .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+        .fractalType(CruxNoise.FractalType.FBm)
+        .fractalOctaves(7)
+        ;
+    protected final CruxNoise continental = CruxNoise.fast()
+        .frequency(0.01f)
+        .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+        .fractalType(CruxNoise.FractalType.FBm)
+        .fractalOctaves(3)
+        ;
 
     public AbyssPopulator() {
         //crimsonCenter = new Vector(CruxMath.random(-300D, 300D), 0D, CruxMath.random(-300D, 300D));
-        temperature.SetFrequency(0.005f);
-        temperature.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        temperature.SetFractalType(FastNoiseLite.FractalType.FBm);
-        temperature.SetFractalOctaves(5);
-
-        humidity.SetFrequency(0.002f);
-        humidity.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        humidity.SetFractalType(FastNoiseLite.FractalType.FBm);
-        humidity.SetFractalOctaves(7);
-
-        continental.SetFrequency(0.01f);
-        continental.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        continental.SetFractalType(FastNoiseLite.FractalType.FBm);
-        continental.SetFractalOctaves(3);
     }
 
     public void defaultBiome(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion,
@@ -74,9 +75,9 @@ public class AbyssPopulator extends GrimPopulator{
             case DIAMOND_ORE -> limitedRegion.setType(x,y,z,Material.STONE);
         }
 
-        float t = temperature.GetNoise(x,y,z);
-        float h = humidity.GetNoise(x,y,z);
-        float c = continental.GetNoise(x,y,z);
+        float t = temperature.noise(x,y,z);
+        float h = humidity.noise(x,y,z);
+        float c = continental.noise(x,y,z);
 
         //charred
         if(t > .3f && h < 0f){

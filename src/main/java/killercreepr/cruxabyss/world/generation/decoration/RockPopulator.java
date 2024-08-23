@@ -2,9 +2,9 @@ package killercreepr.cruxabyss.world.generation.decoration;
 
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.cruxabyss.world.FastNoiseLite;
 import killercreepr.cruxabyss.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
+import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -20,22 +20,23 @@ import java.util.Set;
 
 public class RockPopulator extends GrimPopulator {
     private final BlockGenerator ore;
-    private final FastNoiseLite rockNoise = new FastNoiseLite();
-    private final FastNoiseLite rockSpawnNoise = new FastNoiseLite();
+    private final CruxNoise rockNoise = CruxNoise.fast()
+        .frequency(.09f)
+        .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+        .fractalType(CruxNoise.FractalType.FBm)
+        .fractalOctaves(3)
+        ;
+    private final CruxNoise rockSpawnNoise = CruxNoise.fast()
+        .frequency(.01f)
+        .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+        .fractalType(CruxNoise.FractalType.FBm)
+        .fractalOctaves(2)
+        ;
     private final Set<Biome> biomes = Set.of(Biome.values());
     private final Set<Material> passMaterials = new HashSet<>();
 
     public RockPopulator(@NotNull BlockGenerator ore) {
         this.ore = ore;
-        rockNoise.SetFrequency(.09f);
-        rockNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        rockNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
-        rockNoise.SetFractalOctaves(3);
-
-        rockSpawnNoise.SetFrequency(.01f);
-        rockSpawnNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-        rockSpawnNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
-        rockSpawnNoise.SetFractalOctaves(2);
 
         passMaterials.addAll(Tag.LEAVES.getValues());
         passMaterials.addAll(Tag.LOGS.getValues());
@@ -52,7 +53,7 @@ public class RockPopulator extends GrimPopulator {
                 int zz = z + (chunkZ * 16);
                 if(spawned > 0){
                     if(CruxMath.random(1, 100) <= 70) continue;
-                    float noise = rockSpawnNoise.GetNoise(xx, zz);
+                    float noise = rockSpawnNoise.noise(xx, zz);
                     if(noise < .6) continue;
                 }
                 for(int y = worldInfo.getMaxHeight()-10; y > 65; y--){
@@ -94,7 +95,7 @@ public class RockPopulator extends GrimPopulator {
                     double equationResult = Math.pow(x, 2) / Math.pow(width, 2)
                             + Math.pow(y, 2) / Math.pow(height, 2)
                             + Math.pow(z, 2) / Math.pow(length, 2);
-                    if (equationResult <= 1 + 0.7 * rockNoise.GetNoise((float) rel.getX(), (float) rel.getY(), (float) rel.getZ())) {
+                    if (equationResult <= 1 + 0.7 * rockNoise.noise((float) rel.getX(), (float) rel.getY(), (float) rel.getZ())) {
                         ChunkFunction function = new ChunkFunction() {
                             @Override
                             public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion) {
