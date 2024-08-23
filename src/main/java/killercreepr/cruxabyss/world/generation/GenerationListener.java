@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.world.generation;
 
+import com.destroystokyo.paper.MaterialSetTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
@@ -14,14 +15,20 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
+import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxstructures.registries.StructureRegistries;
+import killercreepr.usurvive.block.USurviveBlocks;
+import killercreepr.usurvive.world.generation.OreGenerator;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkPopulateEvent;
@@ -66,6 +73,49 @@ public class GenerationListener implements Listener {
         WORLDS.remove(event.getWorld());
     }
 
+    public static final OreGenerator ORBIT_ORE = new OreGenerator(
+        NumberProvider.uniform(1, 3), NumberProvider.uniform(1, 6),
+        NumberProvider.constant(15), NumberProvider.constant(50),
+
+        CruxNoise.fast().frequency(.09f)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+            .fractalType(CruxNoise.FractalType.FBm)
+            .fractalOctaves(3),
+        null,
+        NumberProvider.uniform(16, 32)
+    ){
+        @Override
+        public void place(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+            USurviveBlocks.ORBIT_ORE.getBaseBlock().setBlock(limitedRegion, x, y, z);
+        }
+
+        @Override
+        public boolean canSpawnClumpedOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+            return true;
+        }
+
+        @Override
+        public boolean canSpawnOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+            for(int xAddon = -1; xAddon < 2; xAddon++){
+                for(int zAddon = -1; zAddon < 2; zAddon++){
+                    for(int yAddon = -1; yAddon < 2; yAddon++){
+                        if(xAddon == 0 && yAddon == 0 && zAddon == 0) continue;
+                        if(!limitedRegion.isInRegion(x+xAddon, y+yAddon, z+zAddon)) continue;
+                        if(!testBlock(limitedRegion.getBlockData(x+xAddon, y+yAddon, z+zAddon))) return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private boolean testBlock(BlockData data){
+            Material m = data.getMaterial();
+            return MaterialSetTag.STONE_ORE_REPLACEABLES.isTagged(m) ||
+                AbyssBlocks.PLAGUE_STONE.getBlock(data) != null ||
+                AbyssBlocks.PLAGUE_MOSS_DIRT.getBlock(data) != null;
+        }
+    };
+
     @EventHandler
     public void onWorldInit(WorldInitEvent event) {
         World w = event.getWorld();
@@ -78,6 +128,7 @@ public class GenerationListener implements Listener {
             }));
             AbyssPopulator master = new AbyssPopulator();
             w.getPopulators().add(master);
+            w.getPopulators().add(ORBIT_ORE);
             //initWorlds.remove(event.getWorld().getName());
         }
     }
