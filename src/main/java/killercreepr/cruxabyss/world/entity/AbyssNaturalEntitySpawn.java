@@ -1,12 +1,13 @@
-package killercreepr.cruxabyss.world.entity.impl;
+package killercreepr.cruxabyss.world.entity;
 
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
-import killercreepr.cruxabyss.world.entity.SpawnContext;
+import killercreepr.cruxworlds.world.entity.entity.SpawnContext;
+import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawn;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbyssNaturalEntitySpawn extends SimpleNaturalEntitySpawn{
+public abstract class AbyssNaturalEntitySpawn extends SimpleNaturalEntitySpawn {
     protected final @NotNull AbyssMob mob;
     public AbyssNaturalEntitySpawn(int weight, float quality, @NotNull AbyssMob mob) {
         super(weight, quality);

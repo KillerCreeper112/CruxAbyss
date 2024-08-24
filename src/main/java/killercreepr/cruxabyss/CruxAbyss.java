@@ -5,8 +5,6 @@ import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
-import killercreepr.cruxabyss.game.AbyssWorld;
-import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
@@ -15,16 +13,18 @@ import killercreepr.cruxabyss.structure.AbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredTestStructure;
 import killercreepr.cruxabyss.structure.TestStructure;
+import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
-import killercreepr.cruxabyss.world.generation.GenerationListener;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
+import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -84,6 +84,8 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                 }
             });
         });
+        CruxWorldManager worldManager = CruxCore.inst().worldManager();
+        worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
     }
 
     @Override
@@ -91,7 +93,6 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         instance = this;
         BiomeManager.register();
         registerListeners(
-            new GenerationListener(),
             this,
             new AbyssAltarPortalListener(),
             new DisableElytraListener()
@@ -101,8 +102,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
 
         getServer().getScheduler().runTaskLater(this, task ->{
             game = createNewGame();
-            game.setStarted();
-        }, 100L);
+        }, 60L);
         super.enabled();
         StandardAbyssGroups.register(AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
     }
@@ -113,18 +113,15 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         Bukkit.broadcast(Component.text("[CruxAbyss] Structure spawned " + l.getX() + ", " + l.getY() + ", " + l.getZ()));
     }
 
-    public GameManager game;
+    public AbyssWorld game;
     @EventHandler(ignoreCancelled = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player p = event.getPlayer();
-        p.teleport(game.getWorld().getSpawnLocation());
+        p.teleport(game.toBukkitWorld().getSpawnLocation());
     }
 
-    public @Nullable GameManager createNewGame(){
-        AbyssWorld abyssWorld = AbyssWorld.getOrCreate(this, "world_abyss");
-        if(abyssWorld==null) return null;
-        GameManager game = new GameManager(this, abyssWorld.getWorld());
-        return game;
+    public @Nullable AbyssWorld createNewGame(){
+        return AbyssWorld.getOrCreate(this, "world_abyss");
     }
 
     @Override
