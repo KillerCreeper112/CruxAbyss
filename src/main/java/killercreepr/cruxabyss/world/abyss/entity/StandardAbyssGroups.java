@@ -65,5 +65,9 @@ public class StandardAbyssGroups {
     };
 
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
+        registry.register(EMPTY);
+        registry.register(CRIMSON_EYE);
+        registry.register(MOOSE);
+        registry.register(GROUND_DWELLER);
     }
 }
