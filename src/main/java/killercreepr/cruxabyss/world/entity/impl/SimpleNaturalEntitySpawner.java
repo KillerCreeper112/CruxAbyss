@@ -1,45 +1,64 @@
 package killercreepr.cruxabyss.world.entity.impl;
 
-import com.google.errorprone.annotations.DoNotMock;
 import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.crux.registry.Registry;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.crux.util.CruxWeightedSupplier;
 import killercreepr.cruxabyss.persistence.AbyssPersist;
-import killercreepr.cruxabyss.world.entity.*;
+import killercreepr.cruxabyss.world.entity.NaturalEntitySpawnGroup;
+import killercreepr.cruxabyss.world.entity.NaturalEntitySpawner;
+import killercreepr.cruxabyss.world.entity.SpawnContext;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class SimpleNaturalEntitySpawner implements NaturalEntitySpawner {
     private static final short GLOBAL_MOB_CAP = 3000;//todo was 300
-    //innerRadius+radius
-    //radius = 24
     protected final @NotNull Plugin plugin;
+    protected final @NotNull Random random;
+    protected final @NotNull Registry<NaturalEntitySpawnGroup> registry;
 
-    public SimpleNaturalEntitySpawner(@NotNull Plugin plugin) {
+    public SimpleNaturalEntitySpawner(@NotNull Plugin plugin, @NotNull Random random, @NotNull Registry<NaturalEntitySpawnGroup> registry) {
         this.plugin = plugin;
+        this.random = random;
+        this.registry = registry;
     }
 
     private final int radius = 34;
     private final int innerRadius = 10;
 
+    @Override
     public int getRadius() {
         return radius;
     }
 
+    @Override
     public int getInnerRadius() {
         return innerRadius;
+    }
+
+    @Override
+    public int getGlobalMobLimit() {
+        return GLOBAL_MOB_CAP;
+    }
+
+    @Override
+    public boolean isBelowGlobalMobLimit(int amount) {
+        return amount < GLOBAL_MOB_CAP;
     }
 
     public boolean belowGlobalCap(int amount){
@@ -83,9 +102,12 @@ public class SimpleNaturalEntitySpawner implements NaturalEntitySpawner {
     }
 
     private final Collection<NaturalEntitySpawnGroup> CACHE = new HashSet<>();
-    public void navigate(@NotNull World world, @NotNull CruxPosition center){
+    @Override
+    public void navigate(@NotNull World world, @NotNull CruxPosition center,
+                         @Nullable Predicate<NaturalEntitySpawner> canContinue,
+                         @Nullable Consumer<NaturalEntitySpawner> onFinish){
         if(!center.getBlock(world).getChunk().isLoaded()){
-            //todo game.naturalSpawnerChecked(p);
+            if(onFinish != null) onFinish.accept(this);
             return;
         }
         new BukkitRunnable(){
@@ -97,11 +119,16 @@ public class SimpleNaturalEntitySpawner implements NaturalEntitySpawner {
                 int amount = CruxMath.random(50, 100);
                 for(Block b : new HashSet<>(blocks)){
                     blocks.remove(b);
-                    SpawnContext ctx = new SimpleSpawnContext(world, CruxPosition.block(b));
+                    SpawnContext ctx = SpawnContext.simple(b, random);
                     Collection<NaturalEntitySpawnGroup> list;
                     if(last != null && b.getLocation().distanceSquared(last.getLocation()) < (48*48)){
                         list = CACHE;
-                    }else list = NaturalEntitySpawnGroup.randomContainer(CruxMath.random(1, 5), info);
+                    }else{
+                        list = CruxWeightedSupplier.builder(registry.values())
+                            .rolls(CruxMath.random(1, 5))
+                            .filter(check -> check.canSpawn(ctx))
+                            .build().rollList();
+                    }
                     last = b;
 
                     if(list.isEmpty()){
@@ -111,15 +138,17 @@ public class SimpleNaturalEntitySpawner implements NaturalEntitySpawner {
 
                     plugin.getServer().getScheduler().runTask(plugin, task ->{
                         for(NaturalEntitySpawnGroup m : list){
-                            NaturalEntitySpawnGroup.spawn(m.random(CruxMath.random(1, 5), info), info);
+                            NaturalEntitySpawnGroup.spawn(
+                                m.selectRandom(CruxMath.random(1, 5), ctx), ctx
+                            );
                         }
                     });
                     amount--;
                     if(amount < 1) break;
                 }
-                if(blocks.isEmpty()){
+                if(blocks.isEmpty() || (canContinue != null && !canContinue.test(SimpleNaturalEntitySpawner.this))){
                     cancel();
-                    //todo game.naturalSpawnerChecked(p);
+                    if(onFinish != null) onFinish.accept(SimpleNaturalEntitySpawner.this);
                 }
             }
         }.runTaskTimerAsynchronously(plugin, 0L, 1L);

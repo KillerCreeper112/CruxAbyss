@@ -1,8 +1,7 @@
 package killercreepr.cruxabyss.world.entity;
 
-import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.crux.loot.WeightedObject;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.cruxabyss.world.entity.impl.SimpleSpawnContext;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public interface NaturalEntitySpawn {
+public interface NaturalEntitySpawn extends WeightedObject {
     @Nullable Entity spawn(@NotNull SpawnContext ctx);
     int getGroupSize(@NotNull SpawnContext ctx);
     int getGroupRadius(@NotNull SpawnContext ctx);
@@ -47,7 +46,7 @@ public interface NaturalEntitySpawn {
                 for(int z = groupRadius; z >= -groupRadius; --z) {
                     Block b = center.getRelative(x,y,z);
                     if(b.equals(center)) continue;
-                    SpawnContext groupInfo = new SimpleSpawnContext(b.getWorld(), CruxPosition.block(b));
+                    SpawnContext groupInfo = SpawnContext.simple(b, ctx.getRandom());
                     if(s.canSpawn(groupInfo)){
                         return s.spawn(groupInfo);
                     }

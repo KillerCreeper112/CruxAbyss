@@ -1,12 +1,15 @@
 package killercreepr.cruxabyss.game;
 
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.game.GenericStatus;
 import killercreepr.crux.game.Statutable;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.persistence.AbyssPersist;
-import killercreepr.cruxabyss.world.entity.AbyssNaturalEntitySpawner;
+import killercreepr.cruxabyss.registries.AbyssRegistries;
+import killercreepr.cruxabyss.world.entity.NaturalEntitySpawner;
+import killercreepr.cruxabyss.world.entity.impl.SimpleNaturalEntitySpawner;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -27,20 +30,22 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Random;
 import java.util.logging.Level;
 
 public class GameManager implements Statutable, Listener {
     protected final @NotNull CruxPlugin plugin;
     protected final World world;
-    protected final AbyssNaturalEntitySpawner naturalEntitySpawner = new AbyssNaturalEntitySpawner(this);
+    protected final Random random;
+    protected final NaturalEntitySpawner naturalEntitySpawner;
     protected int wave = 1;
     protected float difficulty = 1f;
     protected GenericStatus state = GenericStatus.IDLE;
 
     protected int naturalSpawnTick = 0;
-    protected final Set<Location> recentlyCheckedMobSpawns = new HashSet<>();
+    protected final Collection<CruxPosition> recentlyCheckedMobSpawns = new HashSet<>();
     protected int daysPassed = 0;
 
     protected int lastMobAmount;
@@ -48,6 +53,8 @@ public class GameManager implements Statutable, Listener {
     public GameManager(@NotNull CruxPlugin plugin, @NotNull World world) {
         this.plugin = plugin;
         this.world = world;
+        this.random = new Random(world.getSeed());
+        this.naturalEntitySpawner = new SimpleNaturalEntitySpawner(plugin, random, AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
     }
 
     public @NotNull World getWorld() {
@@ -59,7 +66,7 @@ public class GameManager implements Statutable, Listener {
         naturalSpawnTick++;
         if(naturalSpawnTick < CruxMath.random(100, 200)) return;
         naturalSpawnTick = 0;
-        naturalEntitySpawner.belowGlobalCapMainThread().whenComplete((value, throwable) ->{
+        naturalEntitySpawner.checkCanNavigate(world).whenComplete((value, throwable) ->{
             if(throwable !=  null) Crux.log(Level.WARNING, throwable.getMessage());
             if(!value) return;
 
@@ -67,19 +74,13 @@ public class GameManager implements Statutable, Listener {
             plugin.log(Level.INFO, "Navigating natural mob spawns.");
             for(Player p : world.getPlayers()){
                 if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
-                recentlyCheckedMobSpawns.add(p.getLocation());
-                naturalEntitySpawner.navigate(p);
+                CruxPosition position = CruxPosition.block(p.getLocation());
+                recentlyCheckedMobSpawns.add(position);
+                naturalEntitySpawner.navigate(world, position, spawner -> p.isOnline() && p.isValid(), spawner ->{
+                    naturalSpawnerChecked(p);
+                });
             }
         });
-                /*if(naturalEntitySpawner.belowGlobalCap()){
-                    recentlyCheckedMobSpawns.clear();
-                    plugin.log(Level.INFO, "Navigating natural mob spawns.");
-                    for(Player p : world.getPlayers()){
-                        if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
-                        recentlyCheckedMobSpawns.add(p.getLocation());
-                        naturalEntitySpawner.navigate(p);
-                    }
-                }*/
     }
 
     public void tick(){
@@ -109,8 +110,8 @@ public class GameManager implements Statutable, Listener {
     private boolean nearChecked(@NotNull Player p){
         Location x = p.getLocation();
         double radius = naturalEntitySpawner.getRadius() * .6D;
-        for(Location b : recentlyCheckedMobSpawns){
-            if(x.distanceSquared(b) < (radius*radius)) return true;
+        for(CruxPosition b : recentlyCheckedMobSpawns){
+            if(b.distanceSquared(CruxPosition.block(x)) < (radius*radius)) return true;
         }
         return false;
     }
@@ -197,7 +198,7 @@ public class GameManager implements Statutable, Listener {
         return plugin;
     }
 
-    public AbyssNaturalEntitySpawner getNaturalEntitySpawner() {
+    public NaturalEntitySpawner getNaturalEntitySpawner() {
         return naturalEntitySpawner;
     }
 
@@ -217,7 +218,7 @@ public class GameManager implements Statutable, Listener {
         this.naturalSpawnTick = naturalSpawnTick;
     }
 
-    public Set<Location> getRecentlyCheckedMobSpawns() {
+    public Collection<CruxPosition> getRecentlyCheckedMobSpawns() {
         return recentlyCheckedMobSpawns;
     }
 
@@ -307,9 +308,9 @@ public class GameManager implements Statutable, Listener {
         if(!e.getWorld().equals(world)) return;
         if(System.currentTimeMillis() > lastCheckedMobAmount){
             lastCheckedMobAmount = System.currentTimeMillis() + (50L*20);
-            lastMobAmount = naturalEntitySpawner.getNaturalSpawnedMobs();
+            lastMobAmount = naturalEntitySpawner.getNaturallySpawnedMobs(world);
         }
-        if(!naturalEntitySpawner.belowGlobalCap(lastMobAmount)){
+        if(!naturalEntitySpawner.isBelowGlobalMobLimit(lastMobAmount)){
             event.setCancelled(true);
             return;
         }

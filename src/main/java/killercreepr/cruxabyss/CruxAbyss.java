@@ -10,13 +10,13 @@ import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
+import killercreepr.cruxabyss.registries.AbyssRegistries;
 import killercreepr.cruxabyss.structure.AbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredTestStructure;
 import killercreepr.cruxabyss.structure.TestStructure;
+import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
-import killercreepr.cruxabyss.world.entity.AbyssNaturalMobContainer;
-import killercreepr.cruxabyss.world.entity.AbyssNaturalMobSettings;
 import killercreepr.cruxabyss.world.generation.GenerationListener;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
@@ -104,14 +104,13 @@ public class CruxAbyss extends CruxPlugin implements Listener {
             game.setStarted();
         }, 100L);
         super.enabled();
-        AbyssNaturalMobSettings.register();
-        AbyssNaturalMobContainer.register();
+        StandardAbyssGroups.register(AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onStructurePlace(StructurePlaceEvent event) {
         Location l = event.getLocation();
-        Bukkit.broadcast(Component.text("Structure spawned " + l.getX() + ", " + l.getY() + ", " + l.getZ()));
+        Bukkit.broadcast(Component.text("[CruxAbyss] Structure spawned " + l.getX() + ", " + l.getY() + ", " + l.getZ()));
     }
 
     public GameManager game;
