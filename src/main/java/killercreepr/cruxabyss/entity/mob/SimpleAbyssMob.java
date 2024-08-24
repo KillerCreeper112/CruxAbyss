@@ -3,13 +3,14 @@ package killercreepr.cruxabyss.entity.mob;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
-import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeInstance;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.entity.GenericCruxMob;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
-import killercreepr.cruxentities.persistence.CruxEntitiesPersistTags;
+import killercreepr.cruxentities.persistence.CruxEntitiesPersist;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -30,33 +31,28 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
+public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
     protected final @NotNull EntityType spawnType;
     public SimpleAbyssMob(@NotNull Key key, @NotNull EntityType spawnType) {
         super(key);
         this.spawnType = spawnType;
     }
 
-    @Override
-    protected @NotNull Entity spawnAt(@NotNull Location location) {
-        return spawn(null, location);
+    public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l){ return null; }
+
+    public @NotNull Entity spawn(@Nullable AbyssWorld world, @NotNull Location l){
+        return spawnAt(world, l, null);
     }
 
-    public @Nullable Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l){ return null; }
-
-    public @NotNull Entity spawn(@Nullable GameManager game, @NotNull Location l){
-        return spawnAt(game, l, null);
-    }
-
-    public @NotNull Entity spawnAt(@Nullable GameManager game, @NotNull Location l, @Nullable Consumer<Entity> consumer){
+    public @NotNull Entity spawnAt(@Nullable AbyssWorld world, @NotNull Location l, @Nullable Consumer<Entity> consumer){
         return l.getWorld().spawnEntity(l, spawnType, CreatureSpawnEvent.SpawnReason.NATURAL, e ->{
-            CruxEntitiesPersistTags.ENTITY.set(e, this.key);
-            CruxTag.set(e, "level", PersistentDataType.INTEGER, (int) (game == null ? 1 : (game.getWave() * game.getDifficulty())));
+            CruxEntitiesPersist.ENTITY.set(e, this.key);
+            CruxTag.set(e, "level", PersistentDataType.INTEGER, (int) (world == null ? 1 : (world.getWave() * world.getDifficulty())));
 
             //Equipment
             if(e instanceof LivingEntity lE){
                 if(lE.getEquipment() != null){
-                    Map<EquipmentSlot, ItemStack> equipment = getEquipment(game, l);
+                    Map<EquipmentSlot, ItemStack> equipment = getEquipment(world, l);
                     if(equipment != null){
                         for(Map.Entry<EquipmentSlot, ItemStack> entry : equipment.entrySet()){
                             lE.getEquipment().setItem(entry.getKey(), entry.getValue());
@@ -68,7 +64,7 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
                 }
             }
             //Atributes
-            Map<CruxAttribute, Collection<CruxAttributeModifier>> attributes = getAttributes(game, e);
+            Map<CruxAttribute, Collection<CruxAttributeModifier>> attributes = getAttributes(world, e);
             if(attributes != null){
                 for(Map.Entry<CruxAttribute, Collection<CruxAttributeModifier>> entry : attributes.entrySet()){
                     for(CruxAttributeModifier m : entry.getValue()){
@@ -77,7 +73,7 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
                 }
             }
 
-            Consumer<Entity> spawnFunction = spawnFunction(game, l);
+            Consumer<Entity> spawnFunction = spawnFunction(world, l);
             if(spawnFunction != null) spawnFunction.accept(e);
             if(consumer != null) consumer.accept(e);
 
@@ -86,13 +82,13 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
         });
     }
 
-    public @Nullable Map<EquipmentSlot, ItemStack> getEquipment(@Nullable GameManager game, @NotNull Location l){
+    public @Nullable Map<EquipmentSlot, ItemStack> getEquipment(@Nullable AbyssWorld world, @NotNull Location l){
         return null;
     }
 
-    public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable GameManager game, @NotNull Entity e){
-        int wave = game == null ? 1 : game.getWave();
-        float difficulty = game == null ? 1f : game.getDifficulty();
+    public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e){
+        int wave = world == null ? 1 : world.getWave();
+        float difficulty = world == null ? 1f : world.getDifficulty();
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         Collection<CruxAttributeModifier> list = new HashSet<>();
         list.add(new CruxAttributeModifier(CruxMath.random(1D, 7D) * (wave * .1D) * difficulty));
@@ -171,5 +167,12 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
 
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         return null;
+    }
+
+    @Override
+    protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
+        return spawnAt(
+            CruxCore.inst().worldManager().getWorld(location.getWorld().getUID(), AbyssWorld.class), location, consumer
+        );
     }
 }

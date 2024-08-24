@@ -204,6 +204,22 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     }
 
+    public NaturalEntitySpawnManager getEntitySpawnManager() {
+        return entitySpawnManager;
+    }
+
+    public int getWave() {
+        return wave;
+    }
+
+    public float getDifficulty() {
+        return difficulty;
+    }
+
+    public int getDaysPassed() {
+        return daysPassed;
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onChunkPopulate(ChunkPopulateEvent event) {
         Chunk chunk = event.getChunk();

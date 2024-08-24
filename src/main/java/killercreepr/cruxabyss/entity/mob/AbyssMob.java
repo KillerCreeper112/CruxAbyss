@@ -5,7 +5,7 @@ import killercreepr.cruxabyss.entity.mob.type.*;
 import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
 import killercreepr.cruxabyss.entity.type.AbyssCrystal;
 import killercreepr.cruxabyss.entity.type.AbyssReturnPortal;
-import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import org.bukkit.Location;
@@ -24,10 +24,5 @@ public interface AbyssMob extends CruxMob {
     AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
     AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());
     AbyssCrystal ABYSS_CRYSTAL = REGISTRY.register(new AbyssCrystal());
-
-    @NotNull
-    default Entity spawn(@NotNull Location at){
-        return spawn(null, at);
-    }
-    @NotNull Entity spawn(@Nullable GameManager game, @NotNull Location at);
+    @NotNull Entity spawn(@Nullable AbyssWorld world, @NotNull Location at);
 }

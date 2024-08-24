@@ -1,56 +1,52 @@
 package killercreepr.cruxabyss.entity.type;
 
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.model.ActiveModel;
-import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.Crux;
 import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
-import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.game.GameManager;
 import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.entity.SimpleCruxMob;
+import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class AbyssAltarPortal extends SimpleAbyssMob {
+public class AbyssAltarPortal extends SimpleCruxMob {
     public AbyssAltarPortal() {
-        super(Crux.key("abyss_altar_portal"), EntityType.PIG);
-    }
-
-    @Nullable
-    @Override
-    public Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l) {
-        return e ->{
-            ModeledEntity modeled = ModelEngineAPI.createModeledEntity(e);
-            modeled.setBaseEntityVisible(false);
-            ActiveModel model = ModelEngineAPI.createActiveModel(key.key().value());
-            modeled.addModel(model, true);
-            if(e instanceof Mob mob){
-                mob.setSilent(true);
-                mob.setCollidable(false);
-                mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
-            }
-            model.getAnimationHandler().playAnimation("open", 0D, 0D, 1D, true);
-        };
+        super(Crux.key("abyss_altar_portal"));
     }
 
     @Override
-    public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ModeledEntity modeled = ModelEngineAPI.getModeledEntity(e);
-        ActiveModel active = modeled.getModel(key.value()).orElse(null);
-        if(active != null) return new AbyssAltarPortalGoal(e, active);
-        return null;
+    public void load(@NotNull Entity e) {
+        super.load(e);
+        if(!(e instanceof Mob m)) return;
+        new DesignEntity(m).getModel(key.value()).ifPresent(model ->{
+            Bukkit.getMobGoals().addGoal(m, 0, new AbyssAltarPortalGoal(m, model));
+        });
     }
 
     @Override
     public MobCategory[] getCategories() {
         return new MobCategory[]{MobCategory.OBJECT};
+    }
+
+    @Override
+    protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
+        return location.getWorld().spawn(location, Pig.class, e ->{
+            new ModelEntity(e, key().value());
+            if(e instanceof Mob mob){
+                mob.setSilent(true);
+                mob.setCollidable(false);
+                mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+            }
+            //model.getAnimationHandler().playAnimation("open", 0D, 0D, 1D, true);
+            if(consumer != null) consumer.accept(e);
+        });
     }
 }

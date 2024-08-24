@@ -14,7 +14,7 @@ import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.valueproviders.number.ConstantNumber;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.CrimsonEyeGoal;
-import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -42,7 +42,7 @@ public class AbyssCrimsonEye extends SimpleAbyssMob {
     }
 
     @Override
-    public @Nullable Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l) {
+    public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
             CruxTag.set(e, "hide", PersistentDataType.INTEGER, 1);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
@@ -54,11 +54,11 @@ public class AbyssCrimsonEye extends SimpleAbyssMob {
     }
 
     @Override
-    public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable GameManager game, @NotNull Entity e) {
+    public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 new CruxAttributeModifier(CruxMath.random(4D, 6D) *
-                        (game == null ? 1D : game.getWave() * .1D) * (game == null ? 1D : game.getDifficulty())));
+                        (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.35D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(-5));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, new CruxAttributeModifier(20));

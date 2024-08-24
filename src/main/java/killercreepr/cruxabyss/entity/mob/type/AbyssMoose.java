@@ -6,7 +6,7 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.MooseGoal;
-import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -32,9 +32,9 @@ public class AbyssMoose extends SimpleAbyssMob {
     }
 
     @Override
-    public @Nullable Consumer<Entity> spawnFunction(@Nullable GameManager game, @NotNull Location l) {
+    public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
-            Consumer<Entity> s = super.spawnFunction(game, l);
+            Consumer<Entity> s = super.spawnFunction(world, l);
             if(s != null) s.accept(e);
             ModeledEntity modeled = new ModelEntity(e, key.value()).getOrCreateModeledEntity();
             modeled.setBaseEntityVisible(false);
@@ -48,9 +48,9 @@ public class AbyssMoose extends SimpleAbyssMob {
     }
 
     @Override
-    public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable GameManager game, @NotNull Entity e) {
-        int wave = game == null ? 1 : game.getWave();
-        float difficulty = game == null ? 1f : game.getDifficulty();
+    public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
+        int wave = world == null ? 1 : world.getWave();
+        float difficulty = world == null ? 1f : world.getDifficulty();
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 new CruxAttributeModifier(CruxMath.random(8D, 10D) * (wave * .1D) * difficulty));

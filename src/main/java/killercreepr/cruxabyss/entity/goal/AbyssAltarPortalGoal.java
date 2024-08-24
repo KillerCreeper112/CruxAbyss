@@ -33,7 +33,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
             Player p = (Player) e;
             p.sendMessage("seeya loser");
-            Location spawn = new RandomTP(CruxAbyss.inst().game.getWorld()).randomTeleport(p);
+            Location spawn = new RandomTP(CruxAbyss.inst().game.toBukkitWorld()).randomTeleport(p);
             if(spawn==null) return;
             AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
             mob.remove();
