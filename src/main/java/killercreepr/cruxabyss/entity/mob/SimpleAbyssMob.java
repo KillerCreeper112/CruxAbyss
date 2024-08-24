@@ -9,6 +9,7 @@ import killercreepr.cruxattributes.attribute.CruxAttributeInstance;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.GenericCruxMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.persistence.CruxEntitiesPersistTags;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -49,6 +50,7 @@ public class SimpleAbyssMob extends GenericCruxMob implements AbyssMob {
 
     public @NotNull Entity spawnAt(@Nullable GameManager game, @NotNull Location l, @Nullable Consumer<Entity> consumer){
         return l.getWorld().spawnEntity(l, spawnType, CreatureSpawnEvent.SpawnReason.NATURAL, e ->{
+            CruxEntitiesPersistTags.ENTITY.set(e, this.key);
             CruxTag.set(e, "level", PersistentDataType.INTEGER, (int) (game == null ? 1 : (game.getWave() * game.getDifficulty())));
 
             //Equipment

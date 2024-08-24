@@ -29,7 +29,6 @@ public class AbyssCrystal extends GenericCruxMob {
         return l.getWorld().spawn(l, Pig.class, e ->{
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
             new ModelEntity(e, key.value());
-            e.setInvisible(true); //todo remove this maybe if ModelEngine updates
             e.setSilent(true);
             e.setGravity(false);
             e.setCollidable(false);

@@ -125,7 +125,6 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
     }
 
     private final Collection<NaturalMobSettings> spawns = new HashSet<>();
-
     public NaturalMobContainer(int weight, float quality, @NotNull NaturalMobSettings... spawns) {
         super(weight, quality);
         this.spawns.addAll(List.of(spawns));
@@ -145,26 +144,9 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                 Entity e;
                 if(spawned < 1){
                     if(s.canSpawn(info)) e = s.spawn(info);
-                    else e = null;
+                    else break;
                 }else{
-                    e = null;
-                    boolean breakCompletely = false;
-                    for(int x = groupRadius; x >= -groupRadius; --x) {
-                        if(breakCompletely) break;
-                        for(int y = groupRadius; y >= -groupRadius; --y) {
-                            if(breakCompletely) break;
-                            for(int z = groupRadius; z >= -groupRadius; --z) {
-                                Block b = info.getBlock().getRelative(x,y,z);
-                                if(b.equals(info.getBlock())) continue;
-                                SpawnInfo groupInfo = new SpawnInfo(b, info.getGame());
-                                if(s.canSpawn(groupInfo)){
-                                    e = s.spawn(groupInfo);
-                                    breakCompletely=true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    e = spawnGroup(groupRadius, info, s);
                 }
                 if(e == null && spawned == 0) break;
                 if(e != null){
@@ -174,6 +156,22 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
             }
         }
         return list;
+    }
+
+    private static Entity spawnGroup(int groupRadius, @NotNull SpawnInfo info, @NotNull NaturalMobSettings s){
+        for(int x = groupRadius; x >= -groupRadius; --x) {
+            for(int y = groupRadius; y >= -groupRadius; --y) {
+                for(int z = groupRadius; z >= -groupRadius; --z) {
+                    Block b = info.getBlock().getRelative(x,y,z);
+                    if(b.equals(info.getBlock())) continue;
+                    SpawnInfo groupInfo = new SpawnInfo(b, info.getGame());
+                    if(s.canSpawn(groupInfo)){
+                        return s.spawn(groupInfo);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public abstract boolean canSpawn(@NotNull SpawnInfo info);

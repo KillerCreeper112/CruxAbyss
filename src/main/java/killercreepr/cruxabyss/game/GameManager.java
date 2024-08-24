@@ -5,13 +5,14 @@ import killercreepr.crux.game.GenericStatus;
 import killercreepr.crux.game.Statutable;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.CruxTag;
+import killercreepr.cruxabyss.persistence.AbyssPersist;
 import killercreepr.cruxabyss.world.entity.NaturalEntitySpawner;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +23,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.world.TimeSkipEvent;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -54,23 +54,23 @@ public class GameManager implements Statutable, Listener {
         return world;
     }
 
-    public void tick(){
-        if(naturalSpawnTick != -1 && !world.getPlayers().isEmpty()){
-            naturalSpawnTick++;
-            if(naturalSpawnTick >= CruxMath.random(100, 200)){
-                naturalSpawnTick = 0;
-                naturalEntitySpawner.belowGlobalCapMainThread().whenComplete((value, throwable) ->{
-                    if(throwable !=  null) Crux.log(Level.WARNING, throwable.getMessage());
-                    if(!value) return;
+    public void naturalSpawnTick(){
+        if(naturalSpawnTick < 0 || world.getPlayers().isEmpty()) return;
+        naturalSpawnTick++;
+        if(naturalSpawnTick < CruxMath.random(100, 200)) return;
+        naturalSpawnTick = 0;
+        naturalEntitySpawner.belowGlobalCapMainThread().whenComplete((value, throwable) ->{
+            if(throwable !=  null) Crux.log(Level.WARNING, throwable.getMessage());
+            if(!value) return;
 
-                    recentlyCheckedMobSpawns.clear();
-                    plugin.log(Level.INFO, "Navigating natural mob spawns.");
-                    for(Player p : world.getPlayers()){
-                        if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
-                        recentlyCheckedMobSpawns.add(p.getLocation());
-                        naturalEntitySpawner.navigate(p);
-                    }
-                });
+            recentlyCheckedMobSpawns.clear();
+            plugin.log(Level.INFO, "Navigating natural mob spawns.");
+            for(Player p : world.getPlayers()){
+                if(p.getGameMode() == GameMode.SPECTATOR || nearChecked(p)) continue;
+                recentlyCheckedMobSpawns.add(p.getLocation());
+                naturalEntitySpawner.navigate(p);
+            }
+        });
                 /*if(naturalEntitySpawner.belowGlobalCap()){
                     recentlyCheckedMobSpawns.clear();
                     plugin.log(Level.INFO, "Navigating natural mob spawns.");
@@ -80,8 +80,10 @@ public class GameManager implements Statutable, Listener {
                         naturalEntitySpawner.navigate(p);
                     }
                 }*/
-            }
-        }
+    }
+
+    public void tick(){
+        naturalSpawnTick();
         if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
             dayEvent();
         }
@@ -301,7 +303,8 @@ public class GameManager implements Statutable, Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if(!event.getEntity().getWorld().equals(world)) return;
+        Entity e = event.getEntity();
+        if(!e.getWorld().equals(world)) return;
         if(System.currentTimeMillis() > lastCheckedMobAmount){
             lastCheckedMobAmount = System.currentTimeMillis() + (50L*20);
             lastMobAmount = naturalEntitySpawner.getNaturalSpawnedMobs();
@@ -310,7 +313,7 @@ public class GameManager implements Statutable, Listener {
             event.setCancelled(true);
             return;
         }
-        CruxTag.set(event.getEntity(), "spawn_reason", PersistentDataType.STRING, event.getSpawnReason().toString().toLowerCase());
+        AbyssPersist.SPAWN_REASON.set(e, event.getSpawnReason().toString().toLowerCase());
         /*if(TeamUtility.getTeamCacheRaw(event.getEntity()) == null){
             TeamUtility.setTeam(event.getEntity(), GrimTeam.MOB);
             GrimTag.set(event.getEntity(), "spawn_reason", PersistentDataType.STRING, event.getSpawnReason().toString().toLowerCase());

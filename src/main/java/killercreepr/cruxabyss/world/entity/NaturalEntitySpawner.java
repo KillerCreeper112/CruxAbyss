@@ -1,13 +1,12 @@
 package killercreepr.cruxabyss.world.entity;
 
 import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.game.GameManager;
+import killercreepr.cruxabyss.persistence.AbyssPersist;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,10 +15,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class NaturalEntitySpawner {
     private final GameManager game;
-    private static final short GLOBAL_MOB_CAP = 300;
+    private static final short GLOBAL_MOB_CAP = 3000;//todo was 300
     //innerRadius+radius
     //radius = 24
     private final int radius = 34;
@@ -54,7 +54,7 @@ public class NaturalEntitySpawner {
     public boolean belowGlobalCap(){
         int x = 0;
         for(Entity e : game.getWorld().getEntitiesByClass(Mob.class)){
-            if(CruxTag.get(e, "spawn_reason", PersistentDataType.STRING, "").equalsIgnoreCase("natural")){
+            if("natural".equalsIgnoreCase(AbyssPersist.SPAWN_REASON.get(e, null))){
                 x++;
                 if(x >= GLOBAL_MOB_CAP) return false;
             }
@@ -65,7 +65,7 @@ public class NaturalEntitySpawner {
     public int getNaturalSpawnedMobs(){
         int x = 0;
         for(Entity e : game.getWorld().getEntitiesByClass(Mob.class)){
-            if(CruxTag.get(e, "spawn_reason", PersistentDataType.STRING, "").equalsIgnoreCase("natural")){
+            if("natural".equalsIgnoreCase(AbyssPersist.SPAWN_REASON.get(e, null))){
                 x++;
             }
         }
@@ -107,9 +107,10 @@ public class NaturalEntitySpawner {
             return;
         }
         new BukkitRunnable(){
-            private final Set<Block> blocks = random(p.getLocation().getBlock(), radius, innerRadius, CruxMath.random(7500, 10000));
+            private Set<Block> blocks;
             @Override
             public void run() {
+                if(blocks == null) blocks = random(p.getLocation().getBlock(), radius, innerRadius, CruxMath.random(7500, 10000));
                 Block last = null;
                 int amount = CruxMath.random(50, 100);
                 for(Block b : new HashSet<>(blocks)){
@@ -120,14 +121,17 @@ public class NaturalEntitySpawner {
                         list = CACHE;
                     }else list = NaturalMobContainer.randomContainer(CruxMath.random(1, 5), info);
                     last = b;
-                    new BukkitRunnable(){
-                        @Override
-                        public void run() {
-                            for(NaturalMobContainer m : list){
-                                NaturalMobContainer.spawn(m.random(CruxMath.random(1, 5), info), info);
-                            }
+
+                    if(list.isEmpty()){
+                        //amount--;
+                        continue;
+                    }
+
+                    game.getPlugin().getServer().getScheduler().runTask(game.getPlugin(), task ->{
+                        for(NaturalMobContainer m : list){
+                            NaturalMobContainer.spawn(m.random(CruxMath.random(1, 5), info), info);
                         }
-                    }.runTask(game.getPlugin());
+                    });
                     amount--;
                     if(amount < 1) break;
                 }
@@ -144,7 +148,7 @@ public class NaturalEntitySpawner {
     }
 
     public @NotNull Set<Block> random(@NotNull Block center, int radius, int innerRadius, int rolls){
-        Set<Block> list = new HashSet<>();
+        Set<Block> list = new CopyOnWriteArraySet<>();
         for(int i = 0; i < rolls; i++){
             int x = CruxMath.random(-radius, radius);
             int y = CruxMath.random(-radius, radius);
