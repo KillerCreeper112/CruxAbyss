@@ -17,11 +17,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public abstract class NaturalMobContainer extends SimpleWeighted implements Listener {
-    private static final Set<NaturalMobContainer> REGISTRY = new HashSet<>();
-    public static @NotNull Set<NaturalMobContainer> getRegistry(){ return REGISTRY; }
+public abstract class AbyssNaturalMobContainer extends SimpleWeighted implements Listener {
+    private static final Set<AbyssNaturalMobContainer> REGISTRY = new HashSet<>();
+    public static @NotNull Set<AbyssNaturalMobContainer> getRegistry(){ return REGISTRY; }
 
-    public static <T extends NaturalMobContainer> T register(@NotNull T e){
+    public static <T extends AbyssNaturalMobContainer> T register(@NotNull T e){
         REGISTRY.add(e);
         return e;
     }
@@ -29,7 +29,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
     public static void register(){
         //empty
         register(
-                new NaturalMobContainer(50, 0f) {
+                new AbyssNaturalMobContainer(50, 0f) {
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         return true;
@@ -38,7 +38,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
         );
 
         register(
-                new NaturalMobContainer(10, 0, NaturalMobSettings.CRIMSON_EYE) {
+                new AbyssNaturalMobContainer(10, 0, AbyssNaturalMobSettings.CRIMSON_EYE) {
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 12) return false;
@@ -50,7 +50,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
 
 
         register(
-                new NaturalMobContainer(6, 0, NaturalMobSettings.MOOSE) {
+                new AbyssNaturalMobContainer(6, 0, AbyssNaturalMobSettings.MOOSE) {
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 8) return false;
@@ -63,7 +63,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
         );
 
         register(
-                new NaturalMobContainer(12, 0, NaturalMobSettings.GROUND_DWELLER) {
+                new AbyssNaturalMobContainer(12, 0, AbyssNaturalMobSettings.GROUND_DWELLER) {
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 25) return false;
@@ -82,7 +82,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
         );
 
         register(
-                new NaturalMobContainer(5, 0, NaturalMobSettings.CHARRED_BONES) {
+                new AbyssNaturalMobContainer(5, 0, AbyssNaturalMobSettings.CHARRED_BONES) {
                     @Override
                     public boolean canSpawn(@NotNull SpawnInfo info) {
                         if(CruxMath.random(1, 100) <= 60) return false;
@@ -100,7 +100,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
     protected @NotNull Collection<Entity> getNearbyChunkEntitySpawns(@NotNull Chunk chunk, int radius, @Nullable Predicate<Entity> predicate){
         return getNearbyChunkEntities(chunk, radius, e ->{
             if(predicate != null && !predicate.test(e)) return false;
-            for(NaturalMobSettings s : spawns){
+            for(AbyssNaturalMobSettings s : spawns){
                 if(CruxMob.is(e, s.spawn)) return true;
             }
             return false;
@@ -124,19 +124,19 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
         return list;
     }
 
-    private final Collection<NaturalMobSettings> spawns = new HashSet<>();
-    public NaturalMobContainer(int weight, float quality, @NotNull NaturalMobSettings... spawns) {
+    private final Collection<AbyssNaturalMobSettings> spawns = new HashSet<>();
+    public AbyssNaturalMobContainer(int weight, float quality, @NotNull AbyssNaturalMobSettings... spawns) {
         super(weight, quality);
         this.spawns.addAll(List.of(spawns));
     }
 
-    public @NotNull Collection<NaturalMobSettings> getSpawns() {
+    public @NotNull Collection<AbyssNaturalMobSettings> getSpawns() {
         return spawns;
     }
 
-    public static @NotNull List<Entity> spawn(@NotNull Collection<NaturalMobSettings> poll, @NotNull SpawnInfo info){
+    public static @NotNull List<Entity> spawn(@NotNull Collection<AbyssNaturalMobSettings> poll, @NotNull SpawnInfo info){
         List<Entity> list = new ArrayList<>();
-        for(NaturalMobSettings s : poll){
+        for(AbyssNaturalMobSettings s : poll){
             int spawned = 0;
             int maxGroup = s.getGroupSize(info);
             int groupRadius = s.getGroupRadius(info);
@@ -158,7 +158,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
         return list;
     }
 
-    private static Entity spawnGroup(int groupRadius, @NotNull SpawnInfo info, @NotNull NaturalMobSettings s){
+    private static Entity spawnGroup(int groupRadius, @NotNull SpawnInfo info, @NotNull AbyssNaturalMobSettings s){
         for(int x = groupRadius; x >= -groupRadius; --x) {
             for(int y = groupRadius; y >= -groupRadius; --y) {
                 for(int z = groupRadius; z >= -groupRadius; --z) {
@@ -176,20 +176,20 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
 
     public abstract boolean canSpawn(@NotNull SpawnInfo info);
 
-    public static @NotNull List<NaturalMobContainer> randomContainer(int rolls, @NotNull SpawnInfo info){
+    public static @NotNull List<AbyssNaturalMobContainer> randomContainer(int rolls, @NotNull SpawnInfo info){
         return randomContainer(REGISTRY, rolls, info);
     }
 
-    public static @NotNull List<NaturalMobContainer> randomContainer(@NotNull Collection<NaturalMobContainer> poll, int rolls, @NotNull SpawnInfo info){
-        List<NaturalMobContainer> list = new ArrayList<>();
-        Map<NaturalMobContainer, Integer> data = new HashMap<>();
-        for(NaturalMobContainer p : poll){
+    public static @NotNull List<AbyssNaturalMobContainer> randomContainer(@NotNull Collection<AbyssNaturalMobContainer> poll, int rolls, @NotNull SpawnInfo info){
+        List<AbyssNaturalMobContainer> list = new ArrayList<>();
+        Map<AbyssNaturalMobContainer, Integer> data = new HashMap<>();
+        for(AbyssNaturalMobContainer p : poll){
             data.put(p, p.getWeight());
         }
         for(int i = 0; i < rolls; i++){
             int totalWeight = 0;
             int weight;
-            for(NaturalMobContainer item : new HashSet<>(data.keySet())){
+            for(AbyssNaturalMobContainer item : new HashSet<>(data.keySet())){
                 if(!item.canSpawn(info)){
                     data.remove(item);
                     continue;
@@ -203,7 +203,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                 data.put(item, weight);
             }
             int chance = CruxMath.random(0, totalWeight);
-            for(Map.Entry<NaturalMobContainer, Integer> entry : new HashSet<>(data.entrySet())){
+            for(Map.Entry<AbyssNaturalMobContainer, Integer> entry : new HashSet<>(data.entrySet())){
                 if(chance <= entry.getValue()){
                     data.remove(entry.getKey());
                     list.add(entry.getKey());
@@ -215,20 +215,20 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
         return list;
     }
 
-    public @NotNull List<NaturalMobSettings> random(int rolls, @NotNull SpawnInfo info){
+    public @NotNull List<AbyssNaturalMobSettings> random(int rolls, @NotNull SpawnInfo info){
         return random(spawns, rolls, info);
     }
 
-    public static @NotNull List<NaturalMobSettings> random(@NotNull Collection<NaturalMobSettings> poll, int rolls, @NotNull SpawnInfo info){
-        List<NaturalMobSettings> list = new ArrayList<>();
-        Map<NaturalMobSettings, Integer> data = new HashMap<>();
-        for(NaturalMobSettings p : poll){
+    public static @NotNull List<AbyssNaturalMobSettings> random(@NotNull Collection<AbyssNaturalMobSettings> poll, int rolls, @NotNull SpawnInfo info){
+        List<AbyssNaturalMobSettings> list = new ArrayList<>();
+        Map<AbyssNaturalMobSettings, Integer> data = new HashMap<>();
+        for(AbyssNaturalMobSettings p : poll){
             data.put(p, p.getWeight());
         }
         for(int i = 0; i < rolls; i++){
             int totalWeight = 0;
             int weight;
-            for(NaturalMobSettings item : new HashSet<>(data.keySet())){
+            for(AbyssNaturalMobSettings item : new HashSet<>(data.keySet())){
                 if(!item.canSpawn(info)){
                     data.remove(item);
                     continue;
@@ -242,7 +242,7 @@ public abstract class NaturalMobContainer extends SimpleWeighted implements List
                 data.put(item, weight);
             }
             int chance = CruxMath.random(0, totalWeight);
-            for(Map.Entry<NaturalMobSettings, Integer> entry : new HashSet<>(data.entrySet())){
+            for(Map.Entry<AbyssNaturalMobSettings, Integer> entry : new HashSet<>(data.entrySet())){
                 if(chance <= entry.getValue()){
                     data.remove(entry.getKey());
                     list.add(entry.getKey());

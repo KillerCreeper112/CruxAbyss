@@ -6,7 +6,7 @@ import killercreepr.crux.game.Statutable;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.persistence.AbyssPersist;
-import killercreepr.cruxabyss.world.entity.NaturalEntitySpawner;
+import killercreepr.cruxabyss.world.entity.AbyssNaturalEntitySpawner;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -34,7 +34,7 @@ import java.util.logging.Level;
 public class GameManager implements Statutable, Listener {
     protected final @NotNull CruxPlugin plugin;
     protected final World world;
-    protected final NaturalEntitySpawner naturalEntitySpawner = new NaturalEntitySpawner(this);
+    protected final AbyssNaturalEntitySpawner naturalEntitySpawner = new AbyssNaturalEntitySpawner(this);
     protected int wave = 1;
     protected float difficulty = 1f;
     protected GenericStatus state = GenericStatus.IDLE;
@@ -197,7 +197,7 @@ public class GameManager implements Statutable, Listener {
         return plugin;
     }
 
-    public NaturalEntitySpawner getNaturalEntitySpawner() {
+    public AbyssNaturalEntitySpawner getNaturalEntitySpawner() {
         return naturalEntitySpawner;
     }
 

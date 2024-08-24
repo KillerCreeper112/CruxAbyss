@@ -17,17 +17,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class NaturalMobSettings extends SimpleWeighted {
-    private static final Set<NaturalMobSettings> REGISTRY = new HashSet<>();
-    public static <T extends NaturalMobSettings> T register(@NotNull T e){
+public abstract class AbyssNaturalMobSettings extends SimpleWeighted {
+    private static final Set<AbyssNaturalMobSettings> REGISTRY = new HashSet<>();
+    public static <T extends AbyssNaturalMobSettings> T register(@NotNull T e){
         REGISTRY.add(e);
         return e;
     }
-    public static NaturalMobSettings EMPTY;
-    public static NaturalMobSettings CRIMSON_EYE;
-    public static NaturalMobSettings MOOSE;
-    public static NaturalMobSettings GROUND_DWELLER;
-    public static NaturalMobSettings CHARRED_BONES;
+    public static AbyssNaturalMobSettings EMPTY;
+    public static AbyssNaturalMobSettings CRIMSON_EYE;
+    public static AbyssNaturalMobSettings MOOSE;
+    public static AbyssNaturalMobSettings GROUND_DWELLER;
+    public static AbyssNaturalMobSettings CHARRED_BONES;
 
     private final static Set<Material> CRIMSON_EYE_SPAWNABLE_ON_NOT = new HashSet<>();
 
@@ -39,7 +39,7 @@ public abstract class NaturalMobSettings extends SimpleWeighted {
         CRIMSON_EYE_SPAWNABLE_ON_NOT.addAll(MaterialSetTag.CRIMSON_STEMS.getValues());
 
         EMPTY = register(
-                register(new NaturalMobSettings(null, 30, 0f) {
+                register(new AbyssNaturalMobSettings(null, 30, 0f) {
                     @Override
                     public @Nullable Entity spawn(@NotNull SpawnInfo info) {
                         return null;
@@ -50,7 +50,7 @@ public abstract class NaturalMobSettings extends SimpleWeighted {
                         return true;
                     }
                 }));
-        CRIMSON_EYE = register(new NaturalMobSettings(AbyssMob.CRIMSON_EYE, 4, 0f) {
+        CRIMSON_EYE = register(new AbyssNaturalMobSettings(AbyssMob.CRIMSON_EYE, 4, 0f) {
             @Override
             public @NotNull Entity spawn(@NotNull SpawnInfo info) {
                 return spawn.spawn(info.getGame(), info.getBlock()
@@ -79,7 +79,7 @@ public abstract class NaturalMobSettings extends SimpleWeighted {
             }
         });
 
-        MOOSE = register(new NaturalMobSettings(AbyssMob.MOOSE, 7, 0f) {
+        MOOSE = register(new AbyssNaturalMobSettings(AbyssMob.MOOSE, 7, 0f) {
             @Override
             public @NotNull Entity spawn(@NotNull SpawnInfo info) {
                 return spawn.spawn(info.getGame(), info.getBlock()
@@ -102,7 +102,7 @@ public abstract class NaturalMobSettings extends SimpleWeighted {
             }
         });
 
-        GROUND_DWELLER = register(new NaturalMobSettings(AbyssMob.GROUND_DWELLER, 8, 0f) {
+        GROUND_DWELLER = register(new AbyssNaturalMobSettings(AbyssMob.GROUND_DWELLER, 8, 0f) {
             @Override
             public @NotNull Entity spawn(@NotNull SpawnInfo info) {
                 return spawn.spawn(info.getGame(), info.getBlock()
@@ -128,7 +128,7 @@ public abstract class NaturalMobSettings extends SimpleWeighted {
             }
         });
 
-        CHARRED_BONES = register(new NaturalMobSettings(AbyssMob.CHARRED_BONES, 4, 0f) {
+        CHARRED_BONES = register(new AbyssNaturalMobSettings(AbyssMob.CHARRED_BONES, 4, 0f) {
             @Override
             public @NotNull Entity spawn(@NotNull SpawnInfo info) {
                 return spawn.spawn(info.getGame(), info.getBlock()
@@ -164,18 +164,18 @@ public abstract class NaturalMobSettings extends SimpleWeighted {
     }
 
     protected final AbyssMob spawn;
-    public NaturalMobSettings(AbyssMob spawn, int weight, float quality) {
+    public AbyssNaturalMobSettings(AbyssMob spawn, int weight, float quality) {
         super(weight, quality);
         this.spawn = spawn;
     }
 
-    public static @NotNull Collection<NaturalMobSettings> get(@NotNull SpawnInfo info, int rollsPer){
-        Set<NaturalMobContainer> allThatCouldSpawn = new HashSet<>();
-        for(NaturalMobContainer c : NaturalMobContainer.getRegistry()){
+    public static @NotNull Collection<AbyssNaturalMobSettings> get(@NotNull SpawnInfo info, int rollsPer){
+        Set<AbyssNaturalMobContainer> allThatCouldSpawn = new HashSet<>();
+        for(AbyssNaturalMobContainer c : AbyssNaturalMobContainer.getRegistry()){
             if(c.canSpawn(info)) allThatCouldSpawn.add(c);
         }
-        Collection<NaturalMobSettings> random = new HashSet<>();
-        for(NaturalMobContainer c : allThatCouldSpawn){
+        Collection<AbyssNaturalMobSettings> random = new HashSet<>();
+        for(AbyssNaturalMobContainer c : allThatCouldSpawn){
             random.addAll(c.random(rollsPer, info));
         }
         return random;
