@@ -186,6 +186,8 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     @Override
     public void onLoad() {
         active = true;
+        Bukkit.broadcastMessage("abyss world loaded!");
+        buildRunnable().runTaskTimerAsynchronously(Crux.getMainPlugin(), 0L, 1L);
     }
 
     @Override

@@ -5,8 +5,8 @@ import killercreepr.crux.data.util.CollectionBuilder;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
-import killercreepr.cruxabyss.world.entity.AbyssNaturalEntitySpawn;
 import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawn;
 import killercreepr.cruxworlds.world.entity.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawn;
@@ -42,11 +42,11 @@ public class StandardAbyssSpawns {
             return true;
         }
     };
-    public static final NaturalEntitySpawn CRIMSON_EYE = new AbyssNaturalEntitySpawn(4, 0, AbyssMob.CRIMSON_EYE) {
+    public static final NaturalEntitySpawn CRIMSON_EYE = new NaturalCruxMobSpawn(4, 0, AbyssMob.CRIMSON_EYE) {
 
         @Override
         public @NotNull Entity spawn(@NotNull SpawnContext ctx) {
-            return mob.spawn(null, ctx.getBlock()
+            return mob.spawn(ctx.getBlock()
                 .getLocation().toCenterLocation().subtract(0, .5, 0));
         }
 
@@ -71,7 +71,7 @@ public class StandardAbyssSpawns {
             return CruxMath.random(1, 5);
         }
     };
-    public static final NaturalEntitySpawn MOOSE = new AbyssNaturalEntitySpawn(7, 0f, AbyssMob.MOOSE) {
+    public static final NaturalEntitySpawn MOOSE = new NaturalCruxMobSpawn(7, 0f, AbyssMob.MOOSE) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             Block b = ctx.getBlock();
@@ -88,7 +88,7 @@ public class StandardAbyssSpawns {
         }
     };
 
-    public static final NaturalEntitySpawn GROUND_DWELLER = new AbyssNaturalEntitySpawn(8, 0f, AbyssMob.GROUND_DWELLER) {
+    public static final NaturalEntitySpawn GROUND_DWELLER = new NaturalCruxMobSpawn(8, 0f, AbyssMob.GROUND_DWELLER) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             Block b = ctx.getBlock();
@@ -108,7 +108,7 @@ public class StandardAbyssSpawns {
         }
     };
 
-    public static final NaturalEntitySpawn CHARRED_BONES = new AbyssNaturalEntitySpawn(4, 0f, AbyssMob.CHARRED_BONES) {
+    public static final NaturalEntitySpawn CHARRED_BONES = new NaturalCruxMobSpawn(4, 0f, AbyssMob.CHARRED_BONES) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             Block b = ctx.getBlock();

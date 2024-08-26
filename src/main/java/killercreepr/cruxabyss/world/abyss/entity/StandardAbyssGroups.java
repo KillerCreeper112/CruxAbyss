@@ -4,9 +4,9 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.nms.biome.BiomeUtils;
 import killercreepr.crux.registry.Registry;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.cruxabyss.world.entity.AbyssNaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.entity.SpawnContext;
+import killercreepr.cruxworlds.world.entity.entity.impl.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawnGroup;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
@@ -22,7 +22,7 @@ public class StandardAbyssGroups {
             return true;
         }
     };
-    public static final NaturalEntitySpawnGroup CRIMSON_EYE = new AbyssNaturalEntitySpawnGroup(10, 0f,
+    public static final NaturalEntitySpawnGroup CRIMSON_EYE = new NaturalSpawnPartGroup(10, 0f,
         StandardAbyssSpawns.CRIMSON_EYE){
 
         @Override
@@ -33,7 +33,7 @@ public class StandardAbyssGroups {
             return k.equals(Crux.key("toxic_mire")) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
         }
     };
-    public static final NaturalEntitySpawnGroup MOOSE = new AbyssNaturalEntitySpawnGroup(6, 0f,
+    public static final NaturalEntitySpawnGroup MOOSE = new NaturalSpawnPartGroup(6, 0f,
         StandardAbyssSpawns.MOOSE) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
@@ -46,7 +46,7 @@ public class StandardAbyssGroups {
         }
     };
 
-    public static final NaturalEntitySpawnGroup GROUND_DWELLER = new AbyssNaturalEntitySpawnGroup(12, 0f,
+    public static final NaturalEntitySpawnGroup GROUND_DWELLER = new NaturalSpawnPartGroup(12, 0f,
         StandardAbyssSpawns.GROUND_DWELLER) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
