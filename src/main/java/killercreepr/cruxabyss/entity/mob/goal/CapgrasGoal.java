@@ -65,22 +65,22 @@ public class CapgrasGoal extends CruxMobModeledGoal {
             );
             @Override
             public @NotNull CreateSound ambient() {
-                return new CreateSound(CruxMath.getRandom(AMBIENT), 1.15f);
+                return CreateSound.sound(CruxMath.getRandom(AMBIENT), 1.15f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return new CreateSound(CruxMath.getRandom(ATTACK), 1.15f);
+                return CreateSound.sound(CruxMath.getRandom(ATTACK), 1.15f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return new CreateSound(CruxMath.getRandom(HURT), 1.15f);
+                return CreateSound.sound(CruxMath.getRandom(HURT), 1.15f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return new CreateSound(CruxMath.getRandom(DEATH), 1.15f);
+                return CreateSound.sound(CruxMath.getRandom(DEATH), 1.15f);
             }
         });
     }

@@ -31,22 +31,22 @@ public class CrimsonEyeGoal extends CruxMobModeledGoal {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return new CreateSound(Sound.ENTITY_SLIME_SQUISH, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return new CreateSound(Sound.ENTITY_SLIME_ATTACK, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return new CreateSound(Sound.ENTITY_SLIME_ATTACK, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return new CreateSound(Sound.ENTITY_SLIME_DEATH, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_DEATH, 1.5f);
             }
         });
     }

@@ -29,22 +29,22 @@ public class GroundDwellerGoal extends CruxMobModeledGoal {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return new CreateSound(Sound.ENTITY_HOGLIN_AMBIENT, 1.6f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_AMBIENT, 1.6f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return new CreateSound(Sound.ENTITY_HOGLIN_ATTACK, 1.6f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_ATTACK, 1.6f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return new CreateSound(Sound.ENTITY_HOGLIN_HURT, 1.6f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_HURT, 1.6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return new CreateSound(Sound.ENTITY_HOGLIN_DEATH, 2f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_DEATH, 2f);
             }
         });
     }
@@ -69,7 +69,7 @@ public class GroundDwellerGoal extends CruxMobModeledGoal {
     private Location targetLoc;
 
     private final double moveDistance = .35D;
-    private final CreateSound digSound = new CreateSound(Sound.BLOCK_SAND_STEP, 1.6f);
+    private final CreateSound digSound = CreateSound.sound(Sound.BLOCK_SAND_STEP, 1.6f);
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target){

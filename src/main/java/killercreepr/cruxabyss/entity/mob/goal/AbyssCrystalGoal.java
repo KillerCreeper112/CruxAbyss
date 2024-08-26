@@ -79,9 +79,9 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
 
     public void explode(){
         mob.remove();
-        new CreateSound(Sound.ENTITY_ITEM_BREAK, 1.2f).playAt(mob.getLocation());
-        new CreateSound(Sound.BLOCK_GLASS_BREAK, 1.1f).playAt(mob.getLocation());
-        new CreateSound(Sound.ENTITY_GENERIC_EXPLODE, 2f).playAt(mob.getLocation());
+        CreateSound.sound(Sound.ENTITY_ITEM_BREAK, 1.2f).playAt(mob.getLocation());
+        CreateSound.sound(Sound.BLOCK_GLASS_BREAK, 1.1f).playAt(mob.getLocation());
+        CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 2f).playAt(mob.getLocation());
         new ParticleBuilder(Particle.ITEM)
             .location(mob.getLocation())
             .count(20)
