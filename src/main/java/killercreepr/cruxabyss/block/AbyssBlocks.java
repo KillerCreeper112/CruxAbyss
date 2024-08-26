@@ -1,16 +1,21 @@
 package killercreepr.cruxabyss.block;
 
 import killercreepr.crux.Crux;
+import killercreepr.cruxblocks.block.CruxBlock;
 import killercreepr.cruxblocks.block.GenericBlock;
+import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.block.context.BlockContext;
+import killercreepr.cruxblocks.block.context.PlaceBlockContext;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
+import killercreepr.cruxblocks.block.group.GenericBlockGroup;
 import killercreepr.cruxblocks.block.group.SingularBlockGroup;
 import killercreepr.cruxblocks.block.texture.WireTextureData;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -85,6 +90,38 @@ public class AbyssBlocks {
         public boolean canPlace(@NotNull BlockContext ctx) {
             Block b = ctx.getBlock();
             return b.getRelative(BlockFace.DOWN).isSolid();
+        }
+    });
+
+    public static final CruxBlockGroup PLAGUE_FLOWER = CruxBlocksRegistries.BLOCKS.registerGroup(new GenericBlockGroup(
+        Crux.key("plague_flower"),
+        new GenericBlock(Crux.key("plague_flower_bottom"),
+            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH)).build()),
+        new PlagueFlowerBlock(Crux.key("plague_flower_middle"),
+            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST)).build()),
+        new PlagueFlowerBlock(Crux.key("plague_flower_top"),
+            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)).build())
+    ) {
+        @Override
+        public float getHardness() {
+            return 0;
+        }
+
+        @Override
+        public boolean canPlace(@NotNull BlockContext ctx) {
+            Block b = ctx.getBlock();
+            return b.getRelative(BlockFace.DOWN).isSolid();
+        }
+
+        @Override
+        public @Nullable ActiveCruxBlock placeBlock(@NotNull PlaceBlockContext ctx, boolean applyPhysics) {
+            CruxBlock bottom = getBlock(Crux.key("plague_flower_bottom"));
+            CruxBlock middle = getBlock(Crux.key("plague_flower_middle"));
+            CruxBlock top = getBlock(Crux.key("plague_flower_top"));
+            ActiveCruxBlock active = bottom.placeBlock(ctx, applyPhysics);
+            middle.placeBlock(ctx, applyPhysics);
+            top.placeBlock(ctx, applyPhysics);
+            return active;
         }
     });
 }
