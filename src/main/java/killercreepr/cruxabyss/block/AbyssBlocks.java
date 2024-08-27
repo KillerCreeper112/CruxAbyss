@@ -118,9 +118,11 @@ public class AbyssBlocks {
             CruxBlock bottom = getBlock(Crux.key("plague_flower_bottom"));
             CruxBlock middle = getBlock(Crux.key("plague_flower_middle"));
             CruxBlock top = getBlock(Crux.key("plague_flower_top"));
-            ActiveCruxBlock active = bottom.placeBlock(ctx, applyPhysics);
-            middle.placeBlock(ctx, applyPhysics);
-            top.placeBlock(ctx, applyPhysics);
+
+            Block b = ctx.getBlock();
+            ActiveCruxBlock active = bottom.placeBlock(ctx, false);
+            middle.placeBlock(ctx.withBlock(b.getRelative(BlockFace.UP)), applyPhysics);
+            top.placeBlock(ctx.withBlock(b.getRelative(BlockFace.UP).getRelative(BlockFace.UP)), applyPhysics);
             return active;
         }
     });
