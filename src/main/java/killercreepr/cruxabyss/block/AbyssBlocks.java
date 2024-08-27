@@ -1,21 +1,19 @@
 package killercreepr.cruxabyss.block;
 
 import killercreepr.crux.Crux;
-import killercreepr.cruxblocks.block.CruxBlock;
 import killercreepr.cruxblocks.block.GenericBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.block.context.BlockContext;
-import killercreepr.cruxblocks.block.context.PlaceBlockContext;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
-import killercreepr.cruxblocks.block.group.GenericBlockGroup;
 import killercreepr.cruxblocks.block.group.SingularBlockGroup;
+import killercreepr.cruxblocks.block.standard.BushBlock;
+import killercreepr.cruxblocks.block.standard.BushType;
+import killercreepr.cruxblocks.block.standard.group.BushBlockGroup;
 import killercreepr.cruxblocks.block.texture.WireTextureData;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -93,37 +91,21 @@ public class AbyssBlocks {
         }
     });
 
-    public static final CruxBlockGroup PLAGUE_FLOWER = CruxBlocksRegistries.BLOCKS.registerGroup(new GenericBlockGroup(
+    public static final BushBlockGroup PLAGUE_FLOWER = CruxBlocksRegistries.BLOCKS.registerGroup(new BushBlockGroup(
         Crux.key("plague_flower"),
-        new GenericBlock(Crux.key("plague_flower_bottom"),
-            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH)).build()),
-        new PlagueFlowerBlock(Crux.key("plague_flower_middle"),
-            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST)).build()),
-        new PlagueFlowerBlock(Crux.key("plague_flower_top"),
-            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)).build())
+        new BushBlock(Crux.key("plague_flower_bottom"),
+            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH)).build(),
+            BushType.BOTTOM),
+        new BushBlock(Crux.key("plague_flower_middle"),
+            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST)).build(),
+            BushType.MIDDLE),
+        new BushBlock(Crux.key("plague_flower_top"),
+            new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)).build(),
+            BushType.TOP)
     ) {
         @Override
         public float getHardness() {
             return 0;
-        }
-
-        @Override
-        public boolean canPlace(@NotNull BlockContext ctx) {
-            Block b = ctx.getBlock();
-            return b.getRelative(BlockFace.DOWN).isSolid();
-        }
-
-        @Override
-        public @Nullable ActiveCruxBlock placeBlock(@NotNull PlaceBlockContext ctx, boolean applyPhysics) {
-            CruxBlock bottom = getBlock(Crux.key("plague_flower_bottom"));
-            CruxBlock middle = getBlock(Crux.key("plague_flower_middle"));
-            CruxBlock top = getBlock(Crux.key("plague_flower_top"));
-
-            Block b = ctx.getBlock();
-            ActiveCruxBlock active = bottom.placeBlock(ctx, false);
-            middle.placeBlock(ctx.withBlock(b.getRelative(BlockFace.UP)), applyPhysics);
-            top.placeBlock(ctx.withBlock(b.getRelative(BlockFace.UP).getRelative(BlockFace.UP)), applyPhysics);
-            return active;
         }
     });
 }
