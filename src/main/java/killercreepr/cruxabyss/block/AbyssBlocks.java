@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.block;
 
+import io.papermc.paper.registry.RegistryAccess;
 import killercreepr.crux.Crux;
 import killercreepr.cruxblocks.block.GenericBlock;
 import killercreepr.cruxblocks.block.context.BlockContext;

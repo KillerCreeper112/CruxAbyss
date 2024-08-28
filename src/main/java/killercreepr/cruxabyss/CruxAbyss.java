@@ -7,6 +7,7 @@ import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
+import killercreepr.cruxabyss.listener.AbyssWoodFunctionListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
 import killercreepr.cruxabyss.registries.AbyssRegistries;
 import killercreepr.cruxabyss.structure.AbyssOutpost;
@@ -95,7 +96,8 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         registerListeners(
             this,
             new AbyssAltarPortalListener(),
-            new DisableElytraListener()
+            new DisableElytraListener(),
+            new AbyssWoodFunctionListener()
         );
         AbyssBlocks.register();
         AbyssItems.register();
