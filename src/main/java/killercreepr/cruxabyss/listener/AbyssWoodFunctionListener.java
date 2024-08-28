@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
 
 public class AbyssWoodFunctionListener implements Listener {
     public boolean canReflect(@NotNull Block block){
@@ -33,10 +32,10 @@ public class AbyssWoodFunctionListener implements Listener {
         CruxBlock crux = CruxCore.inst().cruxBlocks().getBlockRegistry().getByBlock(block);
         if(crux == null) return null;
         if(AbyssBlocks.PLAGUE_STEM.containsBlock(crux)){
-            return .35f;
+            return 50f;
         }
         if(AbyssBlocks.PLAGUE_WART.containsBlock(crux)){
-            return .3f;
+            return 40f;
         }
         return null;
     }
