@@ -33,6 +33,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -239,7 +240,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         );
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockExplode(BlockExplodeEvent event) {
         if(!event.getBlock().getLocation().getWorld().equals(world)) return;
         float yield = event.getYield();
@@ -261,7 +262,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityExplode(EntityExplodeEvent event) {
         if(!event.getLocation().getWorld().equals(world)) return;
         float yield = event.getYield();
