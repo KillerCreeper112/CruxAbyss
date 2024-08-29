@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.entity.mob.type;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
+import killercreepr.crux.loot.LootContext;
 import killercreepr.crux.loot.LootTable;
 import killercreepr.crux.loot.impl.SimpleLootContext;
 import killercreepr.crux.loot.impl.item.SimpleItemLootPool;
@@ -99,7 +100,7 @@ public class AbyssCrimsonEye extends SimpleAbyssMob {
             )
         );
         event.getDrops().addAll(
-            lootTable.populateLoot(SimpleLootContext.builder().build())
+            lootTable.populateLoot(LootContext.builder().build())
         );
     }
 

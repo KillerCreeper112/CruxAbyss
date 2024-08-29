@@ -26,11 +26,13 @@ public abstract class GrimPopulator extends BlockPopulator {
     @Override
     public void populate(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion){
         populateBeforeFunctions(worldInfo, random, chunkX, chunkZ, limitedRegion);
+        int minHeight = getMinHeight(worldInfo);
+        int maxHeight = getMaxHeight(worldInfo);
         for(int x = 0; x < 16; x++){
             for(int z = 0; z < 16; z++){
                 int xx = x + (chunkX * 16);
                 int zz = z + (chunkZ * 16);
-                for(int y = worldInfo.getMinHeight(); y < worldInfo.getMaxHeight() ; y++){
+                for(int y = minHeight; y < maxHeight ; y++){
                     populateXYZ(worldInfo, random, chunkX, chunkZ, limitedRegion, xx, y, zz);
                     boolean noFunction = true;
                     CruxPosition pos = CruxPosition.block(xx, y, zz);
@@ -46,6 +48,14 @@ public abstract class GrimPopulator extends BlockPopulator {
                 }
             }
         }
+    }
+
+    public int getMinHeight(@NotNull WorldInfo info){
+        return info.getMinHeight();
+    }
+
+    public int getMaxHeight(@NotNull WorldInfo info){
+        return info.getMaxHeight();
     }
 
     /*public void place(@NotNull Structure structure, @NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, @NotNull Location corner){

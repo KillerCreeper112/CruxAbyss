@@ -19,6 +19,7 @@ import killercreepr.cruxstructures.registries.StructureRegistries;
 import killercreepr.cruxworlds.world.CruxWorld;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
+import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawner;
 import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawner;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
@@ -45,6 +46,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Random;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
@@ -70,12 +72,13 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     protected final NaturalEntitySpawnManager entitySpawnManager;
-    public AbyssWorld(@NotNull World world) {
-        this(world, new Random(world.getSeed()));
+
+    public AbyssWorld(@NotNull World world, @NotNull Collection<CruxWorldModuleCreator> modules) {
+        this(world, new Random(world.getSeed()), modules);
     }
 
-    public AbyssWorld(@NotNull World world, @NotNull Random random) {
-        super(world, random);
+    public AbyssWorld(@NotNull World world, @NotNull Random random, @NotNull Collection<CruxWorldModuleCreator> modules) {
+        super(world, random, modules);
         entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner());
     }
 

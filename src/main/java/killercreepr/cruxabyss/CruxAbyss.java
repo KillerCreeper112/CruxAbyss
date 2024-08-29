@@ -16,6 +16,7 @@ import killercreepr.cruxabyss.structure.StoredTestStructure;
 import killercreepr.cruxabyss.structure.TestStructure;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
+import killercreepr.cruxabyss.world.abyss.module.AbyssSeepModule;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
@@ -25,7 +26,10 @@ import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
+import killercreepr.cruxworlds.world.CruxWorld;
+import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
+import killercreepr.cruxworlds.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -87,6 +91,12 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         });
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
+        worldManager.getModuleCreatorRegistry().register("world_abyss", new CruxWorldModuleCreator() {
+            @Override
+            public @NotNull WorldModule create(@NotNull CruxWorld cruxWorld) {
+                return new AbyssSeepModule(cruxWorld);
+            }
+        });
     }
 
     @Override
