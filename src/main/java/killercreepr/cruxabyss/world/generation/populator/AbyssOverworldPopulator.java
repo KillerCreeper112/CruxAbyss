@@ -1,23 +1,23 @@
 package killercreepr.cruxabyss.world.generation.populator;
 
-import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
+import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxgeneration.util.CruxNoise;
-import org.bukkit.Material;
+import org.apache.logging.log4j.util.TriConsumer;
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
-import java.util.logging.Level;
 
 public class AbyssOverworldPopulator extends GrimPopulator{
     protected final CruxNoise seep = CruxNoise.fast()
-        .frequency(0.05f)
+        .frequency(.02f)
         .noiseType(CruxNoise.NoiseType.OpenSimplex2)
         .fractalType(CruxNoise.FractalType.FBm)
-        .fractalOctaves(5)
+        .fractalOctaves(2)
         ;
     public void populate(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion){
         float s = seep.noise(chunkX, chunkZ);
@@ -51,8 +51,26 @@ public class AbyssOverworldPopulator extends GrimPopulator{
     }
 
     public void spawnAbyssSeep(@NotNull WorldInfo worldInfo, @NotNull Random random, int x, int y, int z, @NotNull LimitedRegion region){
-        region.setType(x, y, z, Material.EMERALD_BLOCK);
-        Crux.log(Level.WARNING, "Spawned seep at " + x + ", " + y + ", z");
+        cluster(
+            CruxMath.random(6, 16), CruxMath.random(3, 6),
+            CruxMath.random(2, 4), x, y, z,
+            (xx, yy, zz) ->{
+                AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
+                    region, xx, yy, zz
+                );
+            }
+        );
+        Bukkit.broadcastMessage("Spawned seep at " + x + " " + y + " " + z);
+    }
+
+    public void cluster(int amount, int range, int yRange, int x, int y, int z, @NotNull TriConsumer<Integer, Integer, Integer> consumer){
+        while(amount > 0){
+            amount--;
+            int xx = x + CruxMath.random(-range, range);
+            int yy = y + CruxMath.random(-yRange, yRange);
+            int zz = z + CruxMath.random(-range, range);
+            consumer.accept(xx, yy, zz);
+        }
     }
 
     @Override

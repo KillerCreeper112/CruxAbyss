@@ -2,6 +2,7 @@ package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.plugin.CruxPlugin;
+import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
@@ -10,15 +11,13 @@ import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.listener.AbyssWoodFunctionListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
 import killercreepr.cruxabyss.registries.AbyssRegistries;
-import killercreepr.cruxabyss.structure.AbyssOutpost;
-import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
-import killercreepr.cruxabyss.structure.StoredTestStructure;
-import killercreepr.cruxabyss.structure.TestStructure;
+import killercreepr.cruxabyss.structure.*;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxabyss.world.abyss.module.AbyssSeepModule;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -70,14 +69,15 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                                                         @NotNull CfgFAWEStructure base,
                                                         @Nullable CfgFAWEStructure current) {
                     if(!(e instanceof FileObject o) || current == null) return current;
-                    String type = ctx.getRegistry().deserializeFromFile(String.class, o.get("type"));
+                    FileRegistry registry = ctx.getRegistry();
+                    String type = registry.deserializeFromFile(String.class, o.get("type"));
                     if(type==null) return current;
                     switch (type.toLowerCase()){
                         case "test" ->{
-                            return new TestStructure(current.key(), current.getHolder(), current.isPersistent());
+                            return new TestStructure(current.key(), current.getHolder(), current.isPersistent(), current.getModules());
                         }
                         case "abyss_outpost" ->{
-                            return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent());
+                            return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent(), current.getModules());
                         }
                     }
                     return current;
@@ -91,7 +91,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         });
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
-        worldManager.getModuleCreatorRegistry().register("world_abyss", new CruxWorldModuleCreator() {
+        worldManager.getModuleCreatorRegistry().register("world", new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld cruxWorld) {
                 return new AbyssSeepModule(cruxWorld);

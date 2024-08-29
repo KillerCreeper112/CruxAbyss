@@ -4,6 +4,7 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import killercreepr.crux.data.StoredChunk;
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
+import killercreepr.cruxstructures.structure.module.StructureModule;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -11,18 +12,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collection;
 
 public class AbyssOutpost extends CfgStoredBlocksStructure {
-    public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent) {
-        super(key, holder, persistent);
+    public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @NotNull Collection<StructureModule> modules) {
+        super(key, holder, persistent, modules);
     }
 
-    public AbyssOutpost(@NotNull Key key, @NotNull String filename, boolean persistent) {
-        super(key, filename, persistent);
+    public AbyssOutpost(@NotNull Key key, @NotNull String filename, boolean persistent, @NotNull Collection<StructureModule> modules) {
+        super(key, filename, persistent, modules);
     }
 
-    public AbyssOutpost(@NotNull Key key, @NotNull File schematicFile, boolean persistent) {
-        super(key, schematicFile, persistent);
+    public AbyssOutpost(@NotNull Key key, @NotNull File schematicFile, boolean persistent, @NotNull Collection<StructureModule> modules) {
+        super(key, schematicFile, persistent, modules);
     }
 
     @Override
