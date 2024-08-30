@@ -2,7 +2,6 @@ package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
@@ -23,16 +22,12 @@ import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxstructures.event.StructurePlaceEvent;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxworlds.world.CruxWorld;
 import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -117,12 +112,6 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         }, 60L);
         super.enabled();
         StandardAbyssGroups.register(AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onStructurePlace(StructurePlaceEvent event) {
-        Location l = event.getLocation();
-        Bukkit.broadcast(Component.text("[CruxAbyss] Structure spawned " + l.getX() + ", " + l.getY() + ", " + l.getZ()));
     }
 
     public AbyssWorld game;
