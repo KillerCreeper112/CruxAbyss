@@ -1,14 +1,11 @@
 package killercreepr.cruxabyss.block;
 
-import io.papermc.paper.registry.RegistryAccess;
 import killercreepr.crux.Crux;
 import killercreepr.cruxblocks.block.GenericBlock;
 import killercreepr.cruxblocks.block.context.BlockContext;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
 import killercreepr.cruxblocks.block.group.SingularBlockGroup;
-import killercreepr.cruxblocks.block.standard.BushBlock;
-import killercreepr.cruxblocks.block.standard.BushType;
 import killercreepr.cruxblocks.block.standard.group.BushBlockGroup;
 import killercreepr.cruxblocks.block.texture.WireTextureData;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
@@ -92,7 +89,7 @@ public class AbyssBlocks {
         }
     });
 
-    public static final BushBlockGroup PLAGUE_FLOWER = CruxBlocksRegistries.BLOCKS.registerGroup(new BushBlockGroup(
+    public static final BushBlockGroup PLAGUE_ROOTS = (BushBlockGroup) CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_roots"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new BushBlockGroup(
         Crux.key("plague_flower"),
         new BushBlock(Crux.key("plague_flower_bottom"),
             new WireTextureData.Builder().faces(Set.of(BlockFace.NORTH, BlockFace.SOUTH)).build(),
@@ -108,6 +105,6 @@ public class AbyssBlocks {
         public float getHardness() {
             return 0;
         }
-    });
+    });*/
     public static final CruxBlockGroup PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE =  CruxBlocksRegistries.BLOCKS.getGroup(Crux.key("plague_stone_red_abyss_crystal_ore"));
 }

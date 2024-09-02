@@ -95,6 +95,7 @@ public abstract class GrimPopulator extends BlockPopulator {
             function.accept(worldInfo, random, limitedRegion);
             return;
         }
+        if(position.y() < worldInfo.getMinHeight() || position.y() > worldInfo.getMaxHeight()) return;
         /*int chunkX = floor(position.getBlockX()) >> 4;
         int chunkZ = floor(position.getBlockZ()) >> 4;*/
         addFunction(position, function);
