@@ -31,15 +31,34 @@ public class ToxicMireBiome extends GrimBiome {
         .fractalOctaves(5)
         ;
 
+    private final CruxNoise grasslandsNoise = CruxNoise.fast()
+        .frequency(0.01f)  // Low frequency for large-scale features
+        .noiseType(CruxNoise.NoiseType.Perlin)  // Use Perlin noise
+        .fractalType(CruxNoise.FractalType.FBm)  // FBM for smooth transitions
+        .fractalOctaves(6)  // Number of octaves for detail
+        .fractalLacunarity(2.0f)  // Adjust roughness
+        .fractalGain(0.5f);  // Strength of features
+    private final float grasslandsThreshold = 0.2f;  // High threshold for rarity
+    public final ToxicGrasslandsBiome grasslandsBiome;
+
+    public final ToxicMireTreePopulator treePopulator = new ToxicMireTreePopulator();
+
     public ToxicMireBiome(@NotNull GrimPopulator master) {
         super(master);
+        grasslandsBiome = new ToxicGrasslandsBiome(master);
     }
 
     public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
         setBiome(BiomeManager.TOXIC_MIRE, limitedRegion, x,y,z);
     }
 
-    public final ToxicMireTreePopulator treePopulator = new ToxicMireTreePopulator();
+    public boolean isValidGrasslands(@NotNull LimitedRegion limitedRegion, int x, int y, int z){
+        for(int i = 1; i <= 6; i++){
+            if(!limitedRegion.isInRegion(x, y+i, z)) return false;
+            if(!limitedRegion.getType(x, y+i, z).isEmpty()) return false;
+        }
+        return true;
+    }
 
     @Override
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
@@ -76,7 +95,7 @@ public class ToxicMireBiome extends GrimBiome {
         }
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         if(!b.isSolid()){
-            decorationLogic(worldInfo, random, limitedRegion, x, y, z);
+            decorationLogic(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);
             return;
         }
 
@@ -101,11 +120,18 @@ public class ToxicMireBiome extends GrimBiome {
         }
     }
 
-    private void decorationLogic(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
+
+    private void decorationLogic(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
+        if(grasslandsNoise.noise(x, y, z) > grasslandsThreshold){
+            grasslandsBiome.accept(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);
+            return;
+        }
+
         if(CruxMath.testChance(1)){
-            if(CruxMath.testChance(1)){
+            flowerLogic(limitedRegion, x, y, z);
+            /*if(CruxMath.testChance(1)){
                 rootsPatch(worldInfo, random, limitedRegion, x, y, z, CruxMath.random(3, 6));
-            }else flowerLogic(limitedRegion, x, y, z);
+            }else flowerLogic(limitedRegion, x, y, z);*/
         }
     }
 

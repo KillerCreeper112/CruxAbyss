@@ -25,6 +25,7 @@ public class BiomeManager {
     public static Holder<Biome> CHARRED_WASTES;
     public static Holder<Biome> CORRUPT;
     public static Holder<Biome> ELDRITCH_WASTES;
+    public static Holder<Biome> TOXIC_GRASSLANDS;
     public static void register(){
         WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer().registryAccess().registryOrThrow(Registries.BIOME);
 
@@ -141,6 +142,33 @@ public class BiomeManager {
         registrywritable.createIntrusiveHolder(biome);
         ELDRITCH_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "eldritch_wastes")),
+            biome, RegistrationInfo.BUILT_IN);
+
+        biome = new Biome.BiomeBuilder()
+            .specialEffects(new BiomeSpecialEffects.Builder()
+                .fogColor(0x3BD545)
+                .foliageColorOverride(0x3BD545)
+                .skyColor(0x3BD545)
+                .waterColor(0x3BD545)
+                .waterFogColor(0x3BD545)
+                .grassColorOverride(0x3BD545)
+                .ambientParticle(new AmbientParticleSettings(
+                    new ParticleOptions() {
+                        @Override
+                        public @NotNull ParticleType<?> getType() {
+                            return ParticleTypes.WHITE_ASH;
+                        }
+                    }, .03f
+                ))
+                .build())
+            .downfall(.15f)
+            .temperature(0f)
+            .mobSpawnSettings(plains == null ? MobSpawnSettings.EMPTY : plains.getMobSettings())
+            .generationSettings(BiomeGenerationSettings.EMPTY)
+            .build();
+        registrywritable.createIntrusiveHolder(biome);
+        TOXIC_GRASSLANDS = registrywritable.register(ResourceKey.create(Registries.BIOME,
+                ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "toxic_grasslands")),
             biome, RegistrationInfo.BUILT_IN);
 
         try {

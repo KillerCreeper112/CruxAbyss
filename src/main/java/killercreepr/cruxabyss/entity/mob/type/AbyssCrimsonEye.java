@@ -5,7 +5,6 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.loot.LootContext;
 import killercreepr.crux.loot.LootTable;
-import killercreepr.crux.loot.impl.SimpleLootContext;
 import killercreepr.crux.loot.impl.item.SimpleItemLootPool;
 import killercreepr.crux.loot.impl.item.SimpleItemLootTable;
 import killercreepr.crux.loot.impl.item.functions.ItemEnchantFunction;
