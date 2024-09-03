@@ -38,7 +38,7 @@ public class ToxicMireBiome extends GrimBiome {
         .fractalOctaves(6)  // Number of octaves for detail
         .fractalLacunarity(2.0f)  // Adjust roughness
         .fractalGain(0.5f);  // Strength of features
-    private final float grasslandsThreshold = 0.2f;  // High threshold for rarity
+    private final float grasslandsThreshold = 0.35f;  // High threshold for rarity
     public final ToxicGrasslandsBiome grasslandsBiome;
 
     public final ToxicMireTreePopulator treePopulator = new ToxicMireTreePopulator();
