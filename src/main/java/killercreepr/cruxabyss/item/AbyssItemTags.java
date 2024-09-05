@@ -1,15 +1,10 @@
 package killercreepr.cruxabyss.item;
 
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.ItemTag;
-import killercreepr.crux.SimpleItemTypeTag;
+import killercreepr.crux.registries.CruxRegistries;
 
 public class AbyssItemTags {
-    public static final ItemTag ABYSS_GEMS = new SimpleItemTypeTag.Builder()
-        .add(
-            AbyssItems.GREEN_ABYSS_CRYSTAL.key(),
-            AbyssItems.RED_ABYSS_CRYSTAL.key(),
-            AbyssItems.BLUE_ABYSS_CRYSTAL.key()
-        )
-        .build();
+    public static final ItemTag ABYSS_GEMS = CruxRegistries.ITEM_TAG.get(Crux.key("abyss_gems"));
 }
