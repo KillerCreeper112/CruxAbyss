@@ -12,18 +12,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
 
 public class AbyssOutpost extends CfgStoredBlocksStructure {
-    public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @NotNull Collection<StructureModule> modules) {
+    public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @NotNull List<StructureModule> modules) {
         super(key, holder, persistent, modules);
     }
 
-    public AbyssOutpost(@NotNull Key key, @NotNull String filename, boolean persistent, @NotNull Collection<StructureModule> modules) {
+    public AbyssOutpost(@NotNull Key key, @NotNull String filename, boolean persistent, @NotNull List<StructureModule> modules) {
         super(key, filename, persistent, modules);
     }
 
-    public AbyssOutpost(@NotNull Key key, @NotNull File schematicFile, boolean persistent, @NotNull Collection<StructureModule> modules) {
+    public AbyssOutpost(@NotNull Key key, @NotNull File schematicFile, boolean persistent, @NotNull List<StructureModule> modules) {
         super(key, schematicFile, persistent, modules);
     }
 
