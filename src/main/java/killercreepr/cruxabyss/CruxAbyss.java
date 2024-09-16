@@ -68,10 +68,10 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                     if(type==null) return current;
                     switch (type.toLowerCase()){
                         case "test" ->{
-                            return new TestStructure(current.key(), current.getHolder(), current.isPersistent(), current.getModules());
+                            return new TestStructure(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
                         }
                         case "abyss_outpost" ->{
-                            return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent(), current.getModules());
+                            return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
                         }
                     }
                     return current;

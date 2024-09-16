@@ -15,7 +15,6 @@ import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
-import killercreepr.cruxstructures.registries.StructureRegistries;
 import killercreepr.cruxworlds.world.CruxWorld;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
@@ -39,7 +38,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -224,23 +222,6 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     public int getDaysPassed() {
         return daysPassed;
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onChunkPopulate(ChunkPopulateEvent event) {
-        Chunk chunk = event.getChunk();
-        if(!CruxMath.testChance(.3f)) return;
-
-        int chunkMovedX = chunk.getX() << 4;
-        int chunkMovedZ = chunk.getZ() << 4;
-
-        int x = chunkMovedX + CruxMath.random(0, 15);
-        int z = chunkMovedZ + CruxMath.random(0, 15);
-
-        Block b = chunk.getWorld().getHighestBlockAt(x, z);
-        StructureRegistries.STRUCTURES.get(Crux.key("abyss_outpost")).place(
-            b.getLocation()
-        );
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

@@ -15,16 +15,16 @@ import java.io.File;
 import java.util.List;
 
 public class TestStructure extends CfgStoredBlocksStructure {
-    public TestStructure(@NotNull Key key, @NotNull File schematicFile, boolean persistent, @NotNull List<StructureModule> modules) {
-        super(key, schematicFile, persistent, modules);
+    public TestStructure(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules) {
+        super(key, holder, persistent, beforePlacementModules, modules);
     }
 
-    public TestStructure(@NotNull Key key, @NotNull String filename, boolean persistent, @NotNull List<StructureModule> modules) {
-        super(key, filename, persistent, modules);
+    public TestStructure(@NotNull Key key, @NotNull String filename, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules) {
+        super(key, filename, persistent, beforePlacementModules, modules);
     }
 
-    public TestStructure(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @NotNull List<StructureModule> modules) {
-        super(key, holder, persistent, modules);
+    public TestStructure(@NotNull Key key, @NotNull File schematicFile, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules) {
+        super(key, schematicFile, persistent, beforePlacementModules, modules);
     }
 
     @Override

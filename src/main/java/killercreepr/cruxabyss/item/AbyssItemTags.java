@@ -1,8 +1,7 @@
 package killercreepr.cruxabyss.item;
 
-
 import killercreepr.crux.Crux;
-import killercreepr.crux.ItemTag;
+import killercreepr.crux.data.tag.item.ItemTag;
 import killercreepr.crux.registries.CruxRegistries;
 
 public class AbyssItemTags {
