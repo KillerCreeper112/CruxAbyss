@@ -12,7 +12,7 @@ import killercreepr.cruxabyss.registries.AbyssRegistries;
 import killercreepr.cruxabyss.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
-import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
+import killercreepr.cruxblocks.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxworlds.world.CruxWorld;
@@ -241,7 +241,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling ->{
                 falling.setBlockData(b.getBlockData());
                 falling.setVelocity(dir);
-                if(CruxBlocksRegistries.BLOCKS.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
+                if(CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
             });
         }
     }
@@ -264,7 +264,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling ->{
                 falling.setBlockData(b.getBlockData());
                 falling.setVelocity(dir);
-                if(CruxBlocksRegistries.BLOCKS.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
+                if(CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
             });
         }
     }

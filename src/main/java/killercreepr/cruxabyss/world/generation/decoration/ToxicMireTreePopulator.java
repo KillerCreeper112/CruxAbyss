@@ -5,6 +5,7 @@ import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxblocks.block.component.CruxBlockComponents;
 import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.generator.LimitedRegion;
@@ -22,7 +23,8 @@ public class ToxicMireTreePopulator extends GrimPopulator {
             ChunkFunction function = new ChunkFunction() {
                 @Override
                 public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion) {
-                    AbyssBlocks.PLAGUE_STEM.getBlock(Axis.Y).setBlock(region, rel.getBlockX(), rel.getBlockY(), rel.getBlockZ());
+                    AbyssBlocks.PLAGUE_STEM.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Y)
+                        .setBlock(region, rel.getBlockX(), rel.getBlockY(), rel.getBlockZ());
                     //limitedRegion.setType(rel.getBlockX(), rel.getBlockY(), rel.getBlockZ(), Material.STONE);
                 }
             };
@@ -40,12 +42,12 @@ public class ToxicMireTreePopulator extends GrimPopulator {
 
     public CruxBlock fromDirection(int xDir, int zDir){
         if(xDir == 1 || xDir == -1){
-            return AbyssBlocks.PLAGUE_STEM.getBlock(Axis.X);
+            return AbyssBlocks.PLAGUE_STEM.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.X);
         }
         if(zDir == 1 || zDir == -1){
-            return AbyssBlocks.PLAGUE_STEM.getBlock(Axis.Z);
+            return AbyssBlocks.PLAGUE_STEM.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Z);
         }
-        return AbyssBlocks.PLAGUE_STEM.getBlock(Axis.Y);
+        return AbyssBlocks.PLAGUE_STEM.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Y);
     }
 
     public Location addDirection(Location l, int xDir, int zDir, int amount){

@@ -8,9 +8,11 @@ import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.decoration.ToxicMireTreePopulator;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.standard.BushType;
-import killercreepr.cruxblocks.block.standard.group.BushBlockGroup;
-import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
+import killercreepr.cruxblocks.block.component.BushGroup;
+import killercreepr.cruxblocks.block.component.BushType;
+import killercreepr.cruxblocks.block.component.CruxBlockComponents;
+import killercreepr.cruxblocks.block.group.CruxBlockGroup;
+import killercreepr.cruxblocks.registries.CruxBlocksRegistries;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -102,7 +104,7 @@ public class ToxicMireBiome extends GrimBiome {
         //float n = noise.GetNoise(x,y,z);
         switch (m){
             default ->{
-                if(CruxBlocksRegistries.BLOCKS.getByBlockData(limitedRegion.getBlockData(x, y, z)) != null) return;
+                if(CruxBlocksRegistries.BLOCK.getByBlockData(limitedRegion.getBlockData(x, y, z)) != null) return;
                 if(y >= 62 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
@@ -189,11 +191,12 @@ public class ToxicMireBiome extends GrimBiome {
         setFlower(limitedRegion, x, y, z, CruxMath.random(2, 4), AbyssBlocks.PLAGUE_ROOTS);
     }
 
-    private boolean setFlower(@NotNull LimitedRegion region, int x, int y, int z, int length, @NotNull BushBlockGroup bush){
+    private boolean setFlower(@NotNull LimitedRegion region, int x, int y, int z, int length, @NotNull CruxBlockGroup bushBlock){
         //make sure it's all in region first
         for(int i = 0; i < length; i++){
             if(!region.isInRegion(x, y + i, z)) return false;
         }
+        BushGroup bush = bushBlock.getComponents().get(CruxBlockComponents.BUSH_GROUP);
         for(int i = 0; i < length; i++){
             CruxBlock block;
             if(i == 0) block = bush.getBlock(BushType.BOTTOM);

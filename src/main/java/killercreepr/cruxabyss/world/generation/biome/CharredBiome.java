@@ -4,6 +4,7 @@ import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxblocks.block.component.CruxBlockComponents;
 import killercreepr.cruxgeneration.util.FastNoiseLite;
 import killercreepr.usurvive.block.USurviveBlocks;
 import org.bukkit.Axis;
@@ -19,9 +20,9 @@ import java.util.Random;
 public class CharredBiome extends GrimBiome {
     private final FastNoiseLite magma = new FastNoiseLite();
     private final FastNoiseLite noise = new FastNoiseLite();
-    private final CruxBlock CHARRED_LOG_X = USurviveBlocks.CHARRED_LOG.getBlock(Axis.X);
-    private final CruxBlock CHARRED_LOG_Y = USurviveBlocks.CHARRED_LOG.getBlock(Axis.Y);
-    private final CruxBlock CHARRED_LOG_Z = USurviveBlocks.CHARRED_LOG.getBlock(Axis.Z);
+    private final CruxBlock CHARRED_LOG_X = USurviveBlocks.CHARRED_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.X);
+    private final CruxBlock CHARRED_LOG_Y = USurviveBlocks.CHARRED_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Y);
+    private final CruxBlock CHARRED_LOG_Z = USurviveBlocks.CHARRED_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Z);
 
     public CharredBiome(@NotNull GrimPopulator master) {
         super(master);
