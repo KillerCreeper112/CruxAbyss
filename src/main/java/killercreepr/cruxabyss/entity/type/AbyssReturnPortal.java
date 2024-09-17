@@ -39,7 +39,6 @@ public class AbyssReturnPortal extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        //todo change model ID to new one
         new DesignEntity(m).getModel("abyss_altar_portal").ifPresent(model ->{
             Bukkit.getMobGoals().addGoal(m, 0, new AbyssReturnPortalGoal(m, model));
         });
@@ -48,14 +47,21 @@ public class AbyssReturnPortal extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Pig.class, e ->{
-            //todo look into spawn animation
-            new ModelEntity(e, "abyss_altar_portal")/*.playAnimation("open", 0D, 0D, 1D, true)*/; //todo change model ID to new one
+            ModelEntity model = new ModelEntity(e, "abyss_altar_portal");
+            model.playAnimation("spawn", true);
+            model.playAnimation("portal1_loop", true);
+            model.playAnimation("portal2_loop", true);
+            model.playAnimation("portal3_loop", true);
+            model.playAnimation("portal4_loop", true);
+            e.setGravity(false);
+            e.setInvulnerable(true);
             if(e instanceof Mob mob){
                 mob.setSilent(true);
                 mob.setCollidable(false);
                 mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
             }
             if(consumer != null) consumer.accept(e);
+            load(e);
         });
     }
 }

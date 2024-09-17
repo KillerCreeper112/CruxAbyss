@@ -39,7 +39,14 @@ public class AbyssAltarPortal extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Pig.class, e ->{
-            new ModelEntity(e, key().value());
+            ModelEntity model = new ModelEntity(e, key().value());
+            model.playAnimation("spawn", true);
+            model.playAnimation("portal1_loop", true);
+            model.playAnimation("portal2_loop", true);
+            model.playAnimation("portal3_loop", true);
+            model.playAnimation("portal4_loop", true);
+            e.setGravity(false);
+            e.setInvulnerable(true);
             if(e instanceof Mob mob){
                 mob.setSilent(true);
                 mob.setCollidable(false);
@@ -47,6 +54,7 @@ public class AbyssAltarPortal extends SimpleCruxMob {
             }
             //model.getAnimationHandler().playAnimation("open", 0D, 0D, 1D, true);
             if(consumer != null) consumer.accept(e);
+            load(e);
         });
     }
 }

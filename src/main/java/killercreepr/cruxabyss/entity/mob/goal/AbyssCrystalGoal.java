@@ -6,7 +6,6 @@ import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
@@ -96,9 +95,9 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
         if(altar==null) return;
 
         BlockFace direction = altar.getDirection();
-        Location portalSpawn = altar.getCenter().getLocation();
+        Location portalSpawn = altar.getCenter().getLocation().toCenterLocation();
         portalSpawn.setDirection(direction.getDirection());
-        CruxLoc.relative(portalSpawn, 0D, 0D, 2D);
+        portalSpawn.add(0, 1, 0);
 
         AbyssMob.ALTAR_PORTAL.spawn(portalSpawn);
     }
