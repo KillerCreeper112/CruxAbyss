@@ -8,7 +8,6 @@ import killercreepr.crux.persistence.CruxPersistence;
 import killercreepr.crux.util.*;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Mob;
@@ -97,13 +96,11 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
         lifeSpan--;
         if(lifeSpan < 0){
             mob.damage(999999D);
-            Bukkit.broadcastMessage("UR PROBLEM NOW. BYE");
             return;
         }
         mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
             mob.damage(999999D);
             Player p = (Player) e;
-            p.sendMessage("get scared kid");
             p.teleport(returnTo);
         });
     }

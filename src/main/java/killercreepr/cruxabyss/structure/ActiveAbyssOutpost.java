@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.structure;
 
-import org.bukkit.Bukkit;
+import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
 import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
 
-public class ActiveAbyssOutpost extends ActiveTestStructure {
+public class ActiveAbyssOutpost extends SimpleActiveStructure {
     protected final @NotNull StoredAbyssOutpost data;
     public ActiveAbyssOutpost(@NotNull StoredAbyssOutpost data, @NotNull Chunk chunk) {
         super(data, chunk);
@@ -14,13 +14,11 @@ public class ActiveAbyssOutpost extends ActiveTestStructure {
     @Override
     public void started() {
         super.started();
-        Bukkit.broadcastMessage("ABYSS OUTPOST STARTED");
     }
 
     @Override
     public void stopped() {
         super.stopped();
-        Bukkit.broadcastMessage("ABYSS OUTPOST STOPPED");
     }
 
     @Override

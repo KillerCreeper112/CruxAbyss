@@ -4,7 +4,6 @@ import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.apache.logging.log4j.util.TriConsumer;
-import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
@@ -60,7 +59,6 @@ public class AbyssOverworldPopulator extends GrimPopulator{
                 );
             }
         );
-        Bukkit.broadcastMessage("Spawned seep at " + x + " " + y + " " + z);
     }
 
     public void cluster(int amount, int range, int yRange, int x, int y, int z, @NotNull TriConsumer<Integer, Integer, Integer> consumer){

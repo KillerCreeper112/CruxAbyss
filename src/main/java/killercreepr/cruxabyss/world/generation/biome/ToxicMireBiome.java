@@ -14,7 +14,6 @@ import killercreepr.cruxblocks.block.component.CruxBlockComponents;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.registries.CruxBlocksRegistries;
 import killercreepr.cruxgeneration.util.CruxNoise;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -139,7 +138,6 @@ public class ToxicMireBiome extends GrimBiome {
 
     private void rootsPatch(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z, int size){
         if(!flowerLogic(limitedRegion, x, y, z)) return;
-        Bukkit.broadcastMessage("roots patch " + x + " " + y + " " + z);
 
         for(int xAddon = -size; xAddon <= size; xAddon++){
             for(int zAddon = -size; zAddon <= size; zAddon++){

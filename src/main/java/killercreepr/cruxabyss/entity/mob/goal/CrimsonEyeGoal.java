@@ -141,7 +141,7 @@ public class CrimsonEyeGoal extends CruxMobModeledGoal {
         }
         double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE);
         if(range <= 0D) return;
-        double distance = getDistance();
+        double distance = getDistanceFromTarget();
         if(distance <= (range*1.5)){//7
             strongAttack = 11; //animation time
             playAnimation("strong_attack", true);

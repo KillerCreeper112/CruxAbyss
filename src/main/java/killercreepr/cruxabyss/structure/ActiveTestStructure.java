@@ -1,12 +1,14 @@
 package killercreepr.cruxabyss.structure;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.Crux;
 import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Level;
 
 public class ActiveTestStructure extends SimpleActiveStructure {
     public ActiveTestStructure(@NotNull StoredStructure data, @NotNull Chunk chunk) {
@@ -25,12 +27,12 @@ public class ActiveTestStructure extends SimpleActiveStructure {
     @Override
     public void started() {
         super.started();
-        Bukkit.broadcastMessage("TEST STARTED");
+        Crux.log(Level.INFO, "TEST STARTED " + getCenter());
     }
 
     @Override
     public void stopped() {
         super.stopped();
-        Bukkit.broadcastMessage("TEST STOPPED");
+        Crux.log(Level.INFO, "TEST STARTED " + getCenter());
     }
 }
