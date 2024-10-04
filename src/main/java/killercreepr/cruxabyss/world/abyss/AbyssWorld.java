@@ -60,7 +60,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         if(world==null) return null;
 
         world.getWorldBorder().setCenter(0, 0);
-        world.getWorldBorder().setSize(1000D);
+        world.getWorldBorder().setSize(1024D);
 
         USurvivePersist.DIMENSION.set(world, "abyss");
 
