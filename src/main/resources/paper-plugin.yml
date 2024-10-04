@@ -18,3 +18,5 @@ dependencies:
       required: true
     ModelEngine:
       load: BEFORE
+    CruxTeleport:
+      load: BEFORE

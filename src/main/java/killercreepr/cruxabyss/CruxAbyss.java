@@ -3,6 +3,7 @@ package killercreepr.cruxabyss;
 import killercreepr.crux.Crux;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.block.AbyssBlocks;
+import killercreepr.cruxabyss.command.AbyssCommands;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.item.AbyssItems;
@@ -41,6 +42,7 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     @Override
     public void onLoad() {
         super.onLoad();
+        new AbyssCommands(this).register();
         CfgRegistries.JSON_REGISTRY.forEach(registry ->{
             registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
             registry.registerFileHandler(StoredTestStructure.class, new FileTestStructure());
