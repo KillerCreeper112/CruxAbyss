@@ -3,18 +3,19 @@ package killercreepr.cruxabyss.entity.goal;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.Crux;
 import killercreepr.crux.location.DynamicLocation;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.crux.util.GetNear;
-import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,16 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         this(CruxMobGoal.defaultKey(),mob, model);
     }
 
+    protected World world;
+    protected RandomWorldTP tp;
     public AbyssAltarPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
         super(key, mob, model);
+        attemptGetWorld();
+    }
+
+    public void attemptGetWorld(){
+        this.world = Crux.getServer().getWorld("world_abyss");
+        tp = world == null ? null : RandomWorldTP.tp(world);
     }
 
     protected int particle;
@@ -62,9 +71,15 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
     public void tick() {
         rotate();
         particleTick();
+
+        if(tp == null){
+            attemptGetWorld();
+        }
+        if(tp == null) return;
+
         mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
             Player p = (Player) e;
-            Location spawn =  RandomWorldTP.tp(CruxAbyss.inst().game.toBukkitWorld()).randomlyTeleport(p);
+            Location spawn = tp.randomlyTeleport(p);
             if(spawn==null) return;
             AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
             mob.damage(99999999D);
