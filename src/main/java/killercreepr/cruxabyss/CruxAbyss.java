@@ -28,10 +28,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,22 +99,8 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         AbyssBlocks.register();
         AbyssItems.register();
 
-        getServer().getScheduler().runTaskLater(this, task ->{
-            game = createNewGame();
-        }, 60L);
         super.enabled();
         StandardAbyssGroups.register(AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
-    }
-
-    public AbyssWorld game;
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        Player p = event.getPlayer();
-        p.teleport(game.toBukkitWorld().getSpawnLocation());
-    }
-
-    public @Nullable AbyssWorld createNewGame(){
-        return AbyssWorld.getOrCreate(this, "world_abyss");
     }
 
     @Override
