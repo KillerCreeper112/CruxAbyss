@@ -1,9 +1,12 @@
 package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
+import killercreepr.crux.component.TypedDataComponent;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.command.AbyssCommands;
+import killercreepr.cruxabyss.component.AbyssComponents;
+import killercreepr.cruxabyss.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.item.AbyssItems;
@@ -18,6 +21,10 @@ import killercreepr.cruxabyss.structure.TestStructure;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
+import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxblocks.block.component.CruxBlockComponent;
+import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
+import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
@@ -82,6 +89,16 @@ public class CruxAbyss extends CruxPlugin implements Listener {
                 }
             });
         });
+
+        BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers().register("abyss_conquest_node", new FileDataComponentType<AbyssConquestNode>() {
+            @Override
+            public @Nullable TypedDataComponent<AbyssConquestNode> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {
+                return TypedDataComponent.create(
+                    AbyssComponents.ABYSS_CONQUEST_NODE, new AbyssConquestNode()
+                );
+            }
+        });
+
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
     }

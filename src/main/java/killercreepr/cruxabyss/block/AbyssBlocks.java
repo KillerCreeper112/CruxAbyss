@@ -95,4 +95,5 @@ public class AbyssBlocks {
         }
     });*/
     public static final CruxBlockGroup PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stone_red_abyss_crystal_ore"));
+    public static final CruxBlockGroup ABYSS_CONQUEST_NODE =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("abyss_conquest_node"));
 }
