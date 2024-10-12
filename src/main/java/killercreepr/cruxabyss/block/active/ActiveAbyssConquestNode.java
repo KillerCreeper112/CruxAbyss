@@ -4,7 +4,6 @@ import killercreepr.cruxblocks.block.CruxBlock;
 import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
 import killercreepr.cruxblocks.block.active.ActiveCruxInteractable;
 import killercreepr.cruxblocks.block.active.ActiveCruxTickedBlock;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -18,7 +17,6 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
 
     @Override
     public void tick() {
-        Bukkit.broadcastMessage("conquest ticked");
     }
 
     @NotNull

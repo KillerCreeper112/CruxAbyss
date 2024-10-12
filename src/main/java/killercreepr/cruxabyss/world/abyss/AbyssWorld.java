@@ -19,8 +19,9 @@ import killercreepr.cruxworlds.world.CruxWorld;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
 import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
-import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawner;
-import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawner;
+import killercreepr.cruxworlds.world.entity.NaturalEntitySpawner;
+import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntitySpawner;
+import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntityWorldSpawner;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.persistence.USurvivePersist;
@@ -84,8 +85,8 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     protected float difficulty = 1f;
     protected int daysPassed = 0;
 
-    public NaturalEntitySpawner createEntitySpawner(){
-        return new SimpleNaturalEntitySpawner(CruxAbyss.inst(), random,
+    public SimpleNaturalEntityWorldSpawner createEntitySpawner(){
+        return new SimpleNaturalEntityWorldSpawner(CruxAbyss.inst(), random,
             AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP,
             500, 34, 10);
     }
