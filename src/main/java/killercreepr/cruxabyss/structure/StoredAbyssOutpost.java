@@ -11,7 +11,10 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class StoredAbyssOutpost extends SimpleStoredStructure {
+    public UUID owner;
     public StoredAbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation) {
         super(structure, chunk, center, rotation);
     }
@@ -24,5 +27,4 @@ public class StoredAbyssOutpost extends SimpleStoredStructure {
     public @Nullable ActiveStructure buildActive(@NotNull Chunk chunk) {
         return new ActiveAbyssOutpost(this, chunk);
     }
-
 }

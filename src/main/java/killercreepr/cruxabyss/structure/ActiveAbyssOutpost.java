@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.structure;
 
 import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
 import org.bukkit.Chunk;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class ActiveAbyssOutpost extends SimpleActiveStructure {
@@ -9,6 +10,14 @@ public class ActiveAbyssOutpost extends SimpleActiveStructure {
     public ActiveAbyssOutpost(@NotNull StoredAbyssOutpost data, @NotNull Chunk chunk) {
         super(data, chunk);
         this.data = data;
+    }
+
+    public void resetOwner(){
+        getData().owner = null;
+    }
+
+    public void capture(Player p){
+        getData().owner = p.getUniqueId();
     }
 
     @Override

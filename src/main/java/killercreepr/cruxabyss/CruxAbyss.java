@@ -21,8 +21,6 @@ import killercreepr.cruxabyss.structure.TestStructure;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.component.CruxBlockComponent;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
 import killercreepr.cruxconfig.config.common.FileContext;

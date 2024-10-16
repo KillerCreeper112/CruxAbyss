@@ -19,8 +19,6 @@ import killercreepr.cruxworlds.world.CruxWorld;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
 import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
-import killercreepr.cruxworlds.world.entity.NaturalEntitySpawner;
-import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntitySpawner;
 import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntityWorldSpawner;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
