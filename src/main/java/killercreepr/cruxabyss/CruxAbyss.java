@@ -2,14 +2,20 @@ package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.component.TypedDataComponent;
+import killercreepr.crux.data.communication.*;
+import killercreepr.crux.module.StandardModules;
 import killercreepr.crux.plugin.CruxPlugin;
+import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.command.AbyssCommands;
 import killercreepr.cruxabyss.component.AbyssComponents;
 import killercreepr.cruxabyss.component.impl.AbyssConquestNode;
+import killercreepr.cruxabyss.config.Config;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.item.AbyssItems;
+import killercreepr.cruxabyss.lang.Lang;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.listener.AbyssWoodFunctionListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
@@ -18,11 +24,14 @@ import killercreepr.cruxabyss.structure.AbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
 import killercreepr.cruxabyss.structure.StoredTestStructure;
 import killercreepr.cruxabyss.structure.TestStructure;
+import killercreepr.cruxabyss.values.DefaultValues;
+import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
+import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
@@ -37,10 +46,21 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CruxAbyss extends CruxPlugin implements Listener {
+public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     private static CruxAbyss instance;
     public static CruxAbyss inst(){ return instance; }
 
+    protected ValuesProvider values;
+
+    public ValuesProvider values() {
+        return values;
+    }
+
+    public void values(@NotNull ValuesProvider values) {
+        this.values = values;
+    }
+
+    protected LangProvider langProvider;
     @Override
     public void onLoad() {
         super.onLoad();
@@ -91,8 +111,16 @@ public class CruxAbyss extends CruxPlugin implements Listener {
         BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers().register("abyss_conquest_node", new FileDataComponentType<AbyssConquestNode>() {
             @Override
             public @Nullable TypedDataComponent<AbyssConquestNode> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {
+                FileRegistry reg = ctx.getRegistry();
+                NumberProvider requiredExp = reg.deserializeFromFile(NumberProvider.class, e.get("required_exp"));
+                if(requiredExp == null) requiredExp = NumberProvider.constant(100);
+                NumberProvider takeOverTime = reg.deserializeFromFile(NumberProvider.class, e.get("take_over_time"));
+                if(takeOverTime == null) takeOverTime = NumberProvider.constant(100);
+
+                CreateSound takeOverSound = reg.deserializeFromFile(CreateSound.class, e.get("take_over_sound"));
+
                 return TypedDataComponent.create(
-                    AbyssComponents.ABYSS_CONQUEST_NODE, new AbyssConquestNode()
+                    AbyssComponents.ABYSS_CONQUEST_NODE, new AbyssConquestNode(takeOverTime, requiredExp, takeOverSound)
                 );
             }
         });
@@ -104,6 +132,17 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     @Override
     public void enabled() {
         instance = this;
+        if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
+            values(new Config(this, "config"));
+        }else{
+            values(new DefaultValues());
+        }
+        if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
+            langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
+        }else{
+            langProvider = this;
+            LangPopulator.populate(lang, Msg.class);
+        }
         BiomeManager.register();
         registerListeners(
             this,
@@ -126,5 +165,13 @@ public class CruxAbyss extends CruxPlugin implements Listener {
     @Override
     public void reload() {
         super.reload();
+        values.reload(this);
+        langProvider.reload(this);
+    }
+
+    protected final CreateLang lang = Lang.setLang(new SimpleCreateLang());
+    @NotNull
+    public CreateLang lang() {
+        return lang;
     }
 }

@@ -2,37 +2,108 @@ package killercreepr.cruxabyss.block.active;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.communication.CreateSound;
+import killercreepr.crux.tags.container.TagContainer;
+import killercreepr.crux.tags.resolver.Tag;
+import killercreepr.crux.util.CruxColor;
+import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
+import killercreepr.cruxabyss.component.impl.AbyssConquestNode;
+import killercreepr.cruxabyss.lang.Lang;
 import killercreepr.cruxabyss.structure.ActiveAbyssOutpost;
 import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
 import killercreepr.cruxblocks.block.active.ActiveCruxInteractable;
 import killercreepr.cruxblocks.block.active.ActiveCruxTickedBlock;
-import killercreepr.cruxblocks.block.context.PlaceBlockContext;
+import killercreepr.cruxblocks.block.context.BlockContext;
+import killercreepr.cruxblocks.block.data.CustomBlockData;
 import killercreepr.cruxcore.CruxCore;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
 public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements ActiveCruxTickedBlock, ActiveCruxInteractable {
-    public ActiveAbyssConquestNode(@NotNull Block block, @NotNull CruxBlock cruxBlock) {
+    protected final int requiredExperience;
+    protected int storedExperience;
+    protected final AbyssConquestNode node;
+    public ActiveAbyssConquestNode(@NotNull Block block, @NotNull CruxBlock cruxBlock, AbyssConquestNode node) {
         super(block, cruxBlock);
+        this.requiredExperience = node.getRequiredExperience().value().intValue();
+        this.maxProgress = node.getRequiredExperience().value().intValue();
+        this.node = node;
+    }
+
+    @Override
+    public void stopped() {
+        if(!isValid()) return;
+        save();
+    }
+
+    @Override
+    public void started() {
+        ActiveCruxTickedBlock.super.started();
+        load();
+    }
+
+    public void load(){
+        CustomBlockData data = CustomBlockData.wrap(this.getBlock());
+        storedExperience = data.get("stored_experience", PersistentDataType.INTEGER, 0);
+    }
+
+    public void save(){
+        CustomBlockData data = CustomBlockData.wrap(this.getBlock());
+        data.set("stored_experience", PersistentDataType.INTEGER, storedExperience);
+    }
+
+    public int getRequiredExperience() {
+        return requiredExperience;
+    }
+
+    public Reference<Player> getUser() {
+        return user;
+    }
+
+    public long getLastInteract() {
+        return lastInteract;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public int getMaxProgress() {
+        return maxProgress;
+    }
+
+    public int getVisualTick() {
+        return visualTick;
+    }
+
+    public long getLastCheckedOutpost() {
+        return lastCheckedOutpost;
     }
 
     protected Reference<Player> user;
     protected long lastInteract;
     protected int progress = 0;
-    protected final int maxProgress = 100;
+    protected final int maxProgress;
+    protected int experienceGiven;
+    protected int expToTakeEachTick;
+    protected int cooldown;
+    protected int cooldownTick;
 
     public CruxBlock getUnpoweredBlock(){
         return cruxBlock.getGroup().getBlock(
@@ -56,44 +127,148 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         boolean powered = outpost().getData().owner != null;
         CruxBlock state = powered ? getPoweredBlock() : getUnpoweredBlock();
         if(state.getTextureData().compareTexture(block)) return;
-        state.placeBlock(PlaceBlockContext.context(block, null, BlockFace.DOWN));
+        CustomBlockData data = CustomBlockData.wrap(block);
+        PersistentDataContainer pdc = data.getData();
+        ActiveCruxBlock active = state.setBlock(BlockContext.context(block, null), true);
+        data.setData(pdc);
+        if(active instanceof ActiveAbyssConquestNode d){
+            d.load();
+        }
     }
 
     @Override
     public void tick() {
         visualTick();
+        if(cooldown > 0){
+            cooldownTick++;
+            if(cooldownTick >= cooldown){
+                cooldownTick = 0;
+                cooldown = 0;
+            }
+            return;
+        }
         if(user == null) return;
         if(outpost() == null){
+            giveBackExperience();
             reset();
             return;
         }
-        if(!CruxMath.hasOccurredWithin(lastInteract, 11)){
+        if(!CruxMath.hasOccurredWithin(lastInteract, 7)){
+            giveBackExperience();
             reset();
             return;
         }
         Player p = user.get();
-        if(p == null){
+        if(p == null || !p.isOnline() || !p.isValid()){
+            giveBackExperience();
             reset();
             return;
         }
-        if(p.getUniqueId().equals(outpost().getData().owner) && !p.isSneaking()){
+        boolean isOutpostOwner = p.getUniqueId().equals(outpost().getData().owner);
+        if(isOutpostOwner && !p.isSneaking()){
             return;
         }
         progress += 1;
         if(progress >= maxProgress){
-            reset();
-            if(p.getUniqueId().equals(outpost().getData().owner)){
-                outpost().resetOwner();
-            }else{
-                outpost().capture(p);
-            }
-            p.playSound(p, Sound.ENTITY_GENERIC_EXPLODE, 1f, 2f);
-            Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
-                update();
-            });
+            reachedMaxProgress(p, isOutpostOwner);
             return;
         }
-        p.sendActionBar(Component.text(progress + ""));
+        takeOverVisualParticlesTick(p, isOutpostOwner);
+        takeOverVisualTick(p, isOutpostOwner);
+    }
+
+    public void reachedMaxProgress(Player p, boolean isOutpostOwner){
+        cooldown = CruxMath.random(80, 100);
+        cooldownTick = 0;
+        Location center = block.getLocation().toCenterLocation();
+        Location spawn = CruxLoc.shiftToward(center, p.getEyeLocation(), .75);
+        if(isOutpostOwner){
+            outpost().resetOwner();
+            p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() + storedExperience);
+            storedExperience = 0;
+        }else{
+            outpost().capture(p);
+            storedExperience = experienceGiven;
+        }
+        save();
+        reset();
+        new ParticleBuilder(Particle.FLASH)
+            .location(spawn)
+            .spawn()
+
+            .particle(Particle.ELECTRIC_SPARK)
+            .count(15)
+            .offset(.9, .9, .9)
+            .extra(.6)
+            .spawn()
+        ;
+        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+            update();
+            if(isOutpostOwner){
+                block.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.4f);
+            }else{
+                block.getWorld().playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 2f, 1.4f);
+            }
+            block.getWorld().playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 1f, 2f);
+        });
+    }
+
+    public void takeOverVisualParticlesTick(Player p, boolean isOutpostOwner){
+        Location spawn = p.getLocation().add(0, p.getHeight()/2, 0);
+        Location blockCenter = block.getLocation().toCenterLocation();
+
+        Vector dir = blockCenter.toVector().subtract(spawn.toVector()).multiply(.1);
+        if(isOutpostOwner){
+            dir = dir.multiply(-1);
+            new ParticleBuilder(Particle.TRIAL_SPAWNER_DETECTION)
+                .count(0)
+                .extra(.8)
+                .offset(dir.getX(), dir.getY(), dir.getZ())
+                .location(CruxLoc.shiftToward(blockCenter, spawn, .52, 0, 0))
+                .spawn()
+            ;
+        }else{
+            if(experienceGiven < requiredExperience){
+                int cost = requiredExperience - experienceGiven;
+                if(p.calculateTotalExperiencePoints() < cost){
+                    giveBackExperience();
+                    reset();
+                    p.sendMessage("Not enough experience.");
+                    return;
+                }
+                p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() - expToTakeEachTick);
+                experienceGiven += expToTakeEachTick;
+            }
+            new ParticleBuilder(Particle.TRIAL_SPAWNER_DETECTION)
+                .count(0)
+                .extra(.8)
+                .offset(dir.getX(), dir.getY(), dir.getZ())
+                .location(p.getLocation().add(0, p.getHeight()/2, 0))
+                .spawn()
+            ;
+        }
+    }
+
+    protected int playSoundTick = 0;
+    public void takeOverVisualTick(Player p, boolean isOutpostOwner){
+        float progressF = ((float)progress/(float)maxProgress);
+        String progressColor = CruxColor.colorToHex(CruxColor.hsbToBukkitColor((progressF*100), 80f, 80f));
+        Lang.ABYSS_CONQUEST_NODE_TAKING.use(p, p, TagContainer.merged()
+            .add(Tag.parsed("progress", progressF + ""))
+            .add(Tag.parsed("progress_color", progressColor))
+        );
+        CreateSound s = node.getTakeOverSound();
+        if(s != null){
+            playSoundTick++;
+            if(playSoundTick % 5 == 0){
+                float pitch = isOutpostOwner ? (1f - progressF) : progressF;
+                CreateSound sound = CreateSound.sound(
+                    s.getSound().name(), s.getSound().source(), s.getSound().volume(), pitch
+                );
+                sound.playFor(p);
+                playSoundTick = 0;
+            }
+        }
     }
 
     protected int visualTick = 0;
@@ -103,12 +278,12 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         if(outpost().getData().owner == null){
             return;
         }
-        if(visualTick % 10 != 0) return;
+        if(visualTick % 15 != 0) return;
         visualTick = 0;
-        new ParticleBuilder(Particle.WITCH)
-            .offset(.7, .7, .7)
+        new ParticleBuilder(Particle.WAX_ON)
+            .offset(.5, .5, .5)
             .extra(.1)
-            .count(CruxMath.random(10, 20))
+            .count(CruxMath.random(6, 10))
             .location(block.getLocation().toCenterLocation())
             .spawn()
         ;
@@ -118,6 +293,16 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         user = null;
         lastInteract = 0L;
         progress = 0;
+        experienceGiven = 0;
+        expToTakeEachTick = 0;
+    }
+
+    public void giveBackExperience(){
+        if(user == null || experienceGiven < 1) return;
+        Player p = user.get();
+        if(p == null) return;
+        p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() + experienceGiven);
+        experienceGiven = 0;
     }
 
     public boolean hasValidUser(){
@@ -140,25 +325,30 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         if(!event.getAction().isRightClick()) return Event.Result.DENY;
         if(outpost() == null) return Event.Result.DENY;
         Player p = event.getPlayer();
+        if(cooldown > 0){
+            if(cooldownTick < 15){
+                return Event.Result.DENY;
+            }
+            CreateSound.sound(Sound.BLOCK_CHEST_LOCKED, 1.5f).playFor(p);
+            return Event.Result.DENY;
+        }
         if(hasValidUser()){
             Player user = this.user.get();
             if(user != null){
                 if(!p.equals(user) && !user.getUniqueId().equals(outpost().getData().owner)){
-                    p.sendMessage("nono");
                     return Event.Result.DENY;
                 }
             }
         }
-        if(user == null){
+        if(user == null || !p.equals(user.get())){
             reset();
-
             outpost();
             if(outpost == null){
                 p.sendMessage("Block must be placed in an abyss outpost.");
                 return Event.Result.DENY;
             }
-
             user = new WeakReference<>(p);
+            expToTakeEachTick = (int) Math.ceil((float) requiredExperience / (float) maxProgress);
         }
         lastInteract = System.currentTimeMillis();
         return Event.Result.DEFAULT;
