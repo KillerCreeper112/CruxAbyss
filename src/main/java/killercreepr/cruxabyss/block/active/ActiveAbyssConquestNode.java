@@ -147,6 +147,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
     }
 
     protected ConquestFireworks visualFireworks;
+    protected ConquestMessenger messenger;
     @Override
     public void tick() {
         visualTick();
@@ -298,7 +299,11 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             }
             if(isDeactivating(p, isOutpostOwner)){
                 visualFireworks.deactivatingTick();
-            }else visualFireworks.takingOverTick();
+                messenger.deactivatingTick(progressF);
+            }else{
+                visualFireworks.takingOverTick();
+                messenger.takingOverTick(progressF);
+            }
         });
     }
 
@@ -366,6 +371,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             outpost = CruxCore.inst().structureManager().getFirstActiveAt(ActiveAbyssOutpost.class, block);
             lastCheckedOutpost = System.currentTimeMillis();
             visualFireworks = new ConquestFireworks(this, outpost);
+            messenger = new ConquestMessenger(this, outpost);
         }
         return outpost;
     }

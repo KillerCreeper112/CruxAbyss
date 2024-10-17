@@ -12,6 +12,11 @@ public class ActiveAbyssOutpost extends SimpleActiveStructure {
         this.data = data;
     }
 
+    @Override
+    public @NotNull AbyssOutpost getStructure() {
+        return (AbyssOutpost) this.getData().getParent();
+    }
+
     public void resetOwner(){
         getData().owner = null;
     }

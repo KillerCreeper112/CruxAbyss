@@ -67,6 +67,18 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ABYSS_CONQUEST_NODE_PLAYER_CAPTURING = create(
+        Communicator.builder()
+            .chat("<#F08A4F><player_name> is taking over an outpost at <block_x>, <block_z>!")
+            .build()
+    );
+
+    public static final Msg ABYSS_CONQUEST_NODE_PLAYER_DEACTIVATING = create(
+        Communicator.builder()
+            .chat("<#F0D941><player_name> is deactivating an outpost at <block_x>, <block_z>!")
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }
