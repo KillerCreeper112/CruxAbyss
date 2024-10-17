@@ -40,12 +40,16 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
     protected int storedExperience;
     protected final int deactivateTime;
     protected final AbyssConquestNode node;
-    public ActiveAbyssConquestNode(@NotNull Block block, @NotNull CruxBlock cruxBlock, AbyssConquestNode node, int deactivateTime) {
+    public ActiveAbyssConquestNode(@NotNull Block block, @NotNull CruxBlock cruxBlock, AbyssConquestNode node) {
         super(block, cruxBlock);
         this.requiredExperience = node.getRequiredExperience().value().intValue();
-        this.maxProgress = node.getRequiredExperience().value().intValue();
+        this.takeOverTime = node.getTakeOverTime().value().intValue();
+        this.deactivateTime = node.getDeactivateTime().value().intValue();
         this.node = node;
-        this.deactivateTime = deactivateTime;
+    }
+
+    public AbyssConquestNode getNode() {
+        return node;
     }
 
     @Override
@@ -86,8 +90,8 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         return progress;
     }
 
-    public int getMaxProgress() {
-        return maxProgress;
+    public int getTakeOverTime() {
+        return takeOverTime;
     }
 
     public int getVisualTick() {
@@ -101,7 +105,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
     protected Reference<Player> user;
     protected long lastInteract;
     protected int progress = 0;
-    protected final int maxProgress;
+    protected final int takeOverTime;
     protected int experienceGiven;
     protected int expToTakeEachTick;
     protected int cooldown = CruxMath.random(80, 100);
@@ -138,6 +142,11 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         }
     }
 
+    public int getMaxTime(Player p, boolean isOutpostOwner){
+        return (isDeactivating(p, isOutpostOwner) ? deactivateTime : takeOverTime);
+    }
+
+    protected ConquestFireworks visualFireworks;
     @Override
     public void tick() {
         visualTick();
@@ -170,11 +179,11 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         if(isOutpostOwner && !p.isSneaking()){
             return;
         }
-        progress += 1;
+        progress++;
         if(!takeOverLogicTick(p, isOutpostOwner)){
             return;
         }
-        if(progress >= (isDeactivating(p, isOutpostOwner) ? deactivateTime : maxProgress)){
+        if(progress >= getMaxTime(p, isOutpostOwner)){
             reachedMaxProgress(p, isOutpostOwner);
             return;
         }
@@ -194,8 +203,12 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             return false;
         }
         if(isOutpostOwner) return true;
-        p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() - expToTakeEachTick);
-        experienceGiven += expToTakeEachTick;
+        //may want to check if a player has already given the minimum exp amount.
+        //but for now, it's preferred to be like this
+        int totalExp = p.calculateTotalExperiencePoints();
+        int canTake = Math.min(totalExp, expToTakeEachTick);
+        p.setExperienceLevelAndProgress(Math.max(0, totalExp - canTake));
+        experienceGiven += canTake;
         return true;
     }
 
@@ -208,9 +221,11 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             outpost().resetOwner();
             p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() + storedExperience);
             storedExperience = 0;
+            Lang.ABYSS_CONQUEST_NODE_DEACTIVATE.use(p);
         }else{
             outpost().capture(p);
             storedExperience = experienceGiven;
+            Lang.ABYSS_CONQUEST_NODE_TAKE_OVER.use(p);
         }
         save();
         reset();
@@ -262,24 +277,29 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
 
     protected int playSoundTick = 0;
     public void takeOverVisualTick(Player p, boolean isOutpostOwner){
-        float progressF = ((float)progress/(float)maxProgress);
+        float progressF = ((float)progress/(float)getMaxTime(p, isOutpostOwner));
         String progressColor = CruxColor.colorToHex(CruxColor.hsbToBukkitColor((progressF*100), 80f, 80f));
         Lang.ABYSS_CONQUEST_NODE_TAKING.use(p, p, TagContainer.merged()
             .add(Tag.parsed("progress", progressF + ""))
             .add(Tag.parsed("progress_color", progressColor))
         );
-        CreateSound s = node.getTakeOverSound();
-        if(s != null){
-            playSoundTick++;
-            if(playSoundTick % 5 == 0){
-                float pitch = isOutpostOwner ? (1f - progressF) : progressF;
-                CreateSound sound = CreateSound.sound(
-                    s.getSound().name(), s.getSound().source(), s.getSound().volume(), pitch
-                );
-                sound.playFor(p);
-                playSoundTick = 0;
+        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+            CreateSound s = node.getTakeOverSound();
+            if(s != null){
+                playSoundTick++;
+                if(playSoundTick % 5 == 0){
+                    float pitch = isOutpostOwner ? (1f - progressF) : progressF;
+                    CreateSound sound = CreateSound.sound(
+                        s.getSound().name(), s.getSound().source(), s.getSound().volume(), pitch
+                    );
+                    sound.playAt(block.getLocation().toCenterLocation());
+                    playSoundTick = 0;
+                }
             }
-        }
+            if(isDeactivating(p, isOutpostOwner)){
+                visualFireworks.deactivatingTick();
+            }else visualFireworks.takingOverTick();
+        });
     }
 
     protected int visualTick = 0;
@@ -345,6 +365,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             if(CruxMath.hasOccurredWithin(lastCheckedOutpost, 20)) return outpost;
             outpost = CruxCore.inst().structureManager().getFirstActiveAt(ActiveAbyssOutpost.class, block);
             lastCheckedOutpost = System.currentTimeMillis();
+            visualFireworks = new ConquestFireworks(this, outpost);
         }
         return outpost;
     }
@@ -384,7 +405,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
                 return Event.Result.DENY;
             }
             user = new WeakReference<>(p);
-            expToTakeEachTick = (int) Math.ceil((float) requiredExperience / (float) maxProgress);
+            expToTakeEachTick = (int) Math.ceil((float) requiredExperience / (float) getMaxTime(p, p.getUniqueId().equals(outpost().getData().owner)));
         }
         lastInteract = System.currentTimeMillis();
         return Event.Result.DEFAULT;

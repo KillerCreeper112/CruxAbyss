@@ -25,6 +25,26 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ABYSS_CONQUEST_NODE_TAKE_OVER = create(
+        Communicator.builder()
+            .title(CreateTitle.title(
+                "",
+                "",
+                0, 2, 0
+            ))
+            .build()
+    );
+
+    public static final Msg ABYSS_CONQUEST_NODE_DEACTIVATE = create(
+        Communicator.builder()
+            .title(CreateTitle.title(
+                "",
+                "",
+                0, 2, 0
+            ))
+            .build()
+    );
+
     public static final Msg ABYSS_CONQUEST_NODE_SHIFT_INFO = create(
         Communicator.builder()
             .chat("<white>Want to take back your experience and forfeit ownership of the outpost? Hold shift right click.")

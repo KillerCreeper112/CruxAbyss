@@ -118,11 +118,19 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 if(takeOverTime == null) takeOverTime = NumberProvider.constant(100);
                 NumberProvider deactivateTime = reg.deserializeFromFile(NumberProvider.class, e.get("deactivate_time"));
                 if(deactivateTime == null) deactivateTime = NumberProvider.constant(100);
+                NumberProvider fireworksRange = reg.deserializeFromFile(NumberProvider.class, e.get("fireworks_range"));
+                if(fireworksRange == null) fireworksRange = NumberProvider.constant(40);
+                NumberProvider fireworksRangeY = reg.deserializeFromFile(NumberProvider.class, e.get("fireworks_range_y"));
+                if(fireworksRangeY == null) fireworksRangeY = NumberProvider.constant(2);
 
                 CreateSound takeOverSound = reg.deserializeFromFile(CreateSound.class, e.get("take_over_sound"));
 
                 return TypedDataComponent.create(
-                    AbyssComponents.ABYSS_CONQUEST_NODE, new AbyssConquestNode(takeOverTime, requiredExp, deactivateTime, takeOverSound)
+                    AbyssComponents.ABYSS_CONQUEST_NODE, new AbyssConquestNode(
+                        takeOverTime, requiredExp,
+                        deactivateTime, fireworksRange,
+                        fireworksRangeY, takeOverSound
+                    )
                 );
             }
         });

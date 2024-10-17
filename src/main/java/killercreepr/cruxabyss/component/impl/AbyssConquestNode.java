@@ -14,18 +14,34 @@ public class AbyssConquestNode implements CruxBlockComponent {
     protected final NumberProvider takeOverTime;
     protected final NumberProvider requiredExperience;
     protected final NumberProvider deactivateTime;
+    protected final NumberProvider fireworksRange;
+    protected final NumberProvider fireworksRangeY;
     protected final CreateSound takeOverSound;
 
-    public AbyssConquestNode(NumberProvider takeOverTime, NumberProvider requiredExperience, NumberProvider deactivateTime, CreateSound takeOverSound) {
+    public AbyssConquestNode(NumberProvider takeOverTime, NumberProvider requiredExperience, NumberProvider deactivateTime, NumberProvider fireworksRange, NumberProvider fireworksRangeY, CreateSound takeOverSound) {
         this.takeOverTime = takeOverTime;
         this.requiredExperience = requiredExperience;
         this.deactivateTime = deactivateTime;
+        this.fireworksRange = fireworksRange;
+        this.fireworksRangeY = fireworksRangeY;
         this.takeOverSound = takeOverSound;
     }
 
     @Override
     public @Nullable ActiveCruxBlock createActive(@NotNull Block block, @NotNull CruxBlock crux) {
-        return new ActiveAbyssConquestNode(block, crux, this, deactivateTime.value().intValue());
+        return new ActiveAbyssConquestNode(block, crux, this);
+    }
+
+    public NumberProvider getFireworksRangeY() {
+        return fireworksRangeY;
+    }
+
+    public NumberProvider getDeactivateTime() {
+        return deactivateTime;
+    }
+
+    public NumberProvider getFireworksRange() {
+        return fireworksRange;
     }
 
     public NumberProvider getTakeOverTime() {
