@@ -1,9 +1,7 @@
 package killercreepr.cruxabyss.lang;
 
-import killercreepr.crux.data.communication.Communicator;
-import killercreepr.crux.data.communication.CreateLang;
-import killercreepr.crux.data.communication.CreateTitle;
-import killercreepr.crux.data.communication.Msg;
+import killercreepr.crux.data.communication.*;
+import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
 public class Lang {
@@ -19,11 +17,33 @@ public class Lang {
     public static final Msg ABYSS_CONQUEST_NODE_TAKING = create(
         Communicator.builder()
             .title(CreateTitle.title(
-                "<gray>Hold right click!",
-                "     <<progress_color>>{{<progress>*100}[1]}%",
+                "<white><latinfont:Hold right click>!",
+                "<progress_bar:-:10:<aqua>:<gray>:<progress>:1>",
                 0, 8, 0
             ))
             //.sound(CreateSound.sound(Sound.BLOCK_NOTE_BLOCK_BANJO))
+            .build()
+    );
+
+    public static final Msg ABYSS_CONQUEST_NODE_SHIFT_INFO = create(
+        Communicator.builder()
+            .chat("<white>Want to take back your experience and forfeit ownership of the outpost? Hold shift right click.")
+            .sound(CreateSound.sound(Sound.BLOCK_COPPER_BREAK, 1.9f))
+            .build()
+    );
+
+
+    public static final Msg ABYSS_CONQUEST_NODE_NOT_ENOUGH_EXPERIENCE = create(
+        Communicator.builder()
+            .chat("<red>You are not powerful enough! You need at least {{<exp_points>}[0]} experience points!")
+            .sound(CreateSound.sound(Sound.BLOCK_COPPER_BREAK, 1.5f))
+            .build()
+    );
+
+    public static final Msg ABYSS_CONQUEST_NODE_TOO_FAR = create(
+        Communicator.builder()
+            .chat("<red>You are too far away to interact with this.")
+            .sound(CreateSound.sound(Sound.BLOCK_COPPER_BREAK, 1.5f))
             .build()
     );
 

@@ -13,17 +13,19 @@ import org.jetbrains.annotations.Nullable;
 public class AbyssConquestNode implements CruxBlockComponent {
     protected final NumberProvider takeOverTime;
     protected final NumberProvider requiredExperience;
+    protected final NumberProvider deactivateTime;
     protected final CreateSound takeOverSound;
 
-    public AbyssConquestNode(NumberProvider takeOverTime, NumberProvider requiredExperience, CreateSound takeOverSound) {
+    public AbyssConquestNode(NumberProvider takeOverTime, NumberProvider requiredExperience, NumberProvider deactivateTime, CreateSound takeOverSound) {
         this.takeOverTime = takeOverTime;
         this.requiredExperience = requiredExperience;
+        this.deactivateTime = deactivateTime;
         this.takeOverSound = takeOverSound;
     }
 
     @Override
     public @Nullable ActiveCruxBlock createActive(@NotNull Block block, @NotNull CruxBlock crux) {
-        return new ActiveAbyssConquestNode(block, crux, this);
+        return new ActiveAbyssConquestNode(block, crux, this, deactivateTime.value().intValue());
     }
 
     public NumberProvider getTakeOverTime() {

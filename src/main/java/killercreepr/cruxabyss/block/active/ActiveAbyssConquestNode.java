@@ -38,12 +38,14 @@ import java.lang.ref.WeakReference;
 public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements ActiveCruxTickedBlock, ActiveCruxInteractable {
     protected final int requiredExperience;
     protected int storedExperience;
+    protected final int deactivateTime;
     protected final AbyssConquestNode node;
-    public ActiveAbyssConquestNode(@NotNull Block block, @NotNull CruxBlock cruxBlock, AbyssConquestNode node) {
+    public ActiveAbyssConquestNode(@NotNull Block block, @NotNull CruxBlock cruxBlock, AbyssConquestNode node, int deactivateTime) {
         super(block, cruxBlock);
         this.requiredExperience = node.getRequiredExperience().value().intValue();
         this.maxProgress = node.getRequiredExperience().value().intValue();
         this.node = node;
+        this.deactivateTime = deactivateTime;
     }
 
     @Override
@@ -102,8 +104,8 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
     protected final int maxProgress;
     protected int experienceGiven;
     protected int expToTakeEachTick;
-    protected int cooldown;
-    protected int cooldownTick;
+    protected int cooldown = CruxMath.random(80, 100);
+    protected int cooldownTick = 0;
 
     public CruxBlock getUnpoweredBlock(){
         return cruxBlock.getGroup().getBlock(
@@ -169,7 +171,10 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             return;
         }
         progress += 1;
-        if(progress >= maxProgress){
+        if(!takeOverLogicTick(p, isOutpostOwner)){
+            return;
+        }
+        if(progress >= (isDeactivating(p, isOutpostOwner) ? deactivateTime : maxProgress)){
             reachedMaxProgress(p, isOutpostOwner);
             return;
         }
@@ -177,12 +182,29 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         takeOverVisualTick(p, isOutpostOwner);
     }
 
+    public boolean isDeactivating(Player p, boolean isOutpostOwner){
+        if(outpost().getData().owner != null) return true;
+        return false;
+    }
+
+    public boolean takeOverLogicTick(Player p, boolean isOutpostOwner){
+        if(!isValidInteractor(p)){
+            giveBackExperience();
+            reset();
+            return false;
+        }
+        if(isOutpostOwner) return true;
+        p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() - expToTakeEachTick);
+        experienceGiven += expToTakeEachTick;
+        return true;
+    }
+
     public void reachedMaxProgress(Player p, boolean isOutpostOwner){
         cooldown = CruxMath.random(80, 100);
         cooldownTick = 0;
         Location center = block.getLocation().toCenterLocation();
         Location spawn = CruxLoc.shiftToward(center, p.getEyeLocation(), .75);
-        if(isOutpostOwner){
+        if(isDeactivating(p, isOutpostOwner)){
             outpost().resetOwner();
             p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() + storedExperience);
             storedExperience = 0;
@@ -204,7 +226,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         ;
         Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
             update();
-            if(isOutpostOwner){
+            if(isDeactivating(p, isOutpostOwner)){
                 block.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.4f);
             }else{
                 block.getWorld().playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 2f, 1.4f);
@@ -228,17 +250,6 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
                 .spawn()
             ;
         }else{
-            if(experienceGiven < requiredExperience){
-                int cost = requiredExperience - experienceGiven;
-                if(p.calculateTotalExperiencePoints() < cost){
-                    giveBackExperience();
-                    reset();
-                    p.sendMessage("Not enough experience.");
-                    return;
-                }
-                p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() - expToTakeEachTick);
-                experienceGiven += expToTakeEachTick;
-            }
             new ParticleBuilder(Particle.TRIAL_SPAWNER_DETECTION)
                 .count(0)
                 .extra(.8)
@@ -289,6 +300,24 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
         ;
     }
 
+    public boolean isValidInteractor(Player p){
+        if(!p.getWorld().equals(block.getWorld())) return false;
+        double distance = p.getLocation().toCenterLocation().distanceSquared(block.getLocation().toCenterLocation());
+        if(distance > (1.2D*1.2D)){
+            Lang.ABYSS_CONQUEST_NODE_TOO_FAR.use(p);
+            return false;
+        }
+        if(outpost() != null && p.getUniqueId().equals(outpost().getData().owner)) return true;
+        if(experienceGiven < requiredExperience){
+            int cost = requiredExperience - experienceGiven;
+            if(p.calculateTotalExperiencePoints() < cost){
+                Lang.ABYSS_CONQUEST_NODE_NOT_ENOUGH_EXPERIENCE.use(p, TagContainer.merged().add(Tag.parsed("exp_points", cost + "")));
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void reset(){
         user = null;
         lastInteract = 0L;
@@ -332,6 +361,12 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             CreateSound.sound(Sound.BLOCK_CHEST_LOCKED, 1.5f).playFor(p);
             return Event.Result.DENY;
         }
+        if(!p.isSneaking()){
+            if(p.getUniqueId().equals(outpost().getData().owner)){
+                Lang.ABYSS_CONQUEST_NODE_SHIFT_INFO.use(p);
+                return Event.Result.DENY;
+            }
+        }
         if(hasValidUser()){
             Player user = this.user.get();
             if(user != null){
@@ -341,6 +376,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             }
         }
         if(user == null || !p.equals(user.get())){
+            if(!isValidInteractor(p)) return Event.Result.DENY;
             reset();
             outpost();
             if(outpost == null){
