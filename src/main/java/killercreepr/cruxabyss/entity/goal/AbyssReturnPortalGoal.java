@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.entity.goal;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.location.DynamicLocation;
 import killercreepr.crux.persistence.CruxPersistence;
 import killercreepr.crux.util.*;
@@ -10,8 +11,10 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -82,9 +85,11 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
             if(mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).isEmpty()){
                 hasLeftPortal = true;
             }else{
-                completeMaxTime--;
-                if(completeMaxTime < 1){
-                    mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                if(completeMaxTime >= 0){
+                    completeMaxTime--;
+                    if(completeMaxTime < 1){
+                        mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                    }
                 }
                 return;
             }
@@ -102,11 +107,17 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
                 return;
             }
         }
-        mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
-            mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+        int index = 0;
+        for (Entity e : mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player)) {
+            index++;
+            if(index == 1){
+                mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                CreateSound.sound(Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.2f).playAt(mob.getLocation());
+            }
+
             Player p = (Player) e;
             p.teleport(returnTo);
-        });
+        }
     }
 
     public int getCompleteMaxTime() {

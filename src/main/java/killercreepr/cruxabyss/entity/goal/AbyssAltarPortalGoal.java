@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.location.DynamicLocation;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
@@ -15,9 +16,11 @@ import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -79,13 +82,18 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         }
         if(tp == null) return;
 
-        mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
+        int index = 0;
+        for (Entity e : mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player)) {
+            index++;
+            if(index == 1){
+                mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                CreateSound.sound(Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.2f).playAt(mob.getLocation());
+            }
             Player p = (Player) e;
             Location spawn = tp.randomlyTeleport(p);
             if(spawn==null) return;
             AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
-            mob.damage(99999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
-        });
+        }
     }
 
     public World getWorld() {
