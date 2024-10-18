@@ -10,6 +10,8 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +84,7 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
             }else{
                 completeMaxTime--;
                 if(completeMaxTime < 1){
-                    mob.damage(999999D);
+                    mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
                 }
                 return;
             }
@@ -93,15 +95,57 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
             cooldown--;
             return;
         }
-        lifeSpan--;
-        if(lifeSpan < 0){
-            mob.damage(999999D);
-            return;
+        if(lifeSpan >= 0){
+            lifeSpan--;
+            if(lifeSpan < 0){
+                mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                return;
+            }
         }
         mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player).forEach(e ->{
-            mob.damage(999999D);
+            mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
             Player p = (Player) e;
             p.teleport(returnTo);
         });
+    }
+
+    public int getCompleteMaxTime() {
+        return completeMaxTime;
+    }
+
+    public void setCompleteMaxTime(int completeMaxTime) {
+        this.completeMaxTime = completeMaxTime;
+    }
+
+    public boolean isHasLeftPortal() {
+        return hasLeftPortal;
+    }
+
+    public void setHasLeftPortal(boolean hasLeftPortal) {
+        this.hasLeftPortal = hasLeftPortal;
+    }
+
+    public int getParticle() {
+        return particle;
+    }
+
+    public void setParticle(int particle) {
+        this.particle = particle;
+    }
+
+    public int getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(int cooldown) {
+        this.cooldown = cooldown;
+    }
+
+    public int getLifeSpan() {
+        return lifeSpan;
+    }
+
+    public void setLifeSpan(int lifeSpan) {
+        this.lifeSpan = lifeSpan;
     }
 }

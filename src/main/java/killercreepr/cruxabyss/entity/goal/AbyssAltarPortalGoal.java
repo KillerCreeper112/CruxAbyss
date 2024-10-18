@@ -16,6 +16,8 @@ import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +84,31 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             Location spawn = tp.randomlyTeleport(p);
             if(spawn==null) return;
             AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
-            mob.damage(99999999D);
+            mob.damage(99999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
         });
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public RandomWorldTP getTp() {
+        return tp;
+    }
+
+    public void setTp(RandomWorldTP tp) {
+        this.tp = tp;
+    }
+
+    public int getParticle() {
+        return particle;
+    }
+
+    public void setParticle(int particle) {
+        this.particle = particle;
     }
 }
