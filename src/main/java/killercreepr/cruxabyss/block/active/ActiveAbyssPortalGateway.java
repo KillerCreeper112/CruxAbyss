@@ -43,6 +43,11 @@ public class ActiveAbyssPortalGateway extends ActiveCruxBlockImpl implements Act
         return data;
     }
 
+    @Override
+    public void stopped() {
+        Crux.scheduler().runTask(this::removePortal);
+    }
+
     protected int tick = 0;
     protected int cooldown;
     protected Entity spawnedPortal;
@@ -55,7 +60,7 @@ public class ActiveAbyssPortalGateway extends ActiveCruxBlockImpl implements Act
         tick++;
         if(tick % tickPeriod != 0) return;
         tick = 0;
-        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task);
+        Crux.scheduler().runTask(task);
     }
 
     public final Runnable task = new Runnable() {

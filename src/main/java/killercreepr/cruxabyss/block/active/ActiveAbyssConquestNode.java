@@ -240,7 +240,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             .extra(.6)
             .spawn()
         ;
-        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+        Crux.scheduler().runTask(task ->{
             update();
             if(isDeactivating(p, isOutpostOwner)){
                 block.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.4f);
@@ -284,7 +284,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
             .add(Tag.parsed("progress", progressF + ""))
             .add(Tag.parsed("progress_color", progressColor))
         );
-        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+        Crux.scheduler().runTask(task ->{
             CreateSound s = node.getTakeOverSound();
             if(s != null){
                 playSoundTick++;
@@ -327,8 +327,10 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
 
     public boolean isValidInteractor(Player p){
         if(!p.getWorld().equals(block.getWorld())) return false;
-        double distance = p.getLocation().toCenterLocation().distanceSquared(block.getLocation().toCenterLocation());
-        if(distance > (1.2D*1.2D)){
+        Location checkLoc = p.getLocation().toCenterLocation();
+        checkLoc.setY(p.getY() + p.getHeight()/2D);
+        double distance = checkLoc.distanceSquared(block.getLocation().toCenterLocation());
+        if(distance > (1.4D*1.4D)){
             Lang.ABYSS_CONQUEST_NODE_TOO_FAR.use(p);
             return false;
         }
