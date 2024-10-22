@@ -9,6 +9,7 @@ import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -39,7 +40,7 @@ public class AbyssReturnPortal extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        new DesignEntity(m).getModel("abyss_altar_portal").ifPresent(model ->{
+        new DesignEntity(m).getModel("portal_rift").ifPresent(model ->{
             Bukkit.getMobGoals().addGoal(m, 0, new AbyssReturnPortalGoal(m, model));
         });
     }
@@ -47,7 +48,10 @@ public class AbyssReturnPortal extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Pig.class, e ->{
-            ModelEntity model = new ModelEntity(e, "abyss_altar_portal");
+            ModelEntity model = new ModelEntity(e, "portal_rift");
+            //new java.awt.Color(0x21D000);
+            model.getModel().setDefaultTint(Color.fromRGB(0x28FF00));
+            model.getModel().setDamageTint(Color.fromRGB(0x21D000));
             model.playAnimation("spawn", true);
             model.playAnimation("portal1_loop", true);
             model.playAnimation("portal2_loop", true);

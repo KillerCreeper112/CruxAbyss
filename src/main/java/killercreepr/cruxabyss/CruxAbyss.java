@@ -17,10 +17,7 @@ import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
 import killercreepr.cruxabyss.listener.AbyssWoodFunctionListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
 import killercreepr.cruxabyss.registries.AbyssRegistries;
-import killercreepr.cruxabyss.structure.AbyssOutpost;
-import killercreepr.cruxabyss.structure.StoredAbyssOutpost;
-import killercreepr.cruxabyss.structure.StoredTestStructure;
-import killercreepr.cruxabyss.structure.TestStructure;
+import killercreepr.cruxabyss.structure.*;
 import killercreepr.cruxabyss.values.DefaultValues;
 import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
@@ -39,6 +36,7 @@ import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -93,6 +91,12 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                         }
                         case "abyss_outpost" ->{
                             return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
+                        }
+                        case "abyss_safezone" ->{
+                            Vector expand = registry.deserializeFromFile(Vector.class, o.get("outer_box_expansion"));
+                            if(expand == null) expand = new Vector();
+                            return new AbyssSafezone(current.key(), current.getHolder(), current.isPersistent(),
+                                current.getBeforePlacementModules(), current.getModules(), expand);
                         }
                     }
                     return current;

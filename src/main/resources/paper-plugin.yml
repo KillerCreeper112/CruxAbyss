@@ -13,9 +13,6 @@ dependencies:
     uSurvive:
       load: BEFORE
       required: false
-    FastAsyncWorldEdit:
-      load: BEFORE
-      required: true
     ModelEngine:
       load: BEFORE
     CruxTeleport:

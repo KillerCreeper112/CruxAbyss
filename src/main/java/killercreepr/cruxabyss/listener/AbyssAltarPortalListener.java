@@ -7,6 +7,7 @@ import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.AbyssCrystalGoal;
 import killercreepr.cruxabyss.item.AbyssItemTags;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxstructures.structure.InnerBoxedStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import org.bukkit.GameMode;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,12 +54,30 @@ public class AbyssAltarPortalListener implements Listener {
         });*/
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onBlockBreak(BlockBreakEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
         Block b = event.getBlock();
-        CruxPosition blockPos = CruxPosition.block(b);
         StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
+
+        if(stored instanceof InnerBoxedStructure){
+            event.setCancelled(true);
+            return;
+        }
+    }
+
+    //todo proper structure thing for this
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onBlockBreak(BlockBreakEvent event) {
+        Block b = event.getBlock();
+        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        if (stored == null) return;
+
+        if(stored instanceof InnerBoxedStructure){
+            event.setCancelled(true);
+            return;
+        }
+        CruxPosition blockPos = CruxPosition.block(b);
 
         if (!(stored.getParent() instanceof CfgStoredBlocksStructure s)) return;
         CruxPosition structurePos = stored.fromWorldToStructurePos(blockPos);
