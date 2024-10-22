@@ -1,7 +1,9 @@
 package killercreepr.cruxabyss.block.active;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxItem;
+import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.component.impl.AbyssPortalGateway;
 import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
 import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
@@ -11,6 +13,7 @@ import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
 import killercreepr.cruxblocks.block.active.ActiveCruxTickedBlock;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -22,6 +25,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -66,10 +70,28 @@ public class ActiveAbyssPortalGateway extends ActiveCruxBlockImpl implements Act
     public final Runnable task = new Runnable() {
         @Override
         public void run() {
-            if(hasPlayersInRange()){
+            Player p = getNearestPlayer();
+            if(p != null){
                 if(hasSpawnedPortal()) return;
                 cooldown = data.getCooldown().value().intValue();
                 spawnPortal();
+                Location spawn = block.getLocation().toCenterLocation().add(0, 1, 0);
+                Vector dir = p.getLocation().add(0, p.getHeight()/2, 0).toVector().subtract(spawn.toVector());
+                int amount = CruxMath.random(5, 7);
+                while(amount > 0){
+                    amount--;
+                    new ParticleBuilder(Particle.DRAGON_BREATH)
+                        .location(spawn.clone().add(
+                            CruxMath.random(-.1, .1),
+                            CruxMath.random(-.1, .1),
+                            CruxMath.random(-.1, .1)
+                        ))
+                        .count(0)
+                        .offset(dir.getX(), dir.getY(), dir.getZ())
+                        .extra(CruxMath.random(.05, .1))
+                        .spawn()
+                    ;
+                }
                 return;
             }
             cooldown = data.getCooldown().value().intValue();
@@ -129,6 +151,13 @@ public class ActiveAbyssPortalGateway extends ActiveCruxBlockImpl implements Act
 
     public Collection<Player> getPlayersInRange(){
         return block.getWorld().getNearbyPlayers(center, checkRange, this::canBeSeen);
+    }
+
+    public Player getNearestPlayer(){
+        for(Player p : getPlayersInRange()){
+            return p;
+        }
+        return null;
     }
 
     public boolean hasPlayersInRange(){

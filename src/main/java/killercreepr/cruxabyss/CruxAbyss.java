@@ -11,9 +11,11 @@ import killercreepr.cruxabyss.config.Config;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.config.handler.component.CfgAbyssComponents;
+import killercreepr.cruxabyss.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.lang.Lang;
 import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
+import killercreepr.cruxabyss.listener.AbyssSafezoneListener;
 import killercreepr.cruxabyss.listener.AbyssWoodFunctionListener;
 import killercreepr.cruxabyss.listener.DisableElytraListener;
 import killercreepr.cruxabyss.registries.AbyssRegistries;
@@ -58,6 +60,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     @Override
     public void onLoad() {
         super.onLoad();
+        AbyssMobCategory.register();
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
         new AbyssCommands(this).register();
         CfgRegistries.JSON_REGISTRY.forEach(registry ->{
@@ -132,7 +135,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             this,
             new AbyssAltarPortalListener(),
             new DisableElytraListener(),
-            new AbyssWoodFunctionListener()
+            new AbyssWoodFunctionListener(),
+            new AbyssSafezoneListener(this, CruxCore.inst().structureManager())
         );
         AbyssBlocks.register();
         AbyssItems.register();

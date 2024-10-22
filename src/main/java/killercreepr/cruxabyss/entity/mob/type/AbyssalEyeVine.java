@@ -5,7 +5,7 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.entity.mob.goal.CrimsonEyeGoal;
+import killercreepr.cruxabyss.entity.mob.goal.AbyssalEyeVineGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
@@ -28,9 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class AbyssCrimsonEye extends SimpleAbyssMob {
-    public AbyssCrimsonEye() {
-        super(Crux.key("crimson_eye"), EntityType.HUSK);
+public class AbyssalEyeVine extends SimpleAbyssMob {
+    public AbyssalEyeVine() {
+        super(Crux.key("abyssal_eyevine"), EntityType.HUSK);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class AbyssCrimsonEye extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
-        if(active != null) return new CrimsonEyeGoal(e, active);
+        if(active != null) return new AbyssalEyeVineGoal(e, active);
         return null;
     }
 
@@ -75,6 +75,6 @@ public class AbyssCrimsonEye extends SimpleAbyssMob {
 
     @Override
     public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY};
     }
 }

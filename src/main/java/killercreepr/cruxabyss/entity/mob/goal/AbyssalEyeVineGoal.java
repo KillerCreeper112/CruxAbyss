@@ -23,10 +23,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class CrimsonEyeGoal extends CruxMobModeledGoal {
+public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
     private int strongAttack;
     private int strongAttackCooldown;
-    public CrimsonEyeGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
+    public AbyssalEyeVineGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
         super(mob, model);
         sounds(new CruxGoalSounds(mob) {
             @Override

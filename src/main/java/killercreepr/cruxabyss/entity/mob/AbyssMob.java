@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface AbyssMob extends CruxMob {
     KeyedRegistry<CruxMob> REGISTRY = CruxEntityRegistries.ENTITIES;
-    AbyssCrimsonEye CRIMSON_EYE = REGISTRY.register(new AbyssCrimsonEye());
+    AbyssalEyeVine ABYSSAL_EYE_VINE = REGISTRY.register(new AbyssalEyeVine());
     AbyssMoose MOOSE = REGISTRY.register(new AbyssMoose());
     AbyssGroundDweller GROUND_DWELLER = REGISTRY.register(new AbyssGroundDweller());
     AbyssCharredBones CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());

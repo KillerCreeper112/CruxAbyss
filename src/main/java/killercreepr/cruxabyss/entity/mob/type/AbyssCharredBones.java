@@ -60,6 +60,6 @@ public class AbyssCharredBones extends SimpleAbyssMob {
 
     @Override
     public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.UNDEAD};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, MobCategory.UNDEAD};
     }
 }

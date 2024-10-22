@@ -28,6 +28,7 @@ public class AbyssAltarPortal extends SimpleCruxMob {
         super.load(e);
         if(!(e instanceof Mob m)) return;
         new DesignEntity(m).getModel("portal_rift").ifPresent(model ->{
+            Bukkit.getMobGoals().removeAllGoals(m);
             Bukkit.getMobGoals().addGoal(m, 0, new AbyssAltarPortalGoal(m, model));
         });
     }

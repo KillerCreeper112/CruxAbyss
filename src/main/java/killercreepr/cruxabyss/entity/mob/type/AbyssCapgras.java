@@ -61,6 +61,6 @@ public class AbyssCapgras extends SimpleAbyssMob {
 
     @Override
     public MobCategory [] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY};
     }
 }

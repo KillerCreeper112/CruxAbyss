@@ -22,8 +22,8 @@ public class StandardAbyssGroups {
             return true;
         }
     };
-    public static final NaturalEntitySpawnGroup CRIMSON_EYE = new NaturalSpawnPartGroup(10, 0f,
-        StandardAbyssSpawns.CRIMSON_EYE){
+    public static final NaturalEntitySpawnGroup ABYSSAL_EYE_VINE = new NaturalSpawnPartGroup(10, 0f,
+        StandardAbyssSpawns.ABYSSAL_EYE_VINE){
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
@@ -67,7 +67,7 @@ public class StandardAbyssGroups {
 
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
-        registry.register(CRIMSON_EYE);
+        registry.register(ABYSSAL_EYE_VINE);
         registry.register(MOOSE);
         registry.register(GROUND_DWELLER);
     }

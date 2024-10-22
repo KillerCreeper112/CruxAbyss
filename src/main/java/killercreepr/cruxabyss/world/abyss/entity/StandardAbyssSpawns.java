@@ -42,7 +42,7 @@ public class StandardAbyssSpawns {
             return true;
         }
     };
-    public static final NaturalEntitySpawn CRIMSON_EYE = new NaturalCruxMobSpawn(4, 0, AbyssMob.CRIMSON_EYE) {
+    public static final NaturalEntitySpawn ABYSSAL_EYE_VINE = new NaturalCruxMobSpawn(4, 0, AbyssMob.ABYSSAL_EYE_VINE) {
 
         @Override
         public @NotNull Entity spawn(@NotNull SpawnContext ctx) {
