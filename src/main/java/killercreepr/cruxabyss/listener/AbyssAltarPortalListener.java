@@ -6,6 +6,8 @@ import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.AbyssCrystalGoal;
 import killercreepr.cruxabyss.item.AbyssItemTags;
+import killercreepr.cruxblocks.event.CruxBlockBreakEvent;
+import killercreepr.cruxblocks.event.CruxBlockPlaceEvent;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.structure.InnerBoxedStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
@@ -62,9 +64,31 @@ public class AbyssAltarPortalListener implements Listener {
 
         if(stored instanceof InnerBoxedStructure){
             event.setCancelled(true);
-            return;
         }
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCruxBlockPlace(CruxBlockPlaceEvent event) {
+        Block b = event.getContext().getBlock();
+        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        if (stored == null) return;
+
+        if(stored instanceof InnerBoxedStructure){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCruxBlockBreak(CruxBlockBreakEvent event) {
+        Block b = event.getContext().getBlock();
+        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        if (stored == null) return;
+
+        if(stored instanceof InnerBoxedStructure){
+            event.setCancelled(true);
+        }
+    }
+
 
     //todo proper structure thing for this
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
