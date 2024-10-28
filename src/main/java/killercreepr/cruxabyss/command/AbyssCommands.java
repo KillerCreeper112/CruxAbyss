@@ -68,10 +68,12 @@ public class AbyssCommands {
                                     if(active != null){
                                         active.getPlayers().forEach(p -> p.teleport(spawn));
                                         sender.sendMessage("Deleting existing world...");
+                                        Crux.getServer().unloadWorld(active, false);
                                     }
                                     CruxWorldUtil.deleteWorld("world_abyss");
                                     sender.sendMessage("Creating new world...");
                                     AbyssWorld.getOrCreate(plugin, "world_abyss");
+                                    sender.sendMessage("Abyss world created!");
                                     return 1;
                                 })
                         )
@@ -86,7 +88,7 @@ public class AbyssCommands {
 
                                     AbyssWorld world = AbyssWorld.getOrCreate(plugin, "world_abyss");
                                     Location l = world.toBukkitWorld().getSpawnLocation();
-                                    targets.forEach(e -> e.teleport(l));
+                                    targets.forEach(e -> e.teleportAsync(l));
 
                                     sender.sendMessage("Teleported " + targets.size() + " to world_abyss.");
                                     return 1;
@@ -103,7 +105,7 @@ public class AbyssCommands {
 
                                     AbyssWorld world = AbyssWorld.getOrCreate(plugin, "world_abyss");
                                     RandomWorldTP tp = RandomWorldTP.tp(world.toBukkitWorld());
-                                    targets.forEach(tp::randomlyTeleport);
+                                    targets.forEach(tp::randomlyTeleportAsync);
 
                                     sender.sendMessage("Randomly teleported " + targets.size() + " to world_abyss.");
                                     return 1;

@@ -1,19 +1,25 @@
 package killercreepr.cruxabyss.structure;
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.data.StoredChunk;
 import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.cruxabyss.CruxAbyss;
+import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxstructures.structure.Structure;
 import killercreepr.cruxstructures.structure.active.ActiveStructure;
 import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
+import killercreepr.cruxstructures.structure.stored.TickedStoredStructure;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Chunk;
+import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.UUID;
 
-public class StoredAbyssOutpost extends SimpleStoredStructure {
+public class StoredAbyssOutpost extends SimpleStoredStructure implements TickedStoredStructure {
     public UUID owner;
     public StoredAbyssOutpost(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation) {
         super(structure, chunk, center, rotation);
@@ -26,5 +32,22 @@ public class StoredAbyssOutpost extends SimpleStoredStructure {
     @Override
     public @Nullable ActiveStructure buildActive(@NotNull Chunk chunk) {
         return new ActiveAbyssOutpost(this, chunk);
+    }
+
+    protected int tick = 0;
+    @Override
+    public void tick() {
+        if(owner == null) return;
+        tick++;
+        if(tick < 200) return;
+        tick = 0;
+        Player p = Crux.getServer().getPlayer(owner);
+        if(p == null) return;
+        Crux.scheduler().runTask(() ->{
+            ValuesProvider cfg = CruxAbyss.inst().values();
+            cfg.ABYSS_OUTPOST_TAKE_OVER_EFFECTS().valueOr(Set.of()).forEach(pot ->{
+                p.addPotionEffect(pot);
+            });
+        });
     }
 }

@@ -9,6 +9,7 @@ import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.command.AbyssCommands;
 import killercreepr.cruxabyss.config.Config;
 import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
+import killercreepr.cruxabyss.config.handler.FileAbyssSafezone;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.entity.mob.AbyssMobCategory;
@@ -65,6 +66,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         new AbyssCommands(this).register();
         CfgRegistries.JSON_REGISTRY.forEach(registry ->{
             registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
+            registry.registerFileHandler(StoredAbyssSafezone.class, new FileAbyssSafezone());
             registry.registerFileHandler(StoredTestStructure.class, new FileTestStructure());
         });
 
