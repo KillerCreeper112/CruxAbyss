@@ -13,6 +13,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.structure.InnerBoxedStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
+import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,8 +47,14 @@ public class AbyssAltarPortalListener implements Listener {
         if(!altar.isValid()) return;
         event.setCancelled(true);
         if(altar.getSelectedEntity() != null) return;
+
         ItemStack clonedItem = item.clone();
         if(p.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount()-1);
+
+        if(WorldUtil.getDimensionID(b.getWorld()).equalsIgnoreCase("abyss")){
+            b.getWorld().createExplosion(b.getLocation().toCenterLocation(), 4f, true, true);
+            return;
+        }
 
         Location spawn = altar.getCenter().getLocation().toCenterLocation().add(0, .5, 0);
         Mob crystalMob = (Mob) AbyssMob.ABYSS_CRYSTAL.spawn(spawn);

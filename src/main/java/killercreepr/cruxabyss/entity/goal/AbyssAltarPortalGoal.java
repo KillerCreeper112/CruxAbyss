@@ -95,7 +95,9 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             tp.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
                 if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
                 if(spawn==null) return;
-                AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+                Crux.scheduler().runTask(() ->{
+                    AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+                });
             });
         }
     }
