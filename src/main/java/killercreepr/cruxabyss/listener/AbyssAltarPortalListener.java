@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.listener;
 
+import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxabyss.altar.AbyssAltar;
@@ -15,6 +16,7 @@ import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -43,17 +45,16 @@ public class AbyssAltarPortalListener implements Listener {
         AbyssAltar altar = new AbyssAltar(b);
         if(!altar.isValid()) return;
         event.setCancelled(true);
+        if(altar.getSelectedEntity() != null) return;
         ItemStack clonedItem = item.clone();
         if(p.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount()-1);
 
-        Location spawn = b.getLocation().toCenterLocation().add(0, .5, 0);
+        Location spawn = altar.getCenter().getLocation().toCenterLocation().add(0, .5, 0);
         Mob crystalMob = (Mob) AbyssMob.ABYSS_CRYSTAL.spawn(spawn);
         AbyssCrystalGoal goal = CruxGoalUtil.getGoal(crystalMob, AbyssCrystalGoal.class);
         goal.setItem(clonedItem);
         goal.setAltar(altar);
-        /*spawn.getWorld().spawn(spawn, ItemDisplay.class, e ->{
-            e.setItemStack(clonedItem);
-        });*/
+        CreateSound.sound(Sound.BLOCK_AMETHYST_BLOCK_PLACE, 1.5f).playAt(crystalMob);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

@@ -35,6 +35,7 @@ public class AbyssCrystal extends SimpleCruxMob {
             e.setSilent(true);
             e.setGravity(false);
             e.setCollidable(false);
+            e.setInvulnerable(true);
             load(e);
             if(consumer != null) consumer.accept(e);
         });

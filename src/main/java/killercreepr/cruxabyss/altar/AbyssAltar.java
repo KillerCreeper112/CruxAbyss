@@ -1,11 +1,16 @@
 package killercreepr.cruxabyss.altar;
 
 import killercreepr.crux.util.CruxBlockFace;
+import killercreepr.cruxabyss.entity.mob.AbyssMob;
+import killercreepr.cruxentities.entity.CruxMob;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Candle;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AbyssAltar {
     protected final @NotNull Block center;
@@ -16,6 +21,14 @@ public class AbyssAltar {
     @NotNull
     public Block getCenter() {
         return center;
+    }
+
+    public @Nullable Entity getSelectedEntity(){
+        BoundingBox box = BoundingBox.of(center.getLocation().toCenterLocation(), 1, 1, 1).shift(0, 1, 0);
+        for(Entity e : center.getWorld().getNearbyEntities(box, e -> CruxMob.is(e, AbyssMob.ABYSS_CRYSTAL) || CruxMob.is(e, AbyssMob.ALTAR_PORTAL) || CruxMob.is(e, AbyssMob.RETURN_PORTAL))){
+            return e;
+        }
+        return null;
     }
 
     public @NotNull BlockFace getDirection(){
