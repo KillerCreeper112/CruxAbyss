@@ -25,6 +25,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+
 public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
     public AbyssAltarPortalGoal(@NotNull Mob mob, ActiveModel model) {
         this(CruxMobGoal.defaultKey(),mob, model);
@@ -90,9 +92,11 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
                 CreateSound.sound(Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.2f).playAt(mob.getLocation());
             }
             Player p = (Player) e;
-            Location spawn = tp.randomlyTeleport(p);
-            if(spawn==null) return;
-            AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+            tp.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
+                if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
+                if(spawn==null) return;
+                AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+            });
         }
     }
 
