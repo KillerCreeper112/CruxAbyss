@@ -16,7 +16,7 @@ public class FileAbyssEntitySpawnerComponent extends FileEntitySpawnerComponent<
         if(s == null) return null;
         return new AbyssEntitySpawner(
             s.spawnDelay, s.spawnRange, s.innerSpawnDistance, s.spawnCount, s.requiredPlayerRange, s.maxSpawnAttempts,
-            s.groupSpawnAmount, s.yCheck, s.spawns, s.ignoreCreativePlayers
+            s.groupSpawnAmount, s.yCheck, s.failedDelay, s.spawns, s.ignoreCreativePlayers
         );
     }
 

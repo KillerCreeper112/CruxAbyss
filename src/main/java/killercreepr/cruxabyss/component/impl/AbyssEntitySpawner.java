@@ -21,9 +21,10 @@ public class AbyssEntitySpawner extends EntitySpawnerComponent {
                               @NotNull NumberProvider maxSpawnAttempts,
                               @NotNull NumberProvider groupSpawnAmount,
                               @NotNull NumberProvider yCheck,
+                              @NotNull NumberProvider failedDelay,
                               @NotNull Collection<NaturalEntitySpawnGroup> spawns,
                               boolean ignoreCreativePlayers) {
-        super(spawnDelay, spawnRange, innerSpawnDistance, spawnCount, requiredPlayerRange, maxSpawnAttempts, groupSpawnAmount, yCheck, spawns, ignoreCreativePlayers);
+        super(spawnDelay, spawnRange, innerSpawnDistance, spawnCount, requiredPlayerRange, maxSpawnAttempts, groupSpawnAmount, yCheck, failedDelay, spawns, ignoreCreativePlayers);
     }
 
     @Override

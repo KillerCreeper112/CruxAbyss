@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class AbyssOutpost extends CfgStoredBlocksStructure {
-    protected final Collection<BlockPos> conquestNodes = new HashSet<>();
-    protected final Collection<BlockPos> spawners = new HashSet<>();
+    protected Collection<BlockPos> conquestNodes = new HashSet<>();
+    protected Collection<BlockPos> spawners = new HashSet<>();
     public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules) {
         super(key, holder, persistent, beforePlacementModules, modules);
     }
@@ -57,6 +57,8 @@ public class AbyssOutpost extends CfgStoredBlocksStructure {
     public void onForEachBlock(Collection<BlockPos> list, BlockVector3 block, BlockState state) {
         super.onForEachBlock(list, block, state);
         if(state.isAir()) return;
+        if(conquestNodes == null) conquestNodes = new HashSet<>();
+        if(spawners == null) spawners = new HashSet<>();
         BlockData data = BukkitAdapter.adapt(state);
         CruxBlock crux = CruxCore.inst().cruxBlocks().getBlockRegistry().getByBlockData(data);
         if(crux == null) return;
