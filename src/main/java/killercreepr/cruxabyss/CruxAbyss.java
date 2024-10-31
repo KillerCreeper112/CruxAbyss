@@ -95,7 +95,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                             return new TestStructure(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
                         }
                         case "abyss_outpost" ->{
-                            return new AbyssOutpost(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
+                            return new AbyssOutpost(current.key(), current.getHolder(),
+                                current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
                         }
                         case "abyss_safezone" ->{
                             Vector expand = registry.deserializeFromFile(Vector.class, o.get("outer_box_expansion"));
