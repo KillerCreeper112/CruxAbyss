@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.block.active;
 
+import killercreepr.crux.tags.TagsPrefixBuilder;
 import killercreepr.crux.tags.container.MergedTagContainer;
 import killercreepr.crux.tags.container.TagContainer;
 import killercreepr.cruxabyss.lang.Lang;
@@ -48,7 +49,7 @@ public class ConquestMessenger {
         if(p == null) return;
         msged = true;
         MergedTagContainer tags = TagContainer.merged()
-            .hook(p)
+            .hook(p, TagsPrefixBuilder.overwriteBase("node_user_"))
             .hook(node.getBlock())
             ;
         getNearby().forEach(near ->{
