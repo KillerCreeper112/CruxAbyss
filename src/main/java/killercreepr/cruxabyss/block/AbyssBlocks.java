@@ -15,7 +15,7 @@ public class AbyssBlocks {
         }
     });*/
 
-    public static final CruxBlockGroup PLAGUE_MOSS_DIRT = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_moss_dirt"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
+    public static final CruxBlockGroup PLAGUE_DIRT = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_dirt"));/*CruxBlocksRegistries.BLOCKS.registerGroup(new SingularBlockGroup(
         new GenericBlock(Crux.key("plague_moss_dirt"), new NoteTextureData.Builder(new Note(4), Instrument.BANJO).powered(false).build())
     ) {
         @Override

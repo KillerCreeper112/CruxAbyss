@@ -165,7 +165,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             Material m = data.getMaterial();
             return MaterialSetTag.STONE_ORE_REPLACEABLES.isTagged(m) ||
                 AbyssBlocks.PLAGUE_STONE.getBlock(data) != null ||
-                AbyssBlocks.PLAGUE_MOSS_DIRT.getBlock(data) != null;
+                AbyssBlocks.PLAGUE_DIRT.getBlock(data) != null;
         }
     };
 

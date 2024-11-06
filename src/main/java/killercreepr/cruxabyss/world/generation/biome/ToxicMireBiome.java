@@ -109,7 +109,7 @@ public class ToxicMireBiome extends GrimBiome {
                         limitedRegion, x, y, z
                     );
                 }else if(y >= 58){
-                    AbyssBlocks.PLAGUE_MOSS_DIRT.getBaseBlock().setBlock(
+                    AbyssBlocks.PLAGUE_DIRT.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
                 } else{
