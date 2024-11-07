@@ -6,7 +6,9 @@ import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
+import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxabyss.altar.AbyssAltar;
+import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
@@ -100,7 +102,10 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
         portalSpawn.setDirection(direction.getDirection());
         portalSpawn.add(0, 1, 0);
 
-        AbyssMob.ALTAR_PORTAL.spawn(portalSpawn);
+        if(!(AbyssMob.ALTAR_PORTAL.spawn(portalSpawn) instanceof Mob mob)) return;
+        AbyssAltarPortalGoal goal = CruxGoalUtil.getGoal(mob, AbyssAltarPortalGoal.class);
+        if(goal == null) return;
+        goal.setCrystal(model.getBone("base").orElseThrow().getModel());
     }
 
     public void setSpinSpeed(double speed){

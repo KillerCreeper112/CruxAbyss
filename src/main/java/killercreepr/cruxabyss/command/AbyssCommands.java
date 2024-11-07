@@ -8,7 +8,6 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import io.papermc.paper.registry.event.RegistryEvents;
 import killercreepr.crux.Crux;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.util.CruxWorldUtil;

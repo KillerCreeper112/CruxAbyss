@@ -6,14 +6,20 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.location.DynamicLocation;
-import killercreepr.crux.util.CruxLoc;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.GetEntityNear;
-import killercreepr.crux.util.GetNear;
+import killercreepr.crux.persistence.CruxPersistence;
+import killercreepr.crux.util.*;
+import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.item.AbyssItemTags;
+import killercreepr.cruxabyss.structure.StoredAbyssSafezone;
+import killercreepr.cruxabyss.values.ValuesProvider;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
+import killercreepr.usurvive.USurvivePlugin;
+import killercreepr.usurvive.death.DeathManager;
+import killercreepr.usurvive.death.PlayerDeath;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -23,6 +29,7 @@ import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
@@ -33,15 +40,48 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
     }
 
     protected World world;
-    protected RandomWorldTP tp;
+    protected ItemStack crystal;
     public AbyssAltarPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
         super(key, mob, model);
         attemptGetWorld();
+        this.crystal = CruxTag.get(mob, "crystal_item", CruxPersistence.ITEM_STACK, null);
+    }
+
+    public void setCrystal(ItemStack crystal) {
+        this.crystal = crystal;
+        CruxTag.set(mob, "crystal_item", CruxPersistence.ITEM_STACK, crystal);
+    }
+
+    public ItemStack getCrystal() {
+        return crystal;
     }
 
     public void attemptGetWorld(){
-        this.world = Crux.getServer().getWorld("world_abyss");
-        tp = world == null ? null : RandomWorldTP.tp(world);
+        this.world = CruxWorldUtil.getOrLoadWorld("world_abyss");
+    }
+
+    public RandomWorldTP buildRandomTP(Player p){
+        if(crystal == null){
+            return RandomWorldTP.tp(world);
+        }
+        ValuesProvider cfg = CruxAbyss.inst().values();
+        if(AbyssItemTags.ABYSS_GEMS_DEATH.isTagged(crystal)){
+            DeathManager manager = USurvivePlugin.inst().getDeathManager();
+            PlayerDeath death = CruxCollection.getRandom(manager.getAllDeathsInWorld(p.getUniqueId(), world.getUID()));
+            if(death == null) return RandomWorldTP.tp(world);
+
+            Location l = death.getPosition().toLocation(world);
+            return RandomWorldTP.tpNear(l, cfg.ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE());
+        }
+        if(AbyssItemTags.ABYSS_GEMS_SAFEZONE.isTagged(crystal)){
+            StoredAbyssSafezone safezone = CruxCollection.getRandom(
+                CruxCore.inst().structureManager().getStored(world.getUID(), StoredAbyssSafezone.class, null)
+            );
+            if(safezone == null) return RandomWorldTP.tp(world);
+            Location center = safezone.getPosition().toLocation(world);
+            return RandomWorldTP.tpNear(center, cfg.ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE());
+        }
+        return RandomWorldTP.tp(world);
     }
 
     protected int particle;
@@ -79,10 +119,10 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         rotate();
         particleTick();
 
-        if(tp == null){
+        if(world == null){
             attemptGetWorld();
+            if(world == null) return;
         }
-        if(tp == null) return;
 
         int index = 0;
         for (Entity e : mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player)) {
@@ -92,6 +132,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
                 CreateSound.sound(Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.2f).playAt(mob.getLocation());
             }
             Player p = (Player) e;
+            RandomWorldTP tp = buildRandomTP(p);
             tp.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
                 if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
                 if(spawn==null) return;
@@ -108,14 +149,6 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
 
     public void setWorld(World world) {
         this.world = world;
-    }
-
-    public RandomWorldTP getTp() {
-        return tp;
-    }
-
-    public void setTp(RandomWorldTP tp) {
-        this.tp = tp;
     }
 
     public int getParticle() {
