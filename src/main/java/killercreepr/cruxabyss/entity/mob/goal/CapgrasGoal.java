@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.entity.mob.goal;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
+import killercreepr.crux.util.CruxCollection;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -65,22 +66,22 @@ public class CapgrasGoal extends CruxMobModeledGoal {
             );
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(CruxMath.getRandom(AMBIENT), 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(AMBIENT), 1.15f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(CruxMath.getRandom(ATTACK), 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(ATTACK), 1.15f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(CruxMath.getRandom(HURT), 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(HURT), 1.15f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(CruxMath.getRandom(DEATH), 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(DEATH), 1.15f);
             }
         });
     }
