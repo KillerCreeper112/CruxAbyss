@@ -27,7 +27,7 @@ public class BiomeManager {
     public static Holder<Biome> ELDRITCH_WASTES;
     public static Holder<Biome> TOXIC_GRASSLANDS;
     public static void register(){
-        WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer().registryAccess().registryOrThrow(Registries.BIOME);
+        WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElse(null);
 
         try {
             Field frozen = MappedRegistry.class.getDeclaredField("frozen");

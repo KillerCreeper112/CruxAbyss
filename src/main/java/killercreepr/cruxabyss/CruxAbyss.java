@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss;
 
+import io.papermc.paper.registry.event.RegistryEvents;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.*;
 import killercreepr.crux.module.StandardModules;
@@ -38,6 +39,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Registry;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
