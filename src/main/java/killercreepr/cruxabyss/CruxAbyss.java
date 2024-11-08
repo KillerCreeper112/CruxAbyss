@@ -2,6 +2,8 @@ package killercreepr.cruxabyss;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.*;
+import killercreepr.crux.data.entity.EntityMemory;
+import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.module.StandardModules;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
@@ -12,13 +14,11 @@ import killercreepr.cruxabyss.config.handler.FileAbyssOutpost;
 import killercreepr.cruxabyss.config.handler.FileAbyssSafezone;
 import killercreepr.cruxabyss.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.config.handler.component.CfgAbyssComponents;
+import killercreepr.cruxabyss.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.item.AbyssItems;
 import killercreepr.cruxabyss.lang.Lang;
-import killercreepr.cruxabyss.listener.AbyssAltarPortalListener;
-import killercreepr.cruxabyss.listener.AbyssSafezoneListener;
-import killercreepr.cruxabyss.listener.AbyssWoodFunctionListener;
-import killercreepr.cruxabyss.listener.DisableElytraListener;
+import killercreepr.cruxabyss.listener.*;
 import killercreepr.cruxabyss.registries.AbyssRegistries;
 import killercreepr.cruxabyss.structure.*;
 import killercreepr.cruxabyss.values.DefaultValues;
@@ -117,6 +117,11 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
+
+        EntityMemory.registerFunction(this, (mem) ->{
+            if(!(mem instanceof PlayerMemory m)) return;
+            m.getDataHolders().register(new AbyssHolder(m, Crux.getMainPlugin()));
+        });
     }
 
     @Override
@@ -139,7 +144,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             new AbyssAltarPortalListener(),
             new DisableElytraListener(),
             new AbyssWoodFunctionListener(),
-            new AbyssSafezoneListener(this, CruxCore.inst().structureManager())
+            new AbyssSafezoneListener(this, CruxCore.inst().structureManager()),
+            new AbyssTravelTrackingListener()
         );
         AbyssBlocks.register();
         AbyssItems.register();

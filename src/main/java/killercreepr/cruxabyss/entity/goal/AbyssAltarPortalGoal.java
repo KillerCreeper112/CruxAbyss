@@ -10,6 +10,8 @@ import killercreepr.crux.persistence.CruxPersistence;
 import killercreepr.crux.util.*;
 import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.event.EntityTravelThroughRiftEvent;
+import killercreepr.cruxabyss.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.item.AbyssItemTags;
 import killercreepr.cruxabyss.structure.StoredAbyssSafezone;
 import killercreepr.cruxabyss.values.ValuesProvider;
@@ -124,20 +126,26 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             if(world == null) return;
         }
 
-        int index = 0;
         for (Entity e : mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player)) {
-            index++;
-            if(index == 1){
+            Player p = (Player) e;
+            EntityTravelThroughRiftEvent event = new EntityTravelThroughRiftEvent(e, this, buildRandomTP(p));
+            if(!event.callEvent()){
+                continue;
+            }
+
+            if(event.isRemovePortal() && mob.isValid()){
                 mob.damage(999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
                 CreateSound.sound(Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.2f).playAt(mob.getLocation());
             }
-            Player p = (Player) e;
-            RandomWorldTP tp = buildRandomTP(p);
-            tp.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
+            if(event.isCancelTeleport()) continue;
+            RandomWorldTP to = event.getTo();
+            to.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
                 if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
                 if(spawn==null) return;
                 Crux.scheduler().runTask(() ->{
-                    AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+                    Entity returnPortal = AbyssMob.RETURN_PORTAL.spawn(spawn, mob.getLocation());
+                    SuccessfulEntityTravelThroughRiftEvent successEvent = new SuccessfulEntityTravelThroughRiftEvent(p, to, returnPortal);
+                    successEvent.callEvent();
                 });
             });
         }
