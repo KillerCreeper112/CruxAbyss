@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.entity.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.location.DynamicLocation;
 import killercreepr.crux.persistence.CruxPersistence;
@@ -22,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
-    public AbyssReturnPortalGoal(@NotNull Mob mob, ActiveModel model) {
-        this(CruxMobGoal.defaultKey(),mob, model);
+    public AbyssReturnPortalGoal(@NotNull Mob mob) {
+        this(CruxMobGoal.defaultKey(),mob);
     }
-    public AbyssReturnPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
-        super(key, mob, model);
+    public AbyssReturnPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
+        super(key, mob);
         returnTo = CruxTag.get(mob, "return_to", CruxPersistence.LOCATION, null);
         Objects.requireNonNull(returnTo, "Return portal does not have a return location!");
     }

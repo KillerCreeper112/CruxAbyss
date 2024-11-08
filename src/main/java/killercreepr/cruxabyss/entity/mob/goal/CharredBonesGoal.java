@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -12,8 +11,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class CharredBonesGoal extends CruxMobModeledGoal {
-    public CharredBonesGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
-        super(mob, model);
+    public CharredBonesGoal(@NotNull Mob mob) {
+        super(mob);
     }
 
     @EventHandler(ignoreCancelled = true)

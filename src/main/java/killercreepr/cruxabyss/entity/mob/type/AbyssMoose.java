@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class AbyssMoose extends SimpleAbyssMob {
@@ -65,8 +66,8 @@ public class AbyssMoose extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ActiveModel active = new DesignEntity(e).getOrAddModel(key.value());
-        return new MooseGoal(e, active);
+        CompletableFuture<ActiveModel> model = new DesignEntity(e).getOrAddModelAsync(key.value());
+        return new MooseGoal(e).model(model);
     }
 
     @Override

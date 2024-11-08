@@ -18,6 +18,7 @@ import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class AbyssAltarPortal extends SimpleCruxMob {
@@ -29,10 +30,10 @@ public class AbyssAltarPortal extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        ActiveModel model = new DesignEntity(m).getOrAddModel("portal_rift");
+        CompletableFuture<ActiveModel> model = new DesignEntity(m).getOrAddModelAsync("portal_rift");
         CruxGoalUtil.addIfNotPresent(m, AbyssAltarPortalGoal.class, 0, () ->{
             Bukkit.getMobGoals().removeAllGoals(m);
-            return new AbyssAltarPortalGoal(m, model);
+            return new AbyssAltarPortalGoal(m).model(model);
         });
     }
 

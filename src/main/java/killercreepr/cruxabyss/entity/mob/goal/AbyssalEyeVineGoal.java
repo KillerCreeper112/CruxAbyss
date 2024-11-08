@@ -1,7 +1,6 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
@@ -26,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
     private int strongAttack;
     private int strongAttackCooldown;
-    public AbyssalEyeVineGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
-        super(mob, model);
+    public AbyssalEyeVineGoal(@NotNull Mob mob) {
+        super(mob);
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {

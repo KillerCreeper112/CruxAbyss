@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.entity.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.location.DynamicLocation;
@@ -35,23 +34,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Level;
 
 public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
-    public AbyssAltarPortalGoal(@NotNull Mob mob, ActiveModel model) {
-        this(CruxMobGoal.defaultKey(),mob, model);
+    public AbyssAltarPortalGoal(@NotNull Mob mob) {
+        this(CruxMobGoal.defaultKey(),mob);
     }
 
     protected World world;
     protected ItemStack crystal;
-    public AbyssAltarPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
-        super(key, mob, model);
+    public AbyssAltarPortalGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
+        super(key, mob);
         attemptGetWorld();
         this.crystal = CruxTag.get(mob, "crystal_item", CruxPersistence.ITEM_STACK, null);
     }
 
     public void setColor(Color color){
-        ModelEntity model = new ModelEntity(mob, "portal_rift");
-        //new java.awt.Color(0xD01F12);
-        model.getModel().setDefaultTint(color);
-        model.getModel().setDamageTint(color);
+        applyModel(model ->{
+            model.setDefaultTint(color);
+            model.setDamageTint(color);
+        });
     }
 
     public void setCrystal(ItemStack crystal) {

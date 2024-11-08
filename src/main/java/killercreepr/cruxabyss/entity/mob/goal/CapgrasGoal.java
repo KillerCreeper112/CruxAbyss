@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.util.CruxCollection;
@@ -18,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class CapgrasGoal extends CruxMobModeledGoal {
-    public CapgrasGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
-        super(mob, model);
+    public CapgrasGoal(@NotNull Mob mob) {
+        super(mob);
         sounds(new CruxGoalSounds(mob) {
             private final List<Sound> AMBIENT = List.of(
                     Sound.ENTITY_GOAT_AMBIENT,

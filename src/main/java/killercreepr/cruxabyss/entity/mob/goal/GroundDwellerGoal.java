@@ -1,7 +1,6 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.util.CruxLoc;
@@ -23,8 +22,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class GroundDwellerGoal extends CruxMobModeledGoal {
-    public GroundDwellerGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
-        super(mob, model);
+    public GroundDwellerGoal(@NotNull Mob mob) {
+        super(mob);
 
         sounds(new CruxGoalSounds(mob) {
             @Override

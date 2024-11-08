@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.GetEntityNear;
@@ -18,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class MooseGoal extends CruxMobModeledGoal {
-    public MooseGoal(@NotNull Mob mob, @NotNull ActiveModel model) {
-        super(mob, model);
+    public MooseGoal(@NotNull Mob mob) {
+        super(mob);
         /*targetCheck = e -> (e instanceof Monster) || !(e instanceof Mob m) || !(Bukkit.getMobGoals().getGoal(m, key) instanceof MooseGoal);*/
     }
     private Item interested;

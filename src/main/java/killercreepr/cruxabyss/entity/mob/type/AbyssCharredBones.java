@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class AbyssCharredBones extends SimpleAbyssMob {
@@ -53,8 +54,8 @@ public class AbyssCharredBones extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ActiveModel active = new DesignEntity(e).getOrAddModel(key.value());
-        return new CharredBonesGoal(e, active);
+        CompletableFuture<ActiveModel> active = new DesignEntity(e).getOrAddModelAsync(key.value());
+        return new CharredBonesGoal(e).model(active);
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class AbyssGroundDweller extends SimpleAbyssMob {
@@ -57,8 +58,8 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ActiveModel active = new DesignEntity(e).getOrAddModel(key.value());
-        return new GroundDwellerGoal(e, active);
+        CompletableFuture<ActiveModel> active = new DesignEntity(e).getOrAddModelAsync(key.value());
+        return new GroundDwellerGoal(e).model(active);
     }
 
     @Override
