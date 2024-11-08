@@ -45,6 +45,8 @@ public class AbyssSafezoneGuideHolder extends PlayerTickedDataHolder {
         ValuesProvider cfg = USurvivePlugin.inst().values();
         int every = cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
+        if(tick % every != 0) return;
+        tick = 0;
         guide(e);
     }
 

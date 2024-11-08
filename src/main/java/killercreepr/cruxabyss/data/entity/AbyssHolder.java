@@ -6,8 +6,10 @@ import killercreepr.crux.data.entity.PlayerDataHolder;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AbyssHolder extends PlayerDataHolder implements Loadable {
     protected final Plugin plugin;
@@ -20,6 +22,12 @@ public class AbyssHolder extends PlayerDataHolder implements Loadable {
 
     public AbyssHolder(@NotNull PlayerMemory parent, Plugin plugin) {
         this(KEY, parent, plugin);
+    }
+
+    @Override
+    protected void removingFromMemory(@Nullable Entity e) {
+        super.removingFromMemory(e);
+        save();
     }
 
     public @NotNull CruxJson buildSaveFile(){
@@ -46,8 +54,8 @@ public class AbyssHolder extends PlayerDataHolder implements Loadable {
     @Override
     public void load() {
         CruxJson json = buildSaveFile();
-        Integer x = json.deserialize("abyss_travel_amount", Integer.class);
+        Number x = json.deserialize("abyss_travel_amount", Number.class);
         json.close();
-        if(x != null) setAbyssTravelAmount(x);
+        if(x != null) setAbyssTravelAmount(x.intValue());
     }
 }

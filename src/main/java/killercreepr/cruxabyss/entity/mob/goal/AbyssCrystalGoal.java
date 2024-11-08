@@ -7,6 +7,8 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.util.CruxGoalUtil;
+import killercreepr.crux.util.CruxLoc;
+import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
@@ -15,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Candle;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -92,6 +95,20 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
             .data(model.getBone("base").orElseThrow().getModel())
             .spawn()
         ;
+
+        CruxLoc.getNearbyBlocks(mob.getLocation().getBlock(), 3).forEach(b ->{
+            if(b.getBlockData() instanceof Candle c){
+                c.setLit(false);
+                b.setBlockData(c);
+                new ParticleBuilder(Particle.SMOKE)
+                    .location(b.getLocation().toCenterLocation())
+                    .count(CruxMath.random(2, 4))
+                    .offset(.05, .05, .05)
+                    .extra(.3)
+                    .spawn()
+                ;
+            }
+        });
     }
 
     public void spawnPortal(){

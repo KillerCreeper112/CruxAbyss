@@ -58,7 +58,13 @@ public class AbyssTravelTrackingListener implements Listener {
 
         if(!(e instanceof Player p)) return;
         PlayerMemory mem = PlayerMemory.getOrCreate(p);
-        AbyssSafezoneGuideHolder guide = mem.getPlayerDataHolderOrCompute(AbyssSafezoneGuideHolder.class, AbyssSafezoneGuideHolder::new);
+        AbyssSafezoneGuideHolder guide = mem.getDataHolder(AbyssSafezoneGuideHolder.class);
+        if(guide == null){
+            AbyssSafezoneGuideHolder data = new AbyssSafezoneGuideHolder(mem);
+            data.update(p.getWorld(), p);
+            mem.getDataHolders().register(data);
+            return;
+        }
         guide.update(p.getWorld(), p);
     }
 
