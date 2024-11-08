@@ -4,7 +4,7 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.game.SimpleStatutable;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.usurvive.values.ValuesProvider;
+import killercreepr.cruxabyss.values.ValuesProvider;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class ParticleGuide extends SimpleStatutable {
     public void started() {
         super.started();
         currentParticleAmount = particleAmount;
-        currentLocation = CruxLoc.shiftToward(from.clone(), toCloneSameY, cfg.DEATH_GUIDE_PARTICLE_SHIFT_START().value().doubleValue());
+        currentLocation = CruxLoc.shiftToward(from.clone(), toCloneSameY, cfg.ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START().value().doubleValue());
         dir = currentLocation.getDirection();
         distance = p.getLocation().distance(to);
         new BukkitRunnable(){
@@ -63,12 +63,12 @@ public class ParticleGuide extends SimpleStatutable {
     @Override
     public void tick() {
         double speed = CruxMath.clamp(
-            distance*cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER().value().doubleValue(),
+            distance*cfg.ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER().value().doubleValue(),
             .01, .6
         );
         Location spawn = CruxLoc.shift(currentLocation.clone(), 0D,
-            cfg.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL().value().doubleValue(),
-            cfg.DEATH_GUIDE_PARTICLE_OFFSET_SIDE().value().doubleValue());
+            cfg.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL().value().doubleValue(),
+            cfg.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE().value().doubleValue());
         p.spawnParticle(Particle.FLAME, spawn, 0,
             dir.getX(), getParticleY(), dir.getZ(), speed
         );
@@ -79,6 +79,6 @@ public class ParticleGuide extends SimpleStatutable {
             return;
         }
 
-        currentLocation = CruxLoc.shiftToward(currentLocation, toCloneSameY, cfg.DEATH_GUIDE_PARTICLE_SHIFT().value().doubleValue());
+        currentLocation = CruxLoc.shiftToward(currentLocation, toCloneSameY, cfg.ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT().value().doubleValue());
     }
 }

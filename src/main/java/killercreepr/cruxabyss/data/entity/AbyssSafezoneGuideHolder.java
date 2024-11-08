@@ -4,14 +4,14 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.data.entity.PlayerTickedDataHolder;
 import killercreepr.crux.util.GetNear;
+import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.data.ParticleGuide;
 import killercreepr.cruxabyss.structure.StoredAbyssSafezone;
+import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.manager.StructureManager;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import killercreepr.cruxstructures.util.GetStructureNear;
-import killercreepr.usurvive.USurvivePlugin;
-import killercreepr.usurvive.values.ValuesProvider;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,8 +42,8 @@ public class AbyssSafezoneGuideHolder extends PlayerTickedDataHolder {
         super.onTick(e);
         if(target == null) return;
         tick++;
-        ValuesProvider cfg = USurvivePlugin.inst().values();
-        int every = cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
+        ValuesProvider cfg = CruxAbyss.inst().values();
+        int every = cfg.ABYSS_SAFEZONE_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(tick % every != 0) return;
         tick = 0;
@@ -51,9 +51,8 @@ public class AbyssSafezoneGuideHolder extends PlayerTickedDataHolder {
     }
 
     public void guide(Player p){
-        //todo eventually do not use death guide values lol
-        ValuesProvider cfg = USurvivePlugin.inst().values();
-        new ParticleGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), target, cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(), cfg).setStarted();
+        ValuesProvider cfg = CruxAbyss.inst().values();
+        new ParticleGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), target, cfg.ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT().value().intValue(), cfg).setStarted();
     }
 
     protected UUID world;

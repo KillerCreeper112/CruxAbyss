@@ -25,6 +25,13 @@ public class Config extends Cfg implements ValuesProvider {
     )){};
     public final NumCfgValue ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE = new NumCfgValue(DefaultValues.ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE);
     public final NumCfgValue ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE = new NumCfgValue(DefaultValues.ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_TICK_EVERY = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_TICK_EVERY);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE);
+    public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -58,5 +65,47 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE() {
         return ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_TICK_EVERY() {
+        return ABYSS_SAFEZONE_GUIDE_TICK_EVERY.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT() {
+        return ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START() {
+        return ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT() {
+        return ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
+        return ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE() {
+        return ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL() {
+        return ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL.value();
     }
 }
