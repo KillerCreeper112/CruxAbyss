@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.listener;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
-import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.data.entity.AbyssSafezoneGuideHolder;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;

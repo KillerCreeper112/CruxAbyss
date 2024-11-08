@@ -1,7 +1,9 @@
 package killercreepr.cruxabyss.entity.type;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.persistence.CruxPersistence;
+import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -40,9 +42,10 @@ public class AbyssReturnPortal extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        new DesignEntity(m).getModel("portal_rift").ifPresent(model ->{
+        ActiveModel model = new DesignEntity(m).getOrAddModel("portal_rift");
+        CruxGoalUtil.addIfNotPresent(m, AbyssReturnPortalGoal.class, 0, () ->{
             Bukkit.getMobGoals().removeAllGoals(m);
-            Bukkit.getMobGoals().addGoal(m, 0, new AbyssReturnPortalGoal(m, model));
+            return new AbyssReturnPortalGoal(m, model);
         });
     }
 

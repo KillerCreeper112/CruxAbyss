@@ -53,9 +53,8 @@ public class AbyssCharredBones extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
-        if(active != null) return new CharredBonesGoal(e, active);
-        return null;
+        ActiveModel active = new DesignEntity(e).getOrAddModel(key.value());
+        return new CharredBonesGoal(e, active);
     }
 
     @Override

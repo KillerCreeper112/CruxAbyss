@@ -1,7 +1,9 @@
 package killercreepr.cruxabyss.entity.type;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
-import killercreepr.cruxabyss.entity.mob.goal.AbyssCrystalGoal;
+import killercreepr.crux.util.CruxGoalUtil;
+import killercreepr.cruxabyss.entity.goal.AbyssCrystalGoal;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -45,8 +47,10 @@ public class AbyssCrystal extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        new DesignEntity(m).getModel(key.value()).ifPresent(model ->{
-            Bukkit.getMobGoals().addGoal(m, 0, new AbyssCrystalGoal(m, model));
+        ActiveModel model = new DesignEntity(m).getOrAddModel(key.value());
+        CruxGoalUtil.addIfNotPresent(m, AbyssCrystalGoal.class, 0, () ->{
+            Bukkit.getMobGoals().removeAllGoals(m);
+            return new AbyssCrystalGoal(m, model);
         });
     }
 

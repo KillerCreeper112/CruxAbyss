@@ -18,14 +18,12 @@ import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
@@ -47,6 +45,13 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         super(key, mob, model);
         attemptGetWorld();
         this.crystal = CruxTag.get(mob, "crystal_item", CruxPersistence.ITEM_STACK, null);
+    }
+
+    public void setColor(Color color){
+        ModelEntity model = new ModelEntity(mob, "portal_rift");
+        //new java.awt.Color(0xD01F12);
+        model.getModel().setDefaultTint(color);
+        model.getModel().setDamageTint(color);
     }
 
     public void setCrystal(ItemStack crystal) {

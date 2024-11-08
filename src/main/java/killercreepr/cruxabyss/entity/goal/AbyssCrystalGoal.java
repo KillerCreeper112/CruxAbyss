@@ -1,4 +1,4 @@
-package killercreepr.cruxabyss.entity.mob.goal;
+package killercreepr.cruxabyss.entity.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
@@ -10,9 +10,10 @@ import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.altar.AbyssAltar;
-import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.item.AbyssItemTags;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -122,7 +123,13 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
         if(!(AbyssMob.ALTAR_PORTAL.spawn(portalSpawn) instanceof Mob mob)) return;
         AbyssAltarPortalGoal goal = CruxGoalUtil.getGoal(mob, AbyssAltarPortalGoal.class);
         if(goal == null) return;
-        goal.setCrystal(model.getBone("base").orElseThrow().getModel());
+        ItemStack item = model.getBone("base").orElseThrow().getModel();
+        goal.setCrystal(item);
+
+        if(item == null) return;
+        //new java.awt.Color(0x6DE96D);
+        if(AbyssItemTags.ABYSS_GEMS_DEATH.isTagged(item)) goal.setColor(Color.fromRGB(0x719BE7));
+        if(AbyssItemTags.ABYSS_GEMS_SAFEZONE.isTagged(item)) goal.setColor(Color.fromRGB(0x6DE96D));
     }
 
     public void setSpinSpeed(double speed){

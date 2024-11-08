@@ -61,9 +61,8 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        ActiveModel active = new DesignEntity(e).getModel(key.value()).orElse(null);
-        if(active != null) return new AbyssalEyeVineGoal(e, active);
-        return null;
+        ActiveModel active = new DesignEntity(e).getOrAddModel(key.value());
+        return new AbyssalEyeVineGoal(e, active);
     }
 
 
