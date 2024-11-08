@@ -66,8 +66,13 @@ public class AbyssWarningMenu extends BukkitMenu {
             .addLoreFromString(
                 "<white>the abyss.",
                 "<white>The abyss is incredibly <red>dangerous<white>!",
-                "<white>Once you enter, the only way out",
-                "<white>is death or to find a safezone!",
+                "",
+                "<white>Once you enter, you will be teleported and a",
+                "<white>rift will open up on the other side. You will",
+                "<white>have <bold>1 minute</bold> to check your",
+                "<white>surroundings and decide if you want to stay.",
+                "<white>After that 1 minute is up and the rift closes, the",
+                "<white>only way out is death or to find a safezone!",
                 "",
                 "<white>Because it is your first time, particles",
                 "<white>will guide you to the nearest safezone.",
@@ -76,7 +81,7 @@ public class AbyssWarningMenu extends BukkitMenu {
             )
             .item(), new SimpleFixedSlot(this, 4));
 
-        setItem(5, CruxItem.create(Material.BARRIER)
+        setItem(5, CruxItem.create(Material.STRUCTURE_VOID)
             .itemName("<green>Proceed")
             .addLoreFromString(
                 "",
