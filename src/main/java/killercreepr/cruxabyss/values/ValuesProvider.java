@@ -29,4 +29,8 @@ public interface ValuesProvider extends Reloadable {
     NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE();
     @NotNull
     NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL();
+    @NotNull
+    NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW();
+    @NotNull
+    NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW();
 }

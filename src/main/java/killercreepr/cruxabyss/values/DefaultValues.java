@@ -18,6 +18,8 @@ public class DefaultValues implements ValuesProvider {
     public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new UniformNumber(.01, .03);
     public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE = new UniformNumber(-.5, .5);
     public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = new UniformNumber(-.5, .5);
+    public static final NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW = NumberProvider.constant(1);
+    public static final NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW = NumberProvider.constant(3);
 
     @NotNull
     @Override
@@ -76,5 +78,17 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL() {
         return ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW() {
+        return ABYSS_RIFT_SHOW_WARNING_IF_BELOW;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW() {
+        return ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW;
     }
 }

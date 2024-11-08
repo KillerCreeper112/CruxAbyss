@@ -32,6 +32,8 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER);
     public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE);
     public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL);
+    public final NumCfgValue ABYSS_RIFT_SHOW_WARNING_IF_BELOW = new NumCfgValue(DefaultValues.ABYSS_RIFT_SHOW_WARNING_IF_BELOW);
+    public final NumCfgValue ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW = new NumCfgValue(DefaultValues.ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -107,5 +109,17 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL() {
         return ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW() {
+        return ABYSS_RIFT_SHOW_WARNING_IF_BELOW.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW() {
+        return ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW.value();
     }
 }

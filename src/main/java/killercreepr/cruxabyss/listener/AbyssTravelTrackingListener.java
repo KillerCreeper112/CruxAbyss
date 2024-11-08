@@ -3,12 +3,14 @@ package killercreepr.cruxabyss.listener;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
+import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.data.entity.AbyssSafezoneGuideHolder;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.event.EntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.menu.AbyssWarningMenu;
+import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
@@ -21,13 +23,19 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import java.util.logging.Level;
 
 public class AbyssTravelTrackingListener implements Listener {
+    protected final ValuesProvider cfg;
+
+    public AbyssTravelTrackingListener(ValuesProvider cfg) {
+        this.cfg = cfg;
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityTravelThroughRift(EntityTravelThroughRiftEvent event) {
         if(!(event.getEntity() instanceof Player p) || event.isCancelTeleport()) return;
 
         AbyssHolder holder = EntityMemory.getDataHolder(p, AbyssHolder.class);
         if(holder == null) return;
-        if(holder.getAbyssTravelAmount() > 0) return;
+        if(holder.getAbyssTravelAmount() >= cfg.ABYSS_RIFT_SHOW_WARNING_IF_BELOW().value().intValue()) return;
         Mob mob = event.getRift().getMob();
         event.setCancelTeleport(true);
         Runnable task = () ->{
@@ -57,6 +65,8 @@ public class AbyssTravelTrackingListener implements Listener {
         holder.setAbyssTravelAmount(amount+1);
 
         if(!(e instanceof Player p)) return;
+        if(amount >= cfg.ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW().value().intValue()) return;
+
         PlayerMemory mem = PlayerMemory.getOrCreate(p);
         AbyssSafezoneGuideHolder guide = mem.getDataHolder(AbyssSafezoneGuideHolder.class);
         if(guide == null){
