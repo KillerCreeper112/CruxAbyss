@@ -6,12 +6,13 @@ import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.CharredBonesGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
-import killercreepr.cruxattributes.attribute.CruxAttribute;
-import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -33,6 +34,8 @@ public class AbyssCharredBones extends SimpleAbyssMob {
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
+            e.customName(Component.text("Charred Bones"));
+            e.setCustomNameVisible(false);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
 
             if(e instanceof Skeleton x) x.setShouldBurnInDay(false);

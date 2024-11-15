@@ -7,12 +7,13 @@ import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.MooseGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
-import killercreepr.cruxattributes.attribute.CruxAttribute;
-import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -35,6 +36,8 @@ public class AbyssMoose extends SimpleAbyssMob {
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
+            e.customName(Component.text("Moose"));
+            e.setCustomNameVisible(false);
             Consumer<Entity> s = super.spawnFunction(world, l);
             if(s != null) s.accept(e);
             ModeledEntity modeled = new ModelEntity(e, key.value()).getOrCreateModeledEntity();

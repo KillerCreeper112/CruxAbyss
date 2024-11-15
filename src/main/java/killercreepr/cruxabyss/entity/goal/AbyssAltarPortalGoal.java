@@ -17,7 +17,6 @@ import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.death.DeathManager;

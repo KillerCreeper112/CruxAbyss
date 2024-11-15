@@ -7,12 +7,13 @@ import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.AbyssalEyeVineGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
-import killercreepr.cruxattributes.attribute.CruxAttribute;
-import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -37,6 +38,8 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
+            e.customName(Component.text("Eyevine"));
+            e.setCustomNameVisible(false);
             CruxTag.set(e, "hide", PersistentDataType.INTEGER, 1);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
