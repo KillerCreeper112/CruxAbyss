@@ -38,7 +38,7 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
-            e.customName(Component.text("Eyevine"));
+            e.customName(Component.text("Abyssal Eyevine"));
             e.setCustomNameVisible(false);
             CruxTag.set(e, "hide", PersistentDataType.INTEGER, 1);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
