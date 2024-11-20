@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.world.abyss.entity;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.nms.biome.BiomeUtils;
-import killercreepr.crux.registry.Registry;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.registry.Registry;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.paper.nms.biome.BiomeUtils;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;

@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.structure;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.StoredChunk;
-import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxstructures.structure.Structure;

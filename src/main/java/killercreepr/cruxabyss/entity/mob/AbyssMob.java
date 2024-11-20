@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.entity.mob;
 
-import killercreepr.crux.registry.KeyedRegistry;
+import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.cruxabyss.entity.mob.type.*;
 import killercreepr.cruxabyss.entity.type.AbyssAltarPortal;
 import killercreepr.cruxabyss.entity.type.AbyssCrystal;

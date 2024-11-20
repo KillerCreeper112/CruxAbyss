@@ -1,23 +1,23 @@
 package killercreepr.cruxabyss.block.active;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.tags.container.TagContainer;
-import killercreepr.crux.tags.resolver.Tag;
-import killercreepr.crux.util.CruxColor;
-import killercreepr.crux.util.CruxLoc;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxColor;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.lang.Lang;
 import killercreepr.cruxabyss.structure.ActiveAbyssOutpost;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
-import killercreepr.cruxblocks.block.active.ActiveCruxInteractable;
-import killercreepr.cruxblocks.block.active.ActiveCruxTickedBlock;
-import killercreepr.cruxblocks.block.context.BlockContext;
-import killercreepr.cruxblocks.block.data.CustomBlockData;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxInteractable;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
+import killercreepr.cruxblocks.api.block.context.BlockContext;
+import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
+import killercreepr.cruxblocks.core.block.data.CustomBlockData;
 import killercreepr.cruxcore.CruxCore;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
-public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements ActiveCruxTickedBlock, ActiveCruxInteractable {
+public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements ActiveCruxTickedBlock, ActiveCruxInteractable {
     protected final int requiredExperience;
     protected int storedExperience;
     protected final int deactivateTime;
@@ -280,7 +280,7 @@ public class ActiveAbyssConquestNode extends ActiveCruxBlockImpl implements Acti
     public void takeOverVisualTick(Player p, boolean isOutpostOwner){
         float progressF = ((float)progress/(float)getMaxTime(p, isOutpostOwner));
         String progressColor = CruxColor.colorToHex(CruxColor.hsbToBukkitColor((progressF*100), 80f, 80f));
-        Lang.ABYSS_CONQUEST_NODE_TAKING.use(p, p, TagContainer.merged()
+        Lang.ABYSS_CONQUEST_NODE_TAKING.use(p, TagContainer.merged()
             .add(Tag.parsed("progress", progressF + ""))
             .add(Tag.parsed("progress_color", progressColor))
         );

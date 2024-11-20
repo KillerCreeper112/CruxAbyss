@@ -2,8 +2,8 @@ package killercreepr.cruxabyss.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import killercreepr.crux.Crux;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.MooseGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;

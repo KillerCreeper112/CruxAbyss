@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.data.entity;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.entity.PlayerMemory;
-import killercreepr.crux.data.entity.PlayerTickedDataHolder;
-import killercreepr.crux.util.GetNear;
+import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
+import killercreepr.crux.core.util.GetNear;
 import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.data.ParticleGuide;
 import killercreepr.cruxabyss.structure.StoredAbyssSafezone;

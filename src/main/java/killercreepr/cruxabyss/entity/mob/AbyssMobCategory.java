@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.entity.mob;
 
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleMobCategory;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;

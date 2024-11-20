@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.persistence;
 
-import killercreepr.crux.persistence.PersistTag;
+import killercreepr.crux.core.persistence.PersistTag;
 import org.bukkit.persistence.PersistentDataType;
 
 public class AbyssPersist {

@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.structure;
 
-import killercreepr.crux.location.DynamicLocation;
+import killercreepr.crux.core.location.DynamicLocation;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;

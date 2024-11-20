@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.world.biome;
 
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistrationInfo;

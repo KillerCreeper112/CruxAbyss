@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.listener;
 
-import killercreepr.crux.util.CruxItem;
+import killercreepr.crux.core.util.CruxItem;
 import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;

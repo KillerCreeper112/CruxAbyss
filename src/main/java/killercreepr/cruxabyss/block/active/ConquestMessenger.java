@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.block.active;
 
-import killercreepr.crux.tags.TagsPrefixBuilder;
-import killercreepr.crux.tags.container.MergedTagContainer;
-import killercreepr.crux.tags.container.TagContainer;
+import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.cruxabyss.lang.Lang;
 import killercreepr.cruxabyss.structure.ActiveAbyssOutpost;
 import org.bukkit.entity.Player;

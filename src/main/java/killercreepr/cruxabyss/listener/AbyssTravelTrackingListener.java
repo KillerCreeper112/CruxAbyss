@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.listener;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.entity.EntityMemory;
-import killercreepr.crux.data.entity.PlayerMemory;
+import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.data.entity.AbyssSafezoneGuideHolder;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
@@ -10,7 +10,7 @@ import killercreepr.cruxabyss.event.EntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.menu.AbyssWarningMenu;
 import killercreepr.cruxabyss.values.ValuesProvider;
-import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;

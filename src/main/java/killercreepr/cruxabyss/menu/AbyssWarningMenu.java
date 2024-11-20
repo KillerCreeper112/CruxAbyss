@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.menu;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.util.CruxItem;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxItem;
 import killercreepr.cruxmenus.core.menu.BukkitMenu;
 import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
 import net.kyori.adventure.text.Component;

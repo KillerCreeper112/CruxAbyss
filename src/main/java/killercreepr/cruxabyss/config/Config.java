@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.config;
 
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxabyss.values.DefaultValues;
 import killercreepr.cruxabyss.values.ValuesProvider;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;

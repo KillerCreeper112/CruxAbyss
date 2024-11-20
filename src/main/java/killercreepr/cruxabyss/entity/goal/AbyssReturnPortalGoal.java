@@ -2,10 +2,10 @@ package killercreepr.cruxabyss.entity.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.location.DynamicLocation;
-import killercreepr.crux.persistence.CruxPersistence;
-import killercreepr.crux.util.*;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.core.location.DynamicLocation;
+import killercreepr.crux.core.persistence.CruxPersistence;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;

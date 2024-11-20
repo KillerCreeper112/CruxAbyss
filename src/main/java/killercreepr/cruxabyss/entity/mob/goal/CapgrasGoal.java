@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.event.CruxEntityDamageEvent;
-import killercreepr.crux.util.CruxCollection;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;

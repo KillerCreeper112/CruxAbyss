@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.component.impl;
 
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.block.active.ActiveAbyssEntitySpawner;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
-import killercreepr.cruxblocks.block.standard.component.EntitySpawnerComponent;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
+import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;

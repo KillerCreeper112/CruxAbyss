@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.registries;
 
-import killercreepr.crux.registry.Registry;
-import killercreepr.crux.registry.SimpleRegistry;
+import killercreepr.crux.api.registry.Registry;
+import killercreepr.crux.core.registry.SimpleRegistry;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 
 public class AbyssRegistries {

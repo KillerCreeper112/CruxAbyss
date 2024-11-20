@@ -1,18 +1,18 @@
 package killercreepr.cruxabyss.world.abyss;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.Loadable;
-import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.data.Loadable;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.plugin.CruxPlugin;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.CruxAbyss;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.registries.AbyssRegistries;
 import killercreepr.cruxabyss.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.world.generation.populator.AbyssPopulator;
-import killercreepr.cruxblocks.registries.CruxBlocksRegistries;
+import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxworlds.world.CruxWorld;

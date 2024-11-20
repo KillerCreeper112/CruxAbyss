@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.structure;
 
 import com.sk89q.worldedit.session.ClipboardHolder;
-import killercreepr.crux.data.StoredChunk;
-import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
 import killercreepr.cruxstructures.structure.module.StructureModule;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;

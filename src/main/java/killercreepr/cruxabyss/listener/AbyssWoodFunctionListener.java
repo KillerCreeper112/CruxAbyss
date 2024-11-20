@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.listener;
 
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.CruxTag;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.persistence.AbyssPersist;
-import killercreepr.cruxblocks.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxcore.CruxCore;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;

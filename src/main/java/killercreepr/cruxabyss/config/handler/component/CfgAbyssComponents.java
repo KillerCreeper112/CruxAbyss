@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.config.handler.component;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.component.TypedDataComponent;
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.registry.MappedRegistry;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.component.TypedDataComponent;
+import killercreepr.crux.api.registry.MappedRegistry;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.component.AbyssComponents;
 import killercreepr.cruxabyss.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.component.impl.AbyssPortalGateway;

@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.world.abyss.entity;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.crux.data.util.CollectionBuilder;
-import killercreepr.crux.util.CruxLoc;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.core.data.util.CollectionBuilder;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;

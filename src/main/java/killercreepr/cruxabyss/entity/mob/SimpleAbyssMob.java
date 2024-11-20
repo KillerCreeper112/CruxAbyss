@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.entity.mob;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.CruxTag;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;

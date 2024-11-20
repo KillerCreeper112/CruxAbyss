@@ -1,11 +1,11 @@
 package killercreepr.cruxabyss.world.generation.decoration;
 
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.component.CruxBlockComponents;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
 import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.generator.LimitedRegion;

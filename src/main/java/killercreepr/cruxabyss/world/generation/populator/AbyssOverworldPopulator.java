@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.world.generation.populator;
 
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.apache.logging.log4j.util.TriConsumer;

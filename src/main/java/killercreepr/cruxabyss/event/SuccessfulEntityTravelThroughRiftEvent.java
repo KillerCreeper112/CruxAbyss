@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.event;
 
-import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;

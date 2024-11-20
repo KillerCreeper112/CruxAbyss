@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.world.generation;
 
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

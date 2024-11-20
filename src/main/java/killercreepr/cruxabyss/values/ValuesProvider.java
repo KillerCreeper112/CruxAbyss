@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.values;
 
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.data.Reloadable;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.data.Reloadable;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.structure;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import org.bukkit.Chunk;

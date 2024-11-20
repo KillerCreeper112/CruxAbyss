@@ -1,16 +1,16 @@
 package killercreepr.cruxabyss.block.active;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.crux.Crux;
-import killercreepr.crux.util.CruxItem;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxItem;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.component.impl.AbyssPortalGateway;
 import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
 import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
-import killercreepr.cruxblocks.block.active.ActiveCruxTickedBlock;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
+import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class ActiveAbyssPortalGateway extends ActiveCruxBlockImpl implements ActiveCruxTickedBlock {
+public class ActiveAbyssPortalGateway extends SimpleActiveCruxBlock implements ActiveCruxTickedBlock {
     protected final AbyssPortalGateway data;
     protected final int tickPeriod;
     protected final int checkRange;

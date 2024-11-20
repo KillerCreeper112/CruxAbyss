@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
-import killercreepr.crux.event.CruxEntityDamageEvent;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;

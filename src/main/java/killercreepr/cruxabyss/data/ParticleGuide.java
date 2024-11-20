@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.data;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.game.SimpleStatutable;
-import killercreepr.crux.util.CruxLoc;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.game.SimpleStatutable;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.values.ValuesProvider;
 import org.bukkit.Location;
 import org.bukkit.Particle;

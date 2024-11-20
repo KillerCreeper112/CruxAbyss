@@ -1,8 +1,7 @@
 package killercreepr.cruxabyss.values;
 
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.valueproviders.number.NumberProvider;
-import killercreepr.crux.valueproviders.number.UniformNumber;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,13 +10,13 @@ import java.util.Collection;
 public class DefaultValues implements ValuesProvider {
     public static final NumberProvider ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE = NumberProvider.uniform(50, 100);
     public static final NumberProvider ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE = NumberProvider.uniform(24, 48);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_TICK_EVERY = new UniformNumber(60, 100);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT = new UniformNumber(3, 5);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START = new UniformNumber(1D, 3D);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT = new UniformNumber(1D, 3D);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new UniformNumber(.01, .03);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE = new UniformNumber(-.5, .5);
-    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = new UniformNumber(-.5, .5);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_TICK_EVERY = NumberProvider.uniform(60, 100);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_AMOUNT = NumberProvider.uniform(3, 5);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT_START = NumberProvider.uniform(1D, 3D);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SHIFT = NumberProvider.uniform(1D, 3D);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = NumberProvider.uniform(.01, .03);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_SIDE = NumberProvider.uniform(-.5, .5);
+    public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = NumberProvider.uniform(-.5, .5);
     public static final NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW = NumberProvider.constant(1);
     public static final NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW = NumberProvider.constant(3);
 

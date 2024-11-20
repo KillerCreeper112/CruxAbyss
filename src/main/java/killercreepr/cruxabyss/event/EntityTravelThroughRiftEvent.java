@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.event;
 
 import killercreepr.cruxabyss.entity.goal.AbyssAltarPortalGoal;
-import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

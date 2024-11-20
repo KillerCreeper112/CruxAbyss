@@ -1,12 +1,16 @@
 package killercreepr.cruxabyss;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.communication.*;
-import killercreepr.crux.data.entity.EntityMemory;
-import killercreepr.crux.data.entity.PlayerMemory;
-import killercreepr.crux.module.StandardModules;
-import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.crux.api.communication.lang.CreateLang;
+import killercreepr.crux.api.communication.lang.LangProvider;
+import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.communication.lang.LangPopulator;
+import killercreepr.crux.core.communication.lang.Msg;
+import killercreepr.crux.core.communication.lang.SimpleCreateLang;
+import killercreepr.crux.core.plugin.CruxPlugin;
+import killercreepr.crux.core.plugin.module.StandardModules;
+import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.command.AbyssCommands;
 import killercreepr.cruxabyss.config.Config;

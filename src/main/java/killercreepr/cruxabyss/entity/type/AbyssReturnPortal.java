@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.entity.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
-import killercreepr.crux.Crux;
-import killercreepr.crux.persistence.CruxPersistence;
-import killercreepr.crux.util.CruxGoalUtil;
-import killercreepr.crux.util.CruxTag;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.persistence.CruxPersistence;
+import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;

@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.block.active;
 
-import killercreepr.crux.context.InputContext;
-import killercreepr.crux.tags.container.TagContainer;
-import killercreepr.crux.tags.resolver.Tag;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.text.context.InputContext;
+import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.structure.ActiveAbyssOutpost;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;

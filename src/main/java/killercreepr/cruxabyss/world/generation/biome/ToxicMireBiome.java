@@ -1,18 +1,18 @@
 package killercreepr.cruxabyss.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.block.AbyssBlocks;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.decoration.ToxicMireTreePopulator;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.component.BushGroup;
-import killercreepr.cruxblocks.block.component.BushType;
-import killercreepr.cruxblocks.block.component.CruxBlockComponents;
-import killercreepr.cruxblocks.block.group.CruxBlockGroup;
-import killercreepr.cruxblocks.registries.CruxBlocksRegistries;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.component.BushGroup;
+import killercreepr.cruxblocks.api.block.component.BushType;
+import killercreepr.cruxblocks.api.block.group.CruxBlockGroup;
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
+import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Location;
 import org.bukkit.Material;

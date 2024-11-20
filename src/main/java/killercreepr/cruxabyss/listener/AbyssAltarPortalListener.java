@@ -1,14 +1,14 @@
 package killercreepr.cruxabyss.listener;
 
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.util.CruxGoalUtil;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxabyss.altar.AbyssAltar;
 import killercreepr.cruxabyss.entity.goal.AbyssCrystalGoal;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.item.AbyssItemTags;
-import killercreepr.cruxblocks.event.CruxBlockBreakEvent;
-import killercreepr.cruxblocks.event.CruxBlockPlaceEvent;
+import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
+import killercreepr.cruxblocks.api.event.CruxBlockPlaceEvent;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.structure.InnerBoxedStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;

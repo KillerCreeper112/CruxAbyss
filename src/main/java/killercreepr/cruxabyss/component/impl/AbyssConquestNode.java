@@ -1,11 +1,11 @@
 package killercreepr.cruxabyss.component.impl;
 
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.block.active.ActiveAbyssConquestNode;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
-import killercreepr.cruxblocks.block.component.CruxBlockComponent;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
+import killercreepr.cruxblocks.api.block.component.CruxBlockComponent;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

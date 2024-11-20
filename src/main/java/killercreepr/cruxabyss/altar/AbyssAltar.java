@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.altar;
 
-import killercreepr.crux.util.CruxBlockFace;
+import killercreepr.crux.core.util.CruxBlockFace;
 import killercreepr.cruxabyss.entity.mob.AbyssMob;
 import killercreepr.cruxentities.entity.CruxMob;
 import org.bukkit.Material;

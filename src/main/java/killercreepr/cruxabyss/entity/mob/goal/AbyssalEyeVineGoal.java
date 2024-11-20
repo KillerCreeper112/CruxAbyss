@@ -1,12 +1,12 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.event.CruxEntityDamageEvent;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.CruxTag;
-import killercreepr.crux.util.GetEntityNear;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
+import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;

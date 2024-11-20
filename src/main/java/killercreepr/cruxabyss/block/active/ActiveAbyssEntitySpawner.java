@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.block.active;
 
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.flag.BlockBreakFlags;
-import killercreepr.cruxblocks.block.standard.active.ActiveEntitySpawner;
-import killercreepr.cruxblocks.block.standard.component.EntitySpawnerComponent;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.flag.BlockBreakFlags;
+import killercreepr.cruxblocks.core.block.active.standard.ActiveEntitySpawner;
+import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawner;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;

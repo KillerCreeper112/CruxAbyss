@@ -1,10 +1,10 @@
 package killercreepr.cruxabyss.config.handler.component;
 
-import killercreepr.crux.component.DataComponentType;
+import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.cruxabyss.component.AbyssComponents;
 import killercreepr.cruxabyss.component.impl.AbyssEntitySpawner;
-import killercreepr.cruxblocks.block.standard.component.EntitySpawnerComponent;
-import killercreepr.cruxblocks.config.handler.component.FileEntitySpawnerComponent;
+import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
+import killercreepr.cruxblocks.core.config.handler.component.FileEntitySpawnerComponent;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import org.jetbrains.annotations.NotNull;

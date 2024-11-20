@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.util.CruxLoc;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.world.biome.BiomeManager;
 import killercreepr.cruxabyss.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.world.generation.populator.GrimPopulator;

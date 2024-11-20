@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.entity.mob.goal;
 
-import killercreepr.crux.event.CruxEntityDamageEvent;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.GetEntityNear;
-import killercreepr.crux.util.GetNear;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.GetEntityNear;
+import killercreepr.crux.core.util.GetNear;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
