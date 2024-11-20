@@ -5,10 +5,13 @@ import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
@@ -26,4 +29,16 @@ public class DisableElytraListener implements Listener {
         elytra.editMeta(Damageable.class, meta -> meta.setDamage(CruxItem.getMaxDurability(elytra)));
         p.playEffect(EntityEffect.BREAK_EQUIPMENT_CHESTPLATE);
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if(!event.getAction().isRightClick()) return;
+        Block b = event.getClickedBlock();
+        if(b == null) return;
+        if(!WorldUtil.getDimensionID(b.getWorld()).equalsIgnoreCase("abyss")) return;
+        if(!(b.getBlockData() instanceof Bed)) return;
+        event.setCancelled(true);
+        b.getWorld().createExplosion(b.getLocation(), 4f);
+    }
+
 }

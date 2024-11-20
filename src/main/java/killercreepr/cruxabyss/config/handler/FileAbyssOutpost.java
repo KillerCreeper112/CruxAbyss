@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+
 public class FileAbyssOutpost extends FileSimpleStoredStructure<StoredAbyssOutpost> {
     public @NotNull FileElement serializeToFile(@NotNull FileContext<?> context, @NotNull StoredAbyssOutpost object) {
         FileObject o = (FileObject) super.serializeToFile(context, object);

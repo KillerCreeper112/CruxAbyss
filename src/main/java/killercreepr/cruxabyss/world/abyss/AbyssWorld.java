@@ -80,7 +80,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     protected int wave = 1;
-    protected float difficulty = 1f;
+    protected float difficulty = .6f;
     protected int daysPassed = 0;
 
     public SimpleNaturalEntityWorldSpawner createEntitySpawner(){
@@ -105,6 +105,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public void tick(){
         entitySpawnManager.tick();
         if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
+            if(world.getPlayers().isEmpty()) return;
             dayEvent();
         }
     }
@@ -215,7 +216,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     public float getDifficulty() {
-        return difficulty;
+        return Math.min(difficulty, 2f);
     }
 
     public int getDaysPassed() {
