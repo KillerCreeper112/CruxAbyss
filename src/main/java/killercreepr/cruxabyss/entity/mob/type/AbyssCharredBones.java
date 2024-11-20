@@ -7,7 +7,7 @@ import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.CharredBonesGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -46,12 +46,12 @@ public class AbyssCharredBones extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = super.getAttributes(world, e);
         setAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                new CruxAttributeModifier(CruxMath.random(8D, 14D) *
+                CruxAttributeModifier.baseModifier(CruxMath.random(8D, 14D) *
                         (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
-        setAttribute(map, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(-15));
-        setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, new CruxAttributeModifier(36));
-        setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, new CruxAttributeModifier(12));
-        setAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, new CruxAttributeModifier(6));
+        setAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-15));
+        setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(36));
+        setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, CruxAttributeModifier.baseModifier(12));
+        setAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, CruxAttributeModifier.baseModifier(6));
         return map;
     }
 

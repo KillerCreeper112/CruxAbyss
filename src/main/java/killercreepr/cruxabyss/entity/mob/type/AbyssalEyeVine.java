@@ -8,7 +8,7 @@ import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.AbyssalEyeVineGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -44,6 +44,8 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
                 mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(-999D);
+                mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.7);
+                mob.getAttribute(Attribute.GENERIC_JUMP_STRENGTH).setBaseValue(0);
                 mob.setSilent(true);
             }
         };
@@ -53,13 +55,13 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                new CruxAttributeModifier(CruxMath.random(4D, 6D) *
+                CruxAttributeModifier.baseModifier(CruxMath.random(4D, 6D) *
                         (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
-        addAttribute(map, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.35D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(-5));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, new CruxAttributeModifier(20));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, new CruxAttributeModifier(2.2D));
-        addAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, new CruxAttributeModifier(9999));
+        addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-5));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(20));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.2D));
+        addAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, CruxAttributeModifier.baseModifier(9999));
         return map;
     }
 

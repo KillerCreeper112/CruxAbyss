@@ -8,7 +8,7 @@ import killercreepr.cruxabyss.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.entity.mob.goal.MooseGoal;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -57,13 +57,13 @@ public class AbyssMoose extends SimpleAbyssMob {
         float difficulty = world == null ? 1f : world.getDifficulty();
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                new CruxAttributeModifier(CruxMath.random(8D, 10D) * (wave * .1D) * difficulty));
-        addAttribute(map, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.35D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(-6));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, new CruxAttributeModifier(25));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, new CruxAttributeModifier(10));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, new CruxAttributeModifier(2D));
-        addAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, new CruxAttributeModifier(15));
+            CruxAttributeModifier.baseModifier(CruxMath.random(8D, 10D) * (wave * .1D) * difficulty));
+        addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-6));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, CruxAttributeModifier.baseModifier(10));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2D));
+        addAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, CruxAttributeModifier.baseModifier(15));
         return map;
     }
 

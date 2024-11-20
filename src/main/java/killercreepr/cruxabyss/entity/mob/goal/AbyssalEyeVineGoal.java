@@ -8,7 +8,7 @@ import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
@@ -121,16 +121,17 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
             //animation hit time at 7 ticks
             if(strongAttack == 7){
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                        new CruxAttributeModifier(Crux.key("strong_damage"), 1D, CruxAttribute.Operation.MULTIPLY),
+                    CruxAttributeModifier.modifier(Crux.key("strong_damage"), 1D, CruxAttribute.Operation.MULTIPLY),
                         Crux.key("strong_attack"));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                        new CruxAttributeModifier(Crux.key("strong_knockback"), 1D, CruxAttribute.Operation.MULTIPLY),
+                        CruxAttributeModifier.modifier(Crux.key("strong_knockback"), 1D, CruxAttribute.Operation.MULTIPLY),
                     Crux.key("strong_attack"));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                        new CruxAttributeModifier(Crux.key("strong_range"), 1D, CruxAttribute.Operation.MULTIPLY),
+                        CruxAttributeModifier.modifier(Crux.key("strong_range"), 1D, CruxAttribute.Operation.MULTIPLY),
                     Crux.key("strong_attack"));
                 hit(true, target);
                 CruxAttribute.removeModifiers(mob, Crux.key("strong_attack"));
+                setAttackCooldown(CruxMath.random(20, 40));
             }
             return;
         }

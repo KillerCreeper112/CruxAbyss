@@ -5,8 +5,8 @@ import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.cruxabyss.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeInstance;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
@@ -91,24 +91,24 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
         float difficulty = world == null ? 1f : world.getDifficulty();
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         Collection<CruxAttributeModifier> list = new HashSet<>();
-        list.add(new CruxAttributeModifier(CruxMath.random(1D, 7D) * (wave * .1D) * difficulty));
+        list.add(CruxAttributeModifier.baseModifier(CruxMath.random(1D, 7D) * (wave * .1D) * difficulty));
         map.put(CruxAttribute.ATTACK_DAMAGE, list);
 
         list = new HashSet<>();
-        list.add(new CruxAttributeModifier(((CruxMath.random(50D, 100D) * (wave * .01D + 1D)) * difficulty)));
+        list.add(CruxAttributeModifier.baseModifier(((CruxMath.random(50D, 100D) * (wave * .01D + 1D)) * difficulty)));
         map.put(CruxAttribute.ATTACK_KNOCKBACK, list);
 
         list = new HashSet<>();
-        list.add(new CruxAttributeModifier(CruxMath.random(-10, -6)));
+        list.add(CruxAttributeModifier.baseModifier(CruxMath.random(-10, -6)));
         map.put(CruxAttribute.ATTACK_SPEED, list);
 
         list = new HashSet<>();
 
-        list.add(new CruxAttributeModifier(CruxMath.random(0D, .5D)));
+        list.add(CruxAttributeModifier.baseModifier(CruxMath.random(0D, .5D)));
         map.put(CruxAttribute.ATTACK_AOE, list);
 
         list = new HashSet<>();
-        list.add(new CruxAttributeModifier(e.getBoundingBox().getWidthX() + CruxMath.random(.1D, .5D)));
+        list.add(CruxAttributeModifier.baseModifier(e.getBoundingBox().getWidthX() + CruxMath.random(.1D, .5D)));
         map.put(CruxAttribute.ATTACK_RANGE, list);
         return map;
     }
@@ -143,7 +143,7 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
     protected double getAttributeValue(@Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> map, @NotNull CruxAttribute attribute){
         if(map == null) return 0D;
         Collection<CruxAttributeModifier> list = map.getOrDefault(attribute, new HashSet<>());
-        return new CruxAttributeInstance(attribute, list).getValue();
+        return CruxAttributeInstance.instance(attribute, list).getValue();
     }
 
     protected double getBaseAttributeValue(@Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> map, @NotNull CruxAttribute attribute){
@@ -172,7 +172,7 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return spawnAt(
-            CruxCore.inst().worldManager().getWorld(location.getWorld().getUID(), AbyssWorld.class), location, consumer
+            CruxCore.inst().worldManager().getWorldOrNull(location.getWorld().getUID(), AbyssWorld.class), location, consumer
         );
     }
 }
