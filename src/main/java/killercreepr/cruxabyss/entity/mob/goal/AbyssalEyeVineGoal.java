@@ -57,8 +57,11 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
 
     @EventHandler(ignoreCancelled = true)
     public void entityDamage(CruxEntityDamageEvent event){
-        if(mob.equals(event.getDamager()) && strongAttack < 1){
-            playAnimation("attack", true);
+        if(mob.equals(event.getDamager())){
+            if(strongAttack < 1){
+                playAnimation("attack", true);
+            }
+            lastHitTarget = System.currentTimeMillis();
             return;
         }
         if(mob.equals(event.getEntity()) && event.getDamager() != null){
@@ -68,9 +71,11 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if(mob.equals(event.getDamager()) && strongAttack < 1){
-            event.setCancelled(true);
-            playAnimation("attack", true);
+        if(mob.equals(event.getDamager())){
+            if(strongAttack < 1){
+                playAnimation("attack", true);
+            }
+            lastHitTarget = System.currentTimeMillis();
             return;
         }
         if(mob.equals(event.getEntity())) {
@@ -78,6 +83,12 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
         }
     }
 
+    @Override
+    public boolean shouldConstantlyLookAtTarget() {
+        return true;
+    }
+
+    protected long lastHitTarget;
     @Override
     public void tick() {
         if(CruxTag.has(mob, "hide")){
@@ -120,6 +131,8 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
             strongAttack--;
             //animation hit time at 7 ticks
             if(strongAttack == 7){
+                if(CruxMath.hasOccurredWithin(lastHitTarget, 20)) return;
+                lastHitTarget = System.currentTimeMillis();
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
                     CruxAttributeModifier.modifier(Crux.key("strong_damage"), 1D, CruxAttribute.Operation.MULTIPLY),
                         Crux.key("strong_attack"));
@@ -139,6 +152,7 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
             strongAttackCooldown--;
             return;
         }
+        if(CruxMath.hasOccurredWithin(lastHitTarget, 20)) return;
         double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE);
         if(range <= 0D) return;
         double distance = getDistanceFromTarget();

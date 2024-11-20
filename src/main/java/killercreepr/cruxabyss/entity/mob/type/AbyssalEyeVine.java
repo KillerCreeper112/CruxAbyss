@@ -14,6 +14,7 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -32,7 +33,7 @@ import java.util.function.Consumer;
 
 public class AbyssalEyeVine extends SimpleAbyssMob {
     public AbyssalEyeVine() {
-        super(Crux.key("abyssal_eyevine"), EntityType.HUSK);
+        super(Crux.key("abyssal_eyevine"), EntityType.PIG);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
                 mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(-999D);
-                mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.7);
+                mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.85);
                 mob.getAttribute(Attribute.GENERIC_JUMP_STRENGTH).setBaseValue(0);
                 mob.setSilent(true);
             }
@@ -67,6 +68,7 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
+        Bukkit.getMobGoals().removeAllGoals(e);
         CompletableFuture<ActiveModel> active = new DesignEntity(e).getOrAddModelAsync(key.value());
         return new AbyssalEyeVineGoal(e).model(active);
     }
