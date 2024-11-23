@@ -1,7 +1,7 @@
 name: CruxAbyss
 version: '1.0'
 author: killercreepr
-main: killercreepr.cruxabyss.CruxAbyss
+main: killercreepr.cruxabyss.core.CruxAbyss
 api-version: '1.19'
 load: STARTUP
 dependencies:
