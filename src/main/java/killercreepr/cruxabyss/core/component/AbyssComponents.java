@@ -16,6 +16,7 @@ import java.util.function.UnaryOperator;
 
 
 public class AbyssComponents {
+    public static void register(){}
     public static final DataComponentType<AbyssConquestNode> ABYSS_CONQUEST_NODE = register("abyss_conquest_node", builder ->
         builder);
     public static final DataComponentType<AbyssEntitySpawner> ABYSS_ENTITY_SPAWNER = register("abyss_entity_spawner", builder ->
