@@ -116,14 +116,13 @@ public class SimpleAbyssAltar implements AbyssAltar {
 
     public boolean checkFromCenter(@NotNull Block center, double rotation){
         int checked = 0;
-        World world = center.getWorld();
         CruxPosition centerPos = CruxPosition.block(0, 0, 0);
         for (Map.Entry<CruxPosition, Predicate<Block>> entry : STRUCTURE.entrySet()) {
             CruxPosition pos = entry.getKey();
             Predicate<Block> filter = entry.getValue();
 
             CruxPosition rotated = pos.rotateAroundY(centerPos, rotation);
-            Block block = rotated.getBlock(world);
+            Block block = center.getRelative(rotated.blockX(), rotated.blockY(), rotated.blockZ());
             if(filter.test(block)) checked++;
         }
         return checked == STRUCTURE.size();

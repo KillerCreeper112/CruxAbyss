@@ -136,10 +136,11 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
             CruxItem cruxItem = CruxItem.wrap(item);
             AbyssAltarCrystal crystal = cruxItem.get(AbyssComponents.ABYSS_ALTAR_CRYSTAL);
             if(crystal == null) return;
-            //new java.awt.Color(0x6DE96D);
+            new java.awt.Color(0x6DE96D);
             goal.setTeleportType(crystal.teleportType());
             Color color = crystal.portalColor();
             if(color != null) goal.setColor(color);
+
             /*if(AbyssItemTags.ABYSS_GEMS_DEATH.isTagged(item)) goal.setColor(Color.fromRGB(0x719BE7));
             if(AbyssItemTags.ABYSS_GEMS_SAFEZONE.isTagged(item)) goal.setColor(Color.fromRGB(0x6DE96D));*/
         });

@@ -34,7 +34,7 @@ public class AbyssComponents {
                     teleportType,
                     portalColor
                 );
-            }).createInput(Crux.key("abyss_altar_item")))
+            }).createInput(Crux.key("abyss_altar_crystal")))
     );
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

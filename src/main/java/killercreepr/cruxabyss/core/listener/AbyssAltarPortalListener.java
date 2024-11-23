@@ -41,8 +41,8 @@ public class AbyssAltarPortalListener implements Listener {
         AbyssAltar altar = AbyssAltar.getFromCenter(b);
         if(altar == null) return;
 
+        event.setCancelled(true);
         for(AbyssAltarItemComponent altarItem : list){
-            event.setCancelled(true);
             if(!altarItem.canPlaceOn(altar)) return;
 
             altarItem.place(altar, p, cruxItem);
