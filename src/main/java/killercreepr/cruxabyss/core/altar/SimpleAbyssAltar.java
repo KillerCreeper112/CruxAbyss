@@ -92,7 +92,8 @@ public class SimpleAbyssAltar implements AbyssAltar {
     @NotNull
     @Override
     public BlockFace getDirection() {
-        if(!isValidCache()) throw new IllegalStateException("SimpleAbyssAltar is no longer valid! Cannot get direction.");
+        if(cache.isEmpty()) isValid();
+        //if(!isValidCache()) throw new IllegalStateException("SimpleAbyssAltar is no longer valid! Cannot get direction.");
         if(cacheRotation == 0) return BlockFace.NORTH;
         return BlockFace.EAST;
     }
@@ -101,7 +102,7 @@ public class SimpleAbyssAltar implements AbyssAltar {
     @Override
     public Collection<AltarEntity> selectedEntities() {
         Collection<AltarEntity> list = new HashSet<>();
-        BoundingBox box = BoundingBox.of(center.getLocation().toCenterLocation(), 1, 1, 1).shift(0, 1, 0);
+        BoundingBox box = BoundingBox.of(center.getLocation().add(0, 1, 0).toCenterLocation(), 1, 1, 1);
         for(Entity e : center.getWorld().getNearbyEntities(box)){
             CruxMob cruxMob = CruxMob.get(e);
             if(!(cruxMob instanceof AltarEntityType type)) continue;

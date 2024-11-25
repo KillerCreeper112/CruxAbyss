@@ -3,6 +3,10 @@ package killercreepr.cruxabyss.core.entity.type;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.cruxabyss.api.altar.AbyssAltar;
+import killercreepr.cruxabyss.api.altar.AltarEntity;
+import killercreepr.cruxabyss.api.altar.AltarEntityType;
+import killercreepr.cruxabyss.core.entity.altar.AltarPortalEntity;
 import killercreepr.cruxabyss.core.entity.goal.AbyssAltarPortalGoal;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
@@ -21,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class AbyssAltarPortal extends SimpleCruxMob {
+public class AbyssAltarPortal extends SimpleCruxMob implements AltarEntityType {
     public AbyssAltarPortal() {
         super(Crux.key("abyss_altar_portal"));
     }
@@ -65,5 +69,11 @@ public class AbyssAltarPortal extends SimpleCruxMob {
             if(consumer != null) consumer.accept(e);
             load(e);
         });
+    }
+
+    @NotNull
+    @Override
+    public AltarEntity createAltarEntity(@NotNull AbyssAltar altar, @NotNull Entity from) {
+        return new AltarPortalEntity(from);
     }
 }

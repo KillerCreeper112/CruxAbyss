@@ -2,10 +2,8 @@ package killercreepr.cruxabyss.core.component.impl;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
-import killercreepr.cruxabyss.core.entity.goal.AbyssCrystalGoal;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.Color;
@@ -13,7 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Mob;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -46,10 +44,7 @@ public class AbyssAltarCrystalComponent implements AbyssAltarCrystal {
         }
 
         Location spawn = b.getLocation().toCenterLocation().add(0, .5, 0);
-        Mob crystalMob = (Mob) AbyssMob.ABYSS_CRYSTAL.spawn(spawn);
-        AbyssCrystalGoal goal = CruxGoalUtil.getGoal(crystalMob, AbyssCrystalGoal.class);
-        goal.setItem(clonedItem);
-        goal.setAltar(altar);
+        Entity crystalMob = AbyssMob.ABYSS_CRYSTAL.place(spawn, altar, clonedItem);
         CreateSound.sound(Sound.BLOCK_AMETHYST_BLOCK_PLACE, 1.5f).playAt(crystalMob);
     }
 
