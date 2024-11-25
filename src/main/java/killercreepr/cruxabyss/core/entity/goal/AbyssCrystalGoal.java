@@ -21,10 +21,11 @@ import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Candle;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class AbyssCrystalGoal extends CruxMobModeledGoal {
+public class AbyssCrystalGoal extends AbyssAltarPlacedItemGoal {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("abyss_crystal"));
     public AbyssCrystalGoal(@NotNull Mob mob) {
         super(KEY, mob);
@@ -40,12 +41,21 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
         });
     }
 
+    @Override
+    public void onRightClick(Player p) {
+
+    }
+
+    @Override
+    public void onLeftClick(Player p) {
+        explode();
+    }
+
     protected AbyssAltar altar;
     public void setAltar(@NotNull AbyssAltar altar){
         this.altar = altar;
     }
 
-    protected int tick = 0;
     protected final int lifeSpan = 100;
     protected double speed = .7D;
     protected final double speedIncrease = .2;

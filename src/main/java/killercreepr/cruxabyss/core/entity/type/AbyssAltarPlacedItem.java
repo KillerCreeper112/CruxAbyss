@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.entity.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.api.entity.CruxEntity;
+import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.altar.AltarEntity;
@@ -36,7 +38,8 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
             e.setSilent(true);
             e.setGravity(false);
             e.setCollidable(false);
-            e.setInvulnerable(true);
+            CruxEntity.entity(e).set(CruxComponents.INVULNERABLE, true);
+            //e.setInvulnerable(true);
 
             load(e);
             if(consumer != null) consumer.accept(e);
