@@ -20,6 +20,14 @@ public class SimpleAbyssAltarItemEntity implements AbyssAltarItemEntity {
         designEntity.model(designEntity.getOrAddModelAsync("abyss_altar_item"));
     }
 
+    public AbyssAltarItemEntity size(float size){
+        designEntity.applyModel(model ->{
+            model.setScale(size);
+            //model.getBone("base").orElseThrow().setGlobalScale(new Vector3f(size, size, size));
+        });
+        return this;
+    }
+
     @Override
     public AbyssAltarItemEntity spin(boolean value) {
         if(value) designEntity.playAnimation("spin", true);

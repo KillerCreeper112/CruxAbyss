@@ -13,6 +13,7 @@ public interface AbyssAltarItemEntity {
         return new SimpleAbyssAltarItemEntity(e);
     }
 
+    AbyssAltarItemEntity size(float size);
     AbyssAltarItemEntity spin(boolean value);
     AbyssAltarItemEntity bob(boolean value);
     AbyssAltarItemEntity size(boolean value);

@@ -3,8 +3,11 @@ package killercreepr.cruxabyss.core.entity.type;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
+import killercreepr.cruxabyss.api.altar.AltarEntity;
+import killercreepr.cruxabyss.api.altar.AltarEntityType;
 import killercreepr.cruxabyss.api.entity.AbyssAltarItemEntity;
 import killercreepr.cruxabyss.api.entity.type.AltarPlacedItem;
+import killercreepr.cruxabyss.core.entity.altar.AltarItemEntity;
 import killercreepr.cruxabyss.core.entity.goal.AbyssAltarPlacedItemGoal;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import net.kyori.adventure.key.Key;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedItem {
+public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedItem, AltarEntityType {
     public AbyssAltarPlacedItem(@NotNull Key key) {
         super(key);
     }
@@ -62,5 +65,11 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
             AbyssAltarItemEntity.wrap(e).display(display);
             if(consumer != null) consumer.accept(e);
         });
+    }
+
+    @NotNull
+    @Override
+    public AltarEntity createAltarEntity(@NotNull AbyssAltar altar, @NotNull Entity from) {
+        return new AltarItemEntity(from);
     }
 }
