@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.entity.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.entity.AbyssAltarItemEntity;
 import killercreepr.cruxabyss.api.entity.type.AltarPlacedItem;
 import killercreepr.cruxabyss.core.entity.goal.AbyssAltarPlacedItemGoal;
@@ -45,8 +46,12 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
 
     @NotNull
     @Override
-    public Entity place(@NotNull Location location, ItemStack display, @Nullable Consumer<Entity> consumer) {
+    public Entity place(@NotNull Location location, AbyssAltar altar, ItemStack display, @Nullable Consumer<Entity> consumer) {
         return spawnAt(location, e ->{
+            if(e instanceof Mob mob){
+                AbyssAltarPlacedItemGoal goal = CruxGoalUtil.getGoal(mob, AbyssAltarPlacedItemGoal.class);
+                if(goal != null) goal.setAltar(altar);
+            }
             AbyssAltarItemEntity.wrap(e).display(display);
             if(consumer != null) consumer.accept(e);
         });
