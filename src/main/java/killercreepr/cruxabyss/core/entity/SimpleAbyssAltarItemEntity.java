@@ -16,7 +16,7 @@ public class SimpleAbyssAltarItemEntity implements AbyssAltarItemEntity {
     protected final ModelEntity designEntity;
     public SimpleAbyssAltarItemEntity(Entity entity) {
         this.entity = entity;
-        this.designEntity = new ModelEntity(entity);
+        this.designEntity = new ModelEntity(entity).setBaseEntityVisible(false);
         designEntity.model(designEntity.getOrAddModelAsync("abyss_altar_item"));
     }
 
