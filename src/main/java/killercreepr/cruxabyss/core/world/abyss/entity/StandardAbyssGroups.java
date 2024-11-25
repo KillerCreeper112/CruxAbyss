@@ -65,10 +65,23 @@ public class StandardAbyssGroups {
         }
     };
 
+    public static final NaturalEntitySpawnGroup CHARRED_BONES = new NaturalSpawnPartGroup(10, 0f,
+        StandardAbyssSpawns.CHARRED_BONES){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 12) return false;
+            Block b = ctx.getBlock();
+            NamespacedKey k = BiomeUtils.getBiome(b);
+            return k.equals(Crux.key("charred_wastes")) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+        }
+    };
+
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
         registry.register(ABYSSAL_EYE_VINE);
         registry.register(MOOSE);
         registry.register(GROUND_DWELLER);
+        registry.register(CHARRED_BONES);
     }
 }

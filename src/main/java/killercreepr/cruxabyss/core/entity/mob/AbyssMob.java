@@ -1,7 +1,10 @@
 package killercreepr.cruxabyss.core.entity.mob;
 
 import killercreepr.crux.api.registry.KeyedRegistry;
+import killercreepr.crux.core.Crux;
+import killercreepr.cruxabyss.api.entity.type.AltarPlacedItem;
 import killercreepr.cruxabyss.core.entity.mob.type.*;
+import killercreepr.cruxabyss.core.entity.type.AbyssAltarPlacedItem;
 import killercreepr.cruxabyss.core.entity.type.AbyssAltarPortal;
 import killercreepr.cruxabyss.core.entity.type.AbyssCrystal;
 import killercreepr.cruxabyss.core.entity.type.AbyssReturnPortal;
@@ -24,5 +27,6 @@ public interface AbyssMob extends CruxMob {
     AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
     AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());
     AbyssCrystal ABYSS_CRYSTAL = REGISTRY.register(new AbyssCrystal());
+    AltarPlacedItem ALTAR_PLACED_ITEM = REGISTRY.register(new AbyssAltarPlacedItem(Crux.key("altar_placed_item")));
     @NotNull Entity spawn(@Nullable AbyssWorld world, @NotNull Location at);
 }
