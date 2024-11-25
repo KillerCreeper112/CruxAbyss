@@ -17,6 +17,8 @@ public interface AbyssAltarItemEntity {
     AbyssAltarItemEntity bob(boolean value);
     AbyssAltarItemEntity size(boolean value);
     AbyssAltarItemEntity display(ItemStack item);
+    ItemStack display();
+    double spinSpeed();
     AbyssAltarItemEntity spinSpeed(double speed);
     CompletableFuture<ActiveModel> model();
     Entity entity();

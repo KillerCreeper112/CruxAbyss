@@ -2,6 +2,8 @@ package killercreepr.cruxabyss.core.entity;
 
 import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.api.entity.CruxEntity;
+import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.cruxabyss.api.entity.AbyssAltarItemEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import org.bukkit.entity.Entity;
@@ -41,10 +43,23 @@ public class SimpleAbyssAltarItemEntity implements AbyssAltarItemEntity {
 
     @Override
     public AbyssAltarItemEntity display(ItemStack item) {
+        CruxEntity.entity(entity).set(CruxComponents.ITEM_DISPLAY, item);
         designEntity.applyModel(model ->{
             model.getBone("base").orElseThrow().setModel(item);
         });
         return this;
+    }
+
+    @Override
+    public ItemStack display() {
+        return CruxEntity.entity(entity).get(CruxComponents.ITEM_DISPLAY);
+    }
+
+    @Override
+    public double spinSpeed() {
+        IAnimationProperty property = designEntity.getModel().getAnimationHandler().getAnimation("spin");
+        if(property == null) return 0D;
+        return property.getSpeed();
     }
 
     @Override
