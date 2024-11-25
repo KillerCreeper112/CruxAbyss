@@ -10,6 +10,7 @@ import killercreepr.cruxentities.entity.SimpleCruxMob;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
@@ -28,6 +29,12 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Pig.class, e ->{
+            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+            e.setSilent(true);
+            e.setGravity(false);
+            e.setCollidable(false);
+            e.setInvulnerable(true);
+
             load(e);
             if(consumer != null) consumer.accept(e);
         });
@@ -47,7 +54,7 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
     @NotNull
     @Override
     public Entity place(@NotNull Location location, AbyssAltar altar, ItemStack display, @Nullable Consumer<Entity> consumer) {
-        return spawnAt(location, e ->{
+        return spawn(location, e ->{
             if(e instanceof Mob mob){
                 AbyssAltarPlacedItemGoal goal = CruxGoalUtil.getGoal(mob, AbyssAltarPlacedItemGoal.class);
                 if(goal != null) goal.setAltar(altar);
