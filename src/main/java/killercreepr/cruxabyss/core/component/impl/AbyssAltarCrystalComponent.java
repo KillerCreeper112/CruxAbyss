@@ -43,7 +43,7 @@ public class AbyssAltarCrystalComponent implements AbyssAltarCrystal {
             return;
         }
 
-        Location spawn = b.getLocation().toCenterLocation().add(0, .5, 0);
+        Location spawn = altar.generalPlaceLocation();
         Entity crystalMob = AbyssMob.ABYSS_CRYSTAL.place(spawn, altar, clonedItem);
         CreateSound.sound(Sound.BLOCK_AMETHYST_BLOCK_PLACE, 1.5f).playAt(crystalMob);
     }
