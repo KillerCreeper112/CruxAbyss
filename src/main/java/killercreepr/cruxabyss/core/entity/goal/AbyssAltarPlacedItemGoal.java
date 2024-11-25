@@ -122,7 +122,7 @@ public class AbyssAltarPlacedItemGoal extends CruxMobModeledGoal implements List
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if(!event.getEntity().equals(mob)) return;
-        if(!(event.getEntity() instanceof Player p)) return;
+        if(!(event.getDamager() instanceof Player p)) return;
         onLeftClick(p);
     }
 
