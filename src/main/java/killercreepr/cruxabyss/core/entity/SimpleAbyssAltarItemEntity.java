@@ -17,7 +17,7 @@ public class SimpleAbyssAltarItemEntity implements AbyssAltarItemEntity {
     public SimpleAbyssAltarItemEntity(Entity entity) {
         this.entity = entity;
         this.designEntity = new ModelEntity(entity);
-        designEntity.getOrAddModelAsync("abyss_altar_item");
+        designEntity.model(designEntity.getOrAddModelAsync("abyss_altar_item"));
     }
 
     @Override

@@ -139,6 +139,7 @@ public class SimpleAbyssAltar implements AbyssAltar {
             this.cache.clear();
             this.cache.putAll(cache);
             this.cacheRotation = (short) rotation;
+            return true;
         }
         return false;
     }
