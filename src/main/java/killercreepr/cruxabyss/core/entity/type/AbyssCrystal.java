@@ -3,11 +3,10 @@ package killercreepr.cruxabyss.core.entity.type;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.cruxabyss.api.entity.AbyssAltarItemEntity;
 import killercreepr.cruxabyss.core.entity.goal.AbyssCrystalGoal;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
-import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -49,12 +48,10 @@ public class AbyssCrystal extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        CompletableFuture<ActiveModel> model = new DesignEntity(m).getOrAddModelAsync(key.value());
+        CompletableFuture<ActiveModel> model =  AbyssAltarItemEntity.wrap(e).spin(true).model();
         CruxGoalUtil.addIfNotPresent(m, AbyssCrystalGoal.class, 0, () ->{
             Bukkit.getMobGoals().removeAllGoals(m);
-            CruxMobModeledGoal goal = new AbyssCrystalGoal(m).model(model);
-            goal.playAnimation("spin", true);
-            return goal;
+            return new AbyssCrystalGoal(m).model(model);
         });
     }
 

@@ -59,7 +59,7 @@ public class AbyssCrystalGoal extends CruxMobModeledGoal {
                 checkValidCooldown--;
             }else{
                 checkValidCooldown = 10;
-                if(!altar.isValid()){
+                if(!altar.isValidCache()){
                     explode();
                     return;
                 }

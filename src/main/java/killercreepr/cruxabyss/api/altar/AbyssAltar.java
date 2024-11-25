@@ -20,6 +20,7 @@ public interface AbyssAltar {
     @NotNull
     Block center();
     boolean isValid();
+    boolean isValidCache();
     @NotNull
     BlockFace getDirection();
     @NotNull

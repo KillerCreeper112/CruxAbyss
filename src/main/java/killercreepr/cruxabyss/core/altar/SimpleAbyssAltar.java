@@ -4,7 +4,7 @@ import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.altar.AltarEntity;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.api.altar.AltarEntityType;
 import killercreepr.cruxentities.entity.CruxMob;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,12 +14,8 @@ import org.bukkit.block.data.type.Candle;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class SimpleAbyssAltar implements AbyssAltar {
@@ -35,7 +31,7 @@ public class SimpleAbyssAltar implements AbyssAltar {
         .put(CruxPosition.block(-1, 1, 0), CANDLE_PREDICATE)
         .buildUnmodifiable();
 
-    public static final float[] validRotations = new float[]{0, 90};
+    public static final short[] validRotations = new short[]{0, 90};
 
     public static AbyssAltar getFromCenter(@NotNull Block block){
         if(!ENCHANTING_TABLE_PREDICATE.test(block)) return null;
@@ -69,14 +65,6 @@ public class SimpleAbyssAltar implements AbyssAltar {
         return center;
     }
 
-    public @Nullable Entity getSelectedEntity(){
-        BoundingBox box = BoundingBox.of(center.getLocation().toCenterLocation(), 1, 1, 1).shift(0, 1, 0);
-        for(Entity e : center.getWorld().getNearbyEntities(box, e -> CruxMob.is(e, AbyssMob.ABYSS_CRYSTAL) || CruxMob.is(e, AbyssMob.ALTAR_PORTAL) || CruxMob.is(e, AbyssMob.RETURN_PORTAL))){
-            return e;
-        }
-        return null;
-    }
-
     @NotNull
     @Override
     public Block center() {
@@ -88,10 +76,24 @@ public class SimpleAbyssAltar implements AbyssAltar {
         return checkFromCenter(center);
     }
 
+    protected final Map<Block, Predicate<Block>> cache = new HashMap<>();
+    protected short cacheRotation;
+    @Override
+    public boolean isValidCache() {
+        if(cache.isEmpty()) return isValid();
+        for (Map.Entry<Block, Predicate<Block>> entry : cache.entrySet()) {
+            Block b = entry.getKey();
+            Predicate<Block> filter = entry.getValue();
+            if(!filter.test(b)) return false;
+        }
+        return true;
+    }
+
     @NotNull
     @Override
     public BlockFace getDirection() {
-        if(checkFromCenter(center, 0)) return BlockFace.NORTH;
+        if(!isValidCache()) throw new IllegalStateException("SimpleAbyssAltar is no longer valid! Cannot get direction.");
+        if(cacheRotation == 0) return BlockFace.NORTH;
         return BlockFace.EAST;
     }
 
@@ -100,31 +102,44 @@ public class SimpleAbyssAltar implements AbyssAltar {
     public Collection<AltarEntity> selectedEntities() {
         Collection<AltarEntity> list = new HashSet<>();
         BoundingBox box = BoundingBox.of(center.getLocation().toCenterLocation(), 1, 1, 1).shift(0, 1, 0);
-        for(Entity e : center.getWorld().getNearbyEntities(box, e -> CruxMob.is(e, AbyssMob.ABYSS_CRYSTAL) ||
-            CruxMob.is(e, AbyssMob.ALTAR_PORTAL) || CruxMob.is(e, AbyssMob.RETURN_PORTAL))){
-            //todo make it get
+        for(Entity e : center.getWorld().getNearbyEntities(box)){
+            CruxMob cruxMob = CruxMob.get(e);
+            if(!(cruxMob instanceof AltarEntityType type)) continue;
+            list.add(type.createAltarEntity(this, e));
         }
         return list;
     }
 
     public boolean checkFromCenter(@NotNull Block center){
-        for(float rot : validRotations){
-            if(checkFromCenter(center, rot)) return true;
+        for(short rot : validRotations){
+            if(checkFromCenter(center, rot, true)){
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean checkFromCenter(@NotNull Block center, double rotation){
+    public boolean checkFromCenter(@NotNull Block center, double rotation, boolean updateCache){
         int checked = 0;
         CruxPosition centerPos = CruxPosition.block(0, 0, 0);
+        Map<Block, Predicate<Block>> cache = new HashMap<>();
         for (Map.Entry<CruxPosition, Predicate<Block>> entry : STRUCTURE.entrySet()) {
             CruxPosition pos = entry.getKey();
             Predicate<Block> filter = entry.getValue();
 
             CruxPosition rotated = pos.rotateAroundY(centerPos, rotation);
             Block block = center.getRelative(rotated.blockX(), rotated.blockY(), rotated.blockZ());
-            if(filter.test(block)) checked++;
+            if(filter.test(block)){
+                checked++;
+                cache.put(block, filter);
+            }
         }
-        return checked == STRUCTURE.size();
+        if(checked == STRUCTURE.size()){
+            if(!updateCache) return true;
+            this.cache.clear();
+            this.cache.putAll(cache);
+            this.cacheRotation = (short) rotation;
+        }
+        return false;
     }
 }
