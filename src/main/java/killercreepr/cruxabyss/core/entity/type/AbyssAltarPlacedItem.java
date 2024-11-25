@@ -50,7 +50,11 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        CompletableFuture<ActiveModel> model =  AbyssAltarItemEntity.wrap(e).bob(true).spin(true).model();
+        loadGoal(m);
+    }
+
+    public void loadGoal(Mob m){
+        CompletableFuture<ActiveModel> model =  AbyssAltarItemEntity.wrap(m).bob(true).spin(true).model();
         CruxGoalUtil.addIfNotPresent(m, AbyssAltarPlacedItemGoal.class, 0, () ->{
             Bukkit.getMobGoals().removeAllGoals(m);
             return new AbyssAltarPlacedItemGoal(m).model(model);
