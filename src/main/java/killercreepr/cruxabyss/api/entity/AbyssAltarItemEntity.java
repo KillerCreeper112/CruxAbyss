@@ -13,6 +13,10 @@ public interface AbyssAltarItemEntity {
         return new SimpleAbyssAltarItemEntity(e);
     }
 
+    static AbyssAltarItemEntity wrap(@NotNull Entity e, String modelID){
+        return new SimpleAbyssAltarItemEntity(e, modelID);
+    }
+
     AbyssAltarItemEntity size(float size);
     AbyssAltarItemEntity spin(boolean value);
     AbyssAltarItemEntity bob(boolean value);

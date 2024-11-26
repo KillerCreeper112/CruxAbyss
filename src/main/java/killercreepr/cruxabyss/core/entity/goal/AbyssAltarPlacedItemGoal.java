@@ -26,9 +26,15 @@ public class AbyssAltarPlacedItemGoal extends CruxMobModeledGoal implements List
     }
 
     public AbyssAltarPlacedItemGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
-        super(key, mob);
-        this.altarItem = AbyssAltarItemEntity.wrap(mob);
+        this(key, mob, null);
     }
+
+    public AbyssAltarPlacedItemGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, AbyssAltarItemEntity altarItem) {
+        super(key, mob);
+        this.altarItem = altarItem == null ? AbyssAltarItemEntity.wrap(mob) : altarItem;
+
+    }
+
     protected final AbyssAltarItemEntity altarItem;
 
     public void onLeftClick(Player p){

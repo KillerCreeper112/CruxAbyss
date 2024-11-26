@@ -15,9 +15,13 @@ public class SimpleAbyssAltarItemEntity implements AbyssAltarItemEntity {
     protected final Entity entity;
     protected final ModelEntity designEntity;
     public SimpleAbyssAltarItemEntity(Entity entity) {
+        this(entity, "abyss_altar_item");
+    }
+
+    public SimpleAbyssAltarItemEntity(Entity entity, String modelID) {
         this.entity = entity;
         this.designEntity = new ModelEntity(entity).setBaseEntityVisible(false);
-        designEntity.model(designEntity.getOrAddModelAsync("abyss_altar_item"));
+        designEntity.model(designEntity.getOrAddModelAsync(modelID));
     }
 
     public AbyssAltarItemEntity size(float size){
