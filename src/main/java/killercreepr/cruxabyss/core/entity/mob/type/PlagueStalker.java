@@ -14,6 +14,7 @@ import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -38,12 +39,12 @@ public class PlagueStalker extends SimpleAbyssMob {
             e.setCustomNameVisible(false);
             e.setSilent(true);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
-            /*if(e instanceof Mob mob){
-                mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(-999D);
-                mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.85);
+            if(e instanceof Mob mob){
+                mob.getAttribute(Attribute.GENERIC_STEP_HEIGHT).setBaseValue(1.2D);
+                /*mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.85);
                 mob.getAttribute(Attribute.GENERIC_JUMP_STRENGTH).setBaseValue(0);
-                mob.setSilent(true);
-            }*/
+                mob.setSilent(true);*/
+            }
         };
     }
 
