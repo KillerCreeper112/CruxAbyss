@@ -80,7 +80,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     protected int wave = 1;
-    protected float difficulty = .6f;
+    protected float difficulty = 1f;
     protected int daysPassed = 0;
 
     public SimpleNaturalEntityWorldSpawner createEntitySpawner(){

@@ -11,6 +11,7 @@ import killercreepr.cruxabyss.api.entity.AbyssAltarItemEntity;
 import killercreepr.cruxabyss.api.entity.type.AltarPlacedItem;
 import killercreepr.cruxabyss.core.entity.altar.AltarItemEntity;
 import killercreepr.cruxabyss.core.entity.goal.AbyssAltarPlacedItemGoal;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -78,5 +79,10 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
     @Override
     public AltarEntity createAltarEntity(@NotNull AbyssAltar altar, @NotNull Entity from) {
         return new AltarItemEntity(from);
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.OBJECT};
     }
 }
