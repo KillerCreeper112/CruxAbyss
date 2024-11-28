@@ -131,4 +131,28 @@ public class StandardAbyssSpawns {
             return CruxMath.random(1, 2);
         }
     };
+
+    public static final NaturalEntitySpawn PLAGUE_STALKER = new NaturalCruxMobSpawn(4, 0f, AbyssMob.PLAGUE_STALKER) {
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            Block b = ctx.getBlock();
+
+            if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
+                Block down = b.getRelative(BlockFace.DOWN);
+                if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
+                for(BlockFace f : BlockFace.values()){
+                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!down.getRelative(f).isSolid()) return false;
+                }
+                return b.getWorld().getNearbyEntities(b.getLocation(), 5D, 5D, 5D,
+                    x -> CruxMob.is(x, mob)).isEmpty();
+            }
+            return false;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return CruxMath.random(1, 2);
+        }
+    };
 }

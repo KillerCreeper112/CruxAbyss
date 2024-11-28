@@ -13,7 +13,6 @@ import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
-import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

@@ -14,8 +14,6 @@ import killercreepr.cruxabyss.core.entity.altar.AltarItemEntity;
 import killercreepr.cruxabyss.core.entity.goal.AbyssCrystalGoal;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
-import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
-import killercreepr.cruxentities.persistence.CruxEntitiesPersist;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

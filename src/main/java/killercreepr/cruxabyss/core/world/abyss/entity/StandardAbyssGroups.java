@@ -77,11 +77,24 @@ public class StandardAbyssGroups {
         }
     };
 
+    public static final NaturalEntitySpawnGroup PLAGUE_STALKER = new NaturalSpawnPartGroup(10, 0f,
+        StandardAbyssSpawns.PLAGUE_STALKER){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 12) return false;
+            Block b = ctx.getBlock();
+            NamespacedKey k = BiomeUtils.getBiome(b);
+            return k.equals(Crux.key("toxic_grasslands")) && getEntityAmountNearChunk(b.getChunk(), 2) < 16;
+        }
+    };
+
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
         registry.register(ABYSSAL_EYE_VINE);
         registry.register(MOOSE);
         registry.register(GROUND_DWELLER);
         registry.register(CHARRED_BONES);
+        registry.register(PLAGUE_STALKER);
     }
 }
