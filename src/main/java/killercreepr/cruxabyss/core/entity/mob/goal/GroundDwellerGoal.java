@@ -72,7 +72,7 @@ public class GroundDwellerGoal extends CruxMobModeledGoal {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target){
-        if(CruxMob.isInCategory(target, MobCategory.MONSTER)) return false;
+        if(CruxMob.isInCategory(target, MobCategory.ENEMY)) return false;
         if(goUnderGround) return isValidTarget(target);
         return isValidTarget(target) && hasLineOfSight(target);
     }

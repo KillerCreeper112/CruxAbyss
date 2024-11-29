@@ -13,7 +13,9 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -40,7 +42,14 @@ public class PlagueStalker extends SimpleAbyssMob {
             e.setSilent(true);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
+                mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40D);
+                mob.setHealth(40D);
                 mob.getAttribute(Attribute.GENERIC_STEP_HEIGHT).setBaseValue(1.2D);
+                CruxAttribute.addModifier(
+                    e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
+                        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
+                    )
+                );
                 /*mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.85);
                 mob.getAttribute(Attribute.GENERIC_JUMP_STRENGTH).setBaseValue(0);
                 mob.setSilent(true);*/
@@ -54,11 +63,22 @@ public class PlagueStalker extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 CruxAttributeModifier.baseModifier(CruxMath.random(5D, 7D) *
                         (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
-        addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-9));
+        addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.2D));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
         return map;
+    }
+
+    @Override
+    public void load(@NotNull Entity e) {
+        super.load(e);
+        if(!(e instanceof Mob mob)) return;
+        //stop wolf from attacking skeletons
+        Bukkit.getMobGoals().getAllGoals(mob).forEach(mobGoal -> {
+            if(!mobGoal.getKey().getNamespacedKey().equals(NamespacedKey.minecraft("nearest_attackable"))) return;
+            Bukkit.getMobGoals().removeGoal(mob, mobGoal.getKey());
+        });
     }
 
     @Override

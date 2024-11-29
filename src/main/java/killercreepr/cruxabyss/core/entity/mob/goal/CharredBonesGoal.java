@@ -36,6 +36,6 @@ public class CharredBonesGoal extends CruxMobModeledGoal {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.MONSTER);
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
     }
 }

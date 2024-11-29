@@ -52,7 +52,7 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.MONSTER);
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
     }
 
     @EventHandler(ignoreCancelled = true)
