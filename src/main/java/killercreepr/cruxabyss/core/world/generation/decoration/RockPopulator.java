@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.core.world.generation.decoration;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
@@ -7,6 +9,7 @@ import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Tag;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -17,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RockPopulator extends GrimPopulator {
     private final BlockGenerator ore;
@@ -32,7 +36,7 @@ public class RockPopulator extends GrimPopulator {
         .fractalType(CruxNoise.FractalType.FBm)
         .fractalOctaves(2)
         ;
-    private final Set<Biome> biomes = Set.of(Biome.values());
+    private final Set<Biome> biomes = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).stream().collect(Collectors.toSet());
     private final Set<Material> passMaterials = new HashSet<>();
 
     public RockPopulator(@NotNull BlockGenerator ore) {

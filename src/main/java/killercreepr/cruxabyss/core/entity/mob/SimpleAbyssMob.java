@@ -59,8 +59,8 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
                         }
                     }
                 }
-                if(lE.getAttribute(Attribute.GENERIC_FOLLOW_RANGE) != null){
-                    lE.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(64D);
+                if(lE.getAttribute(Attribute.FOLLOW_RANGE) != null){
+                    lE.getAttribute(Attribute.FOLLOW_RANGE).setBaseValue(64D);
                 }
             }
             //Atributes

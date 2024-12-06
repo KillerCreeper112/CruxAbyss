@@ -44,9 +44,9 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
             CruxTag.set(e, "hide", PersistentDataType.INTEGER, 1);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
-                mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(-999D);
-                mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(.9);
-                mob.getAttribute(Attribute.GENERIC_JUMP_STRENGTH).setBaseValue(0);
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(-999D);
+                mob.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.9);
+                mob.getAttribute(Attribute.JUMP_STRENGTH).setBaseValue(0);
                 mob.setSilent(true);
             }
         };

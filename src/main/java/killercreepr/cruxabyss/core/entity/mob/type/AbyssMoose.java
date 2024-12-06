@@ -44,8 +44,8 @@ public class AbyssMoose extends SimpleAbyssMob {
             modeled.setBaseEntityVisible(false);
 
             if(e instanceof Mob mob){
-                mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30D);
-                mob.getAttribute(Attribute.GENERIC_STEP_HEIGHT).setBaseValue(1D);
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(30D);
+                mob.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(1D);
                 mob.setHealth(30D);
             }
         };

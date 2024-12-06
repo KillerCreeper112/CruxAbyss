@@ -13,6 +13,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Set;
 
 public class StandardAbyssGroups {
@@ -53,17 +54,20 @@ public class StandardAbyssGroups {
             if(CruxMath.random(1, 100) <= 25) return false;
             boolean biome = false;
             Block b = ctx.getBlock();
-            switch (b.getBiome()){
-                case BEACH, SNOWY_BEACH, SAVANNA, SAVANNA_PLATEAU, WINDSWEPT_SAVANNA, BADLANDS,
-                     ERODED_BADLANDS, WOODED_BADLANDS, DESERT -> biome = true;
-                case CUSTOM -> {
-                    NamespacedKey k = BiomeUtils.getBiome(b);
-                    biome = k.equals(Crux.key("corruption"));
-                }
+            Biome bb = b.getBiome();
+            if(isBiome(bb, Biome.BEACH, Biome.SNOWY_BEACH, Biome.SAVANNA, Biome.SAVANNA_PLATEAU, Biome.WINDSWEPT_SAVANNA,
+                Biome.BADLANDS, Biome.ERODED_BADLANDS, Biome.WOODED_BADLANDS, Biome.DESERT)){
+                biome = true;
+            }else if(bb.key().equals(Crux.key("corruption"))){
+                biome = true;
             }
             return biome && getEntityAmountNearChunk(b.getChunk(), 8) < 4;
         }
     };
+
+    public static boolean isBiome(Biome biome, Biome... biomes){
+        return Arrays.stream(biomes).anyMatch(b -> b.key().equals(biome.key()));
+    }
 
     public static final NaturalEntitySpawnGroup CHARRED_BONES = new NaturalSpawnPartGroup(10, 0f,
         StandardAbyssSpawns.CHARRED_BONES){

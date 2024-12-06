@@ -67,7 +67,7 @@ public class AbyssReturnPortal extends SimpleCruxMob {
             if(e instanceof Mob mob){
                 mob.setSilent(true);
                 mob.setCollidable(false);
-                mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0D);
             }
             if(consumer != null) consumer.accept(e);
             load(e);

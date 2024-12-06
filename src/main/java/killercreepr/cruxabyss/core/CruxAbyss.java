@@ -30,7 +30,6 @@ import killercreepr.cruxabyss.core.structure.*;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
-import killercreepr.cruxabyss.core.world.biome.BiomeManager;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -144,7 +143,6 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             langProvider = this;
             LangPopulator.populate(lang, Msg.class);
         }
-        BiomeManager.register();
         registerListeners(
             this,
             new AbyssAltarPortalListener(),

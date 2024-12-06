@@ -1,34 +1,24 @@
 package killercreepr.cruxabyss.core.world.biome;
 
-import killercreepr.crux.core.Crux;
-import net.minecraft.core.Holder;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.RegistrationInfo;
-import net.minecraft.core.WritableRegistry;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.biome.*;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.lang.reflect.Field;
-import java.util.IdentityHashMap;
-import java.util.logging.Level;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import killercreepr.usurvive.USurvivePlugin;
+import org.bukkit.block.Biome;
 
 public class BiomeManager {
-    public static Holder<Biome> TOXIC_MIRE; //toxic mire
-    public static Holder<Biome> CHARRED_WASTES;
-    public static Holder<Biome> CORRUPT;
-    public static Holder<Biome> ELDRITCH_WASTES;
-    public static Holder<Biome> TOXIC_GRASSLANDS;
-    public static void register(){
-        WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElse(null);
+    //biomes added via datapack
+    public static final Biome TOXIC_MIRE = biome("toxic_mire");
+    public static final Biome CHARRED_WASTES = biome("charred_wastes");
+    public static final Biome CORRUPTION = biome("corruption");
+    public static final Biome ELDRITCH_WASTES = biome("eldritch_wastes");
+    public static final Biome TOXIC_GRASSLANDS = biome("toxic_grasslands");
 
+    public static Biome biome(String id){
+        return RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).get(USurvivePlugin.inst().key(id));
+    }
+    /*public static void register(){
+        WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer()
+            .registryAccess().get(Registries.BIOME).orElseThrow(() -> new RuntimeException("NOOOOOOOOOO")).value();
         try {
             Field frozen = MappedRegistry.class.getDeclaredField("frozen");
             frozen.setAccessible(true);
@@ -47,7 +37,7 @@ public class BiomeManager {
         }
 
         Biome plains = registrywritable.get(ResourceKey.create(Registries.BIOME,
-                ResourceLocation.fromNamespaceAndPath("minecraft", "plains")));
+                ResourceLocation.fromNamespaceAndPath("minecraft", "plains"))).get().value();
         Crux.log(Level.INFO, "Plains biome registry: " + (plains == null ? "null" : "FOUND"));
         new Color(0x04B449);
         new Color(0x3BD545);
@@ -75,9 +65,9 @@ public class BiomeManager {
             .generationSettings(BiomeGenerationSettings.EMPTY)
             .build();
         registrywritable.createIntrusiveHolder(biome);
-        TOXIC_MIRE = registrywritable.register(ResourceKey.create(Registries.BIOME,
+        *//*TOXIC_MIRE = registrywritable.register(ResourceKey.create(Registries.BIOME,
                         ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "toxic_mire")),
-                biome, RegistrationInfo.BUILT_IN);
+                biome, RegistrationInfo.BUILT_IN);*//*
 
         biome = new Biome.BiomeBuilder()
             .specialEffects(new BiomeSpecialEffects.Builder()
@@ -102,9 +92,9 @@ public class BiomeManager {
             .generationSettings(BiomeGenerationSettings.EMPTY)
             .build();
         registrywritable.createIntrusiveHolder(biome);
-        CHARRED_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
+        *//*CHARRED_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "charred_wastes")),
-                biome, RegistrationInfo.BUILT_IN);
+                biome, RegistrationInfo.BUILT_IN);*//*
 
         biome = new Biome.BiomeBuilder()
             .specialEffects(new BiomeSpecialEffects.Builder()
@@ -121,9 +111,9 @@ public class BiomeManager {
             .generationSettings(BiomeGenerationSettings.EMPTY)
             .build();
         registrywritable.createIntrusiveHolder(biome);
-        CORRUPT = registrywritable.register(ResourceKey.create(Registries.BIOME,
+        *//*CORRUPT = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "corruption")),
-                biome, RegistrationInfo.BUILT_IN);
+                biome, RegistrationInfo.BUILT_IN);*//*
 
         biome = new Biome.BiomeBuilder()
             .specialEffects(new BiomeSpecialEffects.Builder()
@@ -140,9 +130,9 @@ public class BiomeManager {
             .generationSettings(BiomeGenerationSettings.EMPTY)
             .build();
         registrywritable.createIntrusiveHolder(biome);
-        ELDRITCH_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
+        *//*ELDRITCH_WASTES = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "eldritch_wastes")),
-            biome, RegistrationInfo.BUILT_IN);
+            biome, RegistrationInfo.BUILT_IN);*//*
 
         biome = new Biome.BiomeBuilder()
             .specialEffects(new BiomeSpecialEffects.Builder()
@@ -167,9 +157,9 @@ public class BiomeManager {
             .generationSettings(BiomeGenerationSettings.EMPTY)
             .build();
         registrywritable.createIntrusiveHolder(biome);
-        TOXIC_GRASSLANDS = registrywritable.register(ResourceKey.create(Registries.BIOME,
+        *//*TOXIC_GRASSLANDS = registrywritable.register(ResourceKey.create(Registries.BIOME,
                 ResourceLocation.fromNamespaceAndPath(Crux.NAMESPACE, "toxic_grasslands")),
-            biome, RegistrationInfo.BUILT_IN);
+            biome, RegistrationInfo.BUILT_IN);*//*
 
         try {
             unregisteredIntrusiveHolders.set(registrywritable, null);
@@ -184,5 +174,5 @@ public class BiomeManager {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 }

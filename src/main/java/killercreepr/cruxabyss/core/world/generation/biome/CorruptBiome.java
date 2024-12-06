@@ -44,7 +44,7 @@ public class CorruptBiome extends GrimBiome {
     }
 
     public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
-        setBiome(BiomeManager.CORRUPT, limitedRegion, x,y,z);
+        setBiome(BiomeManager.CORRUPTION, limitedRegion, x,y,z);
     }
 
     @Override

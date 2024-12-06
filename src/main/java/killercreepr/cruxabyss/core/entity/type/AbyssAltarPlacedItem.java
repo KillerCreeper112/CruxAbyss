@@ -35,7 +35,7 @@ public class AbyssAltarPlacedItem extends SimpleCruxMob implements AltarPlacedIt
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Pig.class, e ->{
-            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0D);
             e.setSilent(true);
             e.setGravity(false);
             e.setCollidable(false);

@@ -63,7 +63,7 @@ public class AbyssAltarPortal extends SimpleCruxMob implements AltarEntityType {
             if(e instanceof Mob mob){
                 mob.setSilent(true);
                 mob.setCollidable(false);
-                mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0D);
             }
             //model.getAnimationHandler().playAnimation("open", 0D, 0D, 1D, true);
             if(consumer != null) consumer.accept(e);

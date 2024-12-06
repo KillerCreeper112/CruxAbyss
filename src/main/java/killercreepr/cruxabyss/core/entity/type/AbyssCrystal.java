@@ -40,7 +40,7 @@ public class AbyssCrystal extends SimpleCruxMob implements AltarPlacedItem, Alta
     @Override
     protected @NotNull Mob spawnAt(@NotNull Location l, @Nullable Consumer<Entity> consumer) {
         return l.getWorld().spawn(l, Pig.class, e ->{
-            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0D);
             //new ModelEntity(e, key.value());
             e.setSilent(true);
             e.setGravity(false);

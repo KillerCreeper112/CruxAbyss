@@ -24,6 +24,7 @@ public interface AbyssMob extends CruxMob {
     AbyssCharredBones CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());
     AbyssCapgras CAPGRAS = REGISTRY.register(new AbyssCapgras());
     PlagueStalker PLAGUE_STALKER = REGISTRY.register(new PlagueStalker());
+    Scourger SCOURGER = REGISTRY.register(new Scourger());
 
     AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
     AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());

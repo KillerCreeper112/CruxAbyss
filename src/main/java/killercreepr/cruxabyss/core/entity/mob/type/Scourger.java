@@ -1,10 +1,15 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.api.loot.LootContext;
+import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.PlagueStalkerGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -15,49 +20,47 @@ import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
-public class PlagueStalker extends SimpleAbyssMob {
-    public PlagueStalker() {
-        super(Crux.key("plague_stalker"), EntityType.WOLF);
+public class Scourger extends SimpleAbyssMob {
+    public Scourger() {
+        super(Crux.key("scourger"), EntityType.VINDICATOR);
     }
 
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
-            e.customName(Component.text("Plague Stalker"));
+            e.customName(Component.text("Scourger"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
-            new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
-                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40D);
-                mob.setHealth(40D);
-                mob.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(1.2D);
-                CruxAttribute.addModifier(
-                    e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
-                        mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()
-                    )
-                );
-                /*mob.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.85);
-                mob.getAttribute(Attribute.JUMP_STRENGTH).setBaseValue(0);
-                mob.setSilent(true);*/
+                LootTable<ItemStack> helmetLootTable = CruxRegistries.ITEM_LOOT_TABLE.get(Crux.key("entity/scourger/helmets"));
+                if(helmetLootTable != null){
+                    List<ItemStack> items = helmetLootTable.populateLoot(LootContext.builder().looted(e).build());
+                    if(!items.isEmpty()) mob.getEquipment().setHelmet(items.getFirst());
+                }
             }
         };
     }
 
-    @Override
+    /*@Override
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
@@ -68,23 +71,25 @@ public class PlagueStalker extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
         addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
         return map;
-    }
+    }*/
 
     @Override
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        //stop wolf from attacking skeletons
-        Bukkit.getMobGoals().getAllGoals(mob).forEach(mobGoal -> {
-            if(!mobGoal.getKey().getNamespacedKey().equals(NamespacedKey.minecraft("nearest_attackable"))) return;
-            Bukkit.getMobGoals().removeGoal(mob, mobGoal.getKey());
-        });
     }
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        CompletableFuture<ActiveModel> active = new DesignEntity(e).getOrAddModelAsync(key.value());
-        return new PlagueStalkerGoal(e).model(active);
+        CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value())
+            .whenComplete((model, throwable) ->{
+                if(throwable != null) Crux.log(Level.SEVERE, throwable.getMessage());
+                model.getAnimationHandler().playAnimation("helmet_size", 0D, 0D, 1D, true);
+                model.getBone("helmet").orElseThrow().setModel(
+                    e.getEquipment().getHelmet()
+                );
+            });
+        return new ScourgerGoal(e).model(active);
     }
 
     @Override
