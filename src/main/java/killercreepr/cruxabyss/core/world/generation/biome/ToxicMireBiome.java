@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.core.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import com.destroystokyo.paper.MaterialTags;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -104,6 +105,11 @@ public class ToxicMireBiome extends GrimBiome {
         switch (m){
             default ->{
                 if(CruxBlocksRegistries.BLOCK.getByBlockData(limitedRegion.getBlockData(x, y, z)) != null) return;
+
+                if(MaterialTags.ORES.isTagged(b)){
+                    if(!MaterialSetTag.DIAMOND_ORES.isTagged(b.getType())) return;
+                }
+
                 if(y >= 62 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z

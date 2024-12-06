@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.core.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.world.biome.BiomeManager;
 import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.api.block.CruxBlock;
@@ -64,6 +65,9 @@ public class CharredBiome extends GrimBiome {
                 limitedRegion.setType(x,y+1,z, Material.AIR);
             }
             return;
+        }else if(MaterialSetTag.PLANKS.isTagged(m)){
+            CruxBlock custom = AbyssBlocks.CHARRED_PLANKS.getBaseBlock();
+            custom.setBlock(limitedRegion, x, y, z);
         }
         if(isOre(m)) return;
         /*for(int adjX = 1; adjX < 2; adjX++){
