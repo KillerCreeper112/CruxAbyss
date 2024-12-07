@@ -41,6 +41,7 @@ public class ScourgerBulletLargeData extends ScourgerBulletData{
         loc.getWorld().spawn(loc, AreaEffectCloud.class, e ->{
             e.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 40, 1), false);
             e.setDuration(30);
+            e.setRadius(2.3f);
         });
     }
 

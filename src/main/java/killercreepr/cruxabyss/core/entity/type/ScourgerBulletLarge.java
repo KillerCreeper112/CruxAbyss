@@ -2,7 +2,7 @@ package killercreepr.cruxabyss.core.entity.type;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
-import killercreepr.cruxabyss.core.entity.memory.ScourgerBulletData;
+import killercreepr.cruxabyss.core.entity.memory.ScourgerBulletLargeData;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.key.Key;
@@ -40,6 +40,6 @@ public class ScourgerBulletLarge extends SimpleCruxMob {
             model.getAnimationHandler().playAnimation("spin", 0D, 0D, 1D, true);
         });
         //modelEntity.playAnimation("spin", true);
-        EntityMemory.getOrCreateDataHolder(e, ScourgerBulletData.class, mem -> new ScourgerBulletData(mem));
+        EntityMemory.getOrCreateDataHolder(e, ScourgerBulletLargeData.class, mem -> new ScourgerBulletLargeData(mem));
     }
 }
