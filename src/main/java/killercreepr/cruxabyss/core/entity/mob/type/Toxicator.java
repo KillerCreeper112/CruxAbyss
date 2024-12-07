@@ -6,7 +6,6 @@ import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
 import killercreepr.cruxabyss.core.entity.mob.goal.ToxicatorGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxentities.entity.MobCategory;

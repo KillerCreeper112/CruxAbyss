@@ -9,7 +9,6 @@ import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.Tag;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;

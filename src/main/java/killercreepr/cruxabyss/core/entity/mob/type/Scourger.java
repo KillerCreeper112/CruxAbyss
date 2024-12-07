@@ -1,47 +1,35 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
-import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.core.entity.mob.goal.PlagueStalkerGoal;
 import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
-import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
-import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
-import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class Scourger extends SimpleAbyssMob {
     public Scourger() {
-        super(Crux.key("scourger"), EntityType.VINDICATOR);
+        super(Crux.key("scourger"), EntityType.SKELETON);
     }
 
     @Override
@@ -50,12 +38,14 @@ public class Scourger extends SimpleAbyssMob {
             e.customName(Component.text("Scourger"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
+            if(e instanceof Skeleton ss) ss.setShouldBurnInDay(false);
             if(e instanceof Mob mob){
                 LootTable<ItemStack> helmetLootTable = CruxRegistries.ITEM_LOOT_TABLE.get(Crux.key("entity/scourger/helmets"));
                 if(helmetLootTable != null){
                     List<ItemStack> items = helmetLootTable.populateLoot(LootContext.builder().looted(e).build());
                     if(!items.isEmpty()) mob.getEquipment().setHelmet(items.getFirst());
                 }
+                mob.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
             }
         };
     }

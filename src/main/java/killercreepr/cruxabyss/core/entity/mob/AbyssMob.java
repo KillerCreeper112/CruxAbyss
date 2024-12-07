@@ -4,10 +4,7 @@ import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.entity.type.AltarPlacedItem;
 import killercreepr.cruxabyss.core.entity.mob.type.*;
-import killercreepr.cruxabyss.core.entity.type.AbyssAltarPlacedItem;
-import killercreepr.cruxabyss.core.entity.type.AbyssAltarPortal;
-import killercreepr.cruxabyss.core.entity.type.AbyssCrystal;
-import killercreepr.cruxabyss.core.entity.type.AbyssReturnPortal;
+import killercreepr.cruxabyss.core.entity.type.*;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
@@ -26,6 +23,9 @@ public interface AbyssMob extends CruxMob {
     AbyssMob PLAGUE_STALKER = REGISTRY.register(new PlagueStalker());
     AbyssMob SCOURGER = REGISTRY.register(new Scourger());
     AbyssMob TOXICATOR = REGISTRY.register(new Toxicator());
+
+    CruxMob SCOURGER_BULLET = REGISTRY.register(new ScourgerBullet());
+    CruxMob SCOURGER_BULLET_LARGE = REGISTRY.register(new ScourgerBulletLarge());
 
     AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
     AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());

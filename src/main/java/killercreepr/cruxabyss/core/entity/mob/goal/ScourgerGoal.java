@@ -2,13 +2,19 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
@@ -37,8 +43,98 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
         });
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        event.setCancelled(true);
+    }
+
+    private final Spell[] spells = new Spell[]{
+        new Spell("prepare_shoot_spell_1", 12/2, 17/2){
+            @Override
+            public void shootSpell(Mob mob) {
+                CreateSound.sound(Sound.ENTITY_EVOKER_CAST_SPELL, 1.3f).playAt(mob);
+                AbyssMob.SCOURGER_BULLET.spawn(mob.getEyeLocation(), e ->{
+                    if(e instanceof Projectile proj){
+                        proj.setShooter(mob);
+                    }
+                    Vector vel = mob.getEyeLocation().getDirection().multiply(1.5f);
+                    e.setVelocity(vel);
+                });
+            }
+
+            @Override
+            public void startSpell(Mob mob) {
+                CreateSound.sound(Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 1.4f).playAt(mob);
+            }
+        },
+        new Spell("prepare_shoot_spell_2", 30/2, 35/2){
+            @Override
+            public void shootSpell(Mob mob) {
+                CreateSound.sound(Sound.ENTITY_EVOKER_CAST_SPELL, 1.3f).playAt(mob);
+                AbyssMob.SCOURGER_BULLET_LARGE.spawn(mob.getEyeLocation(), e ->{
+                    if(e instanceof Projectile proj){
+                        proj.setShooter(mob);
+                    }
+                    Vector vel = mob.getEyeLocation().getDirection().multiply(1.5f);
+                    e.setVelocity(vel);
+                });
+            }
+
+            @Override
+            public void startSpell(Mob mob) {
+                CreateSound.sound(Sound.ENTITY_EVOKER_PREPARE_SUMMON, 1.2f).playAt(mob);
+            }
+        }
+    };
+    protected int currentPrepareSpell = -1;
+
+    protected long lastShotSpell;
+    protected int spellCooldown;
+    protected int preparingSpellTick = 0;
     @Override
     public void tick() {
+        if(mob.getTarget() == null) return;
+        if(currentPrepareSpell == -1){
+            noPrepareSpellTick();
+            return;
+        }
+        prepareSpellTick();
+    }
+
+    private Spell spell(){
+        return spells[currentPrepareSpell];
+    }
+
+    public void prepareSpellTick(){
+        Spell spell = spell();
+        if(isPlayingAnimation(spell.id)){
+            preparingSpellTick++;
+            if(preparingSpellTick == spell.shootTime){
+                LivingEntity target = mob.getTarget();
+                if(target != null) mob.lookAt(target);
+                spell.shootSpell(mob);
+            }
+            return;
+        }
+        //spell has ended
+        if(preparingSpellTick >= (getAnimationLengthTicks(spell.id)/2)){// divide by 2 because mob goals get ticked every 2 ticks.
+            currentPrepareSpell = -1;
+            preparingSpellTick = 0;
+            lastShotSpell = System.currentTimeMillis();
+            spellCooldown = CruxMath.random(40, 80);
+            return;
+        }
+        preparingSpellTick = 0;
+        playAnimation(spell.id, true);
+        spell.startSpell(mob);
+    }
+
+    public void noPrepareSpellTick(){
+        if(CruxMath.hasOccurredWithin(lastShotSpell, spellCooldown)){
+            return;
+        }
+        currentPrepareSpell = CruxMath.random(0, spells.length-1);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -48,40 +144,22 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
         playAnimation(attackID, true);
     }
 
+    private static class Spell{
+        public final String id;
+        public final int shootTime;
+        public final int maxTime;
 
-    /*@Override
-    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
-    }
-
-    protected static final Key targetSpeed = Crux.key("target_speed");
-    protected boolean hadTargetLastTick = false;
-    @Override
-    public void tick() {
-        super.tick();
-
-        boolean hasTarget = target != null;
-        if(target == null){
-            if(hadTargetLastTick){
-                CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, targetSpeed);
-                applyAnimation("walk", a -> a.setSpeed(1D));
-            }
-        }else{
-            if(!hadTargetLastTick){
-                CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.modifier(
-                    targetSpeed, .35, CruxAttribute.Operation.MULTIPLY
-                ));
-            }
+        public Spell(String id, int shootTime, int maxTime) {
+            this.id = id;
+            this.shootTime = shootTime;
+            this.maxTime = maxTime;
         }
-        if(hasTarget){
-            applyAnimation("walk", moveAnimationSpeed);
+
+        public void shootSpell(Mob mob){
+
         }
-        if(hasTarget == hadTargetLastTick) return;
-        hadTargetLastTick = hasTarget;
-        double move = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
-        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(move);
+        public void startSpell(Mob mob){
+
+        }
     }
-    protected final Consumer<IAnimationProperty> moveAnimationSpeed = a ->{
-        a.setSpeed(1.5D);
-    };*/
 }

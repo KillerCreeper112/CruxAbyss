@@ -69,8 +69,8 @@ public class AbyssReturnPortal extends SimpleCruxMob {
                 mob.setCollidable(false);
                 mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0D);
             }
-            if(consumer != null) consumer.accept(e);
             load(e);
+            if(consumer != null) consumer.accept(e);
         });
     }
 }

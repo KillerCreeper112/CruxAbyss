@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 public class Config extends Cfg implements ValuesProvider {
