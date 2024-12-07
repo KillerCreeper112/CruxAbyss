@@ -18,13 +18,14 @@ import org.jetbrains.annotations.Nullable;
 
 public interface AbyssMob extends CruxMob {
     KeyedRegistry<CruxMob> REGISTRY = CruxEntityRegistries.ENTITIES;
-    AbyssalEyeVine ABYSSAL_EYE_VINE = REGISTRY.register(new AbyssalEyeVine());
-    AbyssMoose MOOSE = REGISTRY.register(new AbyssMoose());
-    AbyssGroundDweller GROUND_DWELLER = REGISTRY.register(new AbyssGroundDweller());
-    AbyssCharredBones CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());
-    AbyssCapgras CAPGRAS = REGISTRY.register(new AbyssCapgras());
-    PlagueStalker PLAGUE_STALKER = REGISTRY.register(new PlagueStalker());
-    Scourger SCOURGER = REGISTRY.register(new Scourger());
+    AbyssMob ABYSSAL_EYE_VINE = REGISTRY.register(new AbyssalEyeVine());
+    AbyssMob MOOSE = REGISTRY.register(new AbyssMoose());
+    AbyssMob GROUND_DWELLER = REGISTRY.register(new AbyssGroundDweller());
+    AbyssMob CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());
+    AbyssMob CAPGRAS = REGISTRY.register(new AbyssCapgras());
+    AbyssMob PLAGUE_STALKER = REGISTRY.register(new PlagueStalker());
+    AbyssMob SCOURGER = REGISTRY.register(new Scourger());
+    AbyssMob TOXICATOR = REGISTRY.register(new Toxicator());
 
     AbyssAltarPortal ALTAR_PORTAL = REGISTRY.register(new AbyssAltarPortal());
     AbyssReturnPortal RETURN_PORTAL = REGISTRY.register(new AbyssReturnPortal());
