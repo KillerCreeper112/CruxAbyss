@@ -7,6 +7,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.ToxicatorGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
@@ -75,7 +76,7 @@ public class Toxicator extends SimpleAbyssMob {
                     e.getEquipment().getHelmet()
                 );
             });
-        return new ScourgerGoal(e).model(active);
+        return new ToxicatorGoal(e).model(active);
     }
 
     @Override
