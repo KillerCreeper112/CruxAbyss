@@ -21,6 +21,7 @@ import killercreepr.cruxabyss.core.config.handler.FileAbyssSafezone;
 import killercreepr.cruxabyss.core.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.core.data.entity.AbyssHolder;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.item.AbyssItems;
 import killercreepr.cruxabyss.core.lang.Lang;
@@ -65,6 +66,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     @Override
     public void onLoad() {
         super.onLoad();
+        AbyssMob.register();
         AbyssComponents.register();
         AbyssMobCategory.register();
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
