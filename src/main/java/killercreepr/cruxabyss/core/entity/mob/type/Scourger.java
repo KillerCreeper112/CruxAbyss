@@ -5,6 +5,7 @@ import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
@@ -84,6 +85,6 @@ public class Scourger extends SimpleAbyssMob {
 
     @Override
     public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL, AbyssMobCategory.ABYSS_OUTPOST};
     }
 }

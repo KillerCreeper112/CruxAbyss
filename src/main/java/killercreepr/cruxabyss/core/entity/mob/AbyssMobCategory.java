@@ -15,4 +15,6 @@ public class AbyssMobCategory {
      * Represents aggressive mobs that spawn within abyss outposts.
      */
     public static MobCategory ABYSS_OUTPOST = CruxEntityRegistries.MOB_CATEGORY.register(new SimpleMobCategory(Crux.key("abyss_outpost")));
+
+    public static final MobCategory ABYSSAL = CruxEntityRegistries.MOB_CATEGORY.register(new SimpleMobCategory(Crux.key("abyssal")));
 }
