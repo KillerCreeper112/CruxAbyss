@@ -2,7 +2,10 @@ package killercreepr.cruxabyss.core.entity.type;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.memory.ScourgerBulletLargeData;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.key.Key;
@@ -27,6 +30,8 @@ public class ScourgerBulletLarge extends SimpleCruxMob {
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Arrow.class, e ->{
             e.setSilent(true);
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(CruxMath.random(15, 30)));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(CruxMath.random(6, 9)));
             load(e);
             if(consumer != null) consumer.accept(e);
         });

@@ -168,7 +168,7 @@ public class StandardAbyssSpawns {
                 if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                 if(!b.getRelative(f).isEmpty()) return false;
             }
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
         }
 
         @Override

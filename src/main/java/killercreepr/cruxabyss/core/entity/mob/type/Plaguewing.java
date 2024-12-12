@@ -49,7 +49,7 @@ public class Plaguewing extends SimpleAbyssMob {
                         (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(CruxMath.random(10, 20)));
         addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(1.8D));
         return map;
     }
