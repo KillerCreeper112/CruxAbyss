@@ -30,6 +30,7 @@ public class CustomProjectileListener implements Listener {
             .extra(.3)
             .offset(1, 1, 1)
             .data(new ItemStack(Material.SLIME_BALL))
+            .location(e.getLocation())
             .spawn()
         ;
         CreateSound.sound(Sound.ENTITY_PLAYER_SPLASH, 1.5f).playAt(e);

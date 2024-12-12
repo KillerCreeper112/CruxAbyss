@@ -4,14 +4,10 @@ import killercreepr.crux.api.registry.Registry;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.paper.nms.biome.BiomeUtils;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
-import killercreepr.cruxentities.entity.CruxMob;
-import killercreepr.cruxentities.entity.mob.goal.ICruxMobGoal;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntitySpawnGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -19,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class StandardAbyssGroups {
     public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(50, 0f) {
@@ -103,7 +98,7 @@ public class StandardAbyssGroups {
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(CruxMath.random(1, 100) <= 12) return false;
+            if(CruxMath.random(1, 100) <= 5) return false;
             Block b = ctx.getBlock();
             if(b.getY() < 150) return false;
             if(!b.isEmpty()) return false;

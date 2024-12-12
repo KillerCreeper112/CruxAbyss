@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class StandardAbyssSpawns {
     public static final Collection<Material> SPAWNABLE_ON_NOT = new CollectionBuilder<Material>()
@@ -169,7 +168,7 @@ public class StandardAbyssSpawns {
                 if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                 if(!b.getRelative(f).isEmpty()) return false;
             }
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 5;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 3;
         }
 
         @Override
