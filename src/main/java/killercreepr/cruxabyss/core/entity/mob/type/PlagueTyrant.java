@@ -1,15 +1,11 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
-import killercreepr.crux.api.loot.LootContext;
-import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.PlagueTyrantGoal;
-import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -18,20 +14,19 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 public class PlagueTyrant extends SimpleAbyssMob {
     public PlagueTyrant() {
@@ -48,6 +43,7 @@ public class PlagueTyrant extends SimpleAbyssMob {
             if(e instanceof LivingEntity ee){
                 ee.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(2.5D);
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(100D);
+                ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.89D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
 
                 CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED,
@@ -66,6 +62,8 @@ public class PlagueTyrant extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(20));
         addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
+        addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(6D));
+        addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(3D));
         return map;
     }
 

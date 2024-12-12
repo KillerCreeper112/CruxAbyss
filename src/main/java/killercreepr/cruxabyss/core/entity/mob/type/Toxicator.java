@@ -5,7 +5,6 @@ import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.ToxicatorGoal;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
