@@ -27,6 +27,7 @@ public interface AbyssMob extends CruxMob {
     CruxMob SCOURGER = REGISTRY.register(new Scourger());
     CruxMob TOXICATOR = REGISTRY.register(new Toxicator());
     CruxMob PLAGUE_TYRANT = REGISTRY.register(new PlagueTyrant());
+    CruxMob PLAGUEWING = REGISTRY.register(new Plaguewing());
 
     CruxMob SCOURGER_BULLET = REGISTRY.register(new ScourgerBullet());
     CruxMob SCOURGER_BULLET_LARGE = REGISTRY.register(new ScourgerBulletLarge());
