@@ -155,4 +155,23 @@ public class StandardAbyssSpawns {
             return CruxMath.random(1, 2);
         }
     };
+
+    public static final NaturalEntitySpawn PLAGUEWING = new NaturalCruxMobSpawn(4, 0f, AbyssMob.PLAGUEWING) {
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            Block b = ctx.getBlock();
+            if(!b.isEmpty()) return false;
+
+            for(BlockFace f : BlockFace.values()){
+                if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                if(!b.getRelative(f).isEmpty()) return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return CruxMath.random(1, 2);
+        }
+    };
 }

@@ -93,6 +93,19 @@ public class StandardAbyssGroups {
         }
     };
 
+    public static final NaturalEntitySpawnGroup PLAGUEWING = new NaturalSpawnPartGroup(10, 0f,
+        StandardAbyssSpawns.PLAGUEWING){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 12) return false;
+            Block b = ctx.getBlock();
+            if(b.getY() < 150) return false;
+            if(!b.isEmpty()) return false;
+            return getEntityAmountNearChunk(b.getChunk(), 2) < 16;
+        }
+    };
+
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
         registry.register(ABYSSAL_EYE_VINE);
@@ -100,5 +113,6 @@ public class StandardAbyssGroups {
         registry.register(GROUND_DWELLER);
         registry.register(CHARRED_BONES);
         registry.register(PLAGUE_STALKER);
+        registry.register(PLAGUEWING);
     }
 }
