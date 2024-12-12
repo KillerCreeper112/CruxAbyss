@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
@@ -18,17 +17,13 @@ import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//todo make spit poison ability
-//todo in general when attacks, has a chance to give poison
 public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
     public PlaguewingGoal(@NotNull Mob mob) {
         super(mob);
@@ -62,7 +57,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
 
     public void spit(Location loc){
         Vector v = CruxMath.parabolicMotion(
-            mob.getEyeLocation().toVector(), loc.toVector(), 5, .115
+            mob.getEyeLocation().toVector(), loc.toVector(), CruxMath.random(2, 5), CruxMath.random(.15, .25)
         );
         mob.getWorld().spawn(mob.getEyeLocation(), Snowball.class, e ->{
             CruxTag.set(e, "plaguewing_spit", PersistentDataType.INTEGER, 1);
@@ -121,6 +116,12 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
     @Override
     protected void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
+        if(event.isCancelled()) return;
+        if((event.getEntity() instanceof LivingEntity victim)){
+            if(CruxMath.testChance(50)){
+                victim.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 1));
+            }
+        }
         lastHitTarget = System.currentTimeMillis();
 
         hitsTillBackup--;
