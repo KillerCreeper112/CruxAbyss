@@ -11,6 +11,7 @@ import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntitySpawnGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -106,12 +107,7 @@ public class StandardAbyssGroups {
             Block b = ctx.getBlock();
             if(b.getY() < 150) return false;
             if(!b.isEmpty()) return false;
-            AtomicInteger plagueWingAmount = new AtomicInteger(0);
-            int amount = getEntityAmountNearChunk(b.getChunk(), 2, e ->{
-                if(CruxMob.is(e, AbyssMob.PLAGUEWING)) plagueWingAmount.addAndGet(1);
-                return true;
-            });
-            return amount < 16 && plagueWingAmount.get() < 5;
+            return getEntityAmountNearChunk(b.getChunk(), 4) < 16;
         }
     };
 

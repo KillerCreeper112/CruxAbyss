@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.world.abyss.entity;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.core.data.util.CollectionBuilder;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StandardAbyssSpawns {
     public static final Collection<Material> SPAWNABLE_ON_NOT = new CollectionBuilder<Material>()
@@ -159,6 +161,7 @@ public class StandardAbyssSpawns {
     public static final NaturalEntitySpawn PLAGUEWING = new NaturalCruxMobSpawn(4, 0f, AbyssMob.PLAGUEWING) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 12) return false;
             Block b = ctx.getBlock();
             if(!b.isEmpty()) return false;
 
@@ -166,12 +169,12 @@ public class StandardAbyssSpawns {
                 if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                 if(!b.getRelative(f).isEmpty()) return false;
             }
-            return true;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 5;
         }
 
         @Override
         public int getGroupSize(@NotNull SpawnContext ctx) {
-            return CruxMath.random(1, 2);
+            return 1;
         }
     };
 }
