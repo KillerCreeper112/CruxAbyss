@@ -6,11 +6,14 @@ import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.PlaguewingGoal;
 import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
@@ -25,12 +28,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-//todo set attack range, damage and all that
 public class Plaguewing extends SimpleAbyssMob {
     public Plaguewing() {
         super(Crux.key("plaguewing"), EntityType.ALLAY);
@@ -45,18 +50,18 @@ public class Plaguewing extends SimpleAbyssMob {
         };
     }
 
-    /*@Override
+    @Override
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 CruxAttributeModifier.baseModifier(CruxMath.random(5D, 7D) *
                         (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(1.8D));
         return map;
-    }*/
+    }
 
     @Override
     public void load(@NotNull Entity e) {

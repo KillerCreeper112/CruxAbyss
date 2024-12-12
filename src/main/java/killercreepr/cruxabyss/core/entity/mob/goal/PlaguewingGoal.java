@@ -1,26 +1,34 @@
 package killercreepr.cruxabyss.core.entity.mob.goal;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
+import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 //todo make spit poison ability
 //todo in general when attacks, has a chance to give poison
-//todo make speed faster
 public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
     public PlaguewingGoal(@NotNull Mob mob) {
         super(mob);
@@ -45,6 +53,102 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
                 return CreateSound.sound(Sound.ENTITY_SPIDER_DEATH, .6f);
             }
         });
+    }
+
+    protected Location locationTarget;
+    protected int spitAttackTime = 0;
+    protected int spitAttackCooldown = 0;
+    protected int hitsTillBackup = CruxMath.random(1, 4);
+
+    public void spit(Location loc){
+        Vector v = CruxMath.parabolicMotion(
+            mob.getEyeLocation().toVector(), loc.toVector(), 5, .115
+        );
+        mob.getWorld().spawn(mob.getEyeLocation(), Snowball.class, e ->{
+            CruxTag.set(e, "plaguewing_spit", PersistentDataType.INTEGER, 1);
+            e.setItem(new ItemStack(Material.SLIME_BLOCK));
+            e.setVelocity(v);
+        });
+        Vector dir = loc.toVector().subtract(mob.getEyeLocation().toVector()).normalize();
+        int amount = CruxMath.random(8, 15);
+        while(amount > 0){
+            amount--;
+            new ParticleBuilder(Particle.ITEM)
+                .location(mob.getEyeLocation())
+                .offset(dir.getX(), dir.getY(), dir.getZ())
+                .count(0)
+                .extra(.1)
+                .data(new ItemStack(Material.SLIME_BALL))
+                .spawn()
+            ;
+        }
+        CreateSound.sound(Sound.ENTITY_LLAMA_SPIT, 1.5f).playAt(mob);
+    }
+
+    @Override
+    public void tick() {
+        if(spitAttackCooldown > 0){
+            spitAttackCooldown--;
+        }
+        if(locationTarget != null){
+            checkTargetLogic();
+            if(target == null){
+                locationTarget = null;
+                return;
+            }
+            moveTo(locationTarget, speed);
+            if(target != null){
+                mob.lookAt(target);
+                if(spitAttackTime > 0){
+                    spitAttackTime--;
+                    if(spitAttackTime < 1){
+                        spit(target.getLocation());
+                        spitAttackCooldown = CruxMath.random(100, 200);
+                    }
+                    return;
+                }
+            }
+
+            if(!CruxMath.hasOccurredWithin(lastHitTarget, 20)){
+                locationTarget = null;
+            }
+            return;
+        }
+        super.tick();
+    }
+
+    protected long lastHitTarget;
+    @Override
+    protected void attacked(@NotNull CruxEntityDamageEvent event) {
+        super.attacked(event);
+        lastHitTarget = System.currentTimeMillis();
+
+        hitsTillBackup--;
+        if(hitsTillBackup > 0) return;
+
+        Location l = CruxLoc.shift(mob.getEyeLocation(), CruxMath.random(-7, -4), 0D, 0D);
+        if(l.getBlock().isSolid()){
+            return;
+        }
+        locationTarget = l;
+        if(spitAttackCooldown < 1){
+            spitAttackTime = CruxMath.random(20, 40);
+        }
+        hitsTillBackup = CruxMath.random(1, 3);
+    }
+
+    protected final double speed = CruxMath.random(1.5D, 2D);
+    @Override
+    public void moveTo() {
+        this.moveTo(speed);
+    }
+
+    @Override
+    public void moveTo(@Nullable LivingEntity target, double speed) {
+        if(target == null) super.moveTo(target, speed);
+        else{
+            moveTo(target.getEyeLocation(), speed);
+        }
     }
 
     @Override

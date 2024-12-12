@@ -152,7 +152,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             new AbyssWoodFunctionListener(),
             new AbyssSafezoneListener(this, CruxCore.inst().structureManager()),
             new AbyssTravelTrackingListener(values),
-            new AbyssalMobsListener()
+            new AbyssalMobsListener(),
+            new CustomProjectileListener()
         );
         AbyssBlocks.register();
         AbyssItems.register();
