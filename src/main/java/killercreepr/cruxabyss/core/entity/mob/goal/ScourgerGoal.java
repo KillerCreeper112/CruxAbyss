@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
+    protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     public ScourgerGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -93,6 +94,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
     protected int preparingSpellTick = 0;
     @Override
     public void tick() {
+        swimmer.tick();
         if(mob.getTarget() == null) return;
         if(currentPrepareSpell == -1){
             noPrepareSpellTick();

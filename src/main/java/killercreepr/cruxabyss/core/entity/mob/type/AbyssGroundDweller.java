@@ -4,6 +4,7 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.GroundDwellerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
@@ -67,6 +68,6 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
 
     @Override
     public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL};
     }
 }

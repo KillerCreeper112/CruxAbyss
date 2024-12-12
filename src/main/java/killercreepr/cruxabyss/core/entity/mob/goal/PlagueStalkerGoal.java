@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public class PlagueStalkerGoal extends CruxMobModeledGoal {
+    protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     public PlagueStalkerGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -71,6 +72,7 @@ public class PlagueStalkerGoal extends CruxMobModeledGoal {
         if(hasTarget){
             applyAnimation("walk", moveAnimationSpeed);
         }
+        swimmer.tick();
         if(hasTarget == hadTargetLastTick) return;
         hadTargetLastTick = hasTarget;
         double move = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);

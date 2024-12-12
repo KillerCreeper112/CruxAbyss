@@ -12,6 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
+    protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     public ToxicatorGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -39,6 +40,7 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
 
     @Override
     public void tick() {
+        swimmer.tick();
     }
 
     @EventHandler(ignoreCancelled = true)
