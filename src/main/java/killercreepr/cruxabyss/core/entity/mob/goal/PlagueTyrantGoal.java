@@ -92,9 +92,10 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener {
         if(model ==null) return;
         AnimationHandler.DefaultProperty current = model.getAnimationHandler().getDefaultProperty(ModelState.WALK);
         AnimationHandler.DefaultProperty should = getDefaultWalk();
-        if(current == should) return;
+        if(current.equals(should)) return;
         stopAnimation(current.getAnimation());
         model.getAnimationHandler().setDefaultProperty(should);
+        playAnimation(should.getAnimation(), false);
     }
 
     protected static final Key targetSpeed = Crux.key("target_speed");
