@@ -18,14 +18,15 @@ public interface AbyssMob extends CruxMob {
 
     }
     KeyedRegistry<CruxMob> REGISTRY = CruxEntityRegistries.ENTITIES;
-    AbyssMob ABYSSAL_EYE_VINE = REGISTRY.register(new AbyssalEyeVine());
-    AbyssMob MOOSE = REGISTRY.register(new AbyssMoose());
-    AbyssMob GROUND_DWELLER = REGISTRY.register(new AbyssGroundDweller());
-    AbyssMob CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());
-    AbyssMob CAPGRAS = REGISTRY.register(new AbyssCapgras());
-    AbyssMob PLAGUE_STALKER = REGISTRY.register(new PlagueStalker());
-    AbyssMob SCOURGER = REGISTRY.register(new Scourger());
-    AbyssMob TOXICATOR = REGISTRY.register(new Toxicator());
+    CruxMob ABYSSAL_EYE_VINE = REGISTRY.register(new AbyssalEyeVine());
+    CruxMob MOOSE = REGISTRY.register(new AbyssMoose());
+    CruxMob GROUND_DWELLER = REGISTRY.register(new AbyssGroundDweller());
+    CruxMob CHARRED_BONES = REGISTRY.register(new AbyssCharredBones());
+    CruxMob CAPGRAS = REGISTRY.register(new AbyssCapgras());
+    CruxMob PLAGUE_STALKER = REGISTRY.register(new PlagueStalker());
+    CruxMob SCOURGER = REGISTRY.register(new Scourger());
+    CruxMob TOXICATOR = REGISTRY.register(new Toxicator());
+    CruxMob PLAGUE_TYRANT = REGISTRY.register(new PlagueTyrant());
 
     CruxMob SCOURGER_BULLET = REGISTRY.register(new ScourgerBullet());
     CruxMob SCOURGER_BULLET_LARGE = REGISTRY.register(new ScourgerBulletLarge());
