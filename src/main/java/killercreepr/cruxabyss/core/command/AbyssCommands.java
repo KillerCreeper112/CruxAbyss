@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -65,15 +66,26 @@ public class AbyssCommands {
                                     }
                                     World active = Crux.getServer().getWorld("world_abyss");
                                     Location spawn = world.getSpawnLocation();
-                                    if(active != null){
-                                        active.getPlayers().forEach(p -> p.teleport(spawn));
-                                        sender.sendMessage("Deleting existing world...");
-                                        Crux.getServer().unloadWorld(active, false);
-                                    }
-                                    CruxWorldUtil.deleteWorld("world_abyss");
-                                    sender.sendMessage("Creating new world...");
-                                    AbyssWorld.getOrCreate(plugin, "world_abyss");
-                                    sender.sendMessage("Abyss world created!");
+
+                                    new BukkitRunnable(){
+                                        @Override
+                                        public void run() {
+                                            if(active != null){
+                                                if(plugin.getServer().isTickingWorlds()){
+                                                    sender.sendMessage("Server is ticking worlds, waiting...");
+                                                    return;
+                                                }
+                                                active.getPlayers().forEach(p -> p.teleport(spawn));
+                                                sender.sendMessage("Deleting existing world...");
+                                                Crux.getServer().unloadWorld(active, false);
+                                            }
+                                            cancel();
+                                            CruxWorldUtil.deleteWorld("world_abyss");
+                                            sender.sendMessage("Creating new world...");
+                                            AbyssWorld.getOrCreate(plugin, "world_abyss");
+                                            sender.sendMessage("Abyss world created!");
+                                        }
+                                    }.runTaskTimer(plugin, 0L, 1L);
                                     return 1;
                                 })
                         )

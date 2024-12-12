@@ -4,6 +4,9 @@ import killercreepr.crux.api.registry.Registry;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.paper.nms.biome.BiomeUtils;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.mob.goal.ICruxMobGoal;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;
@@ -15,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StandardAbyssGroups {
     public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(50, 0f) {
@@ -93,7 +97,7 @@ public class StandardAbyssGroups {
         }
     };
 
-    public static final NaturalEntitySpawnGroup PLAGUEWING = new NaturalSpawnPartGroup(10, 0f,
+    public static final NaturalEntitySpawnGroup PLAGUEWING = new NaturalSpawnPartGroup(6, 0f,
         StandardAbyssSpawns.PLAGUEWING){
 
         @Override
@@ -102,7 +106,12 @@ public class StandardAbyssGroups {
             Block b = ctx.getBlock();
             if(b.getY() < 150) return false;
             if(!b.isEmpty()) return false;
-            return getEntityAmountNearChunk(b.getChunk(), 2) < 16;
+            AtomicInteger plagueWingAmount = new AtomicInteger(0);
+            int amount = getEntityAmountNearChunk(b.getChunk(), 2, e ->{
+                if(CruxMob.is(e, AbyssMob.PLAGUEWING)) plagueWingAmount.addAndGet(1);
+                return true;
+            });
+            return amount < 16 && plagueWingAmount.get() < 5;
         }
     };
 
