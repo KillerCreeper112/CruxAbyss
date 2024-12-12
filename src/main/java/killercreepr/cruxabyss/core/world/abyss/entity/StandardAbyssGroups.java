@@ -93,12 +93,12 @@ public class StandardAbyssGroups {
         }
     };
 
-    public static final NaturalEntitySpawnGroup PLAGUEWING = new NaturalSpawnPartGroup(6, 0f,
+    public static final NaturalEntitySpawnGroup PLAGUEWING = new NaturalSpawnPartGroup(3, 0f,
         StandardAbyssSpawns.PLAGUEWING){
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(CruxMath.random(1, 100) <= 5) return false;
+            if(CruxMath.random(1, 100) <= 2) return false;
             Block b = ctx.getBlock();
             if(b.getY() < 150) return false;
             if(!b.isEmpty()) return false;

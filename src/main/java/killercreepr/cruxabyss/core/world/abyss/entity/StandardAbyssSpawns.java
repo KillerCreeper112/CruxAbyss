@@ -160,7 +160,7 @@ public class StandardAbyssSpawns {
     public static final NaturalEntitySpawn PLAGUEWING = new NaturalCruxMobSpawn(4, 0f, AbyssMob.PLAGUEWING) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(CruxMath.random(1, 100) <= 12) return false;
+            if(CruxMath.random(1, 100) <= 7) return false;
             Block b = ctx.getBlock();
             if(!b.isEmpty()) return false;
 
@@ -168,7 +168,7 @@ public class StandardAbyssSpawns {
                 if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                 if(!b.getRelative(f).isEmpty()) return false;
             }
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 3;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
         }
 
         @Override
