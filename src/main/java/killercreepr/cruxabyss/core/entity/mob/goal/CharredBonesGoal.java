@@ -30,7 +30,7 @@ public class CharredBonesGoal extends CruxMobModeledGoal {
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
         switch (event.getCause()){
-            case FIRE, FIRE_TICK, LAVA -> event.setCancelled(true);
+            case FIRE, FIRE_TICK, LAVA, HOT_FLOOR, CAMPFIRE -> event.setCancelled(true);
         }
     }
 

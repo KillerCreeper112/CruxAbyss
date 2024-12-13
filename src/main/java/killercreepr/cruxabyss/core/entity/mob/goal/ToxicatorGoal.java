@@ -9,6 +9,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
@@ -36,6 +37,16 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
                 return CreateSound.sound(Sound.ENTITY_VINDICATOR_DEATH, .6f);
             }
         });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        switch (event.getCause()){
+            case FIRE, FIRE_TICK, HOT_FLOOR, CAMPFIRE ->{
+                event.setCancelled(true);
+            }
+        }
     }
 
     @Override

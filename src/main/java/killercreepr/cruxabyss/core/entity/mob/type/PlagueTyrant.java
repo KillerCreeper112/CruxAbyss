@@ -13,6 +13,7 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -42,7 +43,7 @@ public class PlagueTyrant extends SimpleAbyssMob {
 
             if(e instanceof LivingEntity ee){
                 ee.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(2.5D);
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(100D);
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(150D);
                 ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.89D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
 
@@ -71,6 +72,9 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+        Bukkit.getMobGoals().getAllGoals(mob).forEach(g ->{
+            Bukkit.broadcastMessage(g.getKey().getNamespacedKey() + "dddd");
+        });
     }
 
     @Override

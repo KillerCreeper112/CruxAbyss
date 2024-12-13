@@ -18,10 +18,10 @@ public class AbyssalMobsListener implements Listener {
                 event.setCancelled(true);
             }
             case FALL, CONTACT, FIRE, FIRE_TICK, CAMPFIRE, LAVA, HOT_FLOOR, FREEZE -> {
-                event.setDamage(event.getFinalDamage()/2D);
+                event.setDamage(event.getDamage()/2D);
             }
             case SUFFOCATION, DROWNING, THORNS -> {
-                event.setDamage(event.getFinalDamage()*.7);
+                event.setDamage(event.getDamage()*.7);
             }
         }
     }

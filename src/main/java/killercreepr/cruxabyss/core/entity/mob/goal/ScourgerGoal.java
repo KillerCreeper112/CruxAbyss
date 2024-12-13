@@ -12,6 +12,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,16 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
     public void onEntityShootBow(EntityShootBowEvent event) {
         if(!event.getEntity().equals(mob)) return;
         event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        switch (event.getCause()){
+            case FIRE, FIRE_TICK, HOT_FLOOR, CAMPFIRE ->{
+                event.setCancelled(true);
+            }
+        }
     }
 
     private final Spell[] spells = new Spell[]{

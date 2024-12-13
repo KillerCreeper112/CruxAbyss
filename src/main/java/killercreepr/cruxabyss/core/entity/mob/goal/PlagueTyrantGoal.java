@@ -24,7 +24,9 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +59,17 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener {
             }
         });
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        switch (event.getCause()){
+            case FIRE, FIRE_TICK, HOT_FLOOR, CAMPFIRE ->{
+                event.setCancelled(true);
+            }
+        }
+    }
+
 
     protected int attackTime = -1;
     protected int attackSwingCooldown = CruxMath.random(60, 100);

@@ -6,12 +6,14 @@ import killercreepr.cruxabyss.core.structure.ActiveAbyssSafezone;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxstructures.manager.StructureManager;
+import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -23,6 +25,19 @@ public class AbyssSafezoneListener implements Listener {
         this.plugin = plugin;
         this.manager = manager;
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        Entity e = event.getEntity();
+        if(!WorldUtil.getDimensionID(e.getWorld()).equalsIgnoreCase("abyss")) return;
+        if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
+        ActiveAbyssSafezone targetStructure = manager.getFirstActiveAt(
+            ActiveAbyssSafezone.class, e.getLocation().getBlock()
+        );
+        if(targetStructure == null) return;
+        event.setCancelled(true);
+    }
+
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityTarget(EntityTargetEvent event) {
