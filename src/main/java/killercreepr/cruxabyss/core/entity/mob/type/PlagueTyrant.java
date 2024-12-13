@@ -13,7 +13,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -72,9 +71,6 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        Bukkit.getMobGoals().getAllGoals(mob).forEach(g ->{
-            Bukkit.broadcastMessage(g.getKey().getNamespacedKey() + "dddd");
-        });
     }
 
     @Override
