@@ -148,7 +148,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         registerListeners(
             this,
             new AbyssAltarPortalListener(),
-            new DisableElytraListener(),
+            new AbyssSpecificsListener(),
             new AbyssWoodFunctionListener(),
             new AbyssSafezoneListener(this, CruxCore.inst().structureManager()),
             new AbyssTravelTrackingListener(values),

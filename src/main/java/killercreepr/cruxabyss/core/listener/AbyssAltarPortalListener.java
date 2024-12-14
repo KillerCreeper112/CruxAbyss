@@ -87,6 +87,7 @@ public class AbyssAltarPortalListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Block b = event.getBlock();
+        if(b.getType() == Material.DECORATED_POT) return;
         StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
 

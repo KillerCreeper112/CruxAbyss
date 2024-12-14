@@ -14,10 +14,10 @@ public class AbyssalMobsListener implements Listener {
         Entity e = event.getEntity();
         if(!CruxMob.isInCategory(e, AbyssMobCategory.ABYSSAL)) return;
         switch (event.getCause()){
-            case POISON  -> {
+            case POISON, HOT_FLOOR, FIRE_TICK  -> {
                 event.setCancelled(true);
             }
-            case FALL, CONTACT, FIRE, FIRE_TICK, CAMPFIRE, LAVA, HOT_FLOOR, FREEZE -> {
+            case FALL, CONTACT, FIRE, CAMPFIRE, LAVA, FREEZE -> {
                 event.setDamage(event.getDamage()/2D);
             }
             case SUFFOCATION, DROWNING, THORNS -> {
