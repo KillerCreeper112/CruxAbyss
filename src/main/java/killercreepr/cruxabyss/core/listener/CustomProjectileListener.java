@@ -4,6 +4,8 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
+import killercreepr.cruxentities.entity.CruxMob;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -20,6 +22,14 @@ public class CustomProjectileListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onProjectileHit(ProjectileHitEvent event) {
         Entity e = event.getEntity();
+        if(event.getHitEntity() != null){
+            if(CruxTag.has(e, "ignore_abyssal_mobs")){
+                if(CruxMob.isInCategory(event.getHitEntity(), AbyssMobCategory.ABYSSAL)){
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
         if(!CruxTag.has(e, "plaguewing_spit")) return;
         e.getWorld().spawn(e.getLocation(), AreaEffectCloud.class, x ->{
             x.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 80, 1), false);

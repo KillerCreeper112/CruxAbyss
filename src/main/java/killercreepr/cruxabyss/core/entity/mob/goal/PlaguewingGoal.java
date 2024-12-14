@@ -63,6 +63,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
         );
         mob.getWorld().spawn(mob.getEyeLocation(), Snowball.class, e ->{
             CruxTag.set(e, "plaguewing_spit", PersistentDataType.INTEGER, 1);
+            CruxTag.set(e, "ignore_abyssal_mobs", PersistentDataType.INTEGER, 1);
             e.setItem(new ItemStack(Material.SLIME_BLOCK));
             e.setVelocity(v);
         });
