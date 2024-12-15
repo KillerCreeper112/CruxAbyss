@@ -2,7 +2,7 @@ package killercreepr.cruxabyss.core.world.biome;
 
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
-import killercreepr.usurvive.USurvivePlugin;
+import killercreepr.crux.core.Crux;
 import org.bukkit.block.Biome;
 
 public class BiomeManager {
@@ -14,7 +14,7 @@ public class BiomeManager {
     public static final Biome TOXIC_GRASSLANDS = biome("toxic_grasslands");
 
     public static Biome biome(String id){
-        return RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).get(USurvivePlugin.inst().key(id));
+        return RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).get(Crux.key(id));
     }
     /*public static void register(){
         WritableRegistry<Biome> registrywritable = (WritableRegistry<Biome>) MinecraftServer.getServer()
