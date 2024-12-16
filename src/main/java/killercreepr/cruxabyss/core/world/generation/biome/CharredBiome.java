@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Orientable;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,9 @@ public class CharredBiome extends GrimBiome {
     private final CruxBlock CHARRED_LOG_X = USurviveBlocks.CHARRED_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.X);
     private final CruxBlock CHARRED_LOG_Y = USurviveBlocks.CHARRED_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Y);
     private final CruxBlock CHARRED_LOG_Z = USurviveBlocks.CHARRED_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Z);
+    private final CruxBlock EMBER_LOG_X = USurviveBlocks.EMBER_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.X);
+    private final CruxBlock EMBER_LOG_Y = USurviveBlocks.EMBER_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Y);
+    private final CruxBlock EMBER_LOG_Z = USurviveBlocks.EMBER_LOG.getComponents().get(CruxBlockComponents.DIRECTIONAL_GROUP).getBlock(Axis.Z);
 
     public CharredBiome(@NotNull GrimPopulator master) {
         super(master);
@@ -56,20 +60,74 @@ public class CharredBiome extends GrimBiome {
         return CruxCollection.getRandom(smallBurntDecorations);
     }
 
+    public void acceptNotSolid(
+        @NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z,
+        Block b
+    ){
+        Material m = b.getType();
+        if(MaterialSetTag.SMALL_FLOWERS.isTagged(m) || MaterialSetTag.TALL_FLOWERS.isTagged(m)){
+            if(b.getBlockData() instanceof Bisected){
+                limitedRegion.setType(x, y, z, Material.AIR);
+                return;
+            }
+            if(CruxMath.random().nextBoolean()){
+                limitedRegion.setType(x, y, z, Material.AIR);
+                return;
+            }
+            limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
+            if(limitedRegion.getBlockData(x, y,z) instanceof Waterlogged l && l.isWaterlogged()){
+                l.setWaterlogged(false);
+                limitedRegion.setBlockData(x, y, z, l);
+            }
+            return;
+        }
+        switch (m){
+            case SHORT_GRASS -> {
+                if(CruxMath.random().nextBoolean()){
+                    limitedRegion.setType(x, y, z, Material.AIR);
+                    return;
+                }
+                limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
+                if(limitedRegion.getBlockData(x, y,z) instanceof Waterlogged l && l.isWaterlogged()){
+                    l.setWaterlogged(false);
+                    limitedRegion.setBlockData(x, y, z, l);
+                }
+            }
+            case TALL_GRASS -> {
+                limitedRegion.setType(x, y, z, Material.AIR);
+            }
+            case SEA_PICKLE, SEAGRASS, TALL_SEAGRASS, KELP_PLANT -> {
+                limitedRegion.setType(x, y, z, Material.WATER);
+            }
+        }
+    }
+
     @Override
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
-        if(!b.isSolid()) return;
+        if(!b.isSolid()){
+            acceptNotSolid(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z, b);
+            return;
+        }
         Material m = limitedRegion.getType(x,y,z);
         if(m == Material.BEDROCK) return;
         if(MaterialSetTag.LOGS.isTagged(m) && limitedRegion.getBlockData(x,y,z) instanceof Orientable orientable){
             CruxBlock custom;
-            switch (orientable.getAxis()){
-                case X -> custom = CHARRED_LOG_X;
-                case Y -> custom = CHARRED_LOG_Y;
-                case Z -> custom = CHARRED_LOG_Z;
-                default -> custom = null;
+            if(CruxMath.testChance(25)){
+                switch (orientable.getAxis()){
+                    case X -> custom = EMBER_LOG_X;
+                    case Y -> custom = EMBER_LOG_Y;
+                    case Z -> custom = EMBER_LOG_Z;
+                    default -> custom = null;
+                }
+            }else{
+                switch (orientable.getAxis()){
+                    case X -> custom = CHARRED_LOG_X;
+                    case Y -> custom = CHARRED_LOG_Y;
+                    case Z -> custom = CHARRED_LOG_Z;
+                    default -> custom = null;
+                }
             }
             if(custom != null) custom.setBlock(limitedRegion, x,y,z);
             return;
@@ -82,19 +140,6 @@ public class CharredBiome extends GrimBiome {
         }else if(MaterialSetTag.PLANKS.isTagged(m)){
             CruxBlock custom = AbyssBlocks.CHARRED_PLANKS.getBaseBlock();
             custom.setBlock(limitedRegion, x, y, z);
-            return;
-        }else if(MaterialSetTag.SMALL_FLOWERS.isTagged(m) || MaterialSetTag.TALL_FLOWERS.isTagged(m)){
-            if(b.getBlockData() instanceof Bisected bisected){
-                if(bisected.getHalf() == Bisected.Half.TOP){
-                    limitedRegion.setType(x, y, z, Material.AIR);
-                    return;
-                }
-            }
-            if(CruxMath.random().nextBoolean()){
-                limitedRegion.setType(x, y, z, Material.AIR);
-                return;
-            }
-            limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
             return;
         }
         if(isOre(m)) return;
@@ -118,6 +163,12 @@ public class CharredBiome extends GrimBiome {
         else{
             if(magma.GetNoise(x,y,z) > (/*isNearLava ? .2f :*/ .4f)){
                 type = Material.MAGMA_BLOCK;
+                if(limitedRegion.isInRegion(x, y+1, z)){
+                    Block above = limitedRegion.getBlockState(x, y+1, z).getBlock();
+                    if(!above.isEmpty() && above.isPassable()){
+                        limitedRegion.setType(x, y, z, Material.AIR);
+                    }
+                }
             }else{
                 if(n > .7f) type = Material.COBBLESTONE;
                 else if(n > .52f) type = Material.CYAN_TERRACOTTA;

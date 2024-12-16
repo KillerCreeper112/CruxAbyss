@@ -110,7 +110,8 @@ public class ToxicMireBiome extends GrimBiome {
                     if(!MaterialSetTag.DIAMOND_ORES.isTagged(b.getType())) return;
                 }
 
-                if(y >= 62 && limitedRegion.isInRegion(x,y+1,z) && limitedRegion.getType(x,y+1,z) == Material.AIR){
+                Block above = limitedRegion.isInRegion(x,y+1,z) ? limitedRegion.getBlockState(x,y+1,z).getBlock() : null;
+                if(y >= 62 && above != null && (above.isEmpty() || above.isPassable())){
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );

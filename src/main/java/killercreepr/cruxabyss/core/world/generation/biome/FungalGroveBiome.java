@@ -51,7 +51,11 @@ public class FungalGroveBiome extends GrimBiome {
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
-        if(!b.isSolid() || b.getType() == Material.BEDROCK) return;
+        if(!b.isSolid()){
+            limitedRegion.setType(x, y, z, Material.AIR);
+            return;
+        }
+        if(b.getType() == Material.BEDROCK) return;
         BlockGenerator gen = replace.getOrDefault(limitedRegion.getType(x,y,z), null);
         if(gen == null) return;
         gen.set(limitedRegion,x,y,z);
