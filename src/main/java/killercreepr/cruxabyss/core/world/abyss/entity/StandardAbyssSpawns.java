@@ -121,8 +121,7 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return b.getWorld().getNearbyEntities(b.getLocation(), 5D, 5D, 5D,
-                    x -> CruxMob.is(x, mob)).isEmpty();
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 3, e -> CruxMob.is(e, mob)) < 8;
             }
             return false;
         }
@@ -168,6 +167,34 @@ public class StandardAbyssSpawns {
                 if(!b.getRelative(f).isEmpty()) return false;
             }
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
+        }
+    };
+
+    public static final NaturalEntitySpawn EMBER_LEAPER = new NaturalCruxMobSpawn(3, 0f, AbyssMob.EMBER_LEAPER) {
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            Block b = ctx.getBlock();
+            if(!isPassableAndNotLiquid(b)) return false;
+            int yCheck = 9;
+            for(int y = 1; y <= yCheck; y++){
+                Block check = b.getRelative(0, y, 0);
+                if(!isPassableAndNotLiquid(check)) return false;
+            }
+
+
+            Block down = b.getRelative(BlockFace.DOWN);
+            if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
+            for(BlockFace f : BlockFace.values()){
+                if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                if(!down.getRelative(f).isSolid()) return false;
+            }
+            return b.getWorld().getNearbyEntities(b.getLocation(), 8D, 8D, 8D,
+                x -> CruxMob.is(x, mob)).isEmpty();
         }
 
         @Override
