@@ -5,7 +5,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.core.entity.mob.goal.PlagueTyrantGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.EmberLeaperGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -28,26 +28,25 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class PlagueTyrant extends SimpleAbyssMob {
-    public PlagueTyrant() {
-        super(Crux.key("plague_tyrant"), EntityType.PIG);
+public class EmberLeaper extends SimpleAbyssMob {
+    public EmberLeaper() {
+        super(Crux.key("ember_leaper"), EntityType.PIG);
     }
 
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
-            e.customName(Component.text("Plague Tyrant"));
+            e.customName(Component.text("Ember Leaper"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
 
             if(e instanceof LivingEntity ee){
-                ee.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(2.5D);
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(160D);
-                ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.89D);
+                ee.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(0D);
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(30D);
+                ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(1D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
-
-                CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED,
-                    CruxAttributeModifier.baseModifier(ee.getAttribute(Attribute.MOVEMENT_SPEED).getValue()*1.2D));
+                ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(-99D);
+                ee.getAttribute(Attribute.SAFE_FALL_DISTANCE).setBaseValue(1.5D);
             }
         };
     }
@@ -56,14 +55,12 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(CruxMath.random(10D, 15D) *
+                CruxAttributeModifier.baseModifier(CruxMath.random(4D, 6D) *
                         (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
-        addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(6D));
-        addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(3D));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-6));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(12));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(1.3D));
         return map;
     }
 
@@ -76,11 +73,11 @@ public class PlagueTyrant extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
-        return new PlagueTyrantGoal(e).model(active);
+        return new EmberLeaperGoal(e).model(active);
     }
 
     @Override
     public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL, AbyssMobCategory.ABYSS_OUTPOST};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL};
     }
 }

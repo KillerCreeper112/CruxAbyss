@@ -14,10 +14,8 @@ import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +37,10 @@ public class AbyssCharredBones extends SimpleAbyssMob {
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
 
             if(e instanceof Skeleton x) x.setShouldBurnInDay(false);
+            if(e instanceof LivingEntity d){
+                EntityEquipment equipment = d.getEquipment();
+                if(equipment != null) equipment.setItemInMainHand(null);
+            }
         };
     }
 

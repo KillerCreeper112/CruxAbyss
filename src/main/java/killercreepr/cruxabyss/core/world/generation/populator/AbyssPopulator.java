@@ -1,13 +1,12 @@
 package killercreepr.cruxabyss.core.world.generation.populator;
 
 import killercreepr.cruxabyss.core.world.generation.biome.CharredBiome;
-import killercreepr.cruxabyss.core.world.generation.biome.CorruptBiome;
 import killercreepr.cruxabyss.core.world.generation.biome.EldritchWastesBiome;
+import killercreepr.cruxabyss.core.world.generation.biome.FungalGroveBiome;
 import killercreepr.cruxabyss.core.world.generation.biome.ToxicMireBiome;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Waterlogged;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,7 @@ public class AbyssPopulator extends GrimPopulator{
     //protected final double crimsonRandomRange = (135D*135D);
     protected final CharredBiome charredBiome = new CharredBiome(this);
     protected final ToxicMireBiome toxicMireBiome = new ToxicMireBiome(this);
-    protected final CorruptBiome corruptBiome = new CorruptBiome(this);
+    protected final FungalGroveBiome fungalGroveBiome = new FungalGroveBiome(this);
     protected final EldritchWastesBiome eldritchWastesBiome = new EldritchWastesBiome(this);
 
     protected final CruxNoise temperature = CruxNoise.fast()
@@ -62,12 +61,12 @@ public class AbyssPopulator extends GrimPopulator{
             defaultBiome(worldInfo, random, limitedRegion, x, y, z);
             return;
         }
-        if(b.getType() == Material.WATER || (b.getBlockData() instanceof Waterlogged w && w.isWaterlogged()) ||
+        /*if(b.getType() == Material.WATER || (b.getBlockData() instanceof Waterlogged w && w.isWaterlogged()) ||
                 b.getType() == Material.KELP_PLANT || b.getType() == Material.KELP){
             //limitedRegion.setType(x,y,z, Material.LAVA);
         }else if(b.isReplaceable() && b.getType() != Material.SNOW){
             limitedRegion.setType(x,y,z, Material.AIR);
-        }
+        }*/
 
         switch (b.getType()){
             case ICE -> limitedRegion.setType(x,y,z, Material.PACKED_ICE);
@@ -84,7 +83,7 @@ public class AbyssPopulator extends GrimPopulator{
             charredBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
             return;
         }else if(t < 0f && (h < -.02f || h > .02f) && c > .3f){ //corrupt
-            corruptBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
+            fungalGroveBiome.accept(worldInfo,random,chunkX,chunkZ,limitedRegion,x,y,z);
             return;
         }else if(t < .5f && h < 0f){
             eldritchWastesBiome.accept(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);

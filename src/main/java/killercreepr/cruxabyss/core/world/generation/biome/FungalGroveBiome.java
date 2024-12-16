@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class CorruptBiome extends GrimBiome {
+public class FungalGroveBiome extends GrimBiome {
 
     private final FastNoiseLite spikeNoise = new FastNoiseLite();
 
     private final Map<Material, BlockGenerator> replace = new HashMap<>();
-    public CorruptBiome(@NotNull GrimPopulator master) {
+    public FungalGroveBiome(@NotNull GrimPopulator master) {
         super(master);
         spikeNoise.SetFrequency(.09f);
         spikeNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -44,7 +44,7 @@ public class CorruptBiome extends GrimBiome {
     }
 
     public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
-        setBiome(BiomeManager.CORRUPTION, limitedRegion, x,y,z);
+        setBiome(BiomeManager.FUNGAL_GROVE, limitedRegion, x,y,z);
     }
 
     @Override

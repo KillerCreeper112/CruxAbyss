@@ -3,15 +3,20 @@ package killercreepr.cruxabyss.core.world.biome;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import killercreepr.crux.core.Crux;
+import net.kyori.adventure.key.Key;
 import org.bukkit.block.Biome;
 
 public class BiomeManager {
     //biomes added via datapack
     public static final Biome TOXIC_MIRE = biome("toxic_mire");
     public static final Biome CHARRED_WASTES = biome("charred_wastes");
-    public static final Biome CORRUPTION = biome("corruption");
+    public static final Biome FUNGAL_GROVE = biome("fungal_grove");
     public static final Biome ELDRITCH_WASTES = biome("eldritch_wastes");
     public static final Biome TOXIC_GRASSLANDS = biome("toxic_grasslands");
+
+    public static boolean isToxicMireType(Key k){
+        return k.equals(TOXIC_MIRE.key()) || k.equals(TOXIC_GRASSLANDS.key());
+    }
 
     public static Biome biome(String id){
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).get(Crux.key(id));

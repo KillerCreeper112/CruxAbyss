@@ -145,8 +145,7 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return b.getWorld().getNearbyEntities(b.getLocation(), 5D, 5D, 5D,
-                    x -> CruxMob.is(x, mob)).isEmpty();
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 2, e -> CruxMob.is(e, AbyssMob.PLAGUE_STALKER)) < 2;
             }
             return false;
         }

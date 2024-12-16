@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.world.biome.BiomeManager;
 import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
@@ -11,11 +13,13 @@ import killercreepr.usurvive.block.USurviveBlocks;
 import org.bukkit.Axis;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Random;
 
 public class CharredBiome extends GrimBiome {
@@ -40,6 +44,16 @@ public class CharredBiome extends GrimBiome {
 
     public void acceptBiomeSet(@NotNull WorldInfo worldInfo, @NotNull Random random, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
         setBiome(BiomeManager.CHARRED_WASTES, limitedRegion, x,y,z);
+    }
+
+    protected final List<Material> smallBurntDecorations = List.of(
+        Material.DEAD_FIRE_CORAL,
+        Material.DEAD_HORN_CORAL,
+        Material.DEAD_BRAIN_CORAL,
+        Material.DEAD_BUSH
+    );
+    public Material randomSmallBurntDecoration(){
+        return CruxCollection.getRandom(smallBurntDecorations);
     }
 
     @Override
@@ -68,6 +82,20 @@ public class CharredBiome extends GrimBiome {
         }else if(MaterialSetTag.PLANKS.isTagged(m)){
             CruxBlock custom = AbyssBlocks.CHARRED_PLANKS.getBaseBlock();
             custom.setBlock(limitedRegion, x, y, z);
+            return;
+        }else if(MaterialSetTag.SMALL_FLOWERS.isTagged(m) || MaterialSetTag.TALL_FLOWERS.isTagged(m)){
+            if(b.getBlockData() instanceof Bisected bisected){
+                if(bisected.getHalf() == Bisected.Half.TOP){
+                    limitedRegion.setType(x, y, z, Material.AIR);
+                    return;
+                }
+            }
+            if(CruxMath.random().nextBoolean()){
+                limitedRegion.setType(x, y, z, Material.AIR);
+                return;
+            }
+            limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
+            return;
         }
         if(isOre(m)) return;
         /*for(int adjX = 1; adjX < 2; adjX++){

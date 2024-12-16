@@ -1,9 +1,9 @@
 package killercreepr.cruxabyss.core.world.abyss.entity;
 
 import killercreepr.crux.api.registry.Registry;
-import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.paper.nms.biome.BiomeUtils;
+import killercreepr.cruxabyss.core.world.biome.BiomeManager;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;
@@ -31,7 +31,7 @@ public class StandardAbyssGroups {
             if(CruxMath.random(1, 100) <= 12) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return k.equals(Crux.key("toxic_mire")) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+            return k.equals(BiomeManager.TOXIC_MIRE.key()) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
         }
     };
     public static final NaturalEntitySpawnGroup MOOSE = new NaturalSpawnPartGroup(6, 0f,
@@ -58,7 +58,7 @@ public class StandardAbyssGroups {
             if(isBiome(bb, Biome.BEACH, Biome.SNOWY_BEACH, Biome.SAVANNA, Biome.SAVANNA_PLATEAU, Biome.WINDSWEPT_SAVANNA,
                 Biome.BADLANDS, Biome.ERODED_BADLANDS, Biome.WOODED_BADLANDS, Biome.DESERT)){
                 biome = true;
-            }else if(bb.key().equals(Crux.key("corruption"))){
+            }else if(bb.key().equals(BiomeManager.FUNGAL_GROVE.key())){
                 biome = true;
             }
             return biome && getEntityAmountNearChunk(b.getChunk(), 8) < 4;
@@ -77,7 +77,7 @@ public class StandardAbyssGroups {
             if(CruxMath.random(1, 100) <= 12) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return k.equals(Crux.key("charred_wastes")) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+            return k.equals(BiomeManager.CHARRED_WASTES.key()) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
         }
     };
 
@@ -86,10 +86,10 @@ public class StandardAbyssGroups {
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(CruxMath.random(1, 100) <= 12) return false;
+            if(CruxMath.random(1, 100) <= 8) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return k.equals(Crux.key("toxic_grasslands")) && getEntityAmountNearChunk(b.getChunk(), 2) < 16;
+            return k.equals(BiomeManager.TOXIC_GRASSLANDS.key()) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
         }
     };
 
@@ -102,7 +102,8 @@ public class StandardAbyssGroups {
             Block b = ctx.getBlock();
             if(b.getY() < 150) return false;
             if(!b.isEmpty()) return false;
-            return getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+            NamespacedKey k = BiomeUtils.getBiome(b);
+            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
         }
     };
 
