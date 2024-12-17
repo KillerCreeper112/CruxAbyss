@@ -9,6 +9,7 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
+import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.core.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
@@ -48,24 +49,25 @@ import java.util.Random;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public static @Nullable AbyssWorld getOrCreate(@NotNull CruxPlugin plugin, @NotNull String worldName){
-        CruxWorldManager worldManager = CruxCore.inst().worldManager();
+        return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, worldName);
+        /*CruxWorldManager worldManager = CruxCore.inst().worldManager();
         CruxWorld activeWorld = worldManager.getWorld(worldName);
         if(activeWorld != null){
             if(!(activeWorld instanceof AbyssWorld a)) throw new UnsupportedOperationException(worldName + " is not an AbyssWorld!");
             return a;
         }
 
-        World world = new WorldCreator(worldName).type(WorldType.AMPLIFIED)/*.generator(new AbyssChunkGenerator())*/.createWorld();
+        World world = new WorldCreator(worldName).type(WorldType.AMPLIFIED)*//*.generator(new AbyssChunkGenerator())*//*.createWorld();
         if(world==null) return null;
 
         world.getWorldBorder().setCenter(0, 0);
-        world.getWorldBorder().setSize(1024D);
+        world.getWorldBorder().setSize(4096D);
 
         USurvivePersist.DIMENSION.set(world, "abyss");
 
         activeWorld = worldManager.getWorld(worldName);
         if(!(activeWorld instanceof AbyssWorld a)) throw new UnsupportedOperationException(worldName + " is not an AbyssWorld!");
-        return a;
+        return a;*/
     }
 
     protected final NaturalEntitySpawnManager entitySpawnManager;
@@ -192,7 +194,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     @Override
-    public void onUnload() {
+    public void onUnload(boolean save) {
         active = false;
         HandlerList.unregisterAll(this);
     }

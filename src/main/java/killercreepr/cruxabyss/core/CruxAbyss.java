@@ -29,7 +29,9 @@ import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.*;
 import killercreepr.cruxabyss.core.values.DefaultValues;
+import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
+import killercreepr.cruxabyss.core.world.abyss.AbyssWorldType;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
@@ -124,6 +126,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
+        worldManager.getWorldTypeRegistry().register(AbyssWorldTypes.ABYSS);
 
         EntityMemory.registerFunction(this, (mem) ->{
             if(!(mem instanceof PlayerMemory m)) return;
