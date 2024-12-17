@@ -3,11 +3,13 @@ package killercreepr.cruxabyss.core.listener;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.structure.ActiveAbyssSafezone;
+import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -29,7 +31,8 @@ public class AbyssSafezoneListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         Entity e = event.getEntity();
-        if(!WorldUtil.getDimensionID(e.getWorld()).equalsIgnoreCase("abyss")) return;
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().getUID());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
         CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);

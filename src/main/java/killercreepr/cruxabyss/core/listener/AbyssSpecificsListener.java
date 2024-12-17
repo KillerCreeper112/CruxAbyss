@@ -2,6 +2,10 @@ package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import killercreepr.usurvive.world.WorldUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.EntityEffect;
@@ -36,7 +40,9 @@ public class AbyssSpecificsListener implements Listener {
         if(!event.isGliding()) return;
         if(!(event.getEntity() instanceof Player p)) return;
         if(p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) return;
-        if(!WorldUtil.getDimensionID(p.getWorld()).equalsIgnoreCase("abyss")) return;
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(p.getWorld().getUID());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+
         ItemStack elytra = p.getInventory().getChestplate();
         if(CruxItem.isEmpty(elytra) || elytra.getType() != Material.ELYTRA) return;
         if(!(elytra.getItemMeta() instanceof Damageable d) || d.getDamage() >= CruxItem.getMaxDurability(elytra)) return;
@@ -50,7 +56,8 @@ public class AbyssSpecificsListener implements Listener {
         if(!event.getAction().isRightClick()) return;
         Block b = event.getClickedBlock();
         if(b == null) return;
-        if(!WorldUtil.getDimensionID(b.getWorld()).equalsIgnoreCase("abyss")) return;
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(b.getWorld().getUID());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         if(!(b.getBlockData() instanceof Bed)) return;
         event.setCancelled(true);
         b.getWorld().createExplosion(b.getLocation(), 4f);
@@ -59,7 +66,8 @@ public class AbyssSpecificsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
-        if(!WorldUtil.getDimensionID(p.getWorld()).equalsIgnoreCase("abyss")) return;
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(p.getWorld().getUID());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         Block b = p.getLocation().getBlock();
         if(!isWater(b)) return;
         Key biome = b.getBiome().key();
