@@ -7,9 +7,11 @@ import killercreepr.cruxabyss.api.component.AbyssAltarItemComponent;
 import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
 import killercreepr.cruxblocks.api.event.CruxBlockPlaceEvent;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.structure.InnerBoxedStructure;
 import killercreepr.cruxstructures.structure.impl.CfgStoredBlocksStructure;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -52,7 +54,9 @@ public class AbyssAltarPortalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         Block b = event.getBlock();
-        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
 
         if(stored instanceof InnerBoxedStructure){
@@ -63,7 +67,9 @@ public class AbyssAltarPortalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCruxBlockPlace(CruxBlockPlaceEvent event) {
         Block b = event.getContext().getBlock();
-        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
 
         if(stored instanceof InnerBoxedStructure){
@@ -74,7 +80,9 @@ public class AbyssAltarPortalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCruxBlockBreak(CruxBlockBreakEvent event) {
         Block b = event.getContext().getBlock();
-        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
 
         if(stored instanceof InnerBoxedStructure){
@@ -88,7 +96,9 @@ public class AbyssAltarPortalListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Block b = event.getBlock();
         if(b.getType() == Material.DECORATED_POT) return;
-        StoredStructure stored = CruxCore.inst().structureManager().getFirstStoredAt(StoredStructure.class, b);
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
         if (stored == null) return;
 
         if(stored instanceof InnerBoxedStructure){

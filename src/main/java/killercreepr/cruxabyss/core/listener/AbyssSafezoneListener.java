@@ -3,9 +3,11 @@ package killercreepr.cruxabyss.core.listener;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.structure.ActiveAbyssSafezone;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxstructures.manager.StructureManager;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -19,11 +21,9 @@ import org.bukkit.plugin.Plugin;
 
 public class AbyssSafezoneListener implements Listener {
     protected final Plugin plugin;
-    protected final StructureManager manager;
 
-    public AbyssSafezoneListener(Plugin plugin, StructureManager manager) {
+    public AbyssSafezoneListener(Plugin plugin) {
         this.plugin = plugin;
-        this.manager = manager;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -31,7 +31,10 @@ public class AbyssSafezoneListener implements Listener {
         Entity e = event.getEntity();
         if(!WorldUtil.getDimensionID(e.getWorld()).equalsIgnoreCase("abyss")) return;
         if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
-        ActiveAbyssSafezone targetStructure = manager.getFirstActiveAt(
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+
+        ActiveAbyssSafezone targetStructure = module.getFirstActiveAt(
             ActiveAbyssSafezone.class, e.getLocation().getBlock()
         );
         if(targetStructure == null) return;
@@ -46,7 +49,10 @@ public class AbyssSafezoneListener implements Listener {
         Entity e = event.getEntity();
         if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
 
-        ActiveAbyssSafezone targetStructure = manager.getFirstActiveAt(
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(target.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+
+        ActiveAbyssSafezone targetStructure = module.getFirstActiveAt(
             ActiveAbyssSafezone.class, target.getLocation().getBlock()
         );
         if(targetStructure != null) event.setCancelled(true);
@@ -57,23 +63,27 @@ public class AbyssSafezoneListener implements Listener {
         Entity e = event.getEntity();
         Location to = event.getLoc();
         Location current = e.getLocation();
+
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+
         if(CruxMob.isInCategory(e, AbyssMobCategory.ABYSS_SAFEZONE)){
-            ActiveAbyssSafezone currentStructure = manager.getFirstActiveAt(
+            ActiveAbyssSafezone currentStructure = module.getFirstActiveAt(
                 ActiveAbyssSafezone.class, current.getBlock()
             );
             if(currentStructure == null) return;
-            ActiveAbyssSafezone toStructure = manager.getFirstActiveAt(
+            ActiveAbyssSafezone toStructure = module.getFirstActiveAt(
                 ActiveAbyssSafezone.class, to.getBlock()
             );
             if(toStructure == null) event.setCancelled(true);
             return;
         }
         if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
-        ActiveAbyssSafezone currentStructure = manager.getFirstActiveAt(
+        ActiveAbyssSafezone currentStructure = module.getFirstActiveAt(
             ActiveAbyssSafezone.class, current.getBlock()
         );
         if(currentStructure != null) return;
-        ActiveAbyssSafezone toStructure = manager.getFirstActiveAt(
+        ActiveAbyssSafezone toStructure = module.getFirstActiveAt(
             ActiveAbyssSafezone.class, to.getBlock()
         );
         if(toStructure != null){
@@ -81,7 +91,7 @@ public class AbyssSafezoneListener implements Listener {
             if(e instanceof Mob m){
                 Entity target = m.getTarget();
                 if(target == null) return;
-                ActiveAbyssSafezone targetStructure = manager.getFirstActiveAt(
+                ActiveAbyssSafezone targetStructure = module.getFirstActiveAt(
                     ActiveAbyssSafezone.class, target.getLocation().getBlock()
                 );
                 if(targetStructure != null) m.setTarget(null);

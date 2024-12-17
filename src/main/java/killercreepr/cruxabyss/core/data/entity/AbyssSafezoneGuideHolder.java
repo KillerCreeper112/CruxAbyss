@@ -9,9 +9,10 @@ import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.data.ParticleGuide;
 import killercreepr.cruxabyss.core.structure.StoredAbyssSafezone;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxstructures.manager.StructureManager;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.structure.stored.StoredStructure;
 import killercreepr.cruxstructures.util.GetStructureNear;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -66,8 +67,9 @@ public class AbyssSafezoneGuideHolder extends PlayerTickedDataHolder {
     }
 
     public StoredStructure findSafezone(Player p){
-        StructureManager structureManager = CruxCore.inst().structureManager();
-        GetNear<StoredStructure> near = new GetStructureNear(structureManager.getStored())
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(p.getWorld().getUID());
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        GetNear<StoredStructure> near = new GetStructureNear(module.getStoredStructures())
             .center(p.getLocation())
             .filter(stored -> stored instanceof StoredAbyssSafezone)
             .operation(GetNear.Operation.NEAREST)
