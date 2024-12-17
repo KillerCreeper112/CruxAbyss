@@ -3,10 +3,12 @@ package killercreepr.cruxabyss.core.values;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class DefaultValues implements ValuesProvider {
     public static final NumberProvider ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE = NumberProvider.uniform(50, 100);
@@ -90,5 +92,11 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW() {
         return ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW;
+    }
+
+    @NotNull
+    @Override
+    public Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS() {
+        return null;
     }
 }

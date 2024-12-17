@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.config;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.values.DefaultValues;
@@ -10,6 +11,7 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
+import net.kyori.adventure.key.Key;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -17,8 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+@killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
 public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<Collection<PotionEffect>> ABYSS_OUTPOST_TAKE_OVER_EFFECTS = new CommonValue<>(Set.of(
         new PotionEffect(PotionEffectType.SPEED, 200, 1, false, false, true)
@@ -34,6 +39,11 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL);
     public final NumCfgValue ABYSS_RIFT_SHOW_WARNING_IF_BELOW = new NumCfgValue(DefaultValues.ABYSS_RIFT_SHOW_WARNING_IF_BELOW);
     public final NumCfgValue ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW = new NumCfgValue(DefaultValues.ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW);
+    public final CfgValue<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS = new CommonValue<>(Map.of(
+        Crux.key("toxic_mire"), List.of(new PotionEffect(PotionEffectType.POISON, 60, 0)),
+        Crux.key("toxic_grasslands"), List.of(new PotionEffect(PotionEffectType.POISON, 60, 0)),
+        Crux.key("eldritch_wastes"), List.of(new PotionEffect(PotionEffectType.NAUSEA, 100, 0), new PotionEffect(PotionEffectType.HUNGER, 60, 1))
+    )){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -121,5 +131,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW() {
         return ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS() {
+        return ABYSS_WATER_EFFECTS;
     }
 }

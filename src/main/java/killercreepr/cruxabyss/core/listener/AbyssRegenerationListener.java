@@ -12,7 +12,7 @@ public class AbyssRegenerationListener implements Listener {
         Entity e = event.getEntity();
         if(!WorldUtil.getDimensionID(e.getWorld()).equalsIgnoreCase("abyss")) return;
         if(event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED){
-            event.setAmount(event.getAmount()*.1);
+            event.setAmount(event.getAmount()*.5);
         }
     }
 

@@ -3,10 +3,12 @@ package killercreepr.cruxabyss.api.values;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface ValuesProvider extends Reloadable {
     @NotNull
@@ -33,4 +35,6 @@ public interface ValuesProvider extends Reloadable {
     NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW();
     @NotNull
     NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW();
+    @NotNull
+    Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS();
 }
