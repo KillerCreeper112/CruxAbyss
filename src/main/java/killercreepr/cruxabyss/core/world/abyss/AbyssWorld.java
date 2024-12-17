@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.core.world.abyss;
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
-import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.CruxAbyss;
@@ -36,7 +35,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.generator.LimitedRegion;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,19 +86,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             500, 34, 10);
     }
 
-    public @NotNull BukkitRunnable buildRunnable(){
-        return new BukkitRunnable(){
-            @Override
-            public void run() {
-                if(!isActive()){
-                    cancel();
-                    return;
-                }
-                tick();
-            }
-        };
-    }
-
+    @Override
     public void tick(){
         entitySpawnManager.tick();
         if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
@@ -119,11 +105,6 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         }
         wave++;
         if(wave % 5 == 0) difficulty += .1f;
-    }
-
-    protected boolean active = false;
-    public boolean isActive(){
-        return active;
     }
 
     public final OreGenerator ORBIT_ORE = new OreGenerator(
@@ -171,6 +152,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     @Override
     public void onInitiate() {
+        super.onInitiate();
         world.getPopulators().add(new RockPopulator(new BlockGenerator() {
             @Override
             public void set(@NotNull LimitedRegion region, int x, int y, int z) {
@@ -185,14 +167,8 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     @Override
-    public void onLoad() {
-        active = true;
-        buildRunnable().runTaskTimerAsynchronously(Crux.getMainPlugin(), 0L, 1L);
-    }
-
-    @Override
     public void onUnload(boolean save) {
-        active = false;
+        super.onUnload(save);
         HandlerList.unregisterAll(this);
     }
 
