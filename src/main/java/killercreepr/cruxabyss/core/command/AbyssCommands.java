@@ -12,6 +12,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.USurvivePlugin;
 import org.bukkit.Location;
@@ -77,10 +78,11 @@ public class AbyssCommands {
                                                 }
                                                 active.getPlayers().forEach(p -> p.teleport(spawn));
                                                 sender.sendMessage("Deleting existing world...");
-                                                Crux.getServer().unloadWorld(active, false);
+                                                //Crux.getServer().unloadWorld(active, false);
                                             }
                                             cancel();
-                                            CruxWorldUtil.deleteWorld("world_abyss");
+                                            CruxCore.inst().worldManager().deleteWorld("world_abyss");
+                                            //CruxWorldUtil.deleteWorld("world_abyss");
                                             sender.sendMessage("Creating new world...");
                                             AbyssWorld.getOrCreate(plugin, "world_abyss");
                                             sender.sendMessage("Abyss world created!");
