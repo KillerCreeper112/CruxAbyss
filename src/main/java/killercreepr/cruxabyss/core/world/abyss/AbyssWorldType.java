@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.core.world.abyss;
 
-import killercreepr.cruxworlds.world.CruxWorld;
-import killercreepr.cruxworlds.world.creator.CruxWorldType;
-import killercreepr.cruxworlds.world.manager.CruxWorldManager;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
+import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import net.kyori.adventure.key.Key;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;

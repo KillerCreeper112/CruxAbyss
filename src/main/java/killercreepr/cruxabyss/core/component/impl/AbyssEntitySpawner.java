@@ -5,7 +5,7 @@ import killercreepr.cruxabyss.core.block.active.ActiveAbyssEntitySpawner;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
-import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

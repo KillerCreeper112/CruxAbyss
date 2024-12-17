@@ -4,7 +4,7 @@ import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.flag.BlockBreakFlags;
 import killercreepr.cruxblocks.core.block.active.standard.ActiveEntitySpawner;
 import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
-import killercreepr.cruxworlds.world.entity.NaturalEntitySpawner;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawner;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 

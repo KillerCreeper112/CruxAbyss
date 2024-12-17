@@ -3,7 +3,7 @@ package killercreepr.cruxabyss.core.world;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorldType;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxworlds.world.creator.CruxWorldType;
+import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 
 public class AbyssWorldTypes {
     public static final CruxWorldType ABYSS = new AbyssWorldType(Crux.key("abyss"), CruxCore.inst().worldManager());
