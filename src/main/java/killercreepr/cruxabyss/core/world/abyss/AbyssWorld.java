@@ -45,24 +45,6 @@ import java.util.Random;
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public static @Nullable AbyssWorld getOrCreate(@NotNull CruxPlugin plugin, @NotNull String worldName){
         return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, worldName);
-        /*CruxWorldManager worldManager = CruxCore.inst().worldManager();
-        CruxWorld activeWorld = worldManager.getWorld(worldName);
-        if(activeWorld != null){
-            if(!(activeWorld instanceof AbyssWorld a)) throw new UnsupportedOperationException(worldName + " is not an AbyssWorld!");
-            return a;
-        }
-
-        World world = new WorldCreator(worldName).type(WorldType.AMPLIFIED)*//*.generator(new AbyssChunkGenerator())*//*.createWorld();
-        if(world==null) return null;
-
-        world.getWorldBorder().setCenter(0, 0);
-        world.getWorldBorder().setSize(4096D);
-
-        USurvivePersist.DIMENSION.set(world, "abyss");
-
-        activeWorld = worldManager.getWorld(worldName);
-        if(!(activeWorld instanceof AbyssWorld a)) throw new UnsupportedOperationException(worldName + " is not an AbyssWorld!");
-        return a;*/
     }
 
     protected final NaturalEntitySpawnManager entitySpawnManager;
@@ -88,6 +70,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     @Override
     public void tick(){
+        super.tick();
         entitySpawnManager.tick();
         if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
             if(world.getPlayers().isEmpty()) return;
@@ -104,12 +87,14 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             p.sendMessage(c);
         }
         wave++;
-        if(wave % 5 == 0) difficulty += .1f;
+        if(wave % 5 == 0){
+            difficulty = CruxMath.clamp(difficulty + .1f, .5f, 1.5f);
+        }
     }
 
     public final OreGenerator ORBIT_ORE = new OreGenerator(
         NumberProvider.uniform(1, 3), NumberProvider.uniform(1, 6),
-        NumberProvider.constant(15), NumberProvider.constant(50),
+        NumberProvider.constant(15), NumberProvider.constant(60),
 
         CruxNoise.fast().frequency(.09f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
@@ -145,10 +130,16 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         private boolean testBlock(BlockData data){
             Material m = data.getMaterial();
             return MaterialSetTag.STONE_ORE_REPLACEABLES.isTagged(m) ||
+                MaterialSetTag.DEEPSLATE_ORE_REPLACEABLES.isTagged(m) ||
                 AbyssBlocks.PLAGUE_STONE.getBlock(data) != null ||
                 AbyssBlocks.PLAGUE_DIRT.getBlock(data) != null;
         }
     };
+
+    @Override
+    public int tickInterval() {
+        return 1;
+    }
 
     @Override
     public void onInitiate() {

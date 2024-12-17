@@ -32,6 +32,11 @@ public class AbyssWorldType implements CruxWorldType {
     }
 
     @Override
+    public @NotNull String defaultWorldName() {
+        return "world_abyss";
+    }
+
+    @Override
     public @NotNull Key key() {
         return key;
     }
