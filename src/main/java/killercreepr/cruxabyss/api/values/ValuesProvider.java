@@ -39,4 +39,5 @@ public interface ValuesProvider extends Reloadable {
     Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS();
     @NotNull NumberProvider ANIMAL_DEATH_RANGE();
     @NotNull Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY();
+    @NotNull NumberProvider ABYSS_NATURAL_HEALING_MULTIPLIER();
 }

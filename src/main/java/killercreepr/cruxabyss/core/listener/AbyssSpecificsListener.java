@@ -22,12 +22,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collection;
 import java.util.Map;
@@ -58,7 +60,7 @@ public class AbyssSpecificsListener implements Listener {
             .location(loc)
             .count(CruxMath.random(10, 20))
             .offset(range, range, range)
-            .data(new Particle.DustTransition(Color.fromRGB(0xCCCC0B), Color.fromRGB(0x947E3F), 1f))
+            .data(new Particle.DustTransition(Color.fromRGB(0xCCCC0B), Color.fromRGB(0x947E3F), 2f))
             .spawn();
 
         new GetEntityNear<>(DynamicLocation.createStatic(loc), LivingEntity.class)
@@ -107,7 +109,23 @@ public class AbyssSpecificsListener implements Listener {
         if(!isWater(b)) return;
         Key biome = b.getBiome().key();
         Collection<PotionEffect> effects = cfg.ABYSS_WATER_EFFECTS().valueOr(Map.of()).get(biome);
-        if(effects != null) effects.forEach(p::addPotionEffect);
+        if(effects != null) effects.forEach(pot ->{
+            if(pot.getType() == PotionEffectType.POISON && p.hasPotionEffect(PotionEffectType.POISON)) return;
+            if(pot.getType() == PotionEffectType.WITHER && p.hasPotionEffect(PotionEffectType.WITHER)) return;
+            p.addPotionEffect(pot);
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+        Entity e = event.getEntity();
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().getUID());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+        if(event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED){
+            double multiplier = cfg.ABYSS_NATURAL_HEALING_MULTIPLIER().value().doubleValue();
+            if(multiplier==1D) return;
+            event.setAmount(event.getAmount()*multiplier);
+        }
     }
 
     public boolean isWater(Block b){

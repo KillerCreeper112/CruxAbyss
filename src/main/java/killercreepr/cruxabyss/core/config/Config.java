@@ -48,6 +48,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY = new CommonValue<>(Set.of(
         new PotionEffect(PotionEffectType.POISON, 70, 1)
     )){};
+    public final NumCfgValue ABYSS_NATURAL_HEALING_MULTIPLIER = new NumCfgValue(.5f);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -70,6 +71,12 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY() {
         return ANIMAL_DEATH_EFFECTS_NEARBY;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_NATURAL_HEALING_MULTIPLIER() {
+        return ABYSS_NATURAL_HEALING_MULTIPLIER.value();
     }
 
     @Override

@@ -112,4 +112,10 @@ public class DefaultValues implements ValuesProvider {
     public Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_NATURAL_HEALING_MULTIPLIER() {
+        return null;
+    }
 }
