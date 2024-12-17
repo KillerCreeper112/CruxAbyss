@@ -44,6 +44,10 @@ public class Config extends Cfg implements ValuesProvider {
         Crux.key("toxic_grasslands"), List.of(new PotionEffect(PotionEffectType.POISON, 60, 0)),
         Crux.key("eldritch_wastes"), List.of(new PotionEffect(PotionEffectType.NAUSEA, 100, 0), new PotionEffect(PotionEffectType.HUNGER, 60, 1))
     )){};
+    public final NumCfgValue ANIMAL_DEATH_RANGE = new NumCfgValue(DefaultValues.ANIMAL_DEATH_RANGE);
+    public final CfgValue<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY = new CommonValue<>(Set.of(
+        new PotionEffect(PotionEffectType.POISON, 70, 1)
+    )){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -54,6 +58,18 @@ public class Config extends Cfg implements ValuesProvider {
 
     public Config(@NotNull CruxConfig cfg) {
         super(cfg);
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ANIMAL_DEATH_RANGE() {
+        return ANIMAL_DEATH_RANGE.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY() {
+        return ANIMAL_DEATH_EFFECTS_NEARBY;
     }
 
     @Override

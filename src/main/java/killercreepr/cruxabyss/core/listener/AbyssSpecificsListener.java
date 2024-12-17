@@ -1,23 +1,27 @@
 package killercreepr.cruxabyss.core.listener;
 
+import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.location.DynamicLocation;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.world.WorldUtil;
 import net.kyori.adventure.key.Key;
-import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -27,6 +31,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 public class AbyssSpecificsListener implements Listener {
     protected final ValuesProvider cfg;
@@ -34,6 +39,36 @@ public class AbyssSpecificsListener implements Listener {
     public AbyssSpecificsListener(ValuesProvider cfg) {
         this.cfg = cfg;
     }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onEntityDeath(EntityDeathEvent event) {
+        Entity e = event.getEntity();
+        if(!(e instanceof Mob)) return;
+        if(e instanceof Animals){
+            animalDeath(e);
+        }
+    }
+
+    public void animalDeath(Entity e){
+        Location loc = e.getLocation().add(0, e.getHeight()/2, 0);
+        ValuesProvider cfg = CruxAbyss.inst().values();
+
+        double range = cfg.ANIMAL_DEATH_RANGE().value().doubleValue();//CruxMath.random(.8, 1.2);
+        new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+            .location(loc)
+            .count(CruxMath.random(10, 20))
+            .offset(range, range, range)
+            .data(new Particle.DustTransition(Color.fromRGB(0xCCCC0B), Color.fromRGB(0x947E3F), 1f))
+            .spawn();
+
+        new GetEntityNear<>(DynamicLocation.createStatic(loc), LivingEntity.class)
+            .range(range)
+            .find().forEach(victim ->{
+                cfg.ANIMAL_DEATH_EFFECTS_NEARBY().valueOr(Set.of()).forEach(victim::addPotionEffect);
+            });
+        CreateSound.sound(Sound.ITEM_INK_SAC_USE, 1.5f).playAt(e);
+    }
+
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityToggleGlide(EntityToggleGlideEvent event) {

@@ -37,4 +37,6 @@ public interface ValuesProvider extends Reloadable {
     NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW();
     @NotNull
     Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS();
+    @NotNull NumberProvider ANIMAL_DEATH_RANGE();
+    @NotNull Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY();
 }

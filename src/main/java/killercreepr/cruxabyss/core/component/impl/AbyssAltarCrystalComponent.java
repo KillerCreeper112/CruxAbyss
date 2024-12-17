@@ -2,16 +2,13 @@ package killercreepr.cruxabyss.core.component.impl;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
-import killercreepr.cruxabyss.core.world.abyss.AbyssWorldType;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

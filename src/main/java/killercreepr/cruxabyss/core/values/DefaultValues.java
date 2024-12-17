@@ -22,6 +22,7 @@ public class DefaultValues implements ValuesProvider {
     public static final NumberProvider ABYSS_SAFEZONE_GUIDE_PARTICLE_OFFSET_VERTICAL = NumberProvider.uniform(-.5, .5);
     public static final NumberProvider ABYSS_RIFT_SHOW_WARNING_IF_BELOW = NumberProvider.constant(1);
     public static final NumberProvider ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW = NumberProvider.constant(3);
+    public static final NumberProvider ANIMAL_DEATH_RANGE = NumberProvider.uniform(.7, 1.2);
 
     @NotNull
     @Override
@@ -97,6 +98,18 @@ public class DefaultValues implements ValuesProvider {
     @NotNull
     @Override
     public Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ANIMAL_DEATH_RANGE() {
+        return ANIMAL_DEATH_RANGE;
+    }
+
+    @NotNull
+    @Override
+    public Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY() {
         return null;
     }
 }

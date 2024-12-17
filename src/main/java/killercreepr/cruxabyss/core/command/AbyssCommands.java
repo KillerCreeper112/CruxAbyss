@@ -10,7 +10,6 @@ import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
-import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;

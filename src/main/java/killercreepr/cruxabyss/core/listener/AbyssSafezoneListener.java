@@ -10,7 +10,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.world.WorldUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
