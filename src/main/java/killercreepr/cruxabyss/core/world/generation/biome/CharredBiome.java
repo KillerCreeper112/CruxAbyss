@@ -9,7 +9,7 @@ import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
 import killercreepr.cruxgeneration.util.FastNoiseLite;
-import killercreepr.usurvive.block.USurviveBlocks;
+import killercreepr.usurvive.core.block.USurviveBlocks;
 import org.bukkit.Axis;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

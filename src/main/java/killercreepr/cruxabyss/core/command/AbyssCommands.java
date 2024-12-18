@@ -13,7 +13,7 @@ import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
-import killercreepr.usurvive.USurvivePlugin;
+import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
