@@ -2,6 +2,8 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
@@ -53,6 +55,7 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
                 setTonguePull(false);
                 return;
             }
+            mob.lookAt(target);
             elongateTongueTick();
             return;
         }else{
@@ -67,9 +70,13 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
             return;
         }
         double distance = getSquaredDistanceFromTarget();
-        if(distance < 2.5D*2.5D || distance > 10D*10D) return;
+        if(!isDistanceForTonguePull(distance)) return;
         tonguePullCooldown = CruxMath.random(100, 200);
         setTonguePull(true);
+    }
+
+    public boolean isDistanceForTonguePull(double squaredDistance){
+        return squaredDistance >= 2.5D*2.5D && squaredDistance <= 10D*10D;
     }
 
     public void setTonguePull(boolean on){
@@ -90,7 +97,7 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
             return;
         }
 
-        end.getWorld().getNearbyEntitiesByType(LivingEntity.class, end, 1.2, e -> isValidNaturalTarget(e)).forEach(victim ->{
+        end.getWorld().getNearbyEntitiesByType(LivingEntity.class, end, 1.2, this::isValidNaturalTarget).forEach(victim ->{
             Vector v = mob.getLocation().toVector().subtract(victim.getLocation().toVector())
                 .normalize().multiply(.1);
             victim.setVelocity(victim.getVelocity().add(v));
@@ -103,6 +110,12 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
 
     public Location getTongueEndPosition(){
         return getModel().getBone("tongue_end").get().getLocation();
+    }
+
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -49,7 +49,7 @@ public class AbyssCharredBones extends SimpleAbyssMob {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = super.getAttributes(world, e);
         setAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 CruxAttributeModifier.baseModifier(CruxMath.random(8D, 14D) *
-                        (world == null ? 1D : world.getWave() * .1D) * (world == null ? 1D : world.getDifficulty())));
+                        (world == null ? 1D : world.getDifficulty())));
         setAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-15));
         setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(36));
         setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, CruxAttributeModifier.baseModifier(12));
