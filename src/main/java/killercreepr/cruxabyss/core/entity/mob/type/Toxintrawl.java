@@ -43,6 +43,7 @@ public class Toxintrawl extends SimpleAbyssMob {
             if(e instanceof LivingEntity ee){
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(30D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
+                ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.5D);
             }
         };
     }
@@ -54,7 +55,7 @@ public class Toxintrawl extends SimpleAbyssMob {
             CruxAttributeModifier.baseModifier(CruxMath.random(6D, 9D) * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(-2));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(-3));
         addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(5D));
         return map;
     }

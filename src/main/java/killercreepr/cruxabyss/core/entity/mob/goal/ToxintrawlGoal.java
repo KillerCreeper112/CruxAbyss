@@ -22,24 +22,29 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_VINDICATOR_AMBIENT, .6f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_AMBIENT, .75f);
             }
 
-            /*@Override
+            @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_PILLAGER_HURT, 1.85f);
-            }*/
+                return CreateSound.sound(Sound.ENTITY_STRIDER_STEP, 1.5f);
+            }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_VINDICATOR_HURT, .6f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_HURT, .75f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_VINDICATOR_DEATH, .6f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_DEATH, .6f);
             }
         });
+    }
+
+    @Override
+    public void moveTo() {
+        this.moveTo(10F);
     }
 
     @Override
@@ -73,6 +78,8 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
         if(!isDistanceForTonguePull(distance)) return;
         tonguePullCooldown = CruxMath.random(100, 200);
         setTonguePull(true);
+        CreateSound.sound(Sound.ENTITY_GENERIC_SPLASH, 1.8f).playAt(mob);
+        CreateSound.sound(Sound.ENTITY_FOX_BITE, 2).playAt(mob);
     }
 
     public boolean isDistanceForTonguePull(double squaredDistance){
@@ -111,7 +118,6 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
     public Location getTongueEndPosition(){
         return getModel().getBone("tongue_end").get().getLocation();
     }
-
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
