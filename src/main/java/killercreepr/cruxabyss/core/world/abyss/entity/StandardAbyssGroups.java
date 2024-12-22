@@ -119,6 +119,18 @@ public class StandardAbyssGroups {
         }
     };
 
+    public static final NaturalEntitySpawnGroup TOXINTRAWL = new NaturalSpawnPartGroup(8, 0f,
+        StandardAbyssSpawns.TOXINTRAWL){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 9) return false;
+            Block b = ctx.getBlock();
+            NamespacedKey k = BiomeUtils.getBiome(b);
+            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+        }
+    };
+
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
         registry.register(ABYSSAL_EYE_VINE);
@@ -128,5 +140,6 @@ public class StandardAbyssGroups {
         registry.register(PLAGUE_STALKER);
         registry.register(PLAGUEWING);
         registry.register(EMBER_LEAPER);
+        registry.register(TOXINTRAWL);
     }
 }

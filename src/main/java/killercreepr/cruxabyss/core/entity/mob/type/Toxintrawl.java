@@ -41,7 +41,7 @@ public class Toxintrawl extends SimpleAbyssMob {
             e.setSilent(true);
 
             if(e instanceof LivingEntity ee){
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(30D);
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(36D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
                 ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.5D);
             }

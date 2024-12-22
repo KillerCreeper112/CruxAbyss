@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class StandardAbyssSpawns {
     public static final Collection<Material> SPAWNABLE_ON_NOT = new CollectionBuilder<Material>()
@@ -194,6 +195,36 @@ public class StandardAbyssSpawns {
                 if(!down.getRelative(f).isSolid()) return false;
             }
             return b.getWorld().getNearbyEntities(b.getLocation(), 8D, 8D, 8D,
+                x -> CruxMob.is(x, mob)).isEmpty();
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
+        }
+    };
+
+    protected static final Collection<Material> WATER = Set.of(
+        Material.WATER,
+        Material.KELP,
+        Material.KELP_PLANT,
+        Material.SEAGRASS,
+        Material.TALL_SEAGRASS
+    );
+    private static boolean isWater(Block b){
+        return WATER.contains(b.getType());
+    }
+
+    public static final NaturalEntitySpawn TOXINTRAWL = new NaturalCruxMobSpawn(3, 0f, AbyssMob.TOXINTRAWL) {
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            Block b = ctx.getBlock();
+            if(!isWater(b)) return false;
+
+            for(Block check : CruxLoc.getNearbyBlocks(b, 3)){
+                if(!isWater(check)) return false;
+            }
+            return b.getWorld().getNearbyEntities(b.getLocation(), 28D, 28D, 28D,
                 x -> CruxMob.is(x, mob)).isEmpty();
         }
 
