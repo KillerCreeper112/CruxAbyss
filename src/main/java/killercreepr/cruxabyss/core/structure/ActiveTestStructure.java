@@ -2,8 +2,8 @@ package killercreepr.cruxabyss.core.structure;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.core.Crux;
-import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
-import killercreepr.cruxstructures.structure.stored.StoredStructure;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.core.structure.active.SimpleActiveStructure;
 import org.bukkit.Chunk;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;

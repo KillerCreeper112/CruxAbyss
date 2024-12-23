@@ -41,7 +41,7 @@ import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxstructures.structure.impl.CfgFAWEStructure;
+import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;

@@ -2,9 +2,9 @@ package killercreepr.cruxabyss.core.structure;
 
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.data.world.StoredChunk;
-import killercreepr.cruxstructures.structure.Structure;
-import killercreepr.cruxstructures.structure.active.ActiveStructure;
-import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
+import killercreepr.cruxstructures.api.structure.ActiveStructure;
+import killercreepr.cruxstructures.api.structure.Structure;
+import killercreepr.cruxstructures.core.structure.stored.SimpleStoredStructure;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Chunk;
 import org.bukkit.util.BoundingBox;

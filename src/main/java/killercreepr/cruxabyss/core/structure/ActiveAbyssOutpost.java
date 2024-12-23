@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.core.structure;
 
-import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
+import killercreepr.cruxstructures.core.structure.active.SimpleActiveStructure;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
