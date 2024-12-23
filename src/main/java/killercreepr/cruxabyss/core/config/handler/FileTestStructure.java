@@ -3,8 +3,8 @@ package killercreepr.cruxabyss.core.config.handler;
 import killercreepr.cruxabyss.core.structure.StoredTestStructure;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
-import killercreepr.cruxstructures.config.FileSimpleStoredStructure;
-import killercreepr.cruxstructures.structure.stored.SimpleStoredStructure;
+import killercreepr.cruxstructures.core.config.FileSimpleStoredStructure;
+import killercreepr.cruxstructures.core.structure.stored.SimpleStoredStructure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

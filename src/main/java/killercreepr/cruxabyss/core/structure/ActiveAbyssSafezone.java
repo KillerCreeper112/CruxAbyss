@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.core.structure;
 
-import killercreepr.cruxstructures.structure.active.SimpleActiveStructure;
-import killercreepr.cruxstructures.structure.stored.StoredStructure;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.core.structure.active.SimpleActiveStructure;
 import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
 
