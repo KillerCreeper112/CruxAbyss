@@ -6,6 +6,7 @@ import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.structure.module.StructureModule;
 import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
+import killercreepr.cruxstructures.core.structure.stored.CfgStoredStructure;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 public class AbyssSafezone extends CfgFAWEStructure {
     protected final Vector expandBox;
@@ -34,8 +36,13 @@ public class AbyssSafezone extends CfgFAWEStructure {
 
     @Override
     public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
-        return StoredAbyssSafezone.createNew(
-            this, StoredChunk.from(center), CruxPosition.block(center), rotation, expandBox
+        CfgStoredStructure built = (CfgStoredStructure) super.buildStored(center, rotation);
+        Objects.requireNonNull(built, "Abyss Safezone built stored is null :/");
+        return new StoredAbyssSafezone(
+            built.getStructureKey(), built.getChunk(), built.getPosition(), built.getBoundingBox(), built.getRotation(), built.getInnerBox()
         );
+        /*return StoredAbyssSafezone.createNew(
+            this, StoredChunk.from(center), CruxPosition.block(center), rotation, expandBox
+        );*/
     }
 }
