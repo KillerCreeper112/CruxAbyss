@@ -7,7 +7,7 @@ import killercreepr.crux.core.util.GetNear;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.data.ParticleGuide;
-import killercreepr.cruxabyss.core.structure.StoredAbyssSafezone;
+import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafezone;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;

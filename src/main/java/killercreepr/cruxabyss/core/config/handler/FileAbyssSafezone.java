@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.core.config.handler;
 
-import killercreepr.cruxabyss.core.structure.StoredAbyssSafezone;
+import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafezone;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileElement;

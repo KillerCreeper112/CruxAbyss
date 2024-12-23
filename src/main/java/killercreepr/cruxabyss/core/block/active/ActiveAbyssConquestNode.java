@@ -10,7 +10,7 @@ import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.lang.Lang;
-import killercreepr.cruxabyss.core.structure.ActiveAbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxInteractable;

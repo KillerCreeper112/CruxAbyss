@@ -5,7 +5,7 @@ import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxabyss.core.structure.ActiveAbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;

@@ -4,7 +4,7 @@ import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.cruxabyss.core.lang.Lang;
-import killercreepr.cruxabyss.core.structure.ActiveAbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;

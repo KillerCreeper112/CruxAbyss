@@ -12,7 +12,7 @@ import killercreepr.cruxabyss.api.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
-import killercreepr.cruxabyss.core.structure.StoredAbyssSafezone;
+import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafezone;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;

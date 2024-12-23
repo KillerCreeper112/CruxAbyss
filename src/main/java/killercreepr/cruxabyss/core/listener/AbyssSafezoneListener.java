@@ -2,7 +2,7 @@ package killercreepr.cruxabyss.core.listener;
 
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
-import killercreepr.cruxabyss.core.structure.ActiveAbyssSafezone;
+import killercreepr.cruxabyss.core.structure.safezone.ActiveAbyssSafezone;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;

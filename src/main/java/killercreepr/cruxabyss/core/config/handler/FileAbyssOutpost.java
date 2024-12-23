@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.core.config.handler;
 
-import killercreepr.cruxabyss.core.structure.StoredAbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.StoredAbyssOutpost;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileElement;
