@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.structure.outpost;
 
 import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.api.math.CruxPosition;
-import killercreepr.cruxabyss.api.structure.StoredLootHolderStructure;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
@@ -13,7 +12,6 @@ import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -47,12 +45,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         return data;
     }
 
-    /*public ActiveAbyssOutpost(@NotNull StoredAbyssOutpost data, @NotNull Chunk chunk) {
-        super(data, chunk);
-        this.data = data;
-        updateLootHolders();
-    }*/
-
     public void updateLootHolders(){
         lootHolders.clear();
         CruxWorld crux = CruxCore.core().worldManager().getWorld(active.getCenter().getWorld().getUID());
@@ -60,15 +52,12 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
         if(module == null) return;
         BoundingBox box = active.getData().getBoundingBox();
-        Bukkit.broadcastMessage("looking for loot holders");
-        module.getStored(StoredLootHolderStructure.class, stored ->{
+        /*module.getStored(StoredLootHolderStructure.class, stored ->{
             BoundingBox check = stored.getBoundingBox();
-            Bukkit.broadcastMessage("checking=" + stored.getPosition() + " intersect=" + doBoundingBoxesIntersect(box, check) + ", " + "contains=" + box.contains(check));
             return box.contains(check) || doBoundingBoxesIntersect(box, check);
         }).forEach(stored ->{
                 lootHolders.put(stored.getPosition(), stored);
-                Bukkit.broadcastMessage("found: " + stored.getPosition());
-            });
+            });*/
     }
 
     public static boolean doBoundingBoxesIntersect(BoundingBox box1, BoundingBox box2) {
@@ -84,11 +73,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         // Return true if there is overlap in all three dimensions
         return overlapX && overlapY && overlapZ;
     }
-
-    /*@Override
-    public @NotNull AbyssOutpost getStructure() {
-        return (AbyssOutpost) this.getData().getParent();
-    }*/
 
     public void resetOwner(){
         data.owner = null;
@@ -152,10 +136,4 @@ public class ActiveAbyssOutpost implements ManagedTicked {
     @Override
     public void stopped() {
     }
-
-    /*@Override
-    @NotNull
-    public StoredAbyssOutpost getData() {
-        return data;
-    }*/
 }

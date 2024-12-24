@@ -8,6 +8,7 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxColor;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
@@ -18,6 +19,9 @@ import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.data.CustomBlockData;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxstructures.api.structure.ActiveStructure;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -369,9 +373,11 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     public ActiveAbyssOutpost outpost(){
         if(outpost == null){
             if(CruxMath.hasOccurredWithin(lastCheckedOutpost, 20)) return outpost;
-            outpost = null;/*todo CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
-                .getModule(StructureWorldModule.class)
-                .getFirstActiveAt(ActiveAbyssOutpost.class, block);*/
+            StructureWorldModule module = CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
+                .getModule(StructureWorldModule.class);
+            ActiveStructure structure = module.getFirstActiveAt(ActiveStructure.class, block,
+                check -> check.has(AbyssComponents.ACTIVE_ABYSS_OUTPOST));
+            outpost = structure == null ? null : structure.get(AbyssComponents.ACTIVE_ABYSS_OUTPOST);
             lastCheckedOutpost = System.currentTimeMillis();
             visualFireworks = new ConquestFireworks(this, outpost);
             messenger = new ConquestMessenger(this, outpost);

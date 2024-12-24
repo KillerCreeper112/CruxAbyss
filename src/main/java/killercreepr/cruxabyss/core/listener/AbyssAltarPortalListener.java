@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 
 public class AbyssAltarPortalListener implements Listener {
-
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(!event.getAction().isRightClick()) return;
@@ -39,67 +38,4 @@ public class AbyssAltarPortalListener implements Listener {
             altarItem.place(altar, p, cruxItem);
         }
     }
-
-    /*@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBlockPlace(BlockPlaceEvent event) {
-        Block b = event.getBlock();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
-        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
-        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
-        if (stored == null) return;
-
-        if(stored instanceof InnerBoxedStructure){
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onCruxBlockPlace(CruxBlockPlaceEvent event) {
-        Block b = event.getContext().getBlock();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
-        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
-        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
-        if (stored == null) return;
-
-        if(stored instanceof InnerBoxedStructure){
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onCruxBlockBreak(CruxBlockBreakEvent event) {
-        Block b = event.getContext().getBlock();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
-        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
-        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
-        if (stored == null) return;
-
-        if(stored instanceof InnerBoxedStructure){
-            event.setCancelled(true);
-        }
-    }*/
-
-
-    //todo proper structure thing for this
-    /*@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onBlockBreak(BlockBreakEvent event) {
-        Block b = event.getBlock();
-        if(b.getType() == Material.DECORATED_POT) return;
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
-        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
-        StoredStructure stored = module.getFirstStoredAt(StoredStructure.class, b);
-        if (stored == null) return;
-
-        if(stored instanceof InnerBoxedStructure){
-            event.setCancelled(true);
-            return;
-        }
-        CruxPosition blockPos = CruxPosition.block(b);
-
-        if (!(stored.getParent() instanceof CfgStoredBlocksStructure s)) return;
-        CruxPosition structurePos = stored.fromWorldToStructurePos(blockPos);
-        if(s.getBlocks(stored.getRotation()).contains(structurePos)){
-            event.setCancelled(true);
-        }
-    }*/
 }

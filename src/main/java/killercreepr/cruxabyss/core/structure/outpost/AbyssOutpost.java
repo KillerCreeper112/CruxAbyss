@@ -6,7 +6,6 @@ import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxstructures.api.component.StructureComponent;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
-import killercreepr.cruxstructures.api.structure.Structure;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,15 +21,8 @@ public class AbyssOutpost implements StructureComponent {
     public void onFileLoad(@NotNull FileContext<?> context, @NotNull FileObject o, @NotNull StoredStructure structure) {
         FileRegistry reg = context.getRegistry();
         AbyssOutpostData outpostData = new AbyssOutpostData();
-        if(o.get("data") instanceof FileObject data){
-            outpostData.owner = reg.deserializeFromFile(UUID.class, data.get("owner"));
-        }
+        outpostData.owner = reg.deserializeFromFile(UUID.class, o.get("owner"));
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
-    }
-
-    @Override
-    public void onStructureHook(@NotNull Structure structure) {
-        structure.set(AbyssComponents.ABYSS_OUTPOST, this);
     }
     /*protected Collection<BlockPos> conquestNodes = new HashSet<>();
     public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules) {
