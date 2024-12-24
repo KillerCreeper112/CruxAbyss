@@ -16,9 +16,6 @@ import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.command.AbyssCommands;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.config.Config;
-import killercreepr.cruxabyss.core.config.handler.FileAbyssOutpost;
-import killercreepr.cruxabyss.core.config.handler.FileAbyssSafezone;
-import killercreepr.cruxabyss.core.config.handler.FileTestStructure;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.core.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
@@ -27,11 +24,6 @@ import killercreepr.cruxabyss.core.item.AbyssItems;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
-import killercreepr.cruxabyss.core.structure.*;
-import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
-import killercreepr.cruxabyss.core.structure.outpost.StoredAbyssOutpost;
-import killercreepr.cruxabyss.core.structure.safezone.AbyssSafezone;
-import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafezone;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
@@ -49,7 +41,6 @@ import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,9 +68,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
         new AbyssCommands(this).register();
         CfgRegistries.JSON_REGISTRY.forEach(registry ->{
-            registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
-            registry.registerFileHandler(StoredAbyssSafezone.class, new FileAbyssSafezone());
-            registry.registerFileHandler(StoredTestStructure.class, new FileTestStructure());
+            /*registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
+            registry.registerFileHandler(StoredAbyssSafezone.class, new FileAbyssSafezone());*/
         });
 
         CfgRegistries.SIMPLE_REGISTRY.forEach(registry -> {
@@ -103,7 +93,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                     String type = registry.deserializeFromFile(String.class, o.get("type"));
                     if(type==null) return current;
                     switch (type.toLowerCase()){
-                        case "test" ->{
+                       /* case "test" ->{
                             return new TestStructure(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
                         }
                         case "abyss_outpost" ->{
@@ -116,6 +106,12 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                             return new AbyssSafezone(current.key(), current.getHolder(), current.isPersistent(),
                                 current.getBeforePlacementModules(), current.getModules(), expand);
                         }
+                        case "abyss_outpost_loot_holder" ->{
+                            return new SimpleLootHolderStructure(
+                                current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(),
+                                current.getModules()
+                            );
+                        }*/
                     }
                     return current;
                 }
@@ -126,6 +122,15 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 }
             });
         });
+
+        /*FileStructureModule reg = CruxRegistries.MODULES.getModule(CruxStructuresModule.class).getFileStructureModule();
+        reg.typeHandlers().register("abyss_outpost", new PureYamlFileHandler<AbyssOutpost>(){
+            @Nullable
+            @Override
+            public AbyssOutpost deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileElement fileElement) {
+                return new AbyssOutpost();
+            }
+        });*/
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);

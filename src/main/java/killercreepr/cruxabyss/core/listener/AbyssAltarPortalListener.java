@@ -1,25 +1,14 @@
 package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarItemComponent;
-import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
-import killercreepr.cruxblocks.api.event.CruxBlockPlaceEvent;
-import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxstructures.api.structure.InnerBoxedStructure;
-import killercreepr.cruxstructures.api.structure.StoredStructure;
-import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
-import killercreepr.cruxstructures.core.structure.CfgStoredBlocksStructure;
-import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,7 +40,7 @@ public class AbyssAltarPortalListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         Block b = event.getBlock();
         CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().getUID());
@@ -88,11 +77,11 @@ public class AbyssAltarPortalListener implements Listener {
         if(stored instanceof InnerBoxedStructure){
             event.setCancelled(true);
         }
-    }
+    }*/
 
 
     //todo proper structure thing for this
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    /*@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Block b = event.getBlock();
         if(b.getType() == Material.DECORATED_POT) return;
@@ -112,5 +101,5 @@ public class AbyssAltarPortalListener implements Listener {
         if(s.getBlocks(stored.getRotation()).contains(structurePos)){
             event.setCancelled(true);
         }
-    }
+    }*/
 }

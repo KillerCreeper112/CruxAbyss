@@ -10,6 +10,9 @@ import killercreepr.cruxabyss.core.component.impl.AbyssAltarCrystalComponent;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.component.impl.AbyssEntitySpawner;
 import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import org.bukkit.Color;
 
 import java.util.function.UnaryOperator;
@@ -36,6 +39,9 @@ public class AbyssComponents {
                 );
             }).createInput(Crux.key("abyss_altar_crystal")))
     );
+    public static final DataComponentType<AbyssOutpostData> ABYSS_OUTPOST_DATA = register("abyss_outpost_data", builder -> builder);
+    public static final DataComponentType<AbyssOutpost> ABYSS_OUTPOST = register("abyss_outpost", builder -> builder);
+    public static final DataComponentType<ActiveAbyssOutpost> ACTIVE_ABYSS_OUTPOST = register("active_abyss_outpost", builder -> builder);
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

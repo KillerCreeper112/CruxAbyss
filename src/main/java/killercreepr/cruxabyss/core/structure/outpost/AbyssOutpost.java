@@ -1,31 +1,38 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.world.block.BlockState;
-import killercreepr.crux.api.math.CruxPosition;
-import killercreepr.crux.core.data.world.StoredChunk;
-import killercreepr.crux.core.math.BlockPos;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxblocks.api.block.CruxBlock;
-import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.FileRegistry;
+import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxstructures.api.component.StructureComponent;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
-import killercreepr.cruxstructures.api.structure.module.StructureModule;
-import killercreepr.cruxstructures.core.structure.CfgStoredBlocksStructure;
-import net.kyori.adventure.key.Key;
+import killercreepr.cruxstructures.api.structure.Structure;
 import org.bukkit.Location;
-import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.UUID;
 
-public class AbyssOutpost extends CfgStoredBlocksStructure {
-    protected Collection<BlockPos> conquestNodes = new HashSet<>();
+public class AbyssOutpost implements StructureComponent {
+    @Override
+    public void onCreated(@NotNull Location center, double rotation, @NotNull StoredStructure stored) {
+        stored.set(AbyssComponents.ABYSS_OUTPOST_DATA, new AbyssOutpostData());
+    }
+
+    @Override
+    public void onFileLoad(@NotNull FileContext<?> context, @NotNull FileObject o, @NotNull StoredStructure structure) {
+        FileRegistry reg = context.getRegistry();
+        AbyssOutpostData outpostData = new AbyssOutpostData();
+        if(o.get("data") instanceof FileObject data){
+            outpostData.owner = reg.deserializeFromFile(UUID.class, data.get("owner"));
+        }
+        structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
+    }
+
+    @Override
+    public void onStructureHook(@NotNull Structure structure) {
+        structure.set(AbyssComponents.ABYSS_OUTPOST, this);
+    }
+    /*protected Collection<BlockPos> conquestNodes = new HashSet<>();
     public AbyssOutpost(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules) {
         super(key, holder, persistent, beforePlacementModules, modules);
     }
@@ -40,7 +47,10 @@ public class AbyssOutpost extends CfgStoredBlocksStructure {
 
     @Override
     public @Nullable StoredStructure buildStored(@NotNull Location center, double rotation) {
-        return new StoredAbyssOutpost(this, StoredChunk.from(center), CruxPosition.block(center), rotation);
+        CfgStoredStructure built = (CfgStoredStructure) super.buildStored(center, rotation);
+        return new StoredAbyssOutpost(
+            built.getStructureKey(), built.getChunk(), built.getPosition(), built.getBoundingBox(), built.getRotation(), built.getInnerBox()
+        );
     }
 
     public Collection<BlockPos> getConquestNodes() {
@@ -58,5 +68,5 @@ public class AbyssOutpost extends CfgStoredBlocksStructure {
         if(crux.getComponents().has(AbyssComponents.ABYSS_CONQUEST_NODE)){
             conquestNodes.add(BlockPos.at(block.x(), block.y(), block.z()));
         }
-    }
+    }*/
 }

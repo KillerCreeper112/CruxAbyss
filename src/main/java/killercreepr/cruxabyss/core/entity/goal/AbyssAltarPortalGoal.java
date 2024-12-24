@@ -12,13 +12,9 @@ import killercreepr.cruxabyss.api.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
-import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafezone;
-import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
-import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.death.PlayerDeath;
@@ -88,7 +84,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             Location l = death.getPosition().toLocation(world);
             return RandomWorldTP.tpNear(l, cfg.ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE());
         }
-        if("safezone".equalsIgnoreCase(teleportType)){
+        /*todo if("safezone".equalsIgnoreCase(teleportType)){
             CruxWorld crux = CruxCore.inst().worldManager().getWorld(world.getUID());
             StructureWorldModule module = crux.getModule(StructureWorldModule.class);
 
@@ -98,7 +94,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             if(safezone == null) return RandomWorldTP.tp(world);
             Location center = safezone.getPosition().toLocation(world);
             return RandomWorldTP.tpNear(center, cfg.ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE());
-        }
+        }*/
         return RandomWorldTP.tp(world);
     }
 

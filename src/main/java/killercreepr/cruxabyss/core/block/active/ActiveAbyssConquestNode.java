@@ -18,8 +18,6 @@ import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.data.CustomBlockData;
-import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -371,9 +369,9 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     public ActiveAbyssOutpost outpost(){
         if(outpost == null){
             if(CruxMath.hasOccurredWithin(lastCheckedOutpost, 20)) return outpost;
-            outpost = CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
+            outpost = null;/*todo CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
                 .getModule(StructureWorldModule.class)
-                .getFirstActiveAt(ActiveAbyssOutpost.class, block);
+                .getFirstActiveAt(ActiveAbyssOutpost.class, block);*/
             lastCheckedOutpost = System.currentTimeMillis();
             visualFireworks = new ConquestFireworks(this, outpost);
             messenger = new ConquestMessenger(this, outpost);

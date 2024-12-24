@@ -2,13 +2,14 @@ package killercreepr.cruxabyss.core.config.handler.component;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.component.TypedDataComponent;
-import killercreepr.crux.api.registry.MappedRegistry;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
+import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfgAbyssComponents {
-    public static void register(@NotNull MappedRegistry<String, FileDataComponentType<?>> registry){
+    public static void register(@NotNull FileDataComponentRegistry registry){
         registry.register("abyss_entity_spawner", new FileAbyssEntitySpawnerComponent());
         registry.register("abyss_conquest_node", new FileDataComponentType<AbyssConquestNode>() {
             @Override
@@ -76,6 +77,12 @@ public class CfgAbyssComponents {
                         spawnSound, despawnSound
                     )
                 );
+            }
+        });
+        registry.register("structure/abyss_outpost", new FileDataComponentType<AbyssOutpost>(){
+            @Override
+            public @Nullable TypedDataComponent<AbyssOutpost> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.ABYSS_OUTPOST, new AbyssOutpost());
             }
         });
     }

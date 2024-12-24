@@ -68,7 +68,7 @@ public class ConquestFireworks {
     }
 
     public Location findLocation(){
-        BoundingBox box = outpost.getData().getBoundingBox();
+        BoundingBox box = outpost.getActive().getData().getBoundingBox();//outpost.getData().getBoundingBox();
         NumberProvider range = node.getNode().getFireworksRange();
         NumberProvider rangeY = node.getNode().getFireworksRangeY();
         double paddingX = ((box.getWidthX() - 5));

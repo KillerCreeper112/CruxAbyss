@@ -1,25 +1,13 @@
 package killercreepr.cruxabyss.core.structure.safezone;
 
-import killercreepr.crux.api.math.CruxPosition;
-import killercreepr.crux.core.data.world.StoredChunk;
-import killercreepr.cruxstructures.api.structure.ActiveStructure;
-import killercreepr.cruxstructures.api.structure.InnerBoxedStructure;
-import killercreepr.cruxstructures.api.structure.Structure;
-import killercreepr.cruxstructures.core.structure.stored.CfgStoredStructure;
-import net.kyori.adventure.key.Key;
-import org.bukkit.Chunk;
-import org.bukkit.util.BoundingBox;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class StoredAbyssSafezone extends CfgStoredStructure implements InnerBoxedStructure {
-    public StoredAbyssSafezone(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation, @Nullable BoundingBox innerBox) {
+public class StoredAbyssSafezone /*extends CfgStoredStructure implements InnerBoxedStructure*/ {
+    /*public StoredAbyssSafezone(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation, @Nullable BoundingBox innerBox) {
         super(structure, chunk, center, rotation, innerBox);
     }
 
     public StoredAbyssSafezone(@NotNull Key structureKey, @NotNull StoredChunk chunk, @NotNull CruxPosition center, @NotNull BoundingBox boundingBox, double rotation, @Nullable BoundingBox innerBox) {
         super(structureKey, chunk, center, boundingBox, rotation, innerBox);
-    }
+    }*/
 
     /*public static StoredAbyssSafezone createNew(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation,
                                                 Vector expand){
@@ -44,10 +32,10 @@ public class StoredAbyssSafezone extends CfgStoredStructure implements InnerBoxe
         return box.clone().expand(expand);
     }*/
 
-    @Override
+    /*@Override
     public @Nullable ActiveStructure buildActive(@NotNull Chunk chunk) {
         return new ActiveAbyssSafezone(this, chunk);
-    }
+    }*/
 
     /*@Override
     public @NotNull BoundingBox getInnerBox() {

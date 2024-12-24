@@ -1,22 +1,7 @@
 package killercreepr.cruxabyss.core.structure.safezone;
 
-import com.sk89q.worldedit.session.ClipboardHolder;
-import killercreepr.cruxstructures.api.structure.StoredStructure;
-import killercreepr.cruxstructures.api.structure.module.StructureModule;
-import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
-import killercreepr.cruxstructures.core.structure.stored.CfgStoredStructure;
-import net.kyori.adventure.key.Key;
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.List;
-import java.util.Objects;
-
-public class AbyssSafezone extends CfgFAWEStructure {
-    protected final Vector expandBox;
+public class AbyssSafezone {
+    /*protected final Vector expandBox;
     public AbyssSafezone(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules, Vector expandBox) {
         super(key, holder, persistent, beforePlacementModules, modules);
         this.expandBox = expandBox;
@@ -39,8 +24,8 @@ public class AbyssSafezone extends CfgFAWEStructure {
         return new StoredAbyssSafezone(
             built.getStructureKey(), built.getChunk(), built.getPosition(), built.getBoundingBox(), built.getRotation(), built.getInnerBox()
         );
-        /*return StoredAbyssSafezone.createNew(
+        *//*return StoredAbyssSafezone.createNew(
             this, StoredChunk.from(center), CruxPosition.block(center), rotation, expandBox
-        );*/
-    }
+        );*//*
+    }*/
 }
