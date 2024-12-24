@@ -24,6 +24,7 @@ import killercreepr.cruxabyss.core.item.AbyssItems;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
+import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationList;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
@@ -37,7 +38,12 @@ import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxstructures.core.CruxStructuresModule;
+import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
+import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructureGen;
 import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
+import killercreepr.cruxstructures.core.structure.generation.InstantLocationSetListStructureGen;
+import killercreepr.cruxstructures.core.structure.generation.LocationSetListStructureGen;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
@@ -66,6 +72,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         AbyssComponents.register();
         AbyssMobCategory.register();
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
+        registerCruxStructure();
         new AbyssCommands(this).register();
         CfgRegistries.JSON_REGISTRY.forEach(registry ->{
             /*registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
@@ -189,5 +196,20 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     @NotNull
     public CreateLang lang() {
         return lang;
+    }
+
+    public void registerCruxStructure(){
+        CruxStructuresModule module = CruxCore.core().cruxStructures();
+        FileCfgStructureGen fileCfgStructureGen = module.getFileCfgStructureGen();
+        fileCfgStructureGen.typeHandlers().register("abyss_world/instant_set_location_list", new FileInstantLocationSetListStructureGen(){
+            @Override
+            public @Nullable LocationSetListStructureGen deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+                InstantLocationSetListStructureGen gen = (InstantLocationSetListStructureGen) super.deserializeFromFile(ctx, e);
+                if(gen == null) return null;
+                return new AbyssOutpostSetLocationList(
+                    gen.getStructurePool(), gen.getChunkRangeX(), gen.getChunkRangeZ(), gen.getMinDistanceApart(), gen.getId()
+                );
+            }
+        });
     }
 }

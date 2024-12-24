@@ -7,7 +7,9 @@ import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
+import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.core.world.generation.decoration.RockPopulator;
@@ -15,6 +17,8 @@ import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
+import killercreepr.cruxstructures.api.structure.module.StructureModule;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.core.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.core.world.SimpleWorld;
@@ -42,10 +46,11 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
+    public static final Map<String, List<UUID>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
+
     public static @Nullable AbyssWorld getOrCreate(@NotNull CruxPlugin plugin, @NotNull String worldName){
         return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, worldName);
     }
@@ -69,6 +74,32 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         return new SimpleNaturalEntityWorldSpawner(CruxAbyss.inst(), random,
             AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP,
             500, 34, 10);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public void onDelete() {
+        StructureWorldModule module = getModule(StructureWorldModule.class);
+        if(module != null){
+            List<UUID> abyssOwners = new ArrayList<>();
+            module.getStored(stored -> stored.has(AbyssComponents.ABYSS_OUTPOST_DATA)).forEach(stored ->{
+                AbyssOutpostData data = stored.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+                Objects.requireNonNull(data);
+                if(data.owner == null) return;
+                abyssOwners.add(data.owner);
+            });
+            if(abyssOwners.isEmpty()){
+                WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(getName());
+            }else{
+                WORLD_TO_ABYSS_OUTPOST_OWNERS.put(getName(), abyssOwners);
+            }
+        }
+
+        super.onDelete();
     }
 
     @Override

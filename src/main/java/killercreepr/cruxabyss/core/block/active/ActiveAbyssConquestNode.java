@@ -65,6 +65,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     public void started() {
         ActiveCruxTickedBlock.super.started();
         load();
+        update();
     }
 
     public void load(){
