@@ -13,6 +13,9 @@ import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder;
+import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolderData;
+import killercreepr.cruxabyss.core.structure.outpost.loot.ActiveAbyssOutpostLootHolder;
 import org.bukkit.Color;
 
 import java.util.function.UnaryOperator;
@@ -42,6 +45,10 @@ public class AbyssComponents {
     public static final DataComponentType<AbyssOutpostData> ABYSS_OUTPOST_DATA = register("abyss_outpost_data", builder -> builder);
     public static final DataComponentType<AbyssOutpost> ABYSS_OUTPOST = register("abyss_outpost", builder -> builder);
     public static final DataComponentType<ActiveAbyssOutpost> ACTIVE_ABYSS_OUTPOST = register("active_abyss_outpost", builder -> builder);
+
+    public static final DataComponentType<AbyssOutpostLootHolderData> ABYSS_OUTPOST_LOOT_HOLDER_DATA = register("abyss_outpost_loot_holder_data", builder -> builder);
+    public static final DataComponentType<AbyssOutpostLootHolder> ABYSS_OUTPOST_LOOT_HOLDER = register("abyss_outpost_loot_holder", builder -> builder);
+    public static final DataComponentType<ActiveAbyssOutpostLootHolder> ACTIVE_ABYSS_OUTPOST_LOOT_HOLDER = register("active_abyss_outpost_loot_holder", builder -> builder);
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }
