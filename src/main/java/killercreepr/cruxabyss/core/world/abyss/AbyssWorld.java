@@ -127,7 +127,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     public final OreGenerator ORBIT_ORE = new OreGenerator(
         NumberProvider.uniform(1, 3), NumberProvider.uniform(1, 6),
-        NumberProvider.constant(15), NumberProvider.constant(60),
+        NumberProvider.constant(15), NumberProvider.constant(75),//was 60%
 
         CruxNoise.fast().frequency(.09f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
@@ -168,11 +168,6 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
                 AbyssBlocks.PLAGUE_DIRT.getBlock(data) != null;
         }
     };
-
-    @Override
-    public int tickInterval() {
-        return 1;
-    }
 
     @Override
     public void onInitiate() {

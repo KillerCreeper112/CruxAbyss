@@ -65,7 +65,7 @@ public class CharredBiome extends GrimBiome {
         Block b
     ){
         Material m = b.getType();
-        if(MaterialSetTag.SMALL_FLOWERS.isTagged(m) || MaterialSetTag.TALL_FLOWERS.isTagged(m)){
+        if(MaterialSetTag.FLOWERS.isTagged(m)){
             if(b.getBlockData() instanceof Bisected){
                 limitedRegion.setType(x, y, z, Material.AIR);
                 return;

@@ -79,7 +79,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
 
         ActiveAbyssOutpost outpost = outpost();
         if(outpost == null || outpost.getData().owner == null){
-            removeHologram();
+            if(data.hologramUUID != null) Crux.scheduler().runTask(() -> removeHologram());
             return;
         }
 
@@ -137,7 +137,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
     public void removeHologram(){
         TextDisplay found = getHologram();
         if(found != null){
-            Crux.scheduler().runTask(() -> found.remove());
+            found.remove();
             data.hologramUUID = null;
         }
     }
