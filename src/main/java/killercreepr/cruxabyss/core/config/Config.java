@@ -1,17 +1,26 @@
 package killercreepr.cruxabyss.core.config;
 
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.loot.LootTable;
+import killercreepr.crux.api.loot.key.KeyLootTable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.loot.SimpleLootPool;
+import killercreepr.crux.core.loot.SimpleLootPoolObject;
+import killercreepr.crux.core.loot.key.SimpleKeyLootTable;
 import killercreepr.crux.core.plugin.CruxPlugin;
+import killercreepr.cruxabyss.api.values.AbyssOutpostLootHolderCfg;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
+import killercreepr.cruxconfig.config.bukkit.loader.KeyLootTableLoader;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
+import killercreepr.usurvive.core.block.USurviveBlocks;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -24,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
-public class Config extends Cfg implements ValuesProvider {
+public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolderCfg {
     public final CfgValue<Collection<PotionEffect>> ABYSS_OUTPOST_TAKE_OVER_EFFECTS = new CommonValue<>(Set.of(
         new PotionEffect(PotionEffectType.SPEED, 200, 1, false, false, true)
     )){};
@@ -49,6 +58,17 @@ public class Config extends Cfg implements ValuesProvider {
         new PotionEffect(PotionEffectType.POISON, 70, 1)
     )){};
     public final NumCfgValue ABYSS_NATURAL_HEALING_MULTIPLIER = new NumCfgValue(.5f);
+    public final NumCfgValue ABYSS_OUTPOST_LOOT_HOLDER_TICK_TIME = new NumCfgValue(300);
+    public final NumCfgValue ABYSS_OUTPOST_LOOT_HOLDER_GENERATE_TIME = new NumCfgValue(NumberProvider.uniform(72000, 108000));
+    public final CommonValue<KeyLootTable> ABYSS_OUTPOST_LOOT_HOLDER_BLOCK_LOOT = new CommonValue<>(/*new SimpleKeyLootTable(
+        Crux.key("none"), NumberProvider.constant(1), List.of(
+            new SimpleLootPool<>(null, null, NumberProvider.constant(1), List.of(
+                new SimpleLootPoolObject<>(10, 0f, Holder.direct(List.of(Crux.key("orbit_ore")))),
+                new SimpleLootPoolObject<>(10, 0f, Holder.direct(List.of(Key.key("iron_ore")))),
+                new SimpleLootPoolObject<>(10, 0f, Holder.direct(List.of(Key.key("gold_ore"))))
+            ))
+    ))*/){};
+
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -160,5 +180,23 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<Map<Key, Collection<PotionEffect>>> ABYSS_WATER_EFFECTS() {
         return ABYSS_WATER_EFFECTS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_OUTPOST_LOOT_HOLDER_TICK_TIME() {
+        return ABYSS_OUTPOST_LOOT_HOLDER_TICK_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_OUTPOST_LOOT_HOLDER_GENERATE_TIME() {
+        return ABYSS_OUTPOST_LOOT_HOLDER_GENERATE_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<KeyLootTable> ABYSS_OUTPOST_LOOT_HOLDER_BLOCK_LOOT() {
+        return ABYSS_OUTPOST_LOOT_HOLDER_BLOCK_LOOT;
     }
 }
