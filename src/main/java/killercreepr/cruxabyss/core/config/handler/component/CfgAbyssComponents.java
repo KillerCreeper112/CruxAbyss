@@ -15,6 +15,7 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,6 +91,18 @@ public class CfgAbyssComponents {
             @Override
             public @Nullable TypedDataComponent<AbyssOutpostLootHolder> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
                 return TypedDataComponent.create(AbyssComponents.ABYSS_OUTPOST_LOOT_HOLDER, new AbyssOutpostLootHolder());
+            }
+        });
+        registry.register("abyss_hologram_offset", new FileDataComponentType<Vector>(){
+            @Override
+            public @Nullable TypedDataComponent<Vector> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.ABYSS_HOLOGRAM_OFFSET, ctx.getRegistry().deserializeFromFile(Vector.class, fileObject.get("value")));
+            }
+        });
+        registry.register("abyss_hologram_format", new FileDataComponentType<String>(){
+            @Override
+            public @Nullable TypedDataComponent<String> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.ABYSS_HOLOGRAM_FORMAT, fileObject.getObject(String.class, "value"));
             }
         });
     }

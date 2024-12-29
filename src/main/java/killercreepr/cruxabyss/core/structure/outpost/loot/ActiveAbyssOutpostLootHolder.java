@@ -3,30 +3,43 @@ package killercreepr.cruxabyss.core.structure.outpost.loot;
 import killercreepr.crux.api.block.CruxBlockWrapper;
 import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.api.loot.LootContext;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.Pair;
+import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.values.AbyssOutpostLootHolderCfg;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
     protected final ActiveStructure active;
     protected final AbyssOutpostLootHolderData data;
+    protected ActiveAbyssOutpost outpost;
     public ActiveAbyssOutpostLootHolder(@NotNull ActiveStructure active) {
         this.active = active;
         this.data = active.getData().get(AbyssComponents.ABYSS_OUTPOST_LOOT_HOLDER_DATA);
@@ -37,12 +50,41 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         return (AbyssOutpostLootHolderCfg) CruxAbyss.inst().values();
     }
 
+    public ActiveAbyssOutpost findActiveOutpost(){
+        CruxWorld world = CruxCore.core().worldManager().getWorld(active.getChunk().getWorld().getUID());
+        if(world == null) return null;
+        StructureWorldModule module = world.getModule(StructureWorldModule.class);
+        if(module == null) return null;
+        ActiveStructure structure = CruxCollection.getFirst(module.getActive(e -> e.has(AbyssComponents.ACTIVE_ABYSS_OUTPOST)));
+        return structure == null ? null : structure.get(AbyssComponents.ACTIVE_ABYSS_OUTPOST);
+    }
+
+    protected int checkOutpostCooldown = 0;
+    public ActiveAbyssOutpost outpost(){
+        if(outpost != null) return outpost;
+        if(checkOutpostCooldown > 0){
+            checkOutpostCooldown--;
+            return null;
+        }
+        outpost = findActiveOutpost();
+        checkOutpostCooldown = 300 / cfg().ABYSS_OUTPOST_LOOT_HOLDER_TICK_TIME().value().intValue();
+        return outpost;
+    }
+
     protected int tick = 0;
     @Override
     public void tick() {
         tick++;
         if(tick < cfg().ABYSS_OUTPOST_LOOT_HOLDER_TICK_TIME().value().intValue()) return;
+
+        ActiveAbyssOutpost outpost = outpost();
+        if(outpost == null || outpost.getData().owner == null){
+            removeHologram();
+            return;
+        }
+
         tick = 0;
+        Crux.scheduler().runTask(() -> updateHologram());
         Pair<Integer, Long> nextGen = getGenerateAmount(System.currentTimeMillis());
         if(nextGen == null) return;
         data.lastGenerated = System.currentTimeMillis();
@@ -51,6 +93,67 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         //If amount more or equal to 10, just generate the whole thing.
         double probabilityMultiplier = amount >= 10 ? 10D : 1D;
         generate(probabilityMultiplier, CruxMath.clamp(nextGen.getFirst(), 0, 10));
+    }
+
+    public TextDisplay getHologram(){
+        UUID uuid = data.hologramUUID;
+        if(uuid == null) return null;
+        World world = active.getChunk().getWorld();
+        if(world.getEntity(uuid) instanceof TextDisplay d) return d;
+        Crux.log(Level.SEVERE, "[ABYSS OUTPOST LOOT HOLDER] ENTITY UUID: " + uuid + " not found or is not a TextDisplay! Chunk(" + active.getChunk().getX() + ", " + active.getChunk().getZ() + ")");
+        return null;
+    }
+
+    public TextDisplay getOrCreateHologram(){
+        TextDisplay existing = getHologram();
+        if(existing != null) return existing;
+
+        World world = active.getChunk().getWorld();
+        Location spawn = getHologramPosition();
+        TextDisplay display = world.spawn(spawn, TextDisplay.class, e ->{
+            e.setBillboard(Display.Billboard.CENTER);
+            e.setViewRange(12f);
+            updateHologram(e);
+        });
+        data.hologramUUID = display.getUniqueId();
+        return display;
+    }
+
+
+    public Location getHologramPosition(){
+        Location loc = active.getData().getPosition().toLocation(active.getChunk().getWorld()).toCenterLocation();
+        Vector offset = active.getData().getParent().get(AbyssComponents.ABYSS_HOLOGRAM_OFFSET);
+        if(offset != null) loc.add(offset);
+        return loc;
+    }
+
+    public boolean updateHologram(){
+        if(!active.getData().getParent().has(AbyssComponents.ABYSS_HOLOGRAM_FORMAT)) return false;
+        TextDisplay display = getOrCreateHologram();
+        updateHologram(display);
+        return true;
+    }
+
+    public void removeHologram(){
+        TextDisplay found = getHologram();
+        if(found != null){
+            Crux.scheduler().runTask(() -> found.remove());
+            data.hologramUUID = null;
+        }
+    }
+
+    public void updateHologram(TextDisplay display){
+        String format = active.getData().getParent().get(AbyssComponents.ABYSS_HOLOGRAM_FORMAT);
+        Objects.requireNonNull(format, "Nope nope");
+        Component text = Crux.format().deserialize(format, TagContainer.string(Tag.parsed("abyss_outpost_loot_holder_generation_time",
+            getTimeLeftBeforeGeneration() + "")));
+
+        display.text(text);
+    }
+
+    public long getTimeLeftBeforeGeneration(){
+        long difference = data.nextGeneration - System.currentTimeMillis();
+        return Math.max(0, difference);
     }
 
     public long getNextGenerationAddonTicks(){

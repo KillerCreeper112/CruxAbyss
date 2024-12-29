@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.core.structure.outpost.loot;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -23,8 +22,12 @@ public class AbyssOutpostLootHolder extends StructureTickedStoredComponent imple
     @Override
     public void onFileLoad(@NotNull FileContext<?> context, @NotNull FileObject o, @NotNull StoredStructure structure) {
         FileRegistry reg = context.getRegistry();
-        AbyssOutpostData outpostData = new AbyssOutpostData();
-        outpostData.owner = reg.deserializeFromFile(UUID.class, o.get("owner"));
-        structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
+        AbyssOutpostLootHolderData data = new AbyssOutpostLootHolderData();
+        data.hologramUUID = reg.deserializeFromFile(UUID.class, o.get("hologramUUID"));
+        Long x = reg.deserializeFromFile(Long.class, o.get("nextGeneration"));
+        if(x != null) data.nextGeneration = x;
+        x = reg.deserializeFromFile(Long.class, o.get("lastGenerated"));
+        if(x != null) data.lastGenerated = x;
+        structure.set(AbyssComponents.ABYSS_OUTPOST_LOOT_HOLDER_DATA, data);
     }
 }

@@ -17,7 +17,6 @@ import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
-import killercreepr.cruxstructures.api.structure.module.StructureModule;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.core.world.NaturalEntitySpawnManager;

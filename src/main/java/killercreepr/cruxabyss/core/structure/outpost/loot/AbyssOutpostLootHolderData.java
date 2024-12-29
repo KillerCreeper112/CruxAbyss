@@ -9,13 +9,18 @@ import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class AbyssOutpostLootHolderData implements StoredStructureComponent {
+    public UUID hologramUUID;
     public long lastGenerated;
     public long nextGeneration;
     @Override
     public void onFileSave(@NotNull FileContext<?> ctx, @NotNull FileObject o, @NotNull StoredStructure structure) {
         FileRegistry reg = ctx.getRegistry();
-        o.addProperty("last_generated", lastGenerated);
+        o.addProperty("lastGenerated", lastGenerated);
+        o.addProperty("nextGeneration", nextGeneration);
+        if(hologramUUID != null) o.add("hologramUUID", reg.serializeToFile(hologramUUID));
     }
 
     @Override

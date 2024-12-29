@@ -1,26 +1,19 @@
 package killercreepr.cruxabyss.core.config;
 
 import killercreepr.crux.api.data.Holder;
-import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.api.loot.key.KeyLootTable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.loot.SimpleLootPool;
-import killercreepr.crux.core.loot.SimpleLootPoolObject;
-import killercreepr.crux.core.loot.key.SimpleKeyLootTable;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxabyss.api.values.AbyssOutpostLootHolderCfg;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
-import killercreepr.cruxconfig.config.bukkit.loader.KeyLootTableLoader;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
-import killercreepr.usurvive.core.block.USurviveBlocks;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
