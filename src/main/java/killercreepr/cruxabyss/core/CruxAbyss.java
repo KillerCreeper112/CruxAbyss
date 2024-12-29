@@ -29,6 +29,7 @@ import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -190,6 +191,10 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         super.reload();
         values.reload(this);
         langProvider.reload(this);
+
+        CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
+            new CruxFolder(this, "menus").file()
+        );
     }
 
     protected final CreateLang lang = Lang.setLang(new SimpleCreateLang());
