@@ -6,6 +6,7 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxabyss.api.values.AbyssOutpostLootHolderCfg;
+import killercreepr.cruxabyss.api.values.AbyssOutpostUpgradesCfg;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
-public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolderCfg {
+public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolderCfg, AbyssOutpostUpgradesCfg {
     public final CfgValue<Collection<PotionEffect>> ABYSS_OUTPOST_TAKE_OVER_EFFECTS = new CommonValue<>(Set.of(
         new PotionEffect(PotionEffectType.SPEED, 200, 1, false, false, true)
     )){};
@@ -61,6 +62,7 @@ public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolde
                 new SimpleLootPoolObject<>(10, 0f, Holder.direct(List.of(Key.key("gold_ore"))))
             ))
     ))*/){};
+    public final CommonValue<String> ABYSS_OUTPOST_UPGRADE_REGENERATION_RANGE = new CommonValue<>("16.5 * <level>"){};
 
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
@@ -191,5 +193,11 @@ public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolde
     @Override
     public Holder<KeyLootTable> ABYSS_OUTPOST_LOOT_HOLDER_BLOCK_LOOT() {
         return ABYSS_OUTPOST_LOOT_HOLDER_BLOCK_LOOT;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> ABYSS_OUTPOST_UPGRADE_REGENERATION_RANGE() {
+        return ABYSS_OUTPOST_UPGRADE_REGENERATION_RANGE;
     }
 }

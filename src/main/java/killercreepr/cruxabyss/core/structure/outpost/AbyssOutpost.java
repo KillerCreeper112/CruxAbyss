@@ -16,13 +16,13 @@ import java.util.UUID;
 public class AbyssOutpost extends StructureTickedStoredComponent implements StructureComponent {
     @Override
     public void onCreated(@NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation, @NotNull StoredStructure stored) {
-        stored.set(AbyssComponents.ABYSS_OUTPOST_DATA, new AbyssOutpostData());
+        stored.set(AbyssComponents.ABYSS_OUTPOST_DATA, new AbyssOutpostData(stored));
     }
 
     @Override
     public void onFileLoad(@NotNull FileContext<?> context, @NotNull FileObject o, @NotNull StoredStructure structure) {
         FileRegistry reg = context.getRegistry();
-        AbyssOutpostData outpostData = new AbyssOutpostData();
+        AbyssOutpostData outpostData = new AbyssOutpostData(structure);
         outpostData.owner = reg.deserializeFromFile(UUID.class, o.get("owner"));
 
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);

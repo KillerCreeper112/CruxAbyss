@@ -4,7 +4,7 @@ import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
-import killercreepr.cruxabyss.api.structure.outpost.StoredOutpostUpgrade;
+import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -12,9 +12,12 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.component.StoredStructureComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked, OutpostData {
     public UUID owner;
     protected final Map<OutpostUpgrade, Integer> upgrades = new HashMap<>();
-    protected final Map<OutpostUpgrade, StoredOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
+    protected final Map<OutpostUpgrade, TickedOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
+    protected static final int tickRate = 1;
+    protected final StoredStructure stored;
+
+    public AbyssOutpostData(StoredStructure stored) {
+        this.stored = stored;
+    }
+
     @Override
     public void onFileSave(@NotNull FileContext<?> ctx, @NotNull FileObject o, @NotNull StoredStructure structure) {
         FileRegistry reg = ctx.getRegistry();
@@ -57,17 +67,17 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
     @Override
     public void stopped() {
         ManagedTicked.super.stopped();
-        storedUpgrades.values().forEach(ManagedTicked::stopped);
+        storedUpgrades.values().forEach(t -> t.stopped(tick, tickRate));
     }
 
     public void initiateUpgrades(){
         storedUpgrades.clear();
         upgrades.forEach((upgrade, level) ->{
-            StoredOutpostUpgrade stored = upgrade.createStored(this, level);
+            TickedOutpostUpgrade stored = upgrade.createStored(this, level);
             if(stored == null) return;
             storedUpgrades.put(upgrade, stored);
         });
-        storedUpgrades.values().forEach(ManagedTicked::started);
+        storedUpgrades.values().forEach(t -> t.started(tick, tickRate));
     }
 
     protected int tick = 0;
@@ -79,11 +89,11 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
         tick = 0;
 
         storedUpgrades.values().removeIf(upgrade ->{
-            if(upgrade.shouldStop()){
-                upgrade.stopped();
+            if(upgrade.shouldStop(tick, tickRate)){
+                upgrade.stopped(tick, tickRate);
                 return true;
             }
-            upgrade.tick();
+            upgrade.tick(tick, tickRate);
             return false;
         });
 
@@ -117,14 +127,29 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
         int previousLevel = getUpgradeLevel(upgrade);
         if(previousLevel == level) return;
 
+        ActiveStructure active = CruxCore.core().worldManager().getWorld(stored.getChunk().worldUUID())
+                .getModule(StructureWorldModule.class)
+                    .getActiveStructures().get(stored.getChunk().getChunkKey(), stored.getPosition());
+        if(active != null && active.has(AbyssComponents.ACTIVE_ABYSS_OUTPOST)){
+            ActiveAbyssOutpost abyss = active.get(AbyssComponents.ACTIVE_ABYSS_OUTPOST);
+            TickedOutpostUpgrade stored = abyss.activeUpgrades.get(upgrade);
+            if(stored == null){
+                stored = upgrade.createActive(abyss, level);
+                if(stored != null){
+                    abyss.activeUpgrades.put(upgrade, stored);
+                    stored.started(tick, tickRate);
+                }
+            }else stored.setLevel(level);
+        }
+
         upgrades.put(upgrade, level);
 
-        StoredOutpostUpgrade stored = storedUpgrades.get(upgrade);
+        TickedOutpostUpgrade stored = storedUpgrades.get(upgrade);
         if(stored == null){
             stored = upgrade.createStored(this, level);
             if(stored != null){
                 storedUpgrades.put(upgrade, stored);
-                stored.started();
+                stored.started(tick, tickRate);
             }
             return;
         }
@@ -134,7 +159,7 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
     @Override
     public void removeUpgrade(OutpostUpgrade upgrade) {
         upgrades.remove(upgrade);
-        StoredOutpostUpgrade stored = storedUpgrades.remove(upgrade);
-        if(stored != null) stored.stopped();
+        TickedOutpostUpgrade stored = storedUpgrades.remove(upgrade);
+        if(stored != null) stored.stopped(tick, tickRate);
     }
 }

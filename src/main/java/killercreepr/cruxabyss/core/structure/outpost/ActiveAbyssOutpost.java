@@ -2,6 +2,8 @@ package killercreepr.cruxabyss.core.structure.outpost;
 
 import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
+import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateRectangle;
@@ -14,11 +16,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActiveAbyssOutpost implements ManagedTicked {
+    private static final int tickRate = AbyssOutpostData.tickRate;
     protected final ActiveStructure active;
     protected final AbyssOutpostData data;
+    protected final Map<OutpostUpgrade, TickedOutpostUpgrade> activeUpgrades = new ConcurrentHashMap<>();
     public ActiveAbyssOutpost(@NotNull ActiveStructure active) {
         this.active = active;
         this.data = active.getData().get(AbyssComponents.ABYSS_OUTPOST_DATA);
@@ -33,20 +39,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         return data;
     }
 
-    public static boolean doBoundingBoxesIntersect(BoundingBox box1, BoundingBox box2) {
-        // Check for overlap in the X dimension
-        boolean overlapX = box1.getMaxX() > box2.getMinX() && box1.getMinX() < box2.getMaxX();
-
-        // Check for overlap in the Y dimension
-        boolean overlapY = box1.getMaxY() > box2.getMinY() && box1.getMinY() < box2.getMaxY();
-
-        // Check for overlap in the Z dimension
-        boolean overlapZ = box1.getMaxZ() > box2.getMinZ() && box1.getMinZ() < box2.getMaxZ();
-
-        // Return true if there is overlap in all three dimensions
-        return overlapX && overlapY && overlapZ;
-    }
-
     public void resetOwner(){
         data.owner = null;
     }
@@ -57,10 +49,31 @@ public class ActiveAbyssOutpost implements ManagedTicked {
 
     @Override
     public void started() {
+        ManagedTicked.super.started();
+        initiateUpgrades();
     }
 
     @Override
+    public void stopped() {
+        ManagedTicked.super.stopped();
+        activeUpgrades.values().forEach(t -> t.stopped(tick, tickRate));
+    }
+
+    public void initiateUpgrades(){
+        activeUpgrades.clear();
+        data.upgrades.forEach((upgrade, level) ->{
+            TickedOutpostUpgrade stored = upgrade.createActive(this, level);
+            if(stored == null) return;
+            activeUpgrades.put(upgrade, stored);
+        });
+        activeUpgrades.values().forEach(t -> t.started(tick, tickRate));
+    }
+
+    protected int tick = 0;
+    @Override
     public void tick() {
+        tick++;
+        activeUpgrades.values().forEach(t -> t.tick(tick, tickRate));
         World world = active.getChunk().getWorld();
         ShapeScheduler.builder()
             .shape(CreateRectangle.builder()
@@ -87,9 +100,5 @@ public class ActiveAbyssOutpost implements ManagedTicked {
                 world.getPlayers().forEach(p -> p.spawnParticle(Particle.SOUL_FIRE_FLAME, loc, 0));
             })
             .buildCached().schedule(0);
-    }
-
-    @Override
-    public void stopped() {
     }
 }

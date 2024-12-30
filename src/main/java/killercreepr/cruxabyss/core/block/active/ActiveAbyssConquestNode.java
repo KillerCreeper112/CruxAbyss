@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.block.active;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
@@ -404,7 +405,11 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         }
         if(!p.isSneaking()){
             if(p.getUniqueId().equals(outpost().getData().owner)){
-                Lang.ABYSS_CONQUEST_NODE_SHIFT_INFO.use(p);
+                CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("abyss/outpost/main"))
+                    .open(p, DataExchange.builder()
+                        .put(outpost)
+                        .build());
+                //Lang.ABYSS_CONQUEST_NODE_SHIFT_INFO.use(p);
                 return Event.Result.DENY;
             }
         }

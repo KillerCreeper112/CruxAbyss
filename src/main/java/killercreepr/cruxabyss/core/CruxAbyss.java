@@ -5,6 +5,7 @@ import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.loot.conditions.LootCondition;
+import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
@@ -26,8 +27,12 @@ import killercreepr.cruxabyss.core.item.AbyssItems;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
+import killercreepr.cruxabyss.core.menu.action.AbyssOutpostUpgradeAction;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationList;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
+import killercreepr.cruxabyss.core.text.tags.object.ActiveAbyssOutpostTags;
+import killercreepr.cruxabyss.core.text.tags.object.StoredAbyssOutpostTags;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
@@ -49,6 +54,7 @@ import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxstructures.core.CruxStructuresModule;
 import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
 import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructureGen;
@@ -60,6 +66,8 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     private static CruxAbyss instance;
@@ -160,6 +168,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             if(!(mem instanceof PlayerMemory m)) return;
             m.getDataHolders().register(new AbyssHolder(m, Crux.getMainPlugin()));
         });
+        CruxMenusModule menus = CruxCore.core().cruxMenus();
+        menus.menuRegistry().menuActions().register(new AbyssOutpostUpgradeAction(Crux.key("abyss_outpost_upgrade")));
+        registerTextTags(Crux.tags());
     }
 
     @Override
@@ -189,6 +200,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         );
         AbyssBlocks.register();
         AbyssItems.register();
+        AbyssOutpostUpgrades.register();
 
         super.enabled();
         StandardAbyssGroups.register(AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
@@ -214,6 +226,13 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     @NotNull
     public CreateLang lang() {
         return lang;
+    }
+
+    public void registerTextTags(TagParser tags){
+        tags.register(List.of(
+            new ActiveAbyssOutpostTags(),
+            new StoredAbyssOutpostTags()
+        ));
     }
 
     public void registerObjectives(FileAdvancementObjective file){
