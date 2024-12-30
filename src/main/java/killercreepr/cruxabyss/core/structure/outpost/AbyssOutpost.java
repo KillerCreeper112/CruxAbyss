@@ -24,6 +24,7 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
         FileRegistry reg = context.getRegistry();
         AbyssOutpostData outpostData = new AbyssOutpostData();
         outpostData.owner = reg.deserializeFromFile(UUID.class, o.get("owner"));
+
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
     }
     /*protected Collection<BlockPos> conquestNodes = new HashSet<>();

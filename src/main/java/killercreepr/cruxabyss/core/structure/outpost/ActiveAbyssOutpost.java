@@ -3,15 +3,10 @@ package killercreepr.cruxabyss.core.structure.outpost;
 import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
-import killercreepr.cruxform.api.shape.CreateLine;
 import killercreepr.cruxform.api.shape.CreateRectangle;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
-import killercreepr.cruxstructures.api.structure.StoredStructure;
-import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
-import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -19,12 +14,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class ActiveAbyssOutpost implements ManagedTicked {
-    public final Map<CruxPosition, StoredStructure> lootHolders = new HashMap<>();
     protected final ActiveStructure active;
     protected final AbyssOutpostData data;
     public ActiveAbyssOutpost(@NotNull ActiveStructure active) {
@@ -33,31 +25,12 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         Objects.requireNonNull(data, "No!");
     }
 
-    public Map<CruxPosition, StoredStructure> getLootHolders() {
-        return lootHolders;
-    }
-
     public ActiveStructure getActive() {
         return active;
     }
 
     public AbyssOutpostData getData() {
         return data;
-    }
-
-    public void updateLootHolders(){
-        lootHolders.clear();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(active.getCenter().getWorld().getUID());
-        if(crux == null) return;
-        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
-        if(module == null) return;
-        BoundingBox box = active.getData().getBoundingBox();
-        /*module.getStored(StoredLootHolderStructure.class, stored ->{
-            BoundingBox check = stored.getBoundingBox();
-            return box.contains(check) || doBoundingBoxesIntersect(box, check);
-        }).forEach(stored ->{
-                lootHolders.put(stored.getPosition(), stored);
-            });*/
     }
 
     public static boolean doBoundingBoxesIntersect(BoundingBox box1, BoundingBox box2) {
@@ -88,23 +61,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
 
     @Override
     public void tick() {
-        if(lootHolders.isEmpty()) updateLootHolders();
-        lootHolders.values().forEach(structure ->{
-            World world = structure.getChunk().toBukkitWorld();
-            ShapeScheduler.builder()
-                .shape(CreateLine.builder()
-                    .start(structure.getPosition())
-                    .end(structure.getPosition().add(0, 5, 0))
-                    .spacing(.5)
-                    .build())
-                .locationTick(ctx ->{
-                    CruxPosition pos = ctx.getLocation();
-                    Location loc = pos.toLocation(world);
-                    world.spawnParticle(Particle.FLAME, loc, 0);
-                })
-                .buildCached().schedule(0);
-        });
-
         World world = active.getChunk().getWorld();
         ShapeScheduler.builder()
             .shape(CreateRectangle.builder()
