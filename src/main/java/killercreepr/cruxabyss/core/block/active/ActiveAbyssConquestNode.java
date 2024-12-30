@@ -8,6 +8,7 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxColor;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.lang.Lang;
@@ -218,8 +219,6 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     }
 
     public void reachedMaxProgress(Player p, boolean isOutpostOwner){
-        cooldown = CruxMath.random(80, 100);
-        cooldownTick = 0;
         Location center = block.getLocation().toCenterLocation();
         Location spawn = CruxLoc.shiftToward(center, p.getEyeLocation(), .75);
         if(isDeactivating(p, isOutpostOwner)){
@@ -228,10 +227,15 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
             storedExperience = 0;
             Lang.ABYSS_CONQUEST_NODE_DEACTIVATE.use(p);
         }else{
+            AbyssOutpostCaptureEvent event = new AbyssOutpostCaptureEvent(outpost, p);
+            if(!event.callEvent()) return;
+
             outpost().capture(p);
             storedExperience = experienceGiven;
             Lang.ABYSS_CONQUEST_NODE_TAKE_OVER.use(p);
         }
+        cooldown = CruxMath.random(80, 100);
+        cooldownTick = 0;
         save();
         reset();
         new ParticleBuilder(Particle.FLASH)
