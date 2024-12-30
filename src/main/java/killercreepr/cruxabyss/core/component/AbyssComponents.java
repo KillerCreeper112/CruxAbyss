@@ -6,6 +6,7 @@ import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
+import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
 import killercreepr.cruxabyss.core.component.impl.AbyssAltarCrystalComponent;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.component.impl.AbyssEntitySpawner;
@@ -52,6 +53,9 @@ public class AbyssComponents {
     public static final DataComponentType<ActiveAbyssOutpostLootHolder> ACTIVE_ABYSS_OUTPOST_LOOT_HOLDER = register("active_abyss_outpost_loot_holder", builder -> builder);
     public static final DataComponentType<Vector> ABYSS_HOLOGRAM_OFFSET = register("abyss_hologram_offset", builder -> builder);
     public static final DataComponentType<String> ABYSS_HOLOGRAM_FORMAT = register("abyss_hologram_format", builder -> builder);
+
+
+    public static final DataComponentType<AbyssOutpostCaptureEvent> LOOT_CAPTURED_ABYSS_OUTPOST = register("loot/abyss_outpost_capture", builder -> builder);
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

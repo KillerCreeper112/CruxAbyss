@@ -4,6 +4,7 @@ import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
@@ -12,6 +13,7 @@ import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.command.AbyssCommands;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -23,14 +25,22 @@ import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.item.AbyssItems;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
+import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationList;
 import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
+import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
+import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
+import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
+import killercreepr.cruxadvancements.core.config.handler.FileAdvancementObjective;
+import killercreepr.cruxadvancements.core.config.handler.FileSimpleAdvanceObjective;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
+import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileLootCondition;
+import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.SimpleFileLootCondition;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
@@ -130,6 +140,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 }
             });
         });
+        registerLootConditions(BukkitCfgHandlers.LOOT_CONDITION);
+        registerObjectives(CruxAdvanceCfgData.fileAdvancementObjective());
 
         /*FileStructureModule reg = CruxRegistries.MODULES.getModule(CruxStructuresModule.class).getFileStructureModule();
         reg.typeHandlers().register("abyss_outpost", new PureYamlFileHandler<AbyssOutpost>(){
@@ -201,6 +213,26 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     @NotNull
     public CreateLang lang() {
         return lang;
+    }
+
+    public void registerObjectives(FileAdvancementObjective file){
+        file.registerCustomHandler(new FileSimpleAdvanceObjective<>(key("abyss_outpost_capture")) {
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if(maxProgress==null) maxProgress = 1;
+                return new AbyssOutpostCaptureObjective(data, maxProgress);
+            }
+        });
+    }
+
+    public void registerLootConditions(FileLootCondition file){
+        file.registerCustomHandler(new SimpleFileLootCondition<>(key("abyss_outpost_capture")) {
+            @Override
+            public @Nullable LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject o, @NotNull String target) {
+                return new AbyssOutpostCaptureCondition(target);
+            }
+        });
     }
 
     public void registerCruxStructure(){
