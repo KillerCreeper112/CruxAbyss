@@ -42,7 +42,7 @@ public class PlagueTyrant extends SimpleAbyssMob {
 
             if(e instanceof LivingEntity ee){
                 ee.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(2.5D);
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(160D);
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(180D);
                 ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.89D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
 
@@ -56,12 +56,12 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(CruxMath.random(10D, 15D) *
+                CruxAttributeModifier.baseModifier(CruxMath.random(12D, 17D) *
                          (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.85D));
         addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(6D));
         addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(3D));
         return map;
