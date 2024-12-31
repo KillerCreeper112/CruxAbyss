@@ -75,7 +75,7 @@ public class ActiveAbyssOutpost implements ManagedTicked {
     public void tick() {
         tick++;
         activeUpgrades.values().forEach(t -> t.tick(tick, tickRate));
-        World world = active.getChunk().getWorld();
+        /*World world = active.getChunk().getWorld();
         ShapeScheduler.builder()
             .shape(CreateRectangle.builder()
                 .boundingBox(active.getData().getBoundingBox())
@@ -100,6 +100,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
                 Location loc = pos.toLocation(world);
                 world.getPlayers().forEach(p -> p.spawnParticle(Particle.SOUL_FIRE_FLAME, loc, 0));
             })
-            .buildCached().schedule(0);
+            .buildCached().schedule(0);*/
     }
 }
