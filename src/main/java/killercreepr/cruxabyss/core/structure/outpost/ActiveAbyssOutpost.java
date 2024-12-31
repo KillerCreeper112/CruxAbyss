@@ -45,6 +45,7 @@ public class ActiveAbyssOutpost implements ManagedTicked {
 
     public void capture(Player p){
         data.owner = p.getUniqueId();
+        data.timeCaptured = System.currentTimeMillis();
     }
 
     @Override

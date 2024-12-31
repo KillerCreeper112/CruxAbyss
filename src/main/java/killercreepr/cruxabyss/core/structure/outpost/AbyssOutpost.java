@@ -1,17 +1,23 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.world.StoredChunk;
+import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
+import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxstructures.api.component.StructureComponent;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.core.structure.component.StructureTickedStoredComponent;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class AbyssOutpost extends StructureTickedStoredComponent implements StructureComponent {
     @Override
@@ -24,6 +30,25 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
         FileRegistry reg = context.getRegistry();
         AbyssOutpostData outpostData = new AbyssOutpostData(structure);
         outpostData.owner = reg.deserializeFromFile(UUID.class, o.get("owner"));
+        Number time = reg.deserializeFromFile(Number.class, o.get("time_captured"));
+        if(time != null){
+            outpostData.timeCaptured = time.longValue();
+        }
+        if(o.get("upgrades") instanceof FileArray a){
+            a.forEach(ele ->{
+                if(!(ele instanceof FileObject oo)) return;
+                Key key = reg.deserializeFromFile(Key.class, oo.get("key"));
+                if(key == null) return;
+                Number level = reg.deserializeFromFile(Number.class, oo.get("level"));
+                if(level == null) return;
+                OutpostUpgrade upgrade = AbyssRegistries.OUTPOST_UPGRADE.get(key);
+                if(upgrade == null){
+                    Crux.log(Level.SEVERE, "OutpostUpgrade of " + key + " not found! Skipping...");
+                    return;
+                }
+                outpostData.upgrades.put(upgrade, level.intValue());
+            });
+        }
 
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
     }

@@ -42,12 +42,17 @@ public class ActiveRegenerationUpgrade extends SimpleActiveOutpostUpgrade {
         BoundingBox box = expand(outpost.getActive().getData().getBoundingBox().clone(), level);
 
         Crux.scheduler().runTask(() -> tick(data, p, world, box));
+        double widthX = box.getWidthX()/2;
+        double height = box.getHeight()/2;
+        double widthZ = box.getWidthZ()/2;
 
+        int particleCount = (int) ((widthX * height * widthZ) * .02);
         new ParticleBuilder(Particle.HAPPY_VILLAGER)
-            .location(outpost.getActive().getData().getPosition().toLocation(world))
-            .count(CruxMath.random(100, 200))
-            .offset(box.getWidthX(), box.getHeight(), box.getWidthZ())
-            .extra(.2)
+            .location(outpost.getActive().getData().getPosition().toLocation(world)
+                .add(0, box.getHeight()/2, 0))
+            .count(particleCount)
+            .offset(widthX/2, height/2, widthZ/2)
+            .extra(0)
             .spawn()
         ;
     }

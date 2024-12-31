@@ -35,6 +35,9 @@ public class StoredAbyssOutpostTags implements ObjectTag<AbyssOutpostData> {
                 return object.getUpgradeLevel(upgrade) + "";
             }))
             .add(Tag.string("owner", (args, ctx) -> object.owner + ""))
+            .add(Tag.string("time_captured", (args, ctx) ->{
+                return (object.timeCaptured == null ? 0L : object.timeCaptured) + "";
+            }))
             ;
     }
 }

@@ -9,7 +9,6 @@ import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxmenus.api.menu.contex.ActionContext;
 import killercreepr.cruxmenus.core.menu.action.SimpleMenuAction;
 import net.kyori.adventure.key.Key;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -23,7 +22,7 @@ public class AbyssOutpostUpgradeAction extends SimpleMenuAction {
     //[abyss_outpost_upgrade] clear
     //[abyss_outpost_upgrade] remove <upgrade>
     @Override
-    public boolean execute(@NotNull Player p, @NotNull ActionContext ctx, @NotNull String[] args) {
+    public boolean execute(@NotNull ActionContext ctx, @NotNull String[] args) {
         DataExchange info = ctx.getAllMergedInfo();
         ActiveAbyssOutpost outpost = info.getOrThrow(ActiveAbyssOutpost.class);
         switch (args[0].toLowerCase()){
