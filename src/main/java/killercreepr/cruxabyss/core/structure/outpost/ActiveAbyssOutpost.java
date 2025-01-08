@@ -1,19 +1,11 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
 import killercreepr.crux.api.data.tick.ManagedTicked;
-import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxform.api.scheduler.ShapeScheduler;
-import killercreepr.cruxform.api.shape.CreateRectangle;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
-import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

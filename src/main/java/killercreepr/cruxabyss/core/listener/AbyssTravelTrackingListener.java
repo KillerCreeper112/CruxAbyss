@@ -2,15 +2,16 @@ package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
-import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.event.EntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.component.impl.TeleportAbyssWorldModule;
 import killercreepr.cruxabyss.core.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.core.data.entity.AbyssSafezoneGuideHolder;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.menu.AbyssWarningMenu;
-import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.api.teleport.CruxTeleport;
+import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -18,8 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-
-import java.util.logging.Level;
 
 public class AbyssTravelTrackingListener implements Listener {
     protected final ValuesProvider cfg;
@@ -38,8 +37,10 @@ public class AbyssTravelTrackingListener implements Listener {
         Mob mob = event.getRift().getMob();
         event.setCancelTeleport(true);
         Runnable task = () ->{
-            RandomWorldTP to = event.getTo();
-            to.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
+            CruxTeleport.Builder to = event.getTo();
+            to.set(AbyssComponents.TELEPORT_ABYSS_WORLD, new TeleportAbyssWorldModule(p.getUniqueId(), mob));
+            CruxTeleporter.teleporter().scheduleTeleport(p, to.build());
+            /*to.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
                 if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
                 if(spawn==null) return;
                 Crux.scheduler().runTask(() ->{
@@ -47,7 +48,7 @@ public class AbyssTravelTrackingListener implements Listener {
                     SuccessfulEntityTravelThroughRiftEvent successEvent = new SuccessfulEntityTravelThroughRiftEvent(p, to, returnPortal);
                     successEvent.callEvent();
                 });
-            });
+            });*/
         };
         AbyssWarningMenu menu = new AbyssWarningMenu(task);
         menu.load();

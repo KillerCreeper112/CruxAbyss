@@ -3,17 +3,18 @@ package killercreepr.cruxabyss.core.entity.goal;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
-import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxabyss.api.event.EntityTravelThroughRiftEvent;
-import killercreepr.cruxabyss.api.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.component.impl.TeleportAbyssWorldModule;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxteleport.api.teleport.CruxTeleport;
+import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.core.USurvivePlugin;
@@ -27,7 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.logging.Level;
+import java.util.concurrent.CompletableFuture;
 
 public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
     public AbyssAltarPortalGoal(@NotNull Mob mob) {
@@ -71,18 +72,18 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         this.world = CruxWorldUtil.getOrLoadWorld("world_abyss");
     }
 
-    public RandomWorldTP buildRandomTP(Player p){
+    public CompletableFuture<Location> buildRandomTP(Player p){
         if(crystal == null){
-            return RandomWorldTP.tp(world);
+            return RandomWorldTP.worldRandom(world);
         }
         ValuesProvider cfg = CruxAbyss.inst().values();
         if("death".equalsIgnoreCase(teleportType)){
             DeathManager manager = USurvivePlugin.inst().getDeathManager();
             PlayerDeath death = CruxCollection.getRandom(manager.getAllDeathsInWorld(p.getUniqueId(), world.getUID()));
-            if(death == null) return RandomWorldTP.tp(world);
+            if(death == null) return RandomWorldTP.worldRandom(world);
 
             Location l = death.getPosition().toLocation(world);
-            return RandomWorldTP.tpNear(l, cfg.ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE());
+            return RandomWorldTP.centerNear(l, cfg.ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE());
         }
         /*todo if("safezone".equalsIgnoreCase(teleportType)){
             CruxWorld crux = CruxCore.inst().worldManager().getWorld(world.getUID());
@@ -95,7 +96,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             Location center = safezone.getPosition().toLocation(world);
             return RandomWorldTP.tpNear(center, cfg.ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE());
         }*/
-        return RandomWorldTP.tp(world);
+        return RandomWorldTP.worldRandom(world);
     }
 
     protected int particle;
@@ -140,7 +141,8 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
 
         for (Entity e : mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player)) {
             Player p = (Player) e;
-            EntityTravelThroughRiftEvent event = new EntityTravelThroughRiftEvent(e, this, buildRandomTP(p));
+            CruxTeleport.Builder tp = CruxTeleport.builder().teleportTo(buildRandomTP(p));
+            EntityTravelThroughRiftEvent event = new EntityTravelThroughRiftEvent(e, this, tp);
             if(!event.callEvent()){
                 continue;
             }
@@ -150,8 +152,10 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
                 CreateSound.sound(Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.2f).playAt(mob.getLocation());
             }
             if(event.isCancelTeleport()) continue;
-            RandomWorldTP to = event.getTo();
-            to.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
+            CruxTeleport.Builder to = event.getTo();
+            to.set(AbyssComponents.TELEPORT_ABYSS_WORLD, new TeleportAbyssWorldModule(p.getUniqueId(), mob));
+            CruxTeleporter.teleporter().scheduleTeleport(p, to.build());
+            /*to.randomlyTeleportAsync(p).whenComplete((spawn, throwable) ->{
                 if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
                 if(spawn==null) return;
                 Crux.scheduler().runTask(() ->{
@@ -159,7 +163,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
                     SuccessfulEntityTravelThroughRiftEvent successEvent = new SuccessfulEntityTravelThroughRiftEvent(p, to, returnPortal);
                     successEvent.callEvent();
                 });
-            });
+            });*/
         }
     }
 

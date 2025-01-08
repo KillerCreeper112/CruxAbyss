@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.api.event;
 
 import killercreepr.cruxabyss.core.entity.goal.AbyssAltarPortalGoal;
-import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class EntityTravelThroughRiftEvent extends EntityEvent implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     protected final @NotNull AbyssAltarPortalGoal rift;
-    protected @NotNull RandomWorldTP to;
+    protected @NotNull CruxTeleport.Builder to;
     protected boolean removePortal = true;
     protected boolean cancelTeleport = false;
-    public EntityTravelThroughRiftEvent(@NotNull Entity what, @NotNull AbyssAltarPortalGoal rift, @NotNull RandomWorldTP to) {
+    public EntityTravelThroughRiftEvent(@NotNull Entity what, @NotNull AbyssAltarPortalGoal rift, @NotNull CruxTeleport.Builder to) {
         super(what);
         this.rift = rift;
         this.to = to;
@@ -42,11 +42,11 @@ public class EntityTravelThroughRiftEvent extends EntityEvent implements Cancell
     }
 
     @NotNull
-    public RandomWorldTP getTo() {
+    public CruxTeleport.Builder getTo() {
         return to;
     }
 
-    public void setTo(@NotNull RandomWorldTP to) {
+    public void setTo(@NotNull CruxTeleport.Builder to) {
         this.to = to;
     }
 

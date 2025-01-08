@@ -12,6 +12,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxteleport.api.teleport.CruxTeleport;
+import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Location;
@@ -117,8 +119,12 @@ public class AbyssCommands {
                                         .resolve(ctx.getSource());
 
                                     AbyssWorld world = AbyssWorld.getOrCreate(plugin, "world_abyss");
-                                    RandomWorldTP tp = RandomWorldTP.tp(world.toBukkitWorld());
-                                    targets.forEach(tp::randomlyTeleportAsync);
+                                    CruxTeleport tp = CruxTeleport.teleport(RandomWorldTP.worldRandom(world.toBukkitWorld()));
+                                    targets.forEach(target ->{
+                                        CruxTeleporter.teleporter().scheduleTeleport(target, tp);
+                                    });
+                                    //RandomWorldTP tp = RandomWorldTP.tp(world.toBukkitWorld());
+                                    //targets.forEach(tp::randomlyTeleportAsync);
 
                                     sender.sendMessage("Randomly teleported " + targets.size() + " to world_abyss.");
                                     return 1;
