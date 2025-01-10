@@ -23,7 +23,7 @@ public class StoredAbyssOutpostTags implements ObjectTag<AbyssOutpostData> {
 
     @Override
     public @NotNull FormatPrefix defaultPrefix() {
-        return FormatPrefix.simple("abyss_outpost_data");
+        return FormatPrefix.simple("abyss_outpost_data_");
     }
 
     @Override

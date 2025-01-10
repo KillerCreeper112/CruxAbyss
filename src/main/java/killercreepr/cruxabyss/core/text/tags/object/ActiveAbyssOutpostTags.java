@@ -22,7 +22,7 @@ public class ActiveAbyssOutpostTags implements ObjectTag<ActiveAbyssOutpost> {
 
     @Override
     public @NotNull FormatPrefix defaultPrefix() {
-        return FormatPrefix.simple("active_abyss_outpost");
+        return FormatPrefix.simple("active_abyss_outpost_");
     }
 
     @Override
