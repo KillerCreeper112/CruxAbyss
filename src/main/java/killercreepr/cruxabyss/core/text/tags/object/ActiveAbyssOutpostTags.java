@@ -30,21 +30,23 @@ public class ActiveAbyssOutpostTags implements ObjectTag<ActiveAbyssOutpost> {
         return null;
     }
 
+    @Nullable
     @Override
-    public @Nullable HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull ActiveAbyssOutpost object, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull ActiveAbyssOutpost object, Object base, Object parent, @NotNull TagParser tags) {
         return HookedObjectContainer.string()
-            .addAll(tags.hookStrings(object.getData(), HookedPrefixBuilder.overwrite(
-                FormatPrefix.simple("active_abyss_outpost_data/")
-            )))
+            .addAll(tags.hookStrings(
+                object.getData(), base, object, FormatPrefix.simple("data/")
+            ))
             ;
     }
 
+    @Nullable
     @Override
-    public @Nullable HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull ActiveAbyssOutpost object, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull ActiveAbyssOutpost object, Object base, Object parent, @NotNull TagParser tags) {
         return HookedObjectContainer.stringList()
-            .addAll(tags.hookStringLists(object.getData(), HookedPrefixBuilder.overwrite(
-                FormatPrefix.simple("active_abyss_outpost_data/")
-            )))
+            .addAll(tags.hookStringLists(
+                object.getData(), base, object, FormatPrefix.simple("data/")
+            ))
             ;
     }
 }
