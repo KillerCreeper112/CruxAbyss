@@ -90,9 +90,7 @@ public class ToxicMireBiome extends GrimBiome {
                 limitedRegion.setType(x,y+1,z, Material.AIR);
             }
             return;
-        }else if(MaterialSetTag.SMALL_FLOWERS.isTagged(m)){
-            limitedRegion.setType(x,y,z,Material.AIR);
-        }else if(MaterialSetTag.TALL_FLOWERS.isTagged(m)){
+        }else if(MaterialSetTag.FLOWERS.isTagged(m)){
             limitedRegion.setType(x,y,z,Material.AIR);
         }
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
