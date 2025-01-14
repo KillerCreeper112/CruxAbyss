@@ -26,7 +26,7 @@ public class AbyssAltarPortalListener implements Listener {
         ItemStack item = event.getItem();
         if(item==null) return;
         CruxItem cruxItem = CruxItem.wrap(item);
-        Collection<AbyssAltarItemComponent> list = cruxItem.getAllOfType(AbyssAltarItemComponent.class);
+        Collection<AbyssAltarItemComponent> list = cruxItem.getAllOfTypeOrDefaultData(AbyssAltarItemComponent.class);
         if(list == null || list.isEmpty()) return;
         AbyssAltar altar = AbyssAltar.getFromCenter(b);
         if(altar == null) return;

@@ -143,9 +143,9 @@ public class AbyssCrystalGoal extends AbyssAltarPlacedItemGoal {
 
             if(item == null) return;
             CruxItem cruxItem = CruxItem.wrap(item);
-            AbyssAltarCrystal crystal = cruxItem.get(AbyssComponents.ABYSS_ALTAR_CRYSTAL);
+            AbyssAltarCrystal crystal = cruxItem.getOrDefaultData(AbyssComponents.ABYSS_ALTAR_CRYSTAL);
             if(crystal == null) return;
-            new java.awt.Color(0x6DE96D);
+            //new java.awt.Color(0x6DE96D);
             goal.setTeleportType(crystal.teleportType());
             Color color = crystal.portalColor();
             if(color != null) goal.setColor(color);
