@@ -52,6 +52,9 @@ public class AbyssSpecificsListener implements Listener {
     }
 
     public void animalDeath(Entity e){
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().getUID());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+
         Location loc = e.getLocation().add(0, e.getHeight()/2, 0);
         ValuesProvider cfg = CruxAbyss.inst().values();
 
