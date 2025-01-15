@@ -20,13 +20,15 @@ import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked, OutpostData {
     public UUID owner;
     public Long timeCaptured;
-    public Collection<UUID> members = new HashSet<>();
     protected final Map<OutpostUpgrade, Integer> upgrades = new HashMap<>();
     protected final Map<OutpostUpgrade, TickedOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
     protected static final int tickRate = 1;
@@ -41,9 +43,6 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
         FileRegistry reg = ctx.getRegistry();
         if(owner != null){
             o.add("owner", reg.serializeToFile(owner));
-        }
-        if(!members.isEmpty()){
-            o.add("members", reg.serializeToFile(members));
         }
         if(timeCaptured != null){
             o.addProperty("time_captured", timeCaptured);

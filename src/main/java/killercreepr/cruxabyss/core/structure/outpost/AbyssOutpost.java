@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
-import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.world.StoredChunk;
@@ -17,7 +16,6 @@ import killercreepr.cruxstructures.core.structure.component.StructureTickedStore
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -50,14 +48,6 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
                 }
                 outpostData.upgrades.put(upgrade, level.intValue());
             });
-        }
-
-        Collection<UUID> members = reg.deserializeFromFile(
-            new TypeToken<Collection<UUID>>(){}.getType(),
-            o.get("members")
-        );
-        if(members != null){
-            outpostData.members.addAll(members);
         }
 
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);

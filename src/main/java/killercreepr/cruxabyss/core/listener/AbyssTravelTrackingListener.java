@@ -34,7 +34,6 @@ public class AbyssTravelTrackingListener implements Listener {
         if(!(event.getEntity() instanceof Player p) || event.isCancelTeleport()) return;
 
         CruxStatisticHolder holder = BukkitStatisticHolder.statisticHolder(p);
-        if(holder == null) return;
         if(holder.getStatistic(AbyssStatistic.ABYSS_TRAVEL) >= cfg.ABYSS_RIFT_SHOW_WARNING_IF_BELOW().value().intValue()) return;
         Mob mob = event.getRift().getMob();
         event.setCancelTeleport(true);

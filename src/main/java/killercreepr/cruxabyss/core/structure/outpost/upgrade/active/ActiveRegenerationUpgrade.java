@@ -9,8 +9,11 @@ import killercreepr.cruxabyss.api.values.AbyssOutpostUpgradesCfg;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -23,25 +26,32 @@ public class ActiveRegenerationUpgrade extends SimpleActiveOutpostUpgrade {
         this.outpost = outpost;
     }
 
-    public void tick(AbyssOutpostData data, Player owner, World world, BoundingBox box){
-        world.getNearbyEntities(box, e -> e.equals(owner)).forEach(e ->{
-            owner.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 120, 0));
+    public void tick(AbyssOutpostData data, UPlayer owner, World world, BoundingBox box){
+        world.getNearbyEntities(box, e ->{
+            if(!(e instanceof Player)) return false;
+            if(e.getUniqueId().equals(data.owner)) return true;
+            return owner.hasFriend(e.getUniqueId()) || owner.isApartOfParty(e.getUniqueId());
+        }).forEach(e ->{
+            if(!(e instanceof LivingEntity le)) return;
+            le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 120, 0));
         });
     }
 
+    protected UPlayer cachedUPlayer;
     @Override
     public void tick(int tick, int rate) {
         if(tick % 100 != 0) return;
         AbyssOutpostData data = outpost.getData();
         if(data.owner == null) return;
-        //todo make parties and stuff
-        Player p = Crux.getServer().getPlayer(data.owner);
-        if(p == null) return;
+
+        UPlayer uPlayer = cachedUPlayer == null ? USurvivePlugin.inst().getPlayerManager().getPlayer(data.owner) : cachedUPlayer;
+        if(uPlayer == null) return;
+        if(cachedUPlayer == null) cachedUPlayer = uPlayer;
+
         World world = outpost.getActive().getChunk().getWorld();
-        if(!p.getWorld().equals(world)) return;
         BoundingBox box = expand(outpost.getActive().getData().getBoundingBox().clone(), level);
 
-        Crux.scheduler().runTask(() -> tick(data, p, world, box));
+        Crux.scheduler().runTask(() -> tick(data, uPlayer, world, box));
         double widthX = box.getWidthX()/2;
         double height = box.getHeight()/2;
         double widthZ = box.getWidthZ()/2;
