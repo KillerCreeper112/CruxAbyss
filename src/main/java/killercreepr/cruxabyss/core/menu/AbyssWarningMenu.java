@@ -4,7 +4,6 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxmenus.core.menu.BukkitMenu;
 import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;

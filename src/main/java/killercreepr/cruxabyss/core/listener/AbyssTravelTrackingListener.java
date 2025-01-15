@@ -7,9 +7,11 @@ import killercreepr.cruxabyss.api.event.SuccessfulEntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.TeleportAbyssWorldModule;
-import killercreepr.cruxabyss.core.data.entity.AbyssHolder;
 import killercreepr.cruxabyss.core.data.entity.AbyssSafezoneGuideHolder;
 import killercreepr.cruxabyss.core.menu.AbyssWarningMenu;
+import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
+import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
+import killercreepr.cruxstatistics.api.statistic.CruxStatisticHolder;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import org.bukkit.entity.Entity;
@@ -31,9 +33,9 @@ public class AbyssTravelTrackingListener implements Listener {
     public void onEntityTravelThroughRift(EntityTravelThroughRiftEvent event) {
         if(!(event.getEntity() instanceof Player p) || event.isCancelTeleport()) return;
 
-        AbyssHolder holder = EntityMemory.getDataHolder(p, AbyssHolder.class);
+        CruxStatisticHolder holder = BukkitStatisticHolder.statisticHolder(p);
         if(holder == null) return;
-        if(holder.getAbyssTravelAmount() >= cfg.ABYSS_RIFT_SHOW_WARNING_IF_BELOW().value().intValue()) return;
+        if(holder.getStatistic(AbyssStatistic.ABYSS_TRAVEL) >= cfg.ABYSS_RIFT_SHOW_WARNING_IF_BELOW().value().intValue()) return;
         Mob mob = event.getRift().getMob();
         event.setCancelTeleport(true);
         Runnable task = () ->{
@@ -59,10 +61,10 @@ public class AbyssTravelTrackingListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSuccessfulEntityTravelThroughRift(SuccessfulEntityTravelThroughRiftEvent event) {
         Entity e = event.getEntity();
-        AbyssHolder holder = EntityMemory.getDataHolder(e, AbyssHolder.class);
-        if(holder == null) return;
-        int amount = holder.getAbyssTravelAmount();
-        holder.setAbyssTravelAmount(amount+1);
+        CruxStatisticHolder holder = BukkitStatisticHolder.statisticHolder(e);
+        int amount = holder.getStatistic(AbyssStatistic.ABYSS_TRAVEL);
+
+        holder.incrementStatistic(AbyssStatistic.ABYSS_TRAVEL, 1);
 
         if(!(e instanceof Player p)) return;
         if(amount >= cfg.ABYSS_RIFT_SAFEZONE_GUIDE_IF_BELOW().value().intValue()) return;

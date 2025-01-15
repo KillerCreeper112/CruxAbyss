@@ -1,17 +1,12 @@
 package killercreepr.cruxabyss.core.menu.action;
 
 import killercreepr.crux.api.data.DataExchange;
-import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
-import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxmenus.api.menu.contex.ActionContext;
 import killercreepr.cruxmenus.core.menu.action.SimpleMenuAction;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 public class AbyssOutpostMemberAction extends SimpleMenuAction {

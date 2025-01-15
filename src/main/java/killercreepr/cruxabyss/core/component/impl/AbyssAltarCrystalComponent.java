@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxBlockUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
