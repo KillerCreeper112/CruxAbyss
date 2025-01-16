@@ -31,6 +31,8 @@ public interface AbyssMob extends CruxMob {
     CruxMob EMBER_LEAPER = REGISTRY.register(new EmberLeaper());
     CruxMob TOXINTRAWL = REGISTRY.register(new Toxintrawl());
 
+    CruxMob VILDER = REGISTRY.register(new Vilder());
+
     CruxMob SCOURGER_BULLET = REGISTRY.register(new ScourgerBullet());
     CruxMob SCOURGER_BULLET_LARGE = REGISTRY.register(new ScourgerBulletLarge());
 
