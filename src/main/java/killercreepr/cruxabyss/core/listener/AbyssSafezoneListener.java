@@ -1,25 +1,9 @@
 package killercreepr.cruxabyss.core.listener;
 
-import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
-import killercreepr.cruxabyss.core.structure.safezone.ActiveAbyssSafeZone;
-import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
-import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxentities.entity.CruxMob;
-import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
-import killercreepr.cruxworlds.api.world.CruxWorld;
-import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.plugin.Plugin;
 
+@Deprecated
 public class AbyssSafezoneListener implements Listener {
     protected final Plugin plugin;
 
@@ -27,7 +11,7 @@ public class AbyssSafezoneListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         Entity e = event.getEntity();
         CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().getUID());
@@ -41,10 +25,10 @@ public class AbyssSafezoneListener implements Listener {
         );
         if(targetStructure == null) return;
         event.setCancelled(true);
-    }
+    }*/
 
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityTarget(EntityTargetEvent event) {
         Entity target = event.getTarget();
         if(target == null) return;
@@ -58,9 +42,9 @@ public class AbyssSafezoneListener implements Listener {
             ActiveAbyssSafeZone.class, target.getLocation().getBlock()
         );
         if(targetStructure != null) event.setCancelled(true);
-    }
+    }*/
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityPathfind(EntityPathfindEvent event) {
         Entity e = event.getEntity();
         Location to = event.getLoc();
@@ -99,6 +83,6 @@ public class AbyssSafezoneListener implements Listener {
                 if(targetStructure != null) m.setTarget(null);
             }
         }
-    }
+    }*/
 
 }

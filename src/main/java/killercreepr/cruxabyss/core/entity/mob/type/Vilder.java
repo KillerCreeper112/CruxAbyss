@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public class Vilder extends SimpleAbyssMob {
     public Vilder() {
-        super(Crux.key("vilder"), EntityType.HUSK);
+        super(Crux.key("vilder"), EntityType.PIG);
     }
 
     @Override

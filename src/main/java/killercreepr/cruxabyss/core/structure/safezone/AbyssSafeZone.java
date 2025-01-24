@@ -16,13 +16,13 @@ public class AbyssSafeZone extends StructureTickedStoredComponent implements Str
     //todo safe zone
     @Override
     public void onCreated(@NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation, @NotNull StoredStructure stored) {
-        stored.set(AbyssComponents.ABYSS_OUTPOST_DATA, new AbyssOutpostData(stored));
+        stored.set(AbyssComponents.ABYSS_SAFE_ZONE_DATA, new AbyssSafeZoneData(stored));
     }
 
     @Override
     public void onFileLoad(@NotNull FileContext<?> context, @NotNull FileObject o, @NotNull StoredStructure structure) {
         FileRegistry reg = context.getRegistry();
-        AbyssOutpostData outpostData = new AbyssOutpostData(structure);
+        AbyssSafeZoneData outpostData = new AbyssSafeZoneData(structure);
        /* outpostData.owner = reg.deserializeFromFile(UUID.class, o.get("owner"));
         Number time = reg.deserializeFromFile(Number.class, o.get("time_captured"));
         if(time != null){
@@ -44,7 +44,7 @@ public class AbyssSafeZone extends StructureTickedStoredComponent implements Str
             });
         }*/
 
-        structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
+        structure.set(AbyssComponents.ABYSS_SAFE_ZONE_DATA, outpostData);
     }
     /*protected final Vector expandBox;
     public AbyssSafezone(@NotNull Key key, @NotNull ClipboardHolder holder, boolean persistent, @Nullable List<StructureModule> beforePlacementModules, @NotNull List<StructureModule> modules, Vector expandBox) {

@@ -9,6 +9,7 @@ import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder;
+import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
 import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -85,6 +86,12 @@ public class CfgAbyssComponents {
             @Override
             public @Nullable TypedDataComponent<AbyssOutpost> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
                 return TypedDataComponent.create(AbyssComponents.ABYSS_OUTPOST, new AbyssOutpost());
+            }
+        });
+        registry.register("structure/abyss_safe_zone", new FileDataComponentType<AbyssSafeZone>(){
+            @Override
+            public @Nullable TypedDataComponent<AbyssSafeZone> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.ABYSS_SAFE_ZONE, new AbyssSafeZone());
             }
         });
         registry.register("structure/abyss_outpost_loot_holder", new FileDataComponentType<AbyssOutpostLootHolder>(){
