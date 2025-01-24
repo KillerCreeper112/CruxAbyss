@@ -1,6 +1,6 @@
 package killercreepr.cruxabyss.core.structure.safezone;
 
-public class StoredAbyssSafezone /*extends CfgStoredStructure implements InnerBoxedStructure*/ {
+public class StoredAbyssSafeZone /*extends CfgStoredStructure implements InnerBoxedStructure*/ {
     /*public StoredAbyssSafezone(@NotNull Structure structure, @NotNull StoredChunk chunk, @NotNull CruxPosition center, double rotation, @Nullable BoundingBox innerBox) {
         super(structure, chunk, center, rotation, innerBox);
     }

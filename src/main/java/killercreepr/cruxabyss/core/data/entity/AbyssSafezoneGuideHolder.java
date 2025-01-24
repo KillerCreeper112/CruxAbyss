@@ -7,7 +7,7 @@ import killercreepr.crux.core.util.GetNear;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.data.ParticleGuide;
-import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafezone;
+import killercreepr.cruxabyss.core.structure.safezone.StoredAbyssSafeZone;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
@@ -71,7 +71,7 @@ public class AbyssSafezoneGuideHolder extends PlayerTickedDataHolder {
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
         GetNear<StoredStructure> near = new GetStructureNear(module.getStoredStructures())
             .center(p.getLocation())
-            .filter(stored -> stored instanceof StoredAbyssSafezone)
+            .filter(stored -> stored instanceof StoredAbyssSafeZone)
             .operation(GetNear.Operation.NEAREST)
             ;
         return near.findFirst();

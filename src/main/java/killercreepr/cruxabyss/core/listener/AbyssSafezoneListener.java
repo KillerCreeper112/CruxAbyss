@@ -2,7 +2,7 @@ package killercreepr.cruxabyss.core.listener;
 
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
-import killercreepr.cruxabyss.core.structure.safezone.ActiveAbyssSafezone;
+import killercreepr.cruxabyss.core.structure.safezone.ActiveAbyssSafeZone;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -36,8 +36,8 @@ public class AbyssSafezoneListener implements Listener {
         CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
 
-        ActiveAbyssSafezone targetStructure = module.getFirstActiveAt(
-            ActiveAbyssSafezone.class, e.getLocation().getBlock()
+        ActiveAbyssSafeZone targetStructure = module.getFirstActiveAt(
+            ActiveAbyssSafeZone.class, e.getLocation().getBlock()
         );
         if(targetStructure == null) return;
         event.setCancelled(true);
@@ -54,8 +54,8 @@ public class AbyssSafezoneListener implements Listener {
         CruxWorld crux = CruxCore.core().worldManager().getWorld(target.getWorld().getUID());
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
 
-        ActiveAbyssSafezone targetStructure = module.getFirstActiveAt(
-            ActiveAbyssSafezone.class, target.getLocation().getBlock()
+        ActiveAbyssSafeZone targetStructure = module.getFirstActiveAt(
+            ActiveAbyssSafeZone.class, target.getLocation().getBlock()
         );
         if(targetStructure != null) event.setCancelled(true);
     }
@@ -70,31 +70,31 @@ public class AbyssSafezoneListener implements Listener {
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
 
         if(CruxMob.isInCategory(e, AbyssMobCategory.ABYSS_SAFEZONE)){
-            ActiveAbyssSafezone currentStructure = module.getFirstActiveAt(
-                ActiveAbyssSafezone.class, current.getBlock()
+            ActiveAbyssSafeZone currentStructure = module.getFirstActiveAt(
+                ActiveAbyssSafeZone.class, current.getBlock()
             );
             if(currentStructure == null) return;
-            ActiveAbyssSafezone toStructure = module.getFirstActiveAt(
-                ActiveAbyssSafezone.class, to.getBlock()
+            ActiveAbyssSafeZone toStructure = module.getFirstActiveAt(
+                ActiveAbyssSafeZone.class, to.getBlock()
             );
             if(toStructure == null) event.setCancelled(true);
             return;
         }
         if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
-        ActiveAbyssSafezone currentStructure = module.getFirstActiveAt(
-            ActiveAbyssSafezone.class, current.getBlock()
+        ActiveAbyssSafeZone currentStructure = module.getFirstActiveAt(
+            ActiveAbyssSafeZone.class, current.getBlock()
         );
         if(currentStructure != null) return;
-        ActiveAbyssSafezone toStructure = module.getFirstActiveAt(
-            ActiveAbyssSafezone.class, to.getBlock()
+        ActiveAbyssSafeZone toStructure = module.getFirstActiveAt(
+            ActiveAbyssSafeZone.class, to.getBlock()
         );
         if(toStructure != null){
             event.setCancelled(true);
             if(e instanceof Mob m){
                 Entity target = m.getTarget();
                 if(target == null) return;
-                ActiveAbyssSafezone targetStructure = module.getFirstActiveAt(
-                    ActiveAbyssSafezone.class, target.getLocation().getBlock()
+                ActiveAbyssSafeZone targetStructure = module.getFirstActiveAt(
+                    ActiveAbyssSafeZone.class, target.getLocation().getBlock()
                 );
                 if(targetStructure != null) m.setTarget(null);
             }

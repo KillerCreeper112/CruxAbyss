@@ -17,6 +17,8 @@ import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder;
 import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolderData;
 import killercreepr.cruxabyss.core.structure.outpost.loot.ActiveAbyssOutpostLootHolder;
+import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
+import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import org.bukkit.Color;
 import org.bukkit.util.Vector;
@@ -48,6 +50,10 @@ public class AbyssComponents {
     public static final DataComponentType<AbyssOutpostData> ABYSS_OUTPOST_DATA = register("abyss_outpost_data", builder -> builder);
     public static final DataComponentType<AbyssOutpost> ABYSS_OUTPOST = register("abyss_outpost", builder -> builder);
     public static final DataComponentType<ActiveAbyssOutpost> ACTIVE_ABYSS_OUTPOST = register("active_abyss_outpost", builder -> builder);
+
+
+    public static final DataComponentType<AbyssSafeZone> ABYSS_SAFE_ZONE = register("abyss_safe_zone", builder -> builder);
+    public static final DataComponentType<AbyssSafeZoneData> ABYSS_SAFE_ZONE_DATA = register("abyss_safe_zone_data", builder -> builder);
 
     public static final DataComponentType<AbyssOutpostLootHolderData> ABYSS_OUTPOST_LOOT_HOLDER_DATA = register("abyss_outpost_loot_holder_data", builder -> builder);
     public static final DataComponentType<AbyssOutpostLootHolder> ABYSS_OUTPOST_LOOT_HOLDER = register("abyss_outpost_loot_holder", builder -> builder);
