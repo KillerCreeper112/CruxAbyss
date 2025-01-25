@@ -69,7 +69,8 @@ public class AbyssMoose extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        CompletableFuture<ActiveModel> model = new DesignEntity(e).getOrAddModelAsync(key.value());
+        CompletableFuture<ActiveModel> model = new DesignEntity(e)
+            .setBaseEntityVisible(false).getOrAddModelAsync(key.value());
         return new MooseGoal(e).model(model);
     }
 

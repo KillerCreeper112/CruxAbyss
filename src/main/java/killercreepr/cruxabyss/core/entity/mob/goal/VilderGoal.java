@@ -12,6 +12,8 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
+import killercreepr.cruxabyss.core.entity.mob.type.AbyssCapgras;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -27,6 +29,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
@@ -100,32 +103,57 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public int useStrongAttack(){
-        strongAttackCooldown = CruxMath.random(20, 50);
+        strongAttackCooldown = CruxMath.random(30, 80);
         int atck = CruxMath.random(1,2);
         String id = "attack_strong_" + atck;
         playAnimation(id, true);
         this.maxAttackTime = (int) Math.ceil(getAnimationLengthTicks(id) / 2f);
         this.attackTime = 0;
         //1 = 9, 2 = 8;
-        this.hitAt = atck == 1 ? 5 : 4;
+        this.hitAt = switch(atck){
+            case 2 -> 4;
+            case 3 -> 8;
+            case 4 -> 7;
+            default -> 5;
+        };
         CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
             CruxAttributeModifier.modifier(Crux.key("strong_attack"), -5D, CruxAttribute.Operation.MULTIPLY));
-        if(hitAt == 1){
+        if(atck == 1){
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .5D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .4D, CruxAttribute.Operation.MULTIPLY));
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
                 CruxAttributeModifier.modifier(Crux.key("strong_attack"), .2D, CruxAttribute.Operation.MULTIPLY));
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
                 CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
-        }else if(hitAt == 2){
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .3D, CruxAttribute.Operation.MULTIPLY));
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .15D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1D, CruxAttribute.Operation.MULTIPLY));
+        }else if(atck == 2){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .8D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), -2D, CruxAttribute.Operation.MULTIPLY));
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
                 CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
                 CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
+        }else if(atck == 3){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1.5D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .2D, CruxAttribute.Operation.MULTIPLY));
+        }else if(atck == 4){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1.2D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), -3D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .15D, CruxAttribute.Operation.MULTIPLY));
         }
         return atck;
     }
@@ -151,8 +179,18 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     }
 
     @Override
+    public boolean isValidTarget(@NotNull LivingEntity target) {
+        return !CruxMob.isInCategory(target, AbyssMobCategory.ABYSS_SAFEZONE) && super.isValidTarget(target);
+    }
+
+    @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
+    }
+
+    @Override
+    public boolean isValidHitTarget(@NotNull Entity target) {
+        return !CruxMob.isInCategory(target, AbyssMobCategory.ABYSS_SAFEZONE) && super.isValidHitTarget(target);
     }
 
     @Override
@@ -171,6 +209,7 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         BoundingBox box = safeZone.getOrDefault(StoredStructureComponents.OUTER_BOX, safeZone.getBoundingBox());
         if(box.contains(loc.getX(), loc.getY(), loc.getZ())) return;
         event.setCancelled(true);
+        mob.getPathfinder().stopPathfinding();
     }
 
     public void movementTick(){

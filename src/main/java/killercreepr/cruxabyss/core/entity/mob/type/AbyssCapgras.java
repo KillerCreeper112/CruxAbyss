@@ -58,7 +58,8 @@ public class AbyssCapgras extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        CompletableFuture<ActiveModel> active = new DesignEntity(e).getOrAddModelAsync(key.value());
+        CompletableFuture<ActiveModel> active = new DesignEntity(e)
+            .setBaseEntityVisible(false).getOrAddModelAsync(key.value());
         return new CapgrasGoal(e).model(active);
     }
 
