@@ -59,12 +59,12 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public int ambientMin() {
-                return super.ambientMin();
+                return 100;
             }
 
             @Override
             public int ambientMax() {
-                return super.ambientMax();
+                return 160;
             }
 
             @Override

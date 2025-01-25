@@ -297,6 +297,6 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
+        return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
     }
 }

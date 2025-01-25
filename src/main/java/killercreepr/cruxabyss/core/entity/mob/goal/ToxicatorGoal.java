@@ -2,9 +2,12 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,6 +40,11 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
                 return CreateSound.sound(Sound.ENTITY_VINDICATOR_DEATH, .6f);
             }
         });
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
     }
 
     @EventHandler(ignoreCancelled = true)
