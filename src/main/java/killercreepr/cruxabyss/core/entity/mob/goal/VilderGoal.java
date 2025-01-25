@@ -13,7 +13,6 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
-import killercreepr.cruxabyss.core.entity.mob.type.AbyssCapgras;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -57,6 +56,16 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
             public @NotNull CreateSound attack() {
                 return CreateSound.sound(Sound.ENTITY_PILLAGER_HURT, 1.85f);
             }*/
+
+            @Override
+            public int ambientMin() {
+                return super.ambientMin();
+            }
+
+            @Override
+            public int ambientMax() {
+                return super.ambientMax();
+            }
 
             @Override
             public @NotNull CreateSound hurt() {
