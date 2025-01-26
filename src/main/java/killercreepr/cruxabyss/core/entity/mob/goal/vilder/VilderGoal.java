@@ -105,22 +105,30 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         }
     }
 
+    public void onHitAtTime(){
+        this.attemptAttack();
+    }
+
+    public void onCombatStrongAttackComplete(){
+        maxAttackTime = 0;
+        hitAt = 0;
+        currentAttackID = 0;
+        CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);
+    }
+
     public void combatUsingStrongAttackTick(){
         attackTime++;
         if(hitAt == attackTime){
-            this.attemptAttack();
+            onHitAtTime();
             hitAt = 0;
         }
         if(attackTime >= maxAttackTime){
-            maxAttackTime = 0;
-            hitAt = 0;
-            currentAttackID = 0;
-            CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, STRONG_ATTACK_KEY);
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, STRONG_ATTACK_KEY);
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);
+            onCombatStrongAttackComplete();
             return;
         }
         onCombatUsingStrongAttackTick();

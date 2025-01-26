@@ -9,6 +9,7 @@ import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
 import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderMutation1Goal;
+import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderMutation2Goal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -37,7 +38,8 @@ import java.util.function.Function;
 public class Vilder extends SimpleAbyssMob {
     public static final Map<String, Function<Mob, CruxMobModeledGoal>> TYPES = Map.of(
         "vilder", VilderGoal::new,
-        "vilder_2", VilderMutation1Goal::new
+        "vilder_2", VilderMutation1Goal::new,
+        "vilder_3", VilderMutation2Goal::new
     );
 
     public Vilder() {

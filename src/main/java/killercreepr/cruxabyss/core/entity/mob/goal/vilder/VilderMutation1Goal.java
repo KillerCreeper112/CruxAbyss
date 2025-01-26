@@ -78,6 +78,13 @@ public class VilderMutation1Goal extends VilderGoal{
         if(time == null) return false;
         return CruxMath.hasOccurredWithin(time, ticks);
     }
+
+    @Override
+    public void onCombatStrongAttackComplete() {
+        super.onCombatStrongAttackComplete();
+        lastHit.clear();
+    }
+
     @Override
     public void onCombatUsingStrongAttackTick() {
         super.onCombatUsingStrongAttackTick();

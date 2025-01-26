@@ -113,12 +113,18 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
     @Override
     public void tick() {
         swimmer.tick();
+        super.tick();
         if(mob.getTarget() == null) return;
         if(currentPrepareSpell == -1){
             noPrepareSpellTick();
             return;
         }
         prepareSpellTick();
+    }
+
+    @Override
+    public double getFindTargetRange() {
+        return getFollowDistance();
     }
 
     private Spell spell(){

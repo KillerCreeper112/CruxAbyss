@@ -60,6 +60,12 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
     @Override
     public void tick() {
         swimmer.tick();
+        super.tick();
+    }
+
+    @Override
+    public double getFindTargetRange() {
+        return getFollowDistance();
     }
 
     @EventHandler(ignoreCancelled = true)
