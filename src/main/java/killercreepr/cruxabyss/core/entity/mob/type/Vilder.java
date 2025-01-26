@@ -2,15 +2,19 @@ package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.core.entity.mob.goal.VilderGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderMutation1Goal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -19,6 +23,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Vilder extends SimpleAbyssMob {
+    public static final Map<String, Function<Mob, CruxMobModeledGoal>> TYPES = Map.of(
+        "vilder", VilderGoal::new,
+        "vilder_2", VilderMutation1Goal::new
+    );
+
     public Vilder() {
         super(Crux.key("vilder"), EntityType.PIG);
     }
@@ -58,7 +69,7 @@ public class Vilder extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.4D));
+        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.2D));
         addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(4D));
         addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(2D));
         return map;
@@ -72,8 +83,17 @@ public class Vilder extends SimpleAbyssMob {
 
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
-        CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
-        return new VilderGoal(e).model(active);
+        String typeID = CruxTag.get(e, "vilder_type", PersistentDataType.STRING, null);
+        if(typeID == null){
+            typeID = CruxCollection.getRandom(TYPES.keySet());
+            CruxTag.set(e, "vilder_type", PersistentDataType.STRING, typeID);
+        }
+
+        CompletableFuture<ActiveModel> active = new ModelEntity(e)
+            .setBaseEntityVisible(false)
+            .getOrAddModelAsync(typeID);
+
+        return TYPES.get(typeID).apply(e).model(active);
     }
 
     @Override

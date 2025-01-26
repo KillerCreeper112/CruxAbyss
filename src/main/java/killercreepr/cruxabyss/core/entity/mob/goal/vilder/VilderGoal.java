@@ -1,4 +1,4 @@
-package killercreepr.cruxabyss.core.entity.mob.goal;
+package killercreepr.cruxabyss.core.entity.mob.goal.vilder;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
@@ -13,6 +13,7 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
+import killercreepr.cruxabyss.core.entity.mob.goal.SwimmerGoal;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -25,6 +26,7 @@ import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -42,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 //if they get too far away from the safe zone, they will attempt to go back to it
 //
 public class VilderGoal extends CruxMobModeledGoal implements Listener {
+    public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     protected StoredStructure cachedSafeZone;
     public VilderGoal(@NotNull Mob mob) {
@@ -90,11 +93,19 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
 
     public void combatTick(){
         if(!isUsingStrongAttack()){
-            if(strongAttackCooldown > 0){
-                strongAttackCooldown--;
-            }
+            combatNotUsingStrongAttackTick();
             return;
         }
+        combatUsingStrongAttackTick();
+    }
+
+    public void combatNotUsingStrongAttackTick(){
+        if(strongAttackCooldown > 0){
+            strongAttackCooldown--;
+        }
+    }
+
+    public void combatUsingStrongAttackTick(){
         attackTime++;
         if(hitAt == attackTime){
             this.attemptAttack();
@@ -103,77 +114,104 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         if(attackTime >= maxAttackTime){
             maxAttackTime = 0;
             hitAt = 0;
-            CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, Crux.key("strong_attack"));
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, Crux.key("strong_attack"));
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, Crux.key("strong_attack"));
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, Crux.key("strong_attack"));
-            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, Crux.key("strong_attack"));
+            currentAttackID = 0;
+            CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, STRONG_ATTACK_KEY);
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, STRONG_ATTACK_KEY);
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);
+            return;
         }
+        onCombatUsingStrongAttackTick();
+    }
+    public void onCombatUsingStrongAttackTick(){}
+
+    public int generateStrongAttackID(){
+        return CruxMath.random(1,2);
     }
 
-    public int useStrongAttack(){
-        strongAttackCooldown = CruxMath.random(30, 80);
-        int atck = CruxMath.random(1,2);
-        String id = "attack_strong_" + atck;
-        playAnimation(id, true);
-        this.maxAttackTime = (int) Math.ceil(getAnimationLengthTicks(id) / 2f);
-        this.attackTime = 0;
-        //1 = 9, 2 = 8;
-        this.hitAt = switch(atck){
+    public int getHitAtTime(int attackID){
+        return switch(attackID){
             case 2 -> 4;
             case 3 -> 8;
             case 4 -> 7;
             default -> 5;
         };
-        CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-            CruxAttributeModifier.modifier(Crux.key("strong_attack"), -5D, CruxAttribute.Operation.MULTIPLY));
-        if(atck == 1){
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .4D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .2D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1D, CruxAttribute.Operation.MULTIPLY));
-        }else if(atck == 2){
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .8D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), -2D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
-        }else if(atck == 3){
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1.5D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .2D, CruxAttribute.Operation.MULTIPLY));
-        }else if(atck == 4){
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), 1.2D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), -3D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .1D, CruxAttribute.Operation.MULTIPLY));
-            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                CruxAttributeModifier.modifier(Crux.key("strong_attack"), .15D, CruxAttribute.Operation.MULTIPLY));
+    }
+
+    public void onUseStrongAttack(int attackID){
+        switch(attackID){
+            case 1 ->{
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1D, CruxAttribute.Operation.MULTIPLY));
+            }
+            case 2 ->{
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .8D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -2D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+            }
+            case 3 ->{
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1.5D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+            }
+            case 4 ->{
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1.2D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -3D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .15D, CruxAttribute.Operation.MULTIPLY));
+            }
         }
+    }
+
+    public void onUseStrongAttackApplyAllAttributes(int attackID){
+        CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+            CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+    }
+
+    public int useStrongAttack(){
+        strongAttackCooldown = CruxMath.random(30, 80);
+        int atck = generateStrongAttackID();
+        String id = "attack_strong_" + atck;
+        playAnimation(id, true);
+        this.maxAttackTime = (int) Math.ceil(getAnimationLengthTicks(id) / 2f);
+        this.attackTime = 0;
+        //1 = 9, 2 = 8;
+        this.hitAt = getHitAtTime(atck);
+        onUseStrongAttackApplyAllAttributes(atck);
+        onUseStrongAttack(atck);
         return atck;
     }
 
     protected int attackTime = 0;
     protected int maxAttackTime = 0;
     protected int hitAt = 0;
+    protected int currentAttackID;
     @Override
     public boolean preAttemptAttack() {
         if(canUseStrongAttack()){
-            useStrongAttack();
+            currentAttackID = useStrongAttack();
             return false;
         }
         if(isUsingStrongAttack() && hitAt != attackTime) return false;
@@ -184,7 +222,13 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     protected void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
         if(isUsingStrongAttack()) return;
-        playAnimation("attack_" + CruxMath.random(1,3), true);
+        String id = generateAttackAnimationID();
+        if(id == null) return;
+        playAnimation(id, true);
+    }
+
+    public String generateAttackAnimationID(){
+        return "attack_" + CruxMath.random(1,3);
     }
 
     @Override
