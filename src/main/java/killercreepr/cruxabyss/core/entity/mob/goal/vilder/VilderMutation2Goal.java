@@ -1,7 +1,9 @@
 package killercreepr.cruxabyss.core.entity.mob.goal.vilder;
 
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.holder.LocationHolder;
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
@@ -12,8 +14,10 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateCircle;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -95,7 +99,9 @@ public class VilderMutation2Goal extends VilderGoal{
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
                     CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1.2D, CruxAttribute.Operation.MULTIPLY));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -3D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1D, CruxAttribute.Operation.MULTIPLY));
+                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP,
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 9D, CruxAttribute.Operation.ADD));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
                     CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
@@ -119,7 +125,7 @@ public class VilderMutation2Goal extends VilderGoal{
         if(currentAttackID == 4){
             Location shockLoc = mob.getLocation();
             shockLoc.setPitch(0f);
-            shockLoc = CruxLoc.shift(shockLoc, .7, 0, 0);
+            shockLoc = CruxLoc.shift(shockLoc, .7, .1, 0);
             LocationHolder shockLocHolder = DynamicLocation.createStatic(shockLoc);
 
             ShockWave shockWave = new ShockWave(6D, 0D, 1D);
@@ -130,23 +136,21 @@ public class VilderMutation2Goal extends VilderGoal{
                 })
                 .tick(ctx ->{
                     double radius = shockWave.value().doubleValue();
-
-                    double damage = EntityDamager.getDamage(mob);
-                    double kb = CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK);
-                    double kbUp = CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK_UP);
-
-                    new GetEntityNear<>(shockLocHolder, LivingEntity.class)
-                        .range(radius)
-                        .filter(e ->{
-                            if(!(isValidHitTarget(e) && isValidNaturalTarget(e))) return false;
-                            if(hasHitWithin(e, 5)) return false;
-                            hit(e);
-                            return true;
-                        })
-                        .find().forEach(hit ->{
-                            EntityDamager.entityDamager(hit, mob)
-                                .attack(damage, kb, kbUp, shockLocHolder.value());
-                        });
+                    Crux.scheduler().runTask(() ->{
+                        attack(
+                            new GetEntityNear<>(shockLocHolder, LivingEntity.class)
+                                .range(radius)
+                                .filter(e ->{
+                                    if(e.equals(mob)) return false;
+                                    if(!isValidHitTarget(e)) return false;
+                                    if(!isValidAttackerTarget(e)) return false;
+                                    if(hasHitWithin(e, 6)) return false;
+                                    hit(e);
+                                    return true;
+                                })
+                                .find()
+                        );
+                    });
                 })
                 .endTask(lastHit::clear)
                 .shape(
@@ -159,6 +163,7 @@ public class VilderMutation2Goal extends VilderGoal{
                 .build();
 
             shockWave.start(scheduler);
+            CreateSound.sound(Sound.BLOCK_ANVIL_LAND, 2f).playAt(shockLocHolder.value());
             return;
         }
         super.onHitAtTime();
