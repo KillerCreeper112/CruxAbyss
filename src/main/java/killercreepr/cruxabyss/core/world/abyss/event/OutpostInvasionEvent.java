@@ -2,24 +2,151 @@ package killercreepr.cruxabyss.core.world.abyss.event;
 
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.BoundingBox;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Random;
 
 public class OutpostInvasionEvent implements WorldEvent {
     protected final CruxWorld world;
     protected final StoredStructure targetStructure;
     protected final StructureWorldModule structures;
+    protected final int maxWave;
+    protected int currentWave;
 
-    public OutpostInvasionEvent(CruxWorld world, StoredStructure targetStructure) {
+    public OutpostInvasionEvent(CruxWorld world, StoredStructure targetStructure, int maxWave) {
         this.world = world;
         this.structures = world.getModule(StructureWorldModule.class);
         this.targetStructure = targetStructure;
+        this.maxWave = maxWave;
+    }
+
+    @Override
+    public void tick(){
+
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return false;
+    }
+
+    public void nextWave(){
+        currentWave++;
+        spawnWave(currentWave);
+    }
+
+    public void spawnWave(int wave){
+
+    }
+
+    public boolean isValidGround(Block b){
+        return b.isSolid();
+    }
+
+    public Block findGround(Block b){
+        if(isValidGround(b)) return b;
+        for(int y = 1; y <= 3; y++){
+            Block check = b.getRelative(0, y, 0);
+            if(isValidGround(check)) return check;
+        }
+
+        for(int y = 1; y <= 3; y++){
+            Block check = b.getRelative(0, -y, 0);
+            if(isValidGround(check)) return check;
+        }
+        return null;
+    }
+
+    public boolean isValidSpawn(Block b){
+        Block check = b.getRelative(BlockFace.DOWN);
+        if(!isValidGround(check)) return false;
+        for(int y = 1; y <= 5; y++){
+            check = b.getRelative(0, y, 0);
+            if(!check.isEmpty() && !check.isPassable()) return false;
+        }
+        return true;
+    }
+
+    public boolean isValidGroupSpawn(Block b){
+        int range = 1;
+        int amountChecked = 0;
+        for(int x = -range; x <= range; x++){
+            for(int z = -range; z <= range; z++){
+                Block check = b.getRelative(x, 0, z);
+                check = findGround(check);
+                if(check == null) continue;
+                if(isValidSpawn(check)) amountChecked++;
+            }
+        }
+        return amountChecked > 3;
+    }
+
+    public Block findGroupSpawn(Block b){
+        if(isValidGroupSpawn(b)) return b;
+        int range = 1;
+        for(int x = -range; x <= range; x++){
+            for(int z = -range; z <= range; z++){
+                Block check = b.getRelative(x, 0, z);
+                check = findGround(check);
+                if(check == null) continue;
+                if(isValidSpawn(b)) return b;
+            }
+        }
+        return null;
+    }
+
+    public Block findSpawn(Block b){
+        if(isValidSpawn(b)) return b;
+        for(int y = 1; y <= 5; y++){
+            Block check = b.getRelative(0, y, 0);
+            if(isValidSpawn(check)) return check;
+        }
+        return null;
+    }
+
+    public Location findNearbySpawn(Location center, double range){
+        Location check = center.clone().add(
+            CruxMath.random(-range, range), 0, CruxMath.random(-range, range)
+        );
+        Block ground = findGround(check.getBlock());
+        if(ground == null) return center;
+        if(isValidSpawn(ground)) return check;
+        return center;
+    }
+
+    public Collection<Entity> spawnEntities(
+        int groupAmount, int minAmount, int maxAmount,
+        double minSpawnDistance, double maxSpawnDistance
+    ){
+        Collection<Entity> list = new HashSet<>();
+        BoundingBox box = getTargetStructureBox();
+        while(groupAmount > 0){
+            groupAmount--;
+            Location spawn = findRandomSpawnPoint(
+                box, minSpawnDistance, maxSpawnDistance
+            );
+            Block b = findGroupSpawn(spawn.getBlock());
+            if(b == null) continue;
+            spawn = b.getLocation().toCenterLocation().subtract(0, .3, 0);
+            int amount = CruxMath.random(minAmount, maxAmount);
+            while(amount > 0){
+                amount--;
+                Location mobSpawn = findNearbySpawn(spawn, 3);
+                AbyssMob.TOXICATOR.spawn(mobSpawn);
+            }
+        }
+        return list;
     }
 
     public boolean isActive(){
@@ -85,10 +212,5 @@ public class OutpostInvasionEvent implements WorldEvent {
 
         // Return the location object in the same world as the bounding box
         return new Location(world.toBukkitWorld(), spawnX, spawnY, spawnZ);
-    }
-
-    @Override
-    public void tick(){
-
     }
 }
