@@ -118,4 +118,10 @@ public class DefaultValues implements ValuesProvider {
     public NumberProvider ABYSS_NATURAL_HEALING_MULTIPLIER() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN() {
+        return null;
+    }
 }

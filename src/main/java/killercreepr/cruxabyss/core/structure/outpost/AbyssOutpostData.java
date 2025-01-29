@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.structure.outpost;
 
 import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked, OutpostData {
     public UUID owner;
     public Long timeCaptured;
+    public Long timeInvaded;
     protected final Map<OutpostUpgrade, Integer> upgrades = new HashMap<>();
     protected final Map<OutpostUpgrade, TickedOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
     protected static final int tickRate = 1;
@@ -57,6 +59,13 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
             });
             o.add("upgrades", a);
         }
+        if(timeInvaded != null){
+            o.addProperty("time_invaded", timeInvaded);
+        }
+    }
+
+    public boolean wasInvadedWithin(int ticks){
+        return timeInvaded != null && CruxMath.hasOccurredWithin(timeInvaded, ticks);
     }
 
     @Override

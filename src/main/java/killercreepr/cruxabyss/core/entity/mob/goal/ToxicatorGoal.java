@@ -2,12 +2,15 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxentities.api.entity.mob.goal.LocationTargetMobGoal;
+import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import org.bukkit.Location;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -21,8 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, LocationTargetMobGoal {
+public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, PathTargetMobGoal, OutpostTargeterGoal {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
+    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1.1D);
     public ToxicatorGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -48,7 +52,6 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, Locat
         });
     }
 
-    protected Location locationTarget;
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
@@ -66,19 +69,36 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, Locat
 
     @Override
     protected boolean findAndSetTarget(@Nullable Predicate<Entity> targetCheck) {
-        if(locationTarget != null){
+        if(hasPath() && !isWithinTargetedOutpost()){
             return false;
         }
         return super.findAndSetTarget(targetCheck);
+    }
+
+    public boolean isWithinTargetedOutpost(){
+        if(targetOutpost == null) return false;
+        return targetOutpost.getOrDefault(StoredStructureComponents.OUTER_BOX, targetOutpost.getBoundingBox()).contains(mob.getLocation().toVector());
+    }
+
+    @Override
+    public @Nullable GoalPath getPath() {
+        return pathTarget.getPath();
+    }
+
+    @Override
+    public void setPath(@Nullable GoalPath goalPath) {
+        pathTarget.setPath(goalPath);
     }
 
     @Override
     public void tick() {
         swimmer.tick();
         super.tick();
-        if(locationTarget != null && target == null){
+
+        if(target == null) pathTarget.tick();
+        /*if(locationTarget != null && target == null){
             moveTo(locationTarget, 1.1D);
-        }
+        }*/
     }
 
     @Override
@@ -93,17 +113,16 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, Locat
         playAnimation(attackID, true);
     }
 
-    @Nullable
+    protected StoredStructure targetOutpost;
     @Override
-    public Location getTargetLocation() {
-        return locationTarget;
+    public StoredStructure getOutpostTarget() {
+        return targetOutpost;
     }
 
     @Override
-    public void setTargetLocation(@Nullable Location location) {
-        this.locationTarget = location;
+    public void setOutpostTarget(StoredStructure structure) {
+        this.targetOutpost = structure;
     }
-
 
     /*@Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {

@@ -15,7 +15,6 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,9 +110,9 @@ public class ActiveAbyssOutpost implements ManagedTicked {
                 };
 
                 events.addWorldEvent(new OutpostInvasionEvent(
-                    world, active.getData(), spawnGroup, 3
+                    world, active.getData(), spawnGroup, 3,
+                    CruxMath.random(3000, 4200) //2.5 min - 3.5 min
                 ));
-                Bukkit.broadcastMessage("EVENT= " + active.getPosition());
             }
         }
         /*World world = active.getChunk().getWorld();

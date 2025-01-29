@@ -63,6 +63,7 @@ public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolde
             ))
     ))*/){};
     public final CommonValue<String> ABYSS_OUTPOST_UPGRADE_REGENERATION_RANGE = new CommonValue<>("16.5 * <level>"){};
+    public final NumCfgValue ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN = new NumCfgValue(NumberProvider.constant(1800));
 
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
@@ -92,6 +93,12 @@ public class Config extends Cfg implements ValuesProvider, AbyssOutpostLootHolde
     @Override
     public NumberProvider ABYSS_NATURAL_HEALING_MULTIPLIER() {
         return ABYSS_NATURAL_HEALING_MULTIPLIER.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN() {
+        return ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN.value();
     }
 
     @Override

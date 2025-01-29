@@ -2,13 +2,16 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
-import killercreepr.cruxentities.api.entity.mob.goal.LocationTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import org.bukkit.Location;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -25,8 +28,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-public class ScourgerGoal extends CruxMobModeledGoal implements Listener, LocationTargetMobGoal {
+public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTargetMobGoal, OutpostTargeterGoal {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
+    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1.1D);
     public ScourgerGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -51,7 +55,6 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, Locati
             }
         });
     }
-    protected Location locationTarget;
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
@@ -113,9 +116,14 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, Locati
         }
     };
 
+    public boolean isWithinTargetedOutpost(){
+        if(targetOutpost == null) return false;
+        return targetOutpost.getOrDefault(StoredStructureComponents.OUTER_BOX, targetOutpost.getBoundingBox()).contains(mob.getLocation().toVector());
+    }
+
     @Override
     protected boolean findAndSetTarget(@Nullable Predicate<Entity> targetCheck) {
-        if(locationTarget != null){
+        if(hasPath() && !isWithinTargetedOutpost()){
             return false;
         }
         return super.findAndSetTarget(targetCheck);
@@ -126,13 +134,22 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, Locati
     protected long lastShotSpell;
     protected int spellCooldown;
     protected int preparingSpellTick = 0;
+
+    @Override
+    public @Nullable GoalPath getPath() {
+        return pathTarget.getPath();
+    }
+
+    @Override
+    public void setPath(@Nullable GoalPath goalPath) {
+        pathTarget.setPath(goalPath);
+    }
+
     @Override
     public void tick() {
         swimmer.tick();
         super.tick();
-        if(locationTarget != null && target == null){
-            moveTo(locationTarget, 1.1D);
-        }
+        if(target == null) pathTarget.tick();
         if(mob.getTarget() == null) return;
         if(currentPrepareSpell == -1){
             noPrepareSpellTick();
@@ -188,14 +205,15 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, Locati
         playAnimation(attackID, true);
     }
 
+    protected StoredStructure targetOutpost;
     @Override
-    public @Nullable Location getTargetLocation() {
-        return locationTarget;
+    public StoredStructure getOutpostTarget() {
+        return targetOutpost;
     }
 
     @Override
-    public void setTargetLocation(@Nullable Location location) {
-        this.locationTarget = location;
+    public void setOutpostTarget(StoredStructure structure) {
+        this.targetOutpost = structure;
     }
 
     private static class Spell{

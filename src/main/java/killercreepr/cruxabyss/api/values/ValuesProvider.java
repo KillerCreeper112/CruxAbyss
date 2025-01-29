@@ -40,4 +40,5 @@ public interface ValuesProvider extends Reloadable {
     @NotNull NumberProvider ANIMAL_DEATH_RANGE();
     @NotNull Holder<Collection<PotionEffect>> ANIMAL_DEATH_EFFECTS_NEARBY();
     @NotNull NumberProvider ABYSS_NATURAL_HEALING_MULTIPLIER();
+    @NotNull NumberProvider ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN();
 }

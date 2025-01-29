@@ -21,6 +21,7 @@ public class WorldEventsModule extends SimpleWorldModule implements Ticked {
 
     public void addWorldEvent(@NotNull WorldEvent event){
         events.add(event);
+        event.started();
     }
 
     public void removeWorldEvent(@NotNull WorldEvent event){
@@ -30,7 +31,10 @@ public class WorldEventsModule extends SimpleWorldModule implements Ticked {
     @Override
     public void tick() {
         events.removeIf(event ->{
-            if(event.shouldStop()) return true;
+            if(event.shouldStop()){
+                event.stopped();
+                return true;
+            }
             event.tick();
             return false;
         });

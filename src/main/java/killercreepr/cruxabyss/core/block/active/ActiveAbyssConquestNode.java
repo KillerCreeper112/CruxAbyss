@@ -10,6 +10,8 @@ import killercreepr.crux.core.util.CruxColor;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
+import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.lang.Lang;
@@ -403,6 +405,14 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
             CreateSound.sound(Sound.BLOCK_CHEST_LOCKED, 1.5f).playFor(p);
             return Event.Result.DENY;
         }
+
+        ValuesProvider cfg = CruxAbyss.inst().values();
+        if(outpost().getData().wasInvadedWithin(cfg.ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN().value().intValue())){
+            long invadeTime = outpost().getData().timeInvaded - System.currentTimeMillis();
+            Lang.ABYSS_CONQUEST_NODE_CANNOT_CAPTURE_FROM_INVADE.use(p, TagContainer.merged(Tag.parsed("invade_time", invadeTime + "")));
+            return Event.Result.DENY;
+        }
+
         if(!p.isSneaking()){
             if(p.getUniqueId().equals(outpost().getData().owner)){
                 CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("abyss/outpost/main"))

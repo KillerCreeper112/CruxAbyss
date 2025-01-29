@@ -83,6 +83,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ABYSS_CONQUEST_NODE_CANNOT_CAPTURE_FROM_INVADE = create(
+        Communicator.builder()
+            .chat("<red>This outpost was invaded <duration:<invade_time>> ago and cannot be interacted with right now.")
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }
