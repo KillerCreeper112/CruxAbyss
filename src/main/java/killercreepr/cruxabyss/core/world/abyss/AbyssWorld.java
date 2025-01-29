@@ -14,6 +14,7 @@ import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.core.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
+import killercreepr.cruxabyss.core.world.module.WorldEventsModule;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
@@ -63,6 +64,9 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public AbyssWorld(@NotNull World world, @NotNull Random random, @NotNull Collection<CruxWorldModuleCreator> modules) {
         super(world, random, modules);
         entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner());
+        WorldEventsModule module = new WorldEventsModule(this);
+        this.modules.add(module);
+        this.tickedModules.add(module);
     }
 
     protected int wave = 1;

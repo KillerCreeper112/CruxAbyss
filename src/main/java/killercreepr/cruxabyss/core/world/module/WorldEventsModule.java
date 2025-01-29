@@ -9,10 +9,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class WorldEventsComponent extends SimpleWorldModule implements Ticked {
+public class WorldEventsModule extends SimpleWorldModule implements Ticked {
     protected final @NotNull Collection<WorldEvent> events = new HashSet<>();
-    public WorldEventsComponent(@NotNull CruxWorld parent) {
+    public WorldEventsModule(@NotNull CruxWorld parent) {
         super(parent);
+    }
+
+    public boolean hasWorldEventOfType(Class<? extends WorldEvent> clazz){
+        return events.stream().anyMatch(event -> clazz.isAssignableFrom(event.getClass()));
     }
 
     public void addWorldEvent(@NotNull WorldEvent event){

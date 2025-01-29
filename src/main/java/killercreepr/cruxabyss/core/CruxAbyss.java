@@ -35,6 +35,7 @@ import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
+import killercreepr.cruxabyss.core.world.module.WorldEventsModule;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
@@ -61,7 +62,10 @@ import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructu
 import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
 import killercreepr.cruxstructures.core.structure.generation.InstantLocationSetListStructureGen;
 import killercreepr.cruxstructures.core.structure.generation.LocationSetListStructureGen;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
+import killercreepr.cruxworlds.api.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -164,6 +168,12 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
         worldManager.getWorldTypeRegistry().register(AbyssWorldTypes.ABYSS);
+        worldManager.getModuleCreatorRegistry().register("world", new CruxWorldModuleCreator() {
+            @Override
+            public @NotNull WorldModule create(@NotNull CruxWorld cruxWorld) {
+                return new WorldEventsModule(cruxWorld);
+            }
+        });
 
         CruxMenusModule menus = CruxCore.core().cruxMenus();
         menus.menuRegistry().menuActions().register(new AbyssOutpostUpgradeAction(Crux.key("abyss_outpost_upgrade")));

@@ -2,11 +2,14 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxentities.api.entity.mob.goal.LocationTargetMobGoal;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
@@ -14,8 +17,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
+import java.util.function.Predicate;
+
+public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, LocationTargetMobGoal {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     public ToxicatorGoal(@NotNull Mob mob) {
         super(mob);
@@ -42,6 +48,7 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
         });
     }
 
+    protected Location locationTarget;
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
@@ -58,9 +65,20 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
     }
 
     @Override
+    protected boolean findAndSetTarget(@Nullable Predicate<Entity> targetCheck) {
+        if(locationTarget != null){
+            return false;
+        }
+        return super.findAndSetTarget(targetCheck);
+    }
+
+    @Override
     public void tick() {
         swimmer.tick();
         super.tick();
+        if(locationTarget != null && target == null){
+            moveTo(locationTarget, 1.1D);
+        }
     }
 
     @Override
@@ -73,6 +91,17 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener {
         if(!event.getDamager().equals(mob)) return;
         String attackID = "attack_" + CruxMath.random(1, 3);
         playAnimation(attackID, true);
+    }
+
+    @Nullable
+    @Override
+    public Location getTargetLocation() {
+        return locationTarget;
+    }
+
+    @Override
+    public void setTargetLocation(@Nullable Location location) {
+        this.locationTarget = location;
     }
 
 

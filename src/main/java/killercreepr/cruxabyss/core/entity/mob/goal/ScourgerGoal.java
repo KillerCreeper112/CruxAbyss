@@ -3,11 +3,14 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxentities.api.entity.mob.goal.LocationTargetMobGoal;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Projectile;
@@ -18,8 +21,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
+import java.util.function.Predicate;
+
+public class ScourgerGoal extends CruxMobModeledGoal implements Listener, LocationTargetMobGoal {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     public ScourgerGoal(@NotNull Mob mob) {
         super(mob);
@@ -45,6 +51,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
             }
         });
     }
+    protected Location locationTarget;
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
@@ -105,6 +112,15 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
             }
         }
     };
+
+    @Override
+    protected boolean findAndSetTarget(@Nullable Predicate<Entity> targetCheck) {
+        if(locationTarget != null){
+            return false;
+        }
+        return super.findAndSetTarget(targetCheck);
+    }
+
     protected int currentPrepareSpell = -1;
 
     protected long lastShotSpell;
@@ -114,6 +130,9 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
     public void tick() {
         swimmer.tick();
         super.tick();
+        if(locationTarget != null && target == null){
+            moveTo(locationTarget, 1.1D);
+        }
         if(mob.getTarget() == null) return;
         if(currentPrepareSpell == -1){
             noPrepareSpellTick();
@@ -167,6 +186,16 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener {
         if(!event.getDamager().equals(mob)) return;
         String attackID = "attack_" + CruxMath.random(1, 3);
         playAnimation(attackID, true);
+    }
+
+    @Override
+    public @Nullable Location getTargetLocation() {
+        return locationTarget;
+    }
+
+    @Override
+    public void setTargetLocation(@Nullable Location location) {
+        this.locationTarget = location;
     }
 
     private static class Spell{

@@ -22,5 +22,4 @@ public class ObjectiveListener implements Listener {
             objective.trigger(p.getUniqueId(), manager, advancement, event);
         });
     }
-
 }

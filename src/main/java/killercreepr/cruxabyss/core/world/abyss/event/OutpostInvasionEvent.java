@@ -1,53 +1,109 @@
 package killercreepr.cruxabyss.core.world.abyss.event;
 
+import com.destroystokyo.paper.entity.ai.Goal;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.core.block.active.ActiveAbyssConquestNode;
+import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
+import killercreepr.cruxblocks.core.component.PlacedCustomBlocksComponent;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.api.entity.mob.goal.LocationTargetMobGoal;
+import killercreepr.cruxentities.entity.mob.goal.CruxGoalBase;
+import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
+import killercreepr.cruxworlds.api.world.entity.SpawnContext;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.util.BoundingBox;
 
+import java.lang.ref.Reference;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.logging.Level;
 
 public class OutpostInvasionEvent implements WorldEvent {
     protected final CruxWorld world;
     protected final StoredStructure targetStructure;
     protected final StructureWorldModule structures;
+    protected final NaturalEntitySpawnGroup spawns;
     protected final int maxWave;
     protected int currentWave;
 
-    public OutpostInvasionEvent(CruxWorld world, StoredStructure targetStructure, int maxWave) {
+    protected final Collection<Reference<Entity>> spawnedEntities = new HashSet<>();
+    protected long lastSpawnedWave;
+
+    public OutpostInvasionEvent(CruxWorld world, StoredStructure targetStructure, NaturalEntitySpawnGroup spawns, int maxWave) {
         this.world = world;
         this.structures = world.getModule(StructureWorldModule.class);
         this.targetStructure = targetStructure;
+        this.spawns = spawns;
         this.maxWave = maxWave;
     }
 
+    public Collection<Reference<Entity>> updateSpawnedEntities(){
+        spawnedEntities.removeIf(d -> d.get() == null);
+        return spawnedEntities;
+    }
+
+    public Collection<Entity> getSpawnedEntities(){
+        Collection<Entity> list = new HashSet<>();
+        spawnedEntities.forEach(e -> {
+            Entity entity = e.get();
+            if(entity != null) list.add(entity);
+        });
+        return list;
+    }
+
+    protected int tick = 0;
     @Override
     public void tick(){
+        tick++;
+        if(tick % 20 != 0) return;
 
+        updateSpawnedEntities();
+        if(shouldNextWave()){
+            nextWave();
+        }
     }
 
     @Override
     public boolean shouldStop() {
-        return false;
+        return currentWave >= maxWave;
+    }
+
+    public boolean shouldNextWave(){
+        if(currentWave == 0) return true;
+        if(spawnedEntities.isEmpty()) return true;
+        return !CruxMath.hasOccurredWithin(lastSpawnedWave, 3600);
     }
 
     public void nextWave(){
         currentWave++;
-        spawnWave(currentWave);
+        lastSpawnedWave = System.currentTimeMillis();
+        Crux.scheduler().runTask(() -> spawnWave(currentWave));
     }
 
     public void spawnWave(int wave){
-
+        spawnEntities(
+            3, 2, 5,
+            16D, 32D
+        );
     }
 
     public boolean isValidGround(Block b){
@@ -56,13 +112,11 @@ public class OutpostInvasionEvent implements WorldEvent {
 
     public Block findGround(Block b){
         if(isValidGround(b)) return b;
-        for(int y = 1; y <= 3; y++){
+        int range = 32;
+        for(int y = 1; y <= range; y++){
             Block check = b.getRelative(0, y, 0);
             if(isValidGround(check)) return check;
-        }
-
-        for(int y = 1; y <= 3; y++){
-            Block check = b.getRelative(0, -y, 0);
+            check = b.getRelative(0, -y, 0);
             if(isValidGround(check)) return check;
         }
         return null;
@@ -78,7 +132,7 @@ public class OutpostInvasionEvent implements WorldEvent {
         return true;
     }
 
-    public boolean isValidGroupSpawn(Block b){
+    /*public boolean isValidGroupSpawn(Block b){
         int range = 1;
         int amountChecked = 0;
         for(int x = -range; x <= range; x++){
@@ -90,10 +144,10 @@ public class OutpostInvasionEvent implements WorldEvent {
             }
         }
         return amountChecked > 3;
-    }
+    }*/
 
-    public Block findGroupSpawn(Block b){
-        if(isValidGroupSpawn(b)) return b;
+    public Block findSpawn(Block b){
+        if(isValidSpawn(b)) return b;
         int range = 1;
         for(int x = -range; x <= range; x++){
             for(int z = -range; z <= range; z++){
@@ -106,23 +160,26 @@ public class OutpostInvasionEvent implements WorldEvent {
         return null;
     }
 
-    public Block findSpawn(Block b){
-        if(isValidSpawn(b)) return b;
-        for(int y = 1; y <= 5; y++){
-            Block check = b.getRelative(0, y, 0);
-            if(isValidSpawn(check)) return check;
-        }
-        return null;
-    }
-
     public Location findNearbySpawn(Location center, double range){
         Location check = center.clone().add(
             CruxMath.random(-range, range), 0, CruxMath.random(-range, range)
         );
         Block ground = findGround(check.getBlock());
         if(ground == null) return center;
-        if(isValidSpawn(ground)) return check;
-        return center;
+        return ground.getLocation().toCenterLocation().subtract(0, .3, 0);
+    }
+
+    public Location findSpawn(BoundingBox box, double y, double minSpawnDistance, double maxSpawnDistance,
+                              int maxAttempts){
+        while(maxAttempts > 0){
+            maxAttempts--;
+            Location spawn = findRandomSpawnPoint(box, minSpawnDistance, maxSpawnDistance);
+            spawn.setY(y);
+            Block b = findSpawn(spawn.getBlock());
+            if(b == null) continue;
+            return b.getLocation().toCenterLocation().subtract(0, .3, 0);
+        }
+        return null;
     }
 
     public Collection<Entity> spawnEntities(
@@ -131,19 +188,32 @@ public class OutpostInvasionEvent implements WorldEvent {
     ){
         Collection<Entity> list = new HashSet<>();
         BoundingBox box = getTargetStructureBox();
+        Location targetLoc = getTargetLocationFromStructure();
+        if(targetLoc == null){
+            Crux.log(Level.SEVERE, "No node is found on structure! " + targetStructure.getPosition() + ", " + targetStructure.getChunk());
+            return list;
+        }
+
         while(groupAmount > 0){
             groupAmount--;
-            Location spawn = findRandomSpawnPoint(
-                box, minSpawnDistance, maxSpawnDistance
+            Location spawn = findSpawn(
+                box, targetStructure.getPosition().y(), minSpawnDistance, maxSpawnDistance, 8
             );
-            Block b = findGroupSpawn(spawn.getBlock());
-            if(b == null) continue;
-            spawn = b.getLocation().toCenterLocation().subtract(0, .3, 0);
+            if(spawn == null) continue;
             int amount = CruxMath.random(minAmount, maxAmount);
+
             while(amount > 0){
                 amount--;
                 Location mobSpawn = findNearbySpawn(spawn, 3);
-                AbyssMob.TOXICATOR.spawn(mobSpawn);
+                SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
+                spawns.selectRandom(1,ctx).forEach(e ->{
+                    if(!(e.spawn(ctx) instanceof Mob mob)) return;
+                    if(!(CruxGoalUtil.getGoal(mob, Goal.class, CruxGoalBase.defaultKey()) instanceof LocationTargetMobGoal goal)){
+                        Crux.log(Level.SEVERE, "Goal from " + mob.getName() + " is not a LocationTargetMobGoal!");
+                        return;
+                    }
+                    goal.setTargetLocation(targetLoc);
+                });
             }
         }
         return list;
@@ -157,60 +227,51 @@ public class OutpostInvasionEvent implements WorldEvent {
         return targetStructure.getOrDefault(StoredStructureComponents.OUTER_BOX, targetStructure.getBoundingBox());
     }
 
+    public Location getTargetLocationFromStructure(){
+        PlacedCustomBlocksComponent placed = targetStructure.get(CruxBlockComponents.PLACED_CUSTOM_BLOCKS);
+        World world = targetStructure.getChunk().toBukkitWorld();
+        for (CruxPosition pos : placed.getPlacedBlocks()) {
+            Block block = pos.getBlock(world);
+            ActiveCruxBlock active = CruxCore.core().cruxBlocks().getActiveBlock(block);
+            if(!(active instanceof ActiveAbyssConquestNode node)) continue;
+            return block.getLocation().toCenterLocation();
+        }
+
+        return null;
+    }
+
     public Location findRandomSpawnPoint(BoundingBox box, double minDistance, double maxDistance){
         double minX = box.getMinX();
         double maxX = box.getMaxX();
-        double minY = box.getMinY();
-        double maxY = box.getMaxY();
         double minZ = box.getMinZ();
         double maxZ = box.getMaxZ();
 
-        // Randomly choose a side to spawn outside the box (0 = North, 1 = South, 2 = East, 3 = West, 4 = Top, 5 = Bottom)
         Random rand = CruxMath.random();
-        int side = rand.nextInt(4);//rand.nextInt(6);
+        int side = rand.nextInt(4); // 0 = North, 1 = South, 2 = East, 3 = West
 
-        // Random distance within the specified range
         double distance = CruxMath.random(minDistance, maxDistance);
+        double spawnX, spawnZ;
 
-        double spawnX = 0;
-        double spawnY = 0;
-        double spawnZ = 0;
+        spawnZ = switch (side) {
+            case 0 -> {
+                spawnX = minX + (maxX - minX) * rand.nextDouble(); // Random X within box width
+                yield maxZ + distance;
+            }
+            case 1 -> {
+                spawnX = minX + (maxX - minX) * rand.nextDouble(); // Random X within box width
+                yield minZ - distance;
+            }
+            case 2 -> {
+                spawnX = maxX + distance; // Place outside, east of the box
+                yield minZ + (maxZ - minZ) * rand.nextDouble();
+            }
+            case 3 -> {
+                spawnX = minX - distance; // Place outside, west of the box
+                yield minZ + (maxZ - minZ) * rand.nextDouble();
+            }
+            default -> throw new IllegalStateException("Unexpected side value: " + side);
+        };
 
-        // Handle each side of the bounding box
-        switch (side) {
-            case 0: // North side (y is greater than maxY)
-                spawnX = minX + (maxX - minX) * rand.nextDouble(); // Random X within box width
-                spawnY = maxY + distance; // Place outside, above the box
-                spawnZ = minZ + (maxZ - minZ) * rand.nextDouble(); // Random Z within box depth
-                break;
-            case 1: // South side (y is less than minY)
-                spawnX = minX + (maxX - minX) * rand.nextDouble(); // Random X within box width
-                spawnY = minY - distance; // Place outside, below the box
-                spawnZ = minZ + (maxZ - minZ) * rand.nextDouble(); // Random Z within box depth
-                break;
-            case 2: // East side (x is greater than maxX)
-                spawnY = minY + (maxY - minY) * rand.nextDouble(); // Random Y within box height
-                spawnZ = minZ + (maxZ - minZ) * rand.nextDouble(); // Random Z within box depth
-                spawnX = maxX + distance; // Place outside, right of the box
-                break;
-            case 3: // West side (x is less than minX)
-                spawnY = minY + (maxY - minY) * rand.nextDouble(); // Random Y within box height
-                spawnZ = minZ + (maxZ - minZ) * rand.nextDouble(); // Random Z within box depth
-                spawnX = minX - distance; // Place outside, left of the box
-                break;
-            case 4: // Top side (z is greater than maxZ)
-                spawnX = minX + (maxX - minX) * rand.nextDouble(); // Random X within box width
-                spawnY = minY + (maxY - minY) * rand.nextDouble(); // Random Y within box height
-                spawnZ = maxZ + distance; // Place outside, above the box
-                break;
-            case 5: // Bottom side (z is less than minZ)
-                spawnX = minX + (maxX - minX) * rand.nextDouble(); // Random X within box width
-                spawnY = minY + (maxY - minY) * rand.nextDouble(); // Random Y within box height
-                spawnZ = minZ - distance; // Place outside, below the box
-                break;
-        }
-
-        // Return the location object in the same world as the bounding box
-        return new Location(world.toBukkitWorld(), spawnX, spawnY, spawnZ);
+        return new Location(world.toBukkitWorld(), spawnX, 64D, spawnZ);
     }
 }
