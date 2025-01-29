@@ -51,6 +51,11 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         data.timeCaptured = System.currentTimeMillis();
     }
 
+    public void invasion(){
+        resetOwner();
+        data.timeInvaded = System.currentTimeMillis();
+    }
+
     @Override
     public void started() {
         ManagedTicked.super.started();
@@ -94,8 +99,13 @@ public class ActiveAbyssOutpost implements ManagedTicked {
                             return true;
                         }
                     },
-
                     new NaturalCruxMobSpawn(6, 0f, AbyssMob.SCOURGER) {
+                        @Override
+                        public boolean canSpawn(@NotNull SpawnContext spawnContext) {
+                            return true;
+                        }
+                    },
+                    new NaturalCruxMobSpawn(3, 0f, AbyssMob.PLAGUEWING_MOUNT_SCOURGER) {
                         @Override
                         public boolean canSpawn(@NotNull SpawnContext spawnContext) {
                             return true;

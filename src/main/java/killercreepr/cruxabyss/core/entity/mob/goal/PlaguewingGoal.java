@@ -6,14 +6,20 @@ import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
+import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Snowball;
@@ -26,7 +32,10 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
+import java.util.function.Predicate;
+
+public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, PathTargetMobGoal, OutpostTargeterGoal {
+    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1.1D);
     public PlaguewingGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -50,6 +59,39 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
                 return CreateSound.sound(Sound.ENTITY_SPIDER_DEATH, .6f);
             }
         });
+    }
+
+    public boolean isWithinTargetedOutpost(){
+        if(targetOutpost == null) return false;
+        return targetOutpost.getOrDefault(StoredStructureComponents.OUTER_BOX, targetOutpost.getBoundingBox()).contains(mob.getLocation().toVector());
+    }
+
+    @Override
+    protected boolean findAndSetTarget(@Nullable Predicate<Entity> targetCheck) {
+        if(hasPath() && !isWithinTargetedOutpost()){
+            return false;
+        }
+        return super.findAndSetTarget(targetCheck);
+    }
+    protected StoredStructure targetOutpost;
+    @Override
+    public StoredStructure getOutpostTarget() {
+        return targetOutpost;
+    }
+
+    @Override
+    public void setOutpostTarget(StoredStructure structure) {
+        this.targetOutpost = structure;
+    }
+
+    @Override
+    public @Nullable GoalPath getPath() {
+        return pathTarget.getPath();
+    }
+
+    @Override
+    public void setPath(@Nullable GoalPath goalPath) {
+        pathTarget.setPath(goalPath);
     }
 
     protected Location locationTarget;
@@ -113,6 +155,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener {
             return;
         }
         super.tick();
+        if(target == null) pathTarget.tick();
     }
 
     protected long lastHitTarget;

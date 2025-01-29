@@ -11,17 +11,23 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxedBoundingBox;
+import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
+import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
@@ -30,11 +36,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener {
+public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, PathTargetMobGoal, OutpostTargeterGoal {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
+    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1.1D);
     public PlagueTyrantGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -69,7 +78,38 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener {
             }
         }
     }
+    public boolean isWithinTargetedOutpost(){
+        if(targetOutpost == null) return false;
+        return targetOutpost.getOrDefault(StoredStructureComponents.OUTER_BOX, targetOutpost.getBoundingBox()).contains(mob.getLocation().toVector());
+    }
 
+    @Override
+    protected boolean findAndSetTarget(@Nullable Predicate<Entity> targetCheck) {
+        if(hasPath() && !isWithinTargetedOutpost()){
+            return false;
+        }
+        return super.findAndSetTarget(targetCheck);
+    }
+    protected StoredStructure targetOutpost;
+    @Override
+    public StoredStructure getOutpostTarget() {
+        return targetOutpost;
+    }
+
+    @Override
+    public void setOutpostTarget(StoredStructure structure) {
+        this.targetOutpost = structure;
+    }
+
+    @Override
+    public @Nullable GoalPath getPath() {
+        return pathTarget.getPath();
+    }
+
+    @Override
+    public void setPath(@Nullable GoalPath goalPath) {
+        pathTarget.setPath(goalPath);
+    }
 
     protected int attackTime = -1;
     protected int attackSwingCooldown = CruxMath.random(60, 100);
@@ -161,6 +201,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener {
 
         super.tick();
         if(target != null) targetTick();
+        else pathTarget.tick();
         attackTick();
 
         if(isPlayingAnimation("attack_swing")){

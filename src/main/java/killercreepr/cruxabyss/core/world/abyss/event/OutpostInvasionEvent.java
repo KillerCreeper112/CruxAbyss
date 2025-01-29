@@ -182,8 +182,17 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         }
         ActiveStructure active = getActive();
         ActiveAbyssOutpost outpost = active.get(AbyssComponents.ACTIVE_ABYSS_OUTPOST);
-        outpost.resetOwner();
+        outpost.invasion();
         node.update();
+
+        getSpawnedEntities().forEach(e ->{
+            if(!(e instanceof Mob mob)) return;
+            if(!(CruxGoalUtil.getGoal(mob, Goal.class, CruxGoalBase.defaultKey()) instanceof PathTargetMobGoal goal)){
+                return;
+            }
+            goal.setPath(null);
+            if(goal instanceof OutpostTargeterGoal g) g.setOutpostTarget(null);
+        });
     }
 
     public final Runnable normalTick;

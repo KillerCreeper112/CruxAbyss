@@ -31,6 +31,9 @@ public interface AbyssMob extends CruxMob {
     CruxMob EMBER_LEAPER = REGISTRY.register(new EmberLeaper());
     CruxMob TOXINTRAWL = REGISTRY.register(new Toxintrawl());
 
+    CruxMob PLAGUEWING_MOUNT_SCOURGER = REGISTRY.register(new PlaguewingMounted(Crux.key("plaguewing/mount/scourger"), SCOURGER));
+    CruxMob PLAGUEWING_MOUNT_TOXICATOR = REGISTRY.register(new PlaguewingMounted(Crux.key("plaguewing/mount/toxicator"), TOXICATOR));
+
     CruxMob VILDER = REGISTRY.register(new Vilder());
 
     CruxMob SCOURGER_BULLET = REGISTRY.register(new ScourgerBullet());

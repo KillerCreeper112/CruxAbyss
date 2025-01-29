@@ -90,12 +90,21 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, PathT
         pathTarget.setPath(goalPath);
     }
 
+    public void mountTick(){
+        if(mob.getVehicle() != null){
+            playAnimation("mounted", false);
+        }else if(isPlayingAnimation("mounted")){
+            stopAnimation("mounted");
+        }
+    }
+
     @Override
     public void tick() {
         swimmer.tick();
         super.tick();
 
         if(target == null) pathTarget.tick();
+        mountTick();
         /*if(locationTarget != null && target == null){
             moveTo(locationTarget, 1.1D);
         }*/

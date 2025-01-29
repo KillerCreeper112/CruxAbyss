@@ -145,10 +145,19 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
         pathTarget.setPath(goalPath);
     }
 
+    public void mountTick(){
+        if(mob.getVehicle() != null){
+            playAnimation("mounted", false);
+        }else if(isPlayingAnimation("mounted")){
+            stopAnimation("mounted");
+        }
+    }
+
     @Override
     public void tick() {
         swimmer.tick();
         super.tick();
+        mountTick();
         if(target == null) pathTarget.tick();
         if(mob.getTarget() == null) return;
         if(currentPrepareSpell == -1){
