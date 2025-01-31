@@ -291,7 +291,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     public void normalNonActiveTick(){
         attackingOutpost = true;
         captureTime = Math.min(
-            captureTime + CruxMath.random(1, 2), maxCaptureTime
+            captureTime + CruxMath.random(5, 30), maxCaptureTime
         );
 
         if(captureTime >= maxCaptureTime){
@@ -483,7 +483,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     @Override
     public boolean shouldStop() {
-        return forceStop || defeated || captured || currentWave >= maxWave && spawnedEntities.isEmpty();
+        return forceStop || defeated || captured || (currentWave >= maxWave && spawnedEntities.isEmpty());
     }
 
     public boolean shouldNextWave(){

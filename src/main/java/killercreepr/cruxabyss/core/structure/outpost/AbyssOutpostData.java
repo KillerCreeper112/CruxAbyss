@@ -145,7 +145,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         if(world == null) return;
         WorldEventsModule events = world.getModule(WorldEventsModule.class);
         if(events == null) return;
-        if(!events.hasApplicableWorldEvents(OutpostInvasionEvent.class, e -> e.getTargetStructure().equals(this))) return;
+        if(events.hasApplicableWorldEvents(OutpostInvasionEvent.class, e -> e.getTargetStructure().equals(stored))) return;
 
         NaturalEntitySpawnGroup spawnGroup = new SimpleNaturalEntitySpawnGroup(
             0, 0f, Set.of(
@@ -188,8 +188,11 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         tick++;
         if(tick < 200) return;
         tick = 0;
-        if(CruxMath.testChance(25)){
-            if(!wasInvadedWithin(1200)) attemptInvasion();
+
+        if(CruxMath.testChance(80)){
+            if(!wasInvadedWithin(1200)){
+                attemptInvasion();
+            }
         }
 
         storedUpgrades.values().removeIf(upgrade ->{

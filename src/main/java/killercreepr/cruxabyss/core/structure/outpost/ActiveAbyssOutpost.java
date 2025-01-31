@@ -4,23 +4,13 @@ import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
-import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
-import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
-import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
-import killercreepr.cruxworlds.api.world.CruxWorld;
-import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
-import killercreepr.cruxworlds.api.world.entity.SpawnContext;
-import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ActiveAbyssOutpost implements ManagedTicked {
