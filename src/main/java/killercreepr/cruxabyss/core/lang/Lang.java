@@ -6,7 +6,6 @@ import killercreepr.crux.api.communication.CreateTitle;
 import killercreepr.crux.api.communication.boss.CreateBossBar;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.core.communication.lang.Msg;
-import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,6 +120,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME = create(
+        Communicator.builder()
+            .chat("<gold>The invasion at <white><crux_pos_x></white>, <white><crux_pos_z></white> has failed to take over the outpost!")
+            .build()
+    );
+
     public static final Msg ABYSS_OUTPOST_INVASION_TICK = create(
         Communicator.builder()
             .bossBar(CreateBossBar.bossBar(
@@ -132,6 +137,12 @@ public class Lang {
                 "40",
                 null
             ))
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_INVASION_WAVE_SPAWNING = create(
+        Communicator.builder()
+            .chat("<gold><latinfont:Outpost invasion> <reset>Reinforcements incoming! <wave>/<max_wave>")
             .build()
     );
 

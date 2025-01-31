@@ -1,8 +1,6 @@
 package killercreepr.cruxabyss.core.world.abyss.event;
 
 import com.destroystokyo.paper.entity.ai.Goal;
-import killercreepr.crux.api.communication.Communicator;
-import killercreepr.crux.api.communication.boss.CreateBossBar;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
@@ -36,13 +34,13 @@ import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +48,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 
 import java.lang.ref.Reference;
@@ -59,6 +59,9 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 
 public class OutpostInvasionEvent implements WorldEvent, Listener {
+    public static final int MAX_EVENT_TIME = 9600;
+    public static final int MAX_EVENT_OVER_TIME = 18000;
+
     protected final CruxWorld world;
     protected final StoredStructure targetStructure;
     protected final StructureWorldModule structures;
@@ -255,7 +258,51 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         }
         Crux.scheduler().runTask(normalTick);
         tickPlayers();
+        tickEntities();
+
+        if(overTimeTick()){
+            onOverTime();
+        }
     }
+
+    protected boolean forceStop = false;
+    public void onOverTime(){
+        forceStop = true;
+        Player owner = getOnlineOwner();
+        MergedTagContainer tags = buildTags();
+        if(owner != null){
+            Lang.ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME.use(owner, tags);
+        }
+        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+            if(p.equals(owner)) return;
+            Lang.ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME.use(p, tags);
+        });
+    }
+
+    public boolean overTimeTick(){
+        if(currentWave == maxWave && !CruxMath.hasOccurredWithin(lastSpawnedWave, 1000)){
+            int check = (int) (totalEntitiesSpawnedThisWave * .2f);
+            if(spawnedEntities.size() <= check) return true;
+        }
+
+        if(isOutpostBeingAttacked()){
+            return !CruxMath.hasOccurredWithin(lastSpawnedWave, MAX_EVENT_OVER_TIME);
+        }
+        if(!CruxMath.hasOccurredWithin(lastSpawnedWave, MAX_EVENT_TIME)) return true;
+        return false;
+    }
+
+    public void tickEntities(){
+        int count = (int) (totalEntitiesSpawnedThisWave * .35f);
+        if(spawnedEntities.size() <= count){
+            getSpawnedEntities().forEach(e ->{
+                if(e instanceof LivingEntity le){
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0, false, false));
+                }
+            });
+        }
+    }
+
     protected boolean captured = false;
 
     public void onCaptured(){
@@ -319,13 +366,19 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public void tickPlayer(Player p){
-        MergedTagContainer tags = TagContainer.merged(
+        MergedTagContainer tags = buildTags();
+        Lang.ABYSS_OUTPOST_INVASION_TICK.use(p, tags);
+    }
+
+    public MergedTagContainer buildTags(){
+        return TagContainer.merged(
             Tag.string("spawned_entities", (args, ctx) -> spawnedEntities.size() + ""),
             Tag.string("total_spawned_entities", (args, ctx) -> (totalEntitiesSpawned == 0 ? 1 : totalEntitiesSpawned) + ""),
             Tag.string("capture_time", (args, ctx) -> captureTime + ""),
-            Tag.string("max_capture_time", (args, ctx) -> maxCaptureTime + "")
+            Tag.string("max_capture_time", (args, ctx) -> maxCaptureTime + ""),
+            Tag.string("wave", (args, ctx) -> currentWave + ""),
+            Tag.string("max_wave", (args, ctx) -> maxWave + "")
         );
-        Lang.ABYSS_OUTPOST_INVASION_TICK.use(p, tags);
     }
 
     public boolean hasBeenDefeated(){
@@ -336,20 +389,29 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     @Override
     public boolean shouldStop() {
-        return defeated || captured || currentWave >= maxWave && spawnedEntities.isEmpty();
+        return forceStop || defeated || captured || currentWave >= maxWave && spawnedEntities.isEmpty();
     }
 
     public boolean shouldNextWave(){
         if(currentWave >= maxWave) return false;
         if(currentWave == 0) return true;
         if(spawnedEntities.isEmpty()) return true;
-        return !CruxMath.hasOccurredWithin(lastSpawnedWave, 3600);
+        int count = (int) (totalEntitiesSpawnedThisWave * .35f);
+        if(spawnedEntities.size() <= count && !CruxMath.hasOccurredWithin(lastSpawnedWave, 600)) return true;
+        return !CruxMath.hasOccurredWithin(lastSpawnedWave, 1200);
     }
 
     public void nextWave(){
         currentWave++;
         lastSpawnedWave = System.currentTimeMillis();
-        Crux.scheduler().runTask(() -> spawnWave(currentWave));
+        MergedTagContainer tags = buildTags();
+        Crux.scheduler().runTask(() ->{
+            spawnWave(currentWave);
+            getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+                Lang.ABYSS_OUTPOST_INVASION_WAVE_SPAWNING.use(p, tags);
+            });
+        });
+
     }
 
     public void spawnWave(int wave){
@@ -460,7 +522,8 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     ){
         Collection<Entity> list = new HashSet<>();
         BoundingBox box = getTargetStructureBox();
-        CruxPosition pos = targetStructure.getPosition();/*getFinalTargetLocationFromStructure();
+        CruxPosition pos = targetStructure.getPosition().add(11, 0, 0)
+            .rotateAroundY(targetStructure.getPosition(), targetStructure.getRotation());/*getFinalTargetLocationFromStructure();
         if(targetLoc == null){
             Crux.log(Level.SEVERE, "No node is found on structure! " + targetStructure.getPosition() + ", " + targetStructure.getChunk());
             return list;
@@ -550,7 +613,49 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         return null;
     }
 
-    public Location findRandomSpawnPoint(BoundingBox box, double minDistance, double maxDistance){
+    public Location findRandomSpawnPoint(BoundingBox box, double minDistance, double maxDistance) {
+        double minX = box.getMinX();
+        double maxX = box.getMaxX();
+        double minZ = box.getMinZ();
+        double maxZ = box.getMaxZ();
+
+        // Define exclusion zones for corners
+        double centerExclusionFactor = 0.5; // Controls the size of the exclusion zone (e.g. 0.25 = 25% towards center)
+        double excludedMinX = minX + (maxX - minX) * centerExclusionFactor;
+        double excludedMaxX = maxX - (maxX - minX) * centerExclusionFactor;
+        double excludedMinZ = minZ + (maxZ - minZ) * centerExclusionFactor;
+        double excludedMaxZ = maxZ - (maxZ - minZ) * centerExclusionFactor;
+
+        Random rand = CruxMath.random();
+        int side = rand.nextInt(4); // 0 = North, 1 = South, 2 = East, 3 = West
+
+        double distance = CruxMath.random(minDistance, maxDistance);
+        double spawnX, spawnZ;
+
+        spawnZ = switch (side) {
+            case 0 -> { // North side
+                spawnX = excludedMinX + (excludedMaxX - excludedMinX) * rand.nextDouble(); // More towards the center part of the wall
+                yield maxZ + distance; // Outside the wall
+            }
+            case 1 -> { // South side
+                spawnX = excludedMinX + (excludedMaxX - excludedMinX) * rand.nextDouble(); // More towards the center part of the wall
+                yield minZ - distance; // Outside the wall
+            }
+            case 2 -> { // East side
+                spawnX = maxX + distance; // Outside the wall
+                yield excludedMinZ + (excludedMaxZ - excludedMinZ) * rand.nextDouble(); // More towards the center part of the wall
+            }
+            case 3 -> { // West side
+                spawnX = minX - distance; // Outside the wall
+                yield excludedMinZ + (excludedMaxZ - excludedMinZ) * rand.nextDouble(); // More towards the center part of the wall
+            }
+            default -> throw new IllegalStateException("Unexpected side value: " + side);
+        };
+
+        return new Location(world.toBukkitWorld(), spawnX, 64D, spawnZ);
+    }
+
+    /*public Location findRandomSpawnPoint(BoundingBox box, double minDistance, double maxDistance){
         double minX = box.getMinX();
         double maxX = box.getMaxX();
         double minZ = box.getMinZ();
@@ -583,7 +688,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         };
 
         return new Location(world.toBukkitWorld(), spawnX, 64D, spawnZ);
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {

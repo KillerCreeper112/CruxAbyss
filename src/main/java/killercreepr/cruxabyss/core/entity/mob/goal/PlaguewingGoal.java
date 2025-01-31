@@ -84,6 +84,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, Path
         this.targetOutpost = structure;
     }
 
+    protected GoalPath lastPath;
     @Override
     public @Nullable GoalPath getPath() {
         return pathTarget.getPath();
@@ -92,6 +93,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, Path
     @Override
     public void setPath(@Nullable GoalPath goalPath) {
         pathTarget.setPath(goalPath);
+        if(goalPath != null) lastPath = goalPath;
     }
 
     protected Location locationTarget;
@@ -125,6 +127,12 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, Path
         CreateSound.sound(Sound.ENTITY_LLAMA_SPIT, 1.5f).playAt(mob);
     }
 
+    public void structureTick(){
+        if(targetOutpost == null || lastPath == null || pathTarget.hasPath()) return;
+        if(isWithinTargetedOutpost()) return;
+        setPath(GoalPath.goalPath(lastPath.getNodes()));
+    }
+
     @Override
     public void tick() {
         if(spitAttackCooldown > 0){
@@ -155,6 +163,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, Path
             return;
         }
         super.tick();
+        structureTick();
         if(target == null) pathTarget.tick();
     }
 

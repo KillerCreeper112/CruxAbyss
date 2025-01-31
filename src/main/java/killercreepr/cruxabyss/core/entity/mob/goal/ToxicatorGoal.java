@@ -80,6 +80,7 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, PathT
         return targetOutpost.getOrDefault(StoredStructureComponents.OUTER_BOX, targetOutpost.getBoundingBox()).contains(mob.getLocation().toVector());
     }
 
+    protected GoalPath lastPath;
     @Override
     public @Nullable GoalPath getPath() {
         return pathTarget.getPath();
@@ -88,6 +89,12 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, PathT
     @Override
     public void setPath(@Nullable GoalPath goalPath) {
         pathTarget.setPath(goalPath);
+        if(goalPath != null) lastPath = goalPath;
+    }
+    public void structureTick(){
+        if(targetOutpost == null || lastPath == null || pathTarget.hasPath()) return;
+        if(isWithinTargetedOutpost()) return;
+        setPath(GoalPath.goalPath(lastPath.getNodes()));
     }
 
     public void mountTick(){
@@ -103,6 +110,7 @@ public class ToxicatorGoal extends CruxMobModeledGoal implements Listener, PathT
         swimmer.tick();
         super.tick();
 
+        structureTick();
         if(target == null) pathTarget.tick();
         mountTick();
         /*if(locationTarget != null && target == null){

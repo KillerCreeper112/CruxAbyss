@@ -101,6 +101,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         this.targetOutpost = structure;
     }
 
+    protected GoalPath lastPath;
     @Override
     public @Nullable GoalPath getPath() {
         return pathTarget.getPath();
@@ -109,6 +110,12 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
     @Override
     public void setPath(@Nullable GoalPath goalPath) {
         pathTarget.setPath(goalPath);
+        if(goalPath != null) lastPath = goalPath;
+    }
+    public void structureTick(){
+        if(targetOutpost == null || lastPath == null || pathTarget.hasPath()) return;
+        if(isWithinTargetedOutpost()) return;
+        setPath(GoalPath.goalPath(lastPath.getNodes()));
     }
 
     protected int attackTime = -1;
@@ -200,6 +207,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         }
 
         super.tick();
+        structureTick();
         if(target != null) targetTick();
         else pathTarget.tick();
         attackTick();

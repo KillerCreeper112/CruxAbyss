@@ -135,6 +135,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
     protected int spellCooldown;
     protected int preparingSpellTick = 0;
 
+    protected GoalPath lastPath;
     @Override
     public @Nullable GoalPath getPath() {
         return pathTarget.getPath();
@@ -143,6 +144,12 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
     @Override
     public void setPath(@Nullable GoalPath goalPath) {
         pathTarget.setPath(goalPath);
+        if(goalPath != null) lastPath = goalPath;
+    }
+    public void structureTick(){
+        if(targetOutpost == null || lastPath == null || pathTarget.hasPath()) return;
+        if(isWithinTargetedOutpost()) return;
+        setPath(GoalPath.goalPath(lastPath.getNodes()));
     }
 
     public void mountTick(){
@@ -158,6 +165,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
         swimmer.tick();
         super.tick();
         mountTick();
+        structureTick();
         if(target == null) pathTarget.tick();
         if(mob.getTarget() == null) return;
         if(currentPrepareSpell == -1){
