@@ -35,7 +35,7 @@ import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
-import killercreepr.cruxabyss.core.world.module.WorldEventsModule;
+import killercreepr.cruxabyss.core.world.module.SimpleWorldEventsModule;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
@@ -171,7 +171,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         worldManager.getModuleCreatorRegistry().register("world", new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld cruxWorld) {
-                return new WorldEventsModule(cruxWorld);
+                return new SimpleWorldEventsModule(cruxWorld);
             }
         });
 

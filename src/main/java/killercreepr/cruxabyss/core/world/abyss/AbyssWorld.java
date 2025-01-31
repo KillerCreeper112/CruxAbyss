@@ -5,6 +5,7 @@ import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -14,7 +15,7 @@ import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.core.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
-import killercreepr.cruxabyss.core.world.module.WorldEventsModule;
+import killercreepr.cruxabyss.core.world.module.SimpleWorldEventsModule;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
@@ -64,7 +65,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public AbyssWorld(@NotNull World world, @NotNull Random random, @NotNull Collection<CruxWorldModuleCreator> modules) {
         super(world, random, modules);
         entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner());
-        WorldEventsModule module = new WorldEventsModule(this);
+        WorldEventsModule module = new SimpleWorldEventsModule(this);
         this.modules.add(module);
         this.tickedModules.add(module);
     }

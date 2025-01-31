@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.core.world.module;
 
-import killercreepr.crux.api.data.tick.Ticked;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
+import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
 import org.jetbrains.annotations.NotNull;
@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class WorldEventsModule extends SimpleWorldModule implements Ticked {
+public class SimpleWorldEventsModule extends SimpleWorldModule implements WorldEventsModule {
     protected final @NotNull Collection<WorldEvent> events = new HashSet<>();
-    public WorldEventsModule(@NotNull CruxWorld parent) {
+    public SimpleWorldEventsModule(@NotNull CruxWorld parent) {
         super(parent);
     }
 
@@ -26,6 +26,11 @@ public class WorldEventsModule extends SimpleWorldModule implements Ticked {
 
     public void removeWorldEvent(@NotNull WorldEvent event){
         events.remove(event);
+    }
+
+    @Override
+    public Collection<WorldEvent> getWorldEvents() {
+        return events;
     }
 
     @Override

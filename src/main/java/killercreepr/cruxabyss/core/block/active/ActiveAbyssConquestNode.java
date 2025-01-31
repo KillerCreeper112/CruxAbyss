@@ -11,11 +11,13 @@ import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxInteractable;
@@ -25,6 +27,7 @@ import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.data.CustomBlockData;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -377,6 +380,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         return user.get() != null;
     }
     private ActiveAbyssOutpost outpost;
+    private StoredStructure structure;
     protected long lastCheckedOutpost;
     public ActiveAbyssOutpost outpost(){
         if(outpost == null){
@@ -386,12 +390,23 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
             ActiveStructure structure = module.getFirstActiveAt(ActiveStructure.class, block,
                 check -> check.has(AbyssComponents.ACTIVE_ABYSS_OUTPOST));
             outpost = structure == null ? null : structure.get(AbyssComponents.ACTIVE_ABYSS_OUTPOST);
+            this.structure = structure == null ? null : structure.getData();
             lastCheckedOutpost = System.currentTimeMillis();
             visualFireworks = new ConquestFireworks(this, outpost);
             messenger = new ConquestMessenger(this, outpost);
         }
         return outpost;
     }
+
+    public boolean isBeingInvaded(){
+        outpost();
+        if(structure == null) return false;
+        WorldEventsModule module = CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
+            .getModule(WorldEventsModule.class);
+        if(module == null) return false;
+        return !module.getApplicableWorldEvents(OutpostInvasionEvent.class, e -> e.getTargetStructure().equals(structure)).isEmpty();
+    }
+
     @NotNull
     @Override
     public Event.Result interact(@NotNull PlayerInteractEvent event) {
@@ -410,6 +425,10 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         if(outpost().getData().wasInvadedWithin(cfg.ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN().value().intValue())){
             long invadeTime = outpost().getData().timeInvaded - System.currentTimeMillis();
             Lang.ABYSS_CONQUEST_NODE_CANNOT_CAPTURE_FROM_INVADE.use(p, TagContainer.merged(Tag.parsed("invade_time", invadeTime + "")));
+            return Event.Result.DENY;
+        }
+        if(isBeingInvaded()){
+            Lang.ABYSS_CONQUEST_NODE_CANNOT_CAPTURE_FROM_ACTIVE_INVADE.use(p);
             return Event.Result.DENY;
         }
 

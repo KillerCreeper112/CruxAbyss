@@ -15,6 +15,8 @@ import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
 import killercreepr.cruxabyss.core.block.active.ActiveAbyssConquestNode;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.lang.Lang;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
@@ -32,6 +34,8 @@ import killercreepr.cruxstructures.core.structure.component.StoredStructureCompo
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
+import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -51,6 +55,7 @@ import org.bukkit.util.BoundingBox;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 
 public class OutpostInvasionEvent implements WorldEvent, Listener {
@@ -63,6 +68,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     protected float captureTime;
     protected int currentWave;
     protected int totalEntitiesSpawned;
+    protected int totalEntitiesSpawnedThisWave;
 
     protected final Map<UUID, Reference<Entity>> spawnedEntities = new HashMap<>();
     protected long lastSpawnedWave;
@@ -78,8 +84,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         this.maxCaptureTime = maxCaptureTime;
 
         this.normalTick = () ->{
-            World w = this.world.toBukkitWorld();
-            Collection<Entity> withinWalls = getSpawnedWithinWalls(w);
+            Collection<Entity> withinWalls = getSpawnedWithinWalls();
             if(withinWalls.isEmpty()){
                 attackingOutpost = false;
                 captureTime = Math.max(0f, captureTime - CruxMath.random(20f, 40f));
@@ -114,10 +119,61 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         return list;
     }
 
+    protected UPlayer cachedOwner;
+    public UPlayer getOwner(){
+        if(cachedOwner != null) return cachedOwner;
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        if(data == null || data.owner == null) return null;
+        return cachedOwner = USurvivePlugin.inst().getPlayerManager().getPlayer(data.owner);
+    }
+
+    public boolean isOwner(Entity e){
+        if(cachedOwner != null) return cachedOwner.getUUID().equals(e.getUniqueId());
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        return data != null && e.getUniqueId().equals(data.owner);
+    }
+
+    public Player getOnlineOwner(){
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        if(data== null) return null;
+        return Bukkit.getPlayer(data.owner);
+    }
+
+    public Collection<Player> getOnlineOutpostMembers(){
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        if(data== null) return Set.of();
+        Collection<Player> list = new HashSet<>();
+        data.getMembers().forEach(uuid -> {
+            Player p = Bukkit.getPlayer(uuid);
+            if(p != null) list.add(p);
+        });
+        return list;
+    }
+
+    public Collection<Player> getOnlineOutpostMembersAndOwner(){
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        if(data== null) return Set.of();
+        Collection<Player> list = new HashSet<>();
+        data.getMembersAndOwner().forEach(uuid -> {
+            Player p = Bukkit.getPlayer(uuid);
+            if(p != null) list.add(p);
+        });
+        return list;
+    }
+
     @Override
     public void started() {
         Crux.getServer().getPluginManager().registerEvents(this, Crux.getMainPlugin());
         Bukkit.broadcastMessage("invasion started!");
+        MergedTagContainer tags = TagContainer.merged()
+            .hook(targetStructure.getPosition());
+        getOnlineOutpostMembersAndOwner().forEach(p ->{
+            if(isOwner(p)){
+                Lang.ABYSS_OUTPOST_INVASION_START_OWNER.use(p, tags);
+                return;
+            }
+            Lang.ABYSS_OUTPOST_INVASION_START_MEMBER.use(p, tags);
+        });
     }
 
     @Override
@@ -150,17 +206,48 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         return amount;
     }
 
-    public Collection<Entity> getSpawnedWithinWalls(World world){
+    public Collection<Entity> getSpawnedWithinWalls(){
         BoundingBox box = getTargetStructureBox();
-        return world.getNearbyEntities(box, this::hasSpawned);
+        return world.toBukkitWorld().getNearbyEntities(box, this::hasSpawned);
+    }
+
+    public Collection<Entity> getNearbyEntities(){
+        BoundingBox box = getNearbyBox();
+        return world.toBukkitWorld().getNearbyEntities(box);
+    }
+
+    public Collection<Entity> getNearbyEntities(Predicate<Entity> filter){
+        BoundingBox box = getNearbyBox();
+        return world.toBukkitWorld().getNearbyEntities(box, filter);
+    }
+
+    public void onDefeated(){
+        MergedTagContainer tags = TagContainer.merged()
+            .hook(targetStructure.getPosition());
+        Player owner = getOnlineOwner();
+        if(owner != null){
+            Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(owner, tags);
+        }
+        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+            if(p.equals(owner)) return;
+            Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(p, tags);
+        });
     }
 
     protected int tick = 0;
     protected boolean attackingOutpost;
+    protected boolean defeated = false;
     @Override
     public void tick(){
         tick++;
         if(tick % 20 != 0) return;
+
+        if(hasBeenDefeated()){
+            if(defeated) return;
+            defeated = true;
+            onDefeated();
+            return;
+        }
 
         updateSpawnedEntities();
         if(shouldNextWave()){
@@ -171,9 +258,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
     protected boolean captured = false;
 
-    public void capturedTick(){
-        if(captured) return;
-        captured = true;
+    public void onCaptured(){
         Bukkit.broadcastMessage("Outpost has been captured!");
         ActiveAbyssConquestNode node = getConquestNode();
         if(node == null){
@@ -193,6 +278,23 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             goal.setPath(null);
             if(goal instanceof OutpostTargeterGoal g) g.setOutpostTarget(null);
         });
+
+        MergedTagContainer tags = TagContainer.merged()
+            .hook(targetStructure.getPosition());
+        Player owner = getOnlineOwner();
+        if(owner != null){
+            Lang.ABYSS_OUTPOST_INVASION_OVERTOOK.use(owner, tags);
+        }
+        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+            if(p.equals(owner)) return;
+            Lang.ABYSS_OUTPOST_INVASION_OVERTOOK.use(p, tags);
+        });
+    }
+
+    public void capturedTick(){
+        if(captured) return;
+        captured = true;
+        onCaptured();
     }
 
     public final Runnable normalTick;
@@ -201,9 +303,13 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         return attackingOutpost;
     }
 
+    public BoundingBox getNearbyBox(){
+        return getTargetStructureBox().clone().expand(16D);
+    }
+
     public void tickPlayers(){
         World world = this.world.toBukkitWorld();
-        BoundingBox box = getTargetStructureBox().clone().expand(16D);
+        BoundingBox box = getNearbyBox();
         Crux.scheduler().runTask(() ->{
             for(Entity e : world.getNearbyEntities(box, e -> e instanceof Player)){
                 Player p = (Player) e;
@@ -233,9 +339,15 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         }
     }
 
+    public boolean hasBeenDefeated(){
+        if(captured) return false;
+        int amount = (int) (totalEntitiesSpawnedThisWave * .2f);
+        return currentWave >= maxWave && spawnedEntities.size() <= amount;
+    }
+
     @Override
     public boolean shouldStop() {
-        return captured || currentWave >= maxWave && spawnedEntities.isEmpty();
+        return defeated || captured || currentWave >= maxWave && spawnedEntities.isEmpty();
     }
 
     public boolean shouldNextWave(){
@@ -252,6 +364,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public void spawnWave(int wave){
+        totalEntitiesSpawnedThisWave = 0;
         spawnEntities(
             3, 2, 5,
             16D, 32D
@@ -291,6 +404,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public boolean isValidSpawn(Block b){
+        if(!b.isEmpty() && !b.isPassable()) return false;
         Block check = b.getRelative(BlockFace.DOWN);
         if(!isValidGround(check)) return false;
         for(int y = 1; y <= 5; y++){
@@ -393,6 +507,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     public void onEntitySpawn(Entity e){
         totalEntitiesSpawned++;
+        totalEntitiesSpawnedThisWave++;
         spawnedEntities.put(e.getUniqueId(),new WeakReference<>(e));
     }
 
@@ -491,5 +606,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         participants.compute(p.getUniqueId(), (u, f) -> f == null ? damage : f + damage);
     }
 
-
+    public StoredStructure getTargetStructure() {
+        return targetStructure;
+    }
 }

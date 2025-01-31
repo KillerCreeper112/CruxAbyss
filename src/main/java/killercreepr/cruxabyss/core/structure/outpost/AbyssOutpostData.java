@@ -18,13 +18,12 @@ import killercreepr.cruxstructures.api.component.StoredStructureComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked, OutpostData {
@@ -38,6 +37,41 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
 
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;
+    }
+
+    public Collection<UUID> getMembers(){
+        if(owner == null) return Set.of();
+        UPlayer uPlayer = USurvivePlugin.inst().getPlayerManager().getPlayer(owner);
+        Collection<UUID> list = new HashSet<>();
+        list.addAll(uPlayer.getFriends());
+        list.addAll(uPlayer.getPartyMembers());
+        return list;
+    }
+
+    public Collection<UUID> getMembersAndOwner(){
+        if(owner == null) return Set.of();
+        Collection<UUID> list = getMembers();
+        list.add(owner);
+        return list;
+    }
+
+    public boolean isMemberOrOwner(UUID uuid){
+        if(owner == null) return false;
+        return uuid.equals(owner) || isMember(uuid);
+    }
+
+    public boolean isMemberOrOwner(UUID uuid, UPlayer owner){
+        if(this.owner == null) return false;
+        return uuid.equals(this.owner) || isMember(uuid, owner);
+    }
+
+    public boolean isMember(UUID uuid){
+        if(owner == null) return false;
+        return isMember(uuid, USurvivePlugin.inst().getPlayerManager().getPlayer(owner));
+    }
+
+    public boolean isMember(UUID uuid, UPlayer owner){
+        return uuid.equals(this.owner) || owner.isApartOfParty(uuid) || owner.hasFriend(uuid);
     }
 
     @Override
