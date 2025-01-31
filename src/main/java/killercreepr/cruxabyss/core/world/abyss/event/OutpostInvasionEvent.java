@@ -321,22 +321,11 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     public void tickPlayer(Player p){
         MergedTagContainer tags = TagContainer.merged(
             Tag.string("spawned_entities", (args, ctx) -> spawnedEntities.size() + ""),
-            Tag.string("total_spawned_entities", (args, ctx) -> (totalEntitiesSpawned == 0 ? 1 : totalEntitiesSpawned) + "")
+            Tag.string("total_spawned_entities", (args, ctx) -> (totalEntitiesSpawned == 0 ? 1 : totalEntitiesSpawned) + ""),
+            Tag.string("capture_time", (args, ctx) -> captureTime + ""),
+            Tag.string("max_capture_time", (args, ctx) -> maxCaptureTime + "")
         );
-        Communicator.builder().bossBar(
-            CreateBossBar.bossBar(
-                "abyss_outpost_invasion",
-                "Mobs alive: <spawned_entities>",
-                "{{<spawned_entities> / <total_spawned_entities>}}",
-                "blue",
-                null,
-                "40",
-                null
-            )
-        ).build().use(p, tags);
-        if(isOutpostBeingAttacked()){
-            p.sendActionBar(Component.text("Your outpost is being attacked! " + captureTime + "/" + maxCaptureTime));
-        }
+        Lang.ABYSS_OUTPOST_INVASION_TICK.use(p, tags);
     }
 
     public boolean hasBeenDefeated(){

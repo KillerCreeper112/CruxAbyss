@@ -84,11 +84,12 @@ public class ActiveAbyssOutpost implements ManagedTicked {
     public void tick() {
         tick++;
         activeUpgrades.values().forEach(t -> t.tick(tick, tickRate));
-
+        if(data.owner == null) return;
         if(tick % 100 == 0){
             if(CruxMath.testChance(invasionChance)){
                 CruxWorld world = CruxCore.core().worldManager().getWorld(active.getChunk().getWorld().getUID());
                 WorldEventsModule events = world.getModule(WorldEventsModule.class);
+                if(events == null) return;
                 if(events.hasWorldEventOfType(OutpostInvasionEvent.class)) return;
 
                 NaturalEntitySpawnGroup spawnGroup = new SimpleNaturalEntitySpawnGroup(

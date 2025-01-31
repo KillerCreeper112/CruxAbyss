@@ -3,8 +3,10 @@ package killercreepr.cruxabyss.core.lang;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.communication.CreateTitle;
+import killercreepr.crux.api.communication.boss.CreateBossBar;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.core.communication.lang.Msg;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,6 +118,20 @@ public class Lang {
     public static final Msg ABYSS_OUTPOST_INVASION_DEFEATED = create(
         Communicator.builder()
             .chat("<yellow>The invasion at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been defeated! Good job!")
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_INVASION_TICK = create(
+        Communicator.builder()
+            .bossBar(CreateBossBar.bossBar(
+                "abyss_outpost_invasion",
+                "Mobs alive: <spawned_entities>",
+                "{{<capture_time> / <max_capture_time>}}",
+                "red",
+                "notched_12",
+                "40",
+                null
+            ))
             .build()
     );
 
