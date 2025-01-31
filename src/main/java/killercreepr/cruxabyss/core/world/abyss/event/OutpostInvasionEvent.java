@@ -15,7 +15,6 @@ import killercreepr.cruxabyss.core.block.active.ActiveAbyssConquestNode;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
-import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
 import killercreepr.cruxblocks.core.component.PlacedCustomBlocksComponent;
@@ -100,8 +99,26 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
             if(captureTime >= maxCaptureTime){
                 capturedTick();
+                return;
             }
+
+            float percent = getCapturePercentage();
+            if(percent > lastPercentage){
+                if (percent >= 50f && lastPercentage < 50f && !CruxMath.hasOccurredWithin(lastSend50Msg, 600)) {
+                    onReach50Percent();
+                }
+
+                // Check if the percentage has crossed 75% and hasn't been handled before
+                if (percent >= 75f && lastPercentage < 75f && !CruxMath.hasOccurredWithin(lastSend75Msg, 600)) {
+                    onReach75Percent();
+                }
+            }
+            lastPercentage = percent;
         };
+    }
+
+    public float getCapturePercentage(){
+        return captureTime / maxCaptureTime;
     }
 
     public Map<UUID, Reference<Entity>> updateSpawnedEntities(){
@@ -138,7 +155,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     public Player getOnlineOwner(){
         AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
-        if(data== null) return null;
+        if(data== null || data.owner == null) return null;
         return Bukkit.getPlayer(data.owner);
     }
 
@@ -265,6 +282,38 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         }
     }
 
+    protected long lastSend50Msg;
+    protected long lastSend75Msg;
+    public void onReach50Percent(){
+        lastSend50Msg = System.currentTimeMillis();
+
+        MergedTagContainer tags = buildTags();
+        Player owner = getOnlineOwner();
+        if(owner != null){
+            Lang.ABYSS_OUTPOST_INVASION_REACHED_50.use(owner, tags);
+        }
+        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+            if(p.equals(owner)) return;
+            Lang.ABYSS_OUTPOST_INVASION_REACHED_50.use(p, tags);
+        });
+    }
+
+    public void onReach75Percent() {
+        lastSend75Msg = System.currentTimeMillis();
+
+        MergedTagContainer tags = buildTags();
+        Player owner = getOnlineOwner();
+        if(owner != null){
+            Lang.ABYSS_OUTPOST_INVASION_REACHED_75.use(owner, tags);
+        }
+        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+            if(p.equals(owner)) return;
+            Lang.ABYSS_OUTPOST_INVASION_REACHED_75.use(p, tags);
+        });
+    }
+
+    protected float lastPercentage;
+
     protected boolean forceStop = false;
     public void onOverTime(){
         forceStop = true;
@@ -316,9 +365,9 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             Crux.log(Level.SEVERE, "OutpostInvasionEvent: " + targetStructure.getPosition() + " has no conquest node! " + world.getName());
             return;
         }
-        ActiveStructure active = getActive();
-        ActiveAbyssOutpost outpost = active.get(AbyssComponents.ACTIVE_ABYSS_OUTPOST);
-        outpost.invasion();
+        Player owner = getOnlineOwner();
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        data.invasion();
         node.update();
 
         getSpawnedEntities().forEach(e ->{
@@ -332,7 +381,6 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
         MergedTagContainer tags = TagContainer.merged()
             .hook(targetStructure.getPosition());
-        Player owner = getOnlineOwner();
         if(owner != null){
             Lang.ABYSS_OUTPOST_INVASION_OVERTOOK.use(owner, tags);
         }

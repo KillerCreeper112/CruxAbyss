@@ -51,11 +51,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         data.timeCaptured = System.currentTimeMillis();
     }
 
-    public void invasion(){
-        resetOwner();
-        data.timeInvaded = System.currentTimeMillis();
-    }
-
     @Override
     public void started() {
         ManagedTicked.super.started();

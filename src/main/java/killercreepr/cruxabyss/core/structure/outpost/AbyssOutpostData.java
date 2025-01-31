@@ -39,6 +39,11 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         this.stored = stored;
     }
 
+    public void invasion(){
+        owner = null;
+        timeInvaded = System.currentTimeMillis();
+    }
+
     public Collection<UUID> getMembers(){
         if(owner == null) return Set.of();
         UPlayer uPlayer = USurvivePlugin.inst().getPlayerManager().getPlayer(owner);

@@ -92,37 +92,37 @@ public class Lang {
 
     public static final Msg ABYSS_CONQUEST_NODE_CANNOT_CAPTURE_FROM_ACTIVE_INVADE = create(
         Communicator.builder()
-            .chat("<red>This outpost is being invaded!")
+            .chat("<gold><latinfont:Outpost invasion> <red>This outpost is being invaded!")
             .build()
     );
 
     public static final Msg ABYSS_OUTPOST_INVASION_START_OWNER = create(
         Communicator.builder()
-            .chat("<red>One of your abyss outposts is being invaded at <white><crux_pos_x></white>, <white><crux_pos_z></white>! Hurry and defend it before it is overtaken!")
+            .chat("<gold><latinfont:Outpost invasion> <red>One of your abyss outposts is being invaded at <white><crux_pos_x></white>, <white><crux_pos_z></white>! Hurry and defend it before it is overtaken!")
             .build()
     );
 
     public static final Msg ABYSS_OUTPOST_INVASION_START_MEMBER = create(
         Communicator.builder()
-            .chat("<red>An abyss outpost that you are a member of is being invaded at <white><crux_pos_x></white>, <white><crux_pos_z></white>!")
+            .chat("<gold><latinfont:Outpost invasion> <red>An abyss outpost that you are a member of is being invaded at <white><crux_pos_x></white>, <white><crux_pos_z></white>!")
             .build()
     );
 
     public static final Msg ABYSS_OUTPOST_INVASION_OVERTOOK = create(
         Communicator.builder()
-            .chat("<red>Your abyss outpost at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been overtaken!")
+            .chat("<gold><latinfont:Outpost invasion> <red>Your abyss outpost at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been overtaken!")
             .build()
     );
 
     public static final Msg ABYSS_OUTPOST_INVASION_DEFEATED = create(
         Communicator.builder()
-            .chat("<yellow>The invasion at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been defeated! Good job!")
+            .chat("<gold><latinfont:Outpost invasion> <green>The invasion at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been defeated! Good job!")
             .build()
     );
 
     public static final Msg ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME = create(
         Communicator.builder()
-            .chat("<gold>The invasion at <white><crux_pos_x></white>, <white><crux_pos_z></white> has failed to take over the outpost!")
+            .chat("<gold><latinfont:Outpost invasion> <yellow>The invasion at <white><crux_pos_x></white>, <white><crux_pos_z></white> has failed to take over the outpost!")
             .build()
     );
 
@@ -143,6 +143,18 @@ public class Lang {
     public static final Msg ABYSS_OUTPOST_INVASION_WAVE_SPAWNING = create(
         Communicator.builder()
             .chat("<gold><latinfont:Outpost invasion> <reset>Reinforcements incoming! <wave>/<max_wave>")
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_INVASION_REACHED_50 = create(
+        Communicator.builder()
+            .chat("<gold><latinfont:Outpost invasion> <red>The outpost at <white><crux_pos_x></white>, <white><crux_pos_z></white> has lost 50% of its health! Hurry before they capture the outpost!")
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_INVASION_REACHED_75 = create(
+        Communicator.builder()
+            .chat("<gold><latinfont:Outpost invasion> <red>The outpost at <white><crux_pos_x></white>, <white><crux_pos_z></white> has lost 75% of its health! Hurry before they capture the outpost!")
             .build()
     );
 

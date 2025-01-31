@@ -423,7 +423,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
 
         ValuesProvider cfg = CruxAbyss.inst().values();
         if(outpost().getData().wasInvadedWithin(cfg.ABYSS_OUTPOST_INVADE_CONQUEST_COOLDOWN().value().intValue())){
-            long invadeTime = outpost().getData().timeInvaded - System.currentTimeMillis();
+            long invadeTime = System.currentTimeMillis() - outpost().getData().timeInvaded;
             Lang.ABYSS_CONQUEST_NODE_CANNOT_CAPTURE_FROM_INVADE.use(p, TagContainer.merged(Tag.parsed("invade_time", invadeTime + "")));
             return Event.Result.DENY;
         }
