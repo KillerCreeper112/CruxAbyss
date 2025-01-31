@@ -20,6 +20,7 @@ import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,6 +133,7 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
     protected int tick = 0;
     @Override
     public void tick() {
+        Bukkit.broadcastMessage("stored tick");
         if(owner == null) return;
         tick++;
         if(tick < 200) return;
