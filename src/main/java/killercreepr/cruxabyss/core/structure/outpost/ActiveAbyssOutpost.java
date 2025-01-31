@@ -82,43 +82,7 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         if(data.owner == null) return;
         if(tick % 100 == 0){
             if(CruxMath.testChance(invasionChance)){
-                CruxWorld world = CruxCore.core().worldManager().getWorld(active.getChunk().getWorld().getUID());
-                WorldEventsModule events = world.getModule(WorldEventsModule.class);
-                if(events == null) return;
-                if(events.hasWorldEventOfType(OutpostInvasionEvent.class)) return;
-
-                NaturalEntitySpawnGroup spawnGroup = new SimpleNaturalEntitySpawnGroup(
-                    0, 0f, Set.of(
-                    new NaturalCruxMobSpawn(10, 0f, AbyssMob.TOXICATOR) {
-                        @Override
-                        public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                            return true;
-                        }
-                    },
-                    new NaturalCruxMobSpawn(6, 0f, AbyssMob.SCOURGER) {
-                        @Override
-                        public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                            return true;
-                        }
-                    },
-                    new NaturalCruxMobSpawn(3, 0f, AbyssMob.PLAGUEWING_MOUNT_SCOURGER) {
-                        @Override
-                        public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                            return true;
-                        }
-                    }
-                )
-                ) {
-                    @Override
-                    public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                        return true;
-                    }
-                };
-
-                events.addWorldEvent(new OutpostInvasionEvent(
-                    world, active.getData(), spawnGroup, 3,
-                    CruxMath.random(3000, 4200) //2.5 min - 3.5 min
-                ));
+                if(!data.wasInvadedWithin(1200)) data.attemptInvasion();
             }
         }
         /*World world = active.getChunk().getWorld();

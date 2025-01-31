@@ -93,8 +93,8 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
                 return;
             }
             attackingOutpost = true;
-            captureTime += Math.min(
-                calculateCaptureTickAmount(withinWalls, targetStructure.getPosition()), maxCaptureTime
+            captureTime = Math.min(
+                captureTime + calculateCaptureTickAmount(withinWalls, targetStructure.getPosition()), maxCaptureTime
             );
 
             if(captureTime >= maxCaptureTime){
@@ -184,7 +184,6 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     @Override
     public void started() {
         Crux.getServer().getPluginManager().registerEvents(this, Crux.getMainPlugin());
-        Bukkit.broadcastMessage("invasion started!");
         MergedTagContainer tags = TagContainer.merged()
             .hook(targetStructure.getPosition());
         getOnlineOutpostMembersAndOwner().forEach(p ->{
@@ -199,7 +198,6 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     @Override
     public void stopped() {
         HandlerList.unregisterAll(this);
-        Bukkit.broadcastMessage("invasion stopped. thats enough");
     }
 
     public float calculateCaptureTickAmount(Collection<Entity> entities, CruxPosition center) {
@@ -248,6 +246,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         if(owner != null){
             Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(owner, tags);
         }
+        if(!active) return;
         getNearbyEntities(e -> e instanceof Player).forEach(p ->{
             if(p.equals(owner)) return;
             Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(p, tags);
@@ -257,15 +256,22 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     protected int tick = 0;
     protected boolean attackingOutpost;
     protected boolean defeated = false;
+    protected boolean active = false;
     @Override
     public void tick(){
         tick++;
         if(tick % 20 != 0) return;
+        active = isActive();
 
         if(hasBeenDefeated()){
             if(defeated) return;
             defeated = true;
             onDefeated();
+            return;
+        }
+
+        if(!active){
+            normalNonActiveTick();
             return;
         }
 
@@ -282,6 +288,36 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         }
     }
 
+    public void normalNonActiveTick(){
+        attackingOutpost = true;
+        captureTime = Math.min(
+            captureTime + CruxMath.random(1, 2), maxCaptureTime
+        );
+
+        if(captureTime >= maxCaptureTime){
+            capturedTick();
+            return;
+        }
+
+        if(CruxMath.testChance(0.0008)){
+            onOverTime();
+            return;
+        }
+
+        float percent = getCapturePercentage();
+        if(percent > lastPercentage){
+            if (percent >= .5f && lastPercentage < .5f && !CruxMath.hasOccurredWithin(lastSend50Msg, 600)) {
+                onReach50Percent();
+            }
+
+            // Check if the percentage has crossed 75% and hasn't been handled before
+            if (percent >= .75f && lastPercentage < .75f && !CruxMath.hasOccurredWithin(lastSend75Msg, 600)) {
+                onReach75Percent();
+            }
+        }
+        lastPercentage = percent;
+    }
+
     protected long lastSend50Msg;
     protected long lastSend75Msg;
     public void onReach50Percent(){
@@ -292,6 +328,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         if(owner != null){
             Lang.ABYSS_OUTPOST_INVASION_REACHED_50.use(owner, tags);
         }
+        if(!active) return;
         getNearbyEntities(e -> e instanceof Player).forEach(p ->{
             if(p.equals(owner)) return;
             Lang.ABYSS_OUTPOST_INVASION_REACHED_50.use(p, tags);
@@ -306,6 +343,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         if(owner != null){
             Lang.ABYSS_OUTPOST_INVASION_REACHED_75.use(owner, tags);
         }
+        if(!active) return;
         getNearbyEntities(e -> e instanceof Player).forEach(p ->{
             if(p.equals(owner)) return;
             Lang.ABYSS_OUTPOST_INVASION_REACHED_75.use(p, tags);
@@ -359,16 +397,15 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     protected boolean captured = false;
 
     public void onCaptured(){
-        Bukkit.broadcastMessage("Outpost has been captured!");
-        ActiveAbyssConquestNode node = getConquestNode();
-        if(node == null){
+        ActiveAbyssConquestNode node = active ? getConquestNode() : null;
+        if(node == null && active){
             Crux.log(Level.SEVERE, "OutpostInvasionEvent: " + targetStructure.getPosition() + " has no conquest node! " + world.getName());
             return;
         }
         Player owner = getOnlineOwner();
         AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
         data.invasion();
-        node.update();
+        if(node != null) node.update();
 
         getSpawnedEntities().forEach(e ->{
             if(!(e instanceof Mob mob)) return;
@@ -384,6 +421,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         if(owner != null){
             Lang.ABYSS_OUTPOST_INVASION_OVERTOOK.use(owner, tags);
         }
+        if(!active) return;
         getNearbyEntities(e -> e instanceof Player).forEach(p ->{
             if(p.equals(owner)) return;
             Lang.ABYSS_OUTPOST_INVASION_OVERTOOK.use(p, tags);
@@ -434,6 +472,10 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public boolean hasBeenDefeated(){
+        if(!active){
+            return captureTime >= maxCaptureTime;
+        }
+
         if(captured) return false;
         int amount = (int) (totalEntitiesSpawnedThisWave * .2f);
         return currentWave >= maxWave && spawnedEntities.size() <= amount;

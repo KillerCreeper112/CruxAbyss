@@ -6,18 +6,26 @@ import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxstructures.api.component.StoredStructureComponent;
 import killercreepr.cruxstructures.api.component.TickedStoredComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
+import killercreepr.cruxworlds.api.world.entity.SpawnContext;
+import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.entity.Player;
@@ -132,6 +140,47 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         storedUpgrades.values().forEach(t -> t.started(tick, tickRate));
     }
 
+    public void attemptInvasion(){
+        CruxWorld world = CruxCore.core().worldManager().getWorld(stored.getChunk().worldUUID());
+        if(world == null) return;
+        WorldEventsModule events = world.getModule(WorldEventsModule.class);
+        if(events == null) return;
+        if(!events.hasApplicableWorldEvents(OutpostInvasionEvent.class, e -> e.getTargetStructure().equals(this))) return;
+
+        NaturalEntitySpawnGroup spawnGroup = new SimpleNaturalEntitySpawnGroup(
+            0, 0f, Set.of(
+            new NaturalCruxMobSpawn(10, 0f, AbyssMob.TOXICATOR) {
+                @Override
+                public boolean canSpawn(@NotNull SpawnContext spawnContext) {
+                    return true;
+                }
+            },
+            new NaturalCruxMobSpawn(6, 0f, AbyssMob.SCOURGER) {
+                @Override
+                public boolean canSpawn(@NotNull SpawnContext spawnContext) {
+                    return true;
+                }
+            },
+            new NaturalCruxMobSpawn(3, 0f, AbyssMob.PLAGUEWING_MOUNT_SCOURGER) {
+                @Override
+                public boolean canSpawn(@NotNull SpawnContext spawnContext) {
+                    return true;
+                }
+            }
+        )
+        ) {
+            @Override
+            public boolean canSpawn(@NotNull SpawnContext spawnContext) {
+                return true;
+            }
+        };
+
+        events.addWorldEvent(new OutpostInvasionEvent(
+            world, stored, spawnGroup, 3,
+            CruxMath.random(3000, 4200) //2.5 min - 3.5 min
+        ));
+    }
+
     protected int tick = 0;
     @Override
     public void storedTick(StructureWorldModule module) {
@@ -139,6 +188,9 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         tick++;
         if(tick < 200) return;
         tick = 0;
+        if(CruxMath.testChance(25)){
+            if(!wasInvadedWithin(1200)) attemptInvasion();
+        }
 
         storedUpgrades.values().removeIf(upgrade ->{
             if(upgrade.shouldStop(tick, tickRate)){

@@ -12,6 +12,9 @@ import java.util.function.Predicate;
 
 public interface WorldEventsModule extends WorldModule, Ticked {
     boolean hasWorldEventOfType(Class<? extends WorldEvent> clazz);
+    default <T extends WorldEvent> boolean hasApplicableWorldEvents(Class<T> clazz, Predicate<T> filter){
+        return !getApplicableWorldEvents(clazz, filter).isEmpty();
+    }
     void addWorldEvent(@NotNull WorldEvent event);
     void removeWorldEvent(@NotNull WorldEvent event);
     Collection<WorldEvent> getWorldEvents();
