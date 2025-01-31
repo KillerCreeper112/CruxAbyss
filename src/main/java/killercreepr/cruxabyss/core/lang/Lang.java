@@ -110,7 +110,7 @@ public class Lang {
 
     public static final Msg ABYSS_OUTPOST_INVASION_OVERTOOK = create(
         Communicator.builder()
-            .chat("<gold><latinfont:Outpost invasion> <red>Your abyss outpost at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been overtaken!")
+            .chat("<gold><latinfont:Outpost invasion> <red>Your abyss outpost at <white><crux_pos_x></white>, <white><crux_pos_z></white> has been overtaken by the toxicators!")
             .build()
     );
 

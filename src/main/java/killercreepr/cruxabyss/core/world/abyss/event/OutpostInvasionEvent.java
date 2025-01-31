@@ -104,12 +104,12 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
             float percent = getCapturePercentage();
             if(percent > lastPercentage){
-                if (percent >= 50f && lastPercentage < 50f && !CruxMath.hasOccurredWithin(lastSend50Msg, 600)) {
+                if (percent >= .5f && lastPercentage < .5f && !CruxMath.hasOccurredWithin(lastSend50Msg, 600)) {
                     onReach50Percent();
                 }
 
                 // Check if the percentage has crossed 75% and hasn't been handled before
-                if (percent >= 75f && lastPercentage < 75f && !CruxMath.hasOccurredWithin(lastSend75Msg, 600)) {
+                if (percent >= .75f && lastPercentage < .75f && !CruxMath.hasOccurredWithin(lastSend75Msg, 600)) {
                     onReach75Percent();
                 }
             }
