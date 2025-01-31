@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.entity.mob.goal;
 
+import com.destroystokyo.paper.entity.Pathfinder;
 import killercreepr.cruxentities.entity.mob.goal.CruxGoalBase;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.util.Vector;
@@ -56,7 +58,7 @@ public class SwimmerGoal {
             }
             return;
         }
-        LivingEntity target = goal.getTarget();
+        Location target = getTargetLocation();
         if(target == null || !mob.isInWater()){
             swimmingTicks = 0;
             return;
@@ -65,9 +67,28 @@ public class SwimmerGoal {
             comingBackForAirTicks = 1;
             return;
         }
-        Vector dir = target.getLocation().toVector().subtract(mob.getLocation().toVector()).normalize();
+        if(goal.getTarget() == null && isNearTarget(target)){
+            return;
+        }
+        Vector dir = target.toVector().subtract(mob.getLocation().toVector()).normalize();
         dir.multiply(swimSpeed());
         mob.setVelocity(mob.getVelocity().add(dir));
         swimmingTicks++;
+    }
+
+    public boolean isNearTarget(Location loc){
+        Mob mob = goal.getMob();
+        if(!loc.getWorld().equals(mob.getWorld())) return false;
+        double distance = loc.distanceSquared(mob.getLocation());
+        return distance <= (1.2*1.2);
+    }
+
+    public Location getTargetLocation(){
+        LivingEntity target = goal.getTarget();
+        if(target != null) return target.getLocation();
+        Mob mob = goal.getMob();
+        Pathfinder.PathResult result = mob.getPathfinder().getCurrentPath();
+        if(result == null) return null;
+        return result.getNextPoint();
     }
 }

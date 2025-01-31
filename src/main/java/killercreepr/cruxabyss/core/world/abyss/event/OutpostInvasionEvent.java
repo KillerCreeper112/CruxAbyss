@@ -210,7 +210,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public Collection<Entity> getSpawnedWithinWalls(){
-        BoundingBox box = getTargetStructureBox();
+        BoundingBox box = getTargetStructureBox().clone().expand(0D, 24D, 0D);
         return world.toBukkitWorld().getNearbyEntities(box, this::hasSpawned);
     }
 
@@ -273,9 +273,11 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         if(owner != null){
             Lang.ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME.use(owner, tags);
         }
-        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
-            if(p.equals(owner)) return;
-            Lang.ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME.use(p, tags);
+        Crux.scheduler().runTask(() ->{
+            getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+                if(p.equals(owner)) return;
+                Lang.ABYSS_OUTPOST_INVASION_DEFEATED_OVERTIME.use(p, tags);
+            });
         });
     }
 
@@ -295,10 +297,12 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     public void tickEntities(){
         int count = (int) (totalEntitiesSpawnedThisWave * .35f);
         if(spawnedEntities.size() <= count){
-            getSpawnedEntities().forEach(e ->{
-                if(e instanceof LivingEntity le){
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0, false, false));
-                }
+            Crux.scheduler().runTask(() ->{
+                getSpawnedEntities().forEach(e ->{
+                    if(e instanceof LivingEntity le){
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0, false, false));
+                    }
+                });
             });
         }
     }
@@ -351,7 +355,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public BoundingBox getNearbyBox(){
-        return getTargetStructureBox().clone().expand(16D);
+        return getTargetStructureBox().clone().expand(24D, 36D, 24D);
     }
 
     public void tickPlayers(){
@@ -378,7 +382,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             Tag.string("max_capture_time", (args, ctx) -> maxCaptureTime + ""),
             Tag.string("wave", (args, ctx) -> currentWave + ""),
             Tag.string("max_wave", (args, ctx) -> maxWave + "")
-        );
+        ).hook(targetStructure.getPosition());
     }
 
     public boolean hasBeenDefeated(){
@@ -551,6 +555,17 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
                     goal.setPath(GoalPath.goalPath(List.of(GoalNode.distanceGoalNode(pos, distance))));
                     if(goal instanceof OutpostTargeterGoal g) g.setOutpostTarget(targetStructure);
                     onEntitySpawn(mob);
+
+                    for(Entity passenger : mob.getPassengers()){
+                        if(passenger instanceof Mob passengerMob){
+                            if(!(CruxGoalUtil.getGoal(passengerMob, Goal.class, CruxGoalBase.defaultKey()) instanceof PathTargetMobGoal goalPassenger)){
+                                continue;
+                            }
+                            goalPassenger.setPath(GoalPath.goalPath(List.of(GoalNode.distanceGoalNode(pos, distance))));
+                            if(goalPassenger instanceof OutpostTargeterGoal g) g.setOutpostTarget(targetStructure);
+                        }
+                        onEntitySpawn(passenger);
+                    }
                 });
             }
         }

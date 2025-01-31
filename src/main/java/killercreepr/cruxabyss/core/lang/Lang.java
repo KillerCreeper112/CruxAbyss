@@ -131,7 +131,7 @@ public class Lang {
             .bossBar(CreateBossBar.bossBar(
                 "abyss_outpost_invasion",
                 "Mobs alive: <spawned_entities>",
-                "{{<capture_time> / <max_capture_time>}}",
+                "{{1 - (<capture_time> / <max_capture_time>)}}",
                 "red",
                 "notched_12",
                 "40",
