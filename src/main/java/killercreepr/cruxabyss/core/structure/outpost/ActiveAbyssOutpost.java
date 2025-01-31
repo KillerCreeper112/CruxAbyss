@@ -15,7 +15,6 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +82,6 @@ public class ActiveAbyssOutpost implements ManagedTicked {
     protected final float invasionChance = 25f;
     @Override
     public void tick() {
-        Bukkit.broadcastMessage("ACTIVE tick");
         tick++;
         activeUpgrades.values().forEach(t -> t.tick(tick, tickRate));
         if(data.owner == null) return;

@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
-import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
@@ -15,19 +14,19 @@ import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.component.StoredStructureComponent;
+import killercreepr.cruxstructures.api.component.TickedStoredComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked, OutpostData {
+public class AbyssOutpostData implements StoredStructureComponent, TickedStoredComponent, OutpostData {
     public UUID owner;
     public Long timeCaptured;
     public Long timeInvaded;
@@ -109,14 +108,12 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
     }
 
     @Override
-    public void started() {
-        ManagedTicked.super.started();
+    public void storedStarted(StructureWorldModule module) {
         initiateUpgrades();
     }
 
     @Override
-    public void stopped() {
-        ManagedTicked.super.stopped();
+    public void storedStopped(StructureWorldModule module) {
         storedUpgrades.values().forEach(t -> t.stopped(tick, tickRate));
     }
 
@@ -132,9 +129,8 @@ public class AbyssOutpostData implements StoredStructureComponent, ManagedTicked
 
     protected int tick = 0;
     @Override
-    public void tick() {
-        Bukkit.broadcastMessage("stored tick");
-        if(owner == null) return;
+    public void storedTick(StructureWorldModule module) {
+        if(owner == null || module.isActive(stored)) return;
         tick++;
         if(tick < 200) return;
         tick = 0;
