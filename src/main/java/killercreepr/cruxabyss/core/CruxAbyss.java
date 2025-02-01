@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core;
 
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.loot.conditions.LootCondition;
@@ -9,6 +10,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
 import killercreepr.crux.core.communication.lang.SimpleCreateLang;
+import killercreepr.crux.core.math.BlockPos;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
@@ -41,6 +43,8 @@ import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonD
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
 import killercreepr.cruxadvancements.core.config.handler.FileAdvancementObjective;
 import killercreepr.cruxadvancements.core.config.handler.FileSimpleAdvanceObjective;
+import killercreepr.cruxblocks.core.structure.modules.PlaceCustomBlocksModule;
+import killercreepr.cruxblocks.core.structure.modules.UpdateCustomBlocksModule;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileLootCondition;
@@ -51,14 +55,17 @@ import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.handler.PureYamlFileHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
+import killercreepr.cruxstructures.api.structure.module.StructureModule;
 import killercreepr.cruxstructures.core.CruxStructuresModule;
 import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
 import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructureGen;
+import killercreepr.cruxstructures.core.config.FileStructureModule;
 import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
 import killercreepr.cruxstructures.core.structure.generation.InstantLocationSetListStructureGen;
 import killercreepr.cruxstructures.core.structure.generation.LocationSetListStructureGen;
@@ -71,7 +78,9 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     private static CruxAbyss instance;

@@ -5,6 +5,7 @@ import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
@@ -18,6 +19,7 @@ import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
 import killercreepr.cruxblocks.core.component.PlacedCustomBlocksComponent;
+import killercreepr.cruxblocks.core.structure.modules.PlaceCustomBlocksModule;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
@@ -26,7 +28,9 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxGoalBase;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.api.structure.Structure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.cruxstructures.core.registries.StructureRegistries;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
@@ -396,6 +400,20 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     protected boolean captured = false;
 
+    public void respawnSpawners(){
+        Structure structure = StructureRegistries.STRUCTURES.get(targetStructure.getStructureKey());
+        if(structure == null) return;
+        PlaceCustomBlocksModule module = structure.get(AbyssComponents.STRUCTURE_REPLACEABLE_CUSTOM_BLOCKS);
+        if(module == null) return;
+
+        World world = this.world.toBukkitWorld();
+        StoredChunk chunk = targetStructure.getChunk();
+        world.getChunkAtAsync(chunk.chunkX(), chunk.chunkZ()).whenComplete((ch, throwable) ->{
+            Location loc = targetStructure.getPosition().toLocation(world);
+            module.onPlaced(structure, loc, targetStructure.getRotation());
+        });
+    }
+
     public void onCaptured(){
         ActiveAbyssConquestNode node = active ? getConquestNode() : null;
         if(node == null && active){
@@ -415,6 +433,8 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             goal.setPath(null);
             if(goal instanceof OutpostTargeterGoal g) g.setOutpostTarget(null);
         });
+
+        respawnSpawners();
 
         MergedTagContainer tags = TagContainer.merged()
             .hook(targetStructure.getPosition());

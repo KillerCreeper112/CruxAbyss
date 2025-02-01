@@ -1,24 +1,31 @@
 package killercreepr.cruxabyss.core.config.handler.component;
 
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.math.BlockPos;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
+import killercreepr.cruxblocks.core.structure.modules.PlaceCustomBlocksModule;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
 import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class CfgAbyssComponents {
     public static void register(@NotNull FileDataComponentRegistry registry){
@@ -110,6 +117,18 @@ public class CfgAbyssComponents {
             @Override
             public @Nullable TypedDataComponent<String> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject fileObject) {
                 return TypedDataComponent.create(AbyssComponents.ABYSS_HOLOGRAM_FORMAT, fileObject.getObject(String.class, "value"));
+            }
+        });
+
+        registry.register("structure/place_custom_blocks/replaceable", new FileDataComponentType<PlaceCustomBlocksModule>(){
+            @Override
+            public @Nullable TypedDataComponent<PlaceCustomBlocksModule> deserializeFromFile(@NotNull FileContext<?> context, @NotNull FileObject o) {
+                FileRegistry registry = context.getRegistry();
+                Map<Key, Collection<BlockPos>> blocks = registry.deserializeFromFile(
+                    new TypeToken<Map<Key, Collection<BlockPos>>>(){}.getType(),
+                    o.get("blocks")
+                );
+                return TypedDataComponent.create(AbyssComponents.STRUCTURE_REPLACEABLE_CUSTOM_BLOCKS, new PlaceCustomBlocksModule(blocks, false));
             }
         });
     }
