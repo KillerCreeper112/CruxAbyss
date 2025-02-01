@@ -28,6 +28,7 @@ import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -185,12 +186,14 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     @Override
     public void storedTick(StructureWorldModule module) {
         if(owner == null || module.isActive(stored)) return;
+        Player p = Crux.getServer().getPlayer(owner);
+        if(p == null) return;
         tick++;
         if(tick < 200) return;
         tick = 0;
 
-        if(CruxMath.testChance(80)){
-            if(!wasInvadedWithin(1200)){
+        if(CruxMath.testChance(0.1)){
+            if(!wasInvadedWithin(1200*5)){
                 attemptInvasion();
             }
         }
@@ -204,8 +207,8 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
             return false;
         });
 
-        Player p = Crux.getServer().getPlayer(owner);
-        if(p == null) return;
+        /*Player p = Crux.getServer().getPlayer(owner);
+        if(p == null) return;*/
         Crux.scheduler().runTask(() ->{
             ValuesProvider cfg = CruxAbyss.inst().values();
             cfg.ABYSS_OUTPOST_TAKE_OVER_EFFECTS().valueOr(Set.of()).forEach(pot ->{

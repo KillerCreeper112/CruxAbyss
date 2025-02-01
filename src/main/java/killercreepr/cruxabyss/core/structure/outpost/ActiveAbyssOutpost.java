@@ -64,7 +64,7 @@ public class ActiveAbyssOutpost implements ManagedTicked {
     }
 
     protected int tick = 0;
-    protected final float invasionChance = 25f;
+    protected final float invasionChance = .1f;
     @Override
     public void tick() {
         tick++;
