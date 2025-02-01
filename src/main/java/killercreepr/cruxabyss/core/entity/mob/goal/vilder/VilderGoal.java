@@ -22,28 +22,97 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxitems.core.registries.CruxItemRegistries;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
+import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.view.MerchantView;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 //mob npcs which will not leave the safe zone unless they are targeting something
 //if they get too far away from the safe zone, they will attempt to go back to it
 //
 public class VilderGoal extends CruxMobModeledGoal implements Listener {
+    private static MerchantRecipe recipe(Material result, int resultAmount, int maxUses, Material... ingredients){
+        List<ItemStack> in = new ArrayList<>();
+        for(Material m : ingredients){
+            in.add(new ItemStack(m));
+        }
+        return recipe(new ItemStack(result, resultAmount), maxUses, in.toArray(new ItemStack[0]));
+    }
+
+    private static MerchantRecipe recipe(Material result, int resultAmount, int maxUses, Material ingredient, int amount){
+        List<ItemStack> in = new ArrayList<>();
+        in.add(new ItemStack(ingredient, amount));
+        return recipe(new ItemStack(result, resultAmount), maxUses, in.toArray(new ItemStack[0]));
+    }
+
+    private static MerchantRecipe recipe(ItemStack result, int maxUses, ItemStack... ingredients){
+        MerchantRecipe r = new MerchantRecipe(result, 0, maxUses, false,
+            0, 1f, 0, 0, true);
+        for(ItemStack item : ingredients){
+            r.addIngredient(item);
+        }
+        return r;
+    }
+
+    public static final List<MerchantRecipe> OFFERS = List.of(
+        recipe(Material.AMETHYST_BLOCK, 1, 20, Material.EMERALD, 10),
+
+        recipe(Material.LEATHER, 5, 20, Material.EMERALD, 1),
+
+        recipe(Material.BEEF, 1, 20, Material.IRON_INGOT, 1),
+
+        recipe(Material.EMERALD, 8, 20, Material.IRON_INGOT, 5),
+
+        recipe(Material.LEATHER, 5, 20, Material.EMERALD, 2),
+
+        recipe(Material.BUNDLE, 1, 20, Material.EMERALD, 40),
+
+        recipe(new ItemStack(Material.BUNDLE), 20, new ItemStack(Material.EMERALD, 40), new ItemStack(Material.AMETHYST_SHARD, 10)),
+
+        recipe(new ItemStack(Material.IRON_SWORD), 5, new ItemStack(Material.COPPER_INGOT, 15)),
+
+        recipe(new ItemStack(Material.EMERALD, 3), 5, new ItemStack(Material.MUTTON, 2)),
+
+        recipe(new ItemStack(Material.EMERALD, 3), 5, new ItemStack(Material.PORKCHOP, 2)),
+
+        recipe(new ItemStack(Material.EMERALD, 2), 5, new ItemStack(Material.CHICKEN, 2)),
+
+        recipe(new ItemStack(Material.RAW_IRON, 5), 5, new ItemStack(Material.CHICKEN, 2)),
+
+        recipe(new ItemStack(Material.RAW_COPPER, 5), 5, new ItemStack(Material.COBBLESTONE, 32)),
+
+        recipe(new ItemStack(Material.RAW_GOLD, 5), 5, new ItemStack(Material.BEEF, 12)),
+
+        recipe(CruxItemRegistries.ITEMS.get(Crux.key("scourger_horns")).buildItem(), 5, new ItemStack(Material.EMERALD, 64),
+            new ItemStack(Material.LEATHER, 16))
+    );
+
     public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     protected StoredStructure cachedSafeZone;
@@ -234,6 +303,57 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         if(id == null) return;
         playAnimation(id, true);
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if(!event.getRightClicked().equals(mob)) return;
+        Player p = event.getPlayer();
+        MerchantView view = merchantView(p);
+        if(view == null) return;
+        p.openInventory(view);
+    }
+
+    protected List<MerchantRecipe> recipes;
+    public MerchantView merchantView(Player p){
+        List<MerchantRecipe> recipes = recipes();
+        if(recipes == null) return null;
+        MerchantView view = MenuType.MERCHANT.create(p, mob.getName());
+        view.getMerchant().setRecipes(recipes);
+        return view;
+    }
+
+    public List<MerchantRecipe> recipes(){
+        if(CruxMath.testChance(new Random(recipesSeed()), 60)) return null;
+        if(this.recipes == null) return this.recipes = buildRecipes();
+        return recipes;
+    }
+
+    public long recipesSeed(){
+        Long seed = CruxTag.get(mob, "recipes_seed", PersistentDataType.LONG, null);
+        if(seed == null) {
+            seed = System.nanoTime();
+            CruxTag.set(mob, "recipes_seed", PersistentDataType.LONG, seed);
+        }
+        return seed;
+    }
+
+    public List<MerchantRecipe> buildRecipes(){
+        List<MerchantRecipe> list = new ArrayList<>();
+        Random random = new Random(recipesSeed());
+        int numRecipes = CruxMath.random(3, 7, random);
+        List<MerchantRecipe> choose = new ArrayList<>(OFFERS);
+        for (int i = 0; i < numRecipes; i++) {
+            int index = random.nextInt(choose.size());
+            MerchantRecipe recipe = choose.get(index);
+            choose.remove(index);
+            recipe = new MerchantRecipe(recipe);
+            recipe.setMaxUses(CruxMath.random(5, 15));
+            list.add(recipe);
+            if(choose.isEmpty()) break;
+        }
+        return list;
+    }
+
 
     public String generateAttackAnimationID(){
         return "attack_" + CruxMath.random(1,3);
