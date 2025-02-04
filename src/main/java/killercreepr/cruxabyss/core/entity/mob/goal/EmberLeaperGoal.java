@@ -217,7 +217,7 @@ public class EmberLeaperGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public int getAttackFireTicks(){
-        return CruxMath.random(30, 60);
+        return CruxMath.random(90, 130);
     }
 
     @Override

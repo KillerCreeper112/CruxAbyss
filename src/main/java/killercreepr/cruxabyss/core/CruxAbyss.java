@@ -74,6 +74,7 @@ import killercreepr.cruxstructures.core.structure.generation.InstantLocationSetL
 import killercreepr.cruxstructures.core.structure.generation.LocationSetListStructureGen;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
@@ -116,7 +117,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         new AbyssCommands(this).register();
         CfgRegistries.SIMPLE_REGISTRY.forEach(reg ->{
             reg.registerFileHandler(
-                new AutoFileHandler<>(MobWave.class),
+                new AutoFileHandler<>(MobWave.class, AutoFileOptions.builder()
+                    .addTypeToken("one_time_spawns", new TypeToken<List<NaturalEntitySpawnGroup>>() {})
+                    .build()),
                 new AutoFileHandler<>(MobWaveGroup.class, AutoFileOptions.builder()
                     .addTypeToken("waves", new TypeToken<List<MobWave>>() {})
                     .build())
