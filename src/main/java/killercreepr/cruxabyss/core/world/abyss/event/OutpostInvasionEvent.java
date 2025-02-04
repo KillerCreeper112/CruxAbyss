@@ -69,7 +69,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     protected final CruxWorld world;
     protected final StoredStructure targetStructure;
     protected final StructureWorldModule structures;
-    protected final NaturalEntitySpawnGroup spawns;
+    //protected final NaturalEntitySpawnGroup spawns;
     protected final MobWaveGroup waveGroup;
     protected final int maxWave;
     protected final float maxCaptureTime;
@@ -85,13 +85,13 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     public OutpostInvasionEvent(CruxWorld world,
                                 StoredStructure targetStructure,
-                                NaturalEntitySpawnGroup spawns,
+                                MobWaveGroup waveGroup,
                                 int maxWave,
                                 float maxCaptureTime) {
         this.world = world;
         this.structures = world.getModule(StructureWorldModule.class);
         this.targetStructure = targetStructure;
-        this.spawns = spawns;
+        this.waveGroup = waveGroup;
         this.maxWave = maxWave;
         this.maxCaptureTime = maxCaptureTime;
 
@@ -664,7 +664,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         return null;
     }
 
-    public Collection<Entity> spawnEntities(
+    /*public Collection<Entity> spawnEntities(
         int groupAmount, int minAmount, int maxAmount,
         double minSpawnDistance, double maxSpawnDistance
     ){
@@ -710,7 +710,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             }
         }
         return list;
-    }
+    }*/
 
     public void onEntitySpawn(Entity e){
         totalEntitiesSpawned++;
