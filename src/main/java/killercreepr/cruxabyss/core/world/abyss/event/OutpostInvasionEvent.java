@@ -18,6 +18,7 @@ import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
 import killercreepr.cruxblocks.core.component.PlacedCustomBlocksComponent;
@@ -215,8 +216,12 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         float maxContribution = cfg.ABYSS_OUTPOST_INVASION_CAPTURE_AMOUNT_MAX_PER_ENTITY().value().floatValue(); // Maximum contribution from an entity
         float falloffRate = cfg.ABYSS_OUTPOST_INVASION_CAPTURE_AMOUNT_FALL_OFF_RATE().value().floatValue();     // Adjust for smoother drop-off (higher = slower falloff)
 
+        float dmgFalloffRate = falloffRate * 2f;
+
         for (Entity e : entities) {
             if(!e.getWorld().equals(world.toBukkitWorld())) continue;
+            float damage = (float) CruxAttribute.get(e, CruxAttribute.ATTACK_DAMAGE);
+
             float distanceSquared = (float) center.distanceSquared(CruxPosition.precise(e.getLocation()));
             if (distanceSquared == 0) {
                 // Assume maximum contribution if the entity is exactly at the center
@@ -230,6 +235,13 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             float addedTime = maxContribution / (1 + distance / falloffRate);
 
             amount += addedTime;
+
+            float distanceFactor = 1f / (1 + (distance / dmgFalloffRate));  // Smoother falloff: farther = lower factor
+
+            // Apply damage contribution (scaled by distance)
+            float damageContribution = (damage / 15f) * distanceFactor;
+
+            amount += damageContribution;
         }
 
         return amount;
@@ -258,9 +270,11 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(owner, tags);
         }
         if(!active) return;
-        getNearbyEntities(e -> e instanceof Player).forEach(p ->{
-            if(p.equals(owner)) return;
-            Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(p, tags);
+        Crux.scheduler().runTask(() ->{
+            getNearbyEntities(e -> e instanceof Player).forEach(p ->{
+                if(p.equals(owner)) return;
+                Lang.ABYSS_OUTPOST_INVASION_DEFEATED.use(p, tags);
+            });
         });
     }
 
@@ -310,7 +324,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             return;
         }
 
-        if(CruxMath.testChance(0.0008)){
+        if(CruxMath.testChance(0.0009)){
             onOverTime();
             return;
         }

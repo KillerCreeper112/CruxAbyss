@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class StandardAbyssSpawns {
     public static final Collection<Material> SPAWNABLE_ON_NOT = new CollectionBuilder<Material>()
@@ -35,7 +36,7 @@ public class StandardAbyssSpawns {
     public static final NaturalEntitySpawn EMPTY = new SimpleNaturalEntitySpawn(30, 0f) {
         @Nullable
         @Override
-        public Entity spawn(@NotNull SpawnContext ctx) {
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
             return null;
         }
 
@@ -47,9 +48,9 @@ public class StandardAbyssSpawns {
     public static final NaturalEntitySpawn ABYSSAL_EYE_VINE = new NaturalCruxMobSpawn(4, 0, AbyssMob.ABYSSAL_EYE_VINE) {
 
         @Override
-        public @NotNull Entity spawn(@NotNull SpawnContext ctx) {
+        public @NotNull Entity spawn(@NotNull SpawnContext ctx, Consumer<Entity> consumer) {
             return mob.spawn(ctx.getBlock()
-                .getLocation().toCenterLocation().subtract(0, .5, 0));
+                .getLocation().toCenterLocation().subtract(0, .5, 0), consumer);
         }
 
         @Override

@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxentities.entity.CruxMob;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +22,6 @@ public class AbyssalMobsListener implements Listener {
                 event.setDamage(event.getDamage()/2);
             }
             case /*SUFFOCATION, */DROWNING, THORNS -> {
-                Bukkit.broadcastMessage(event.getDamage() + "");
                 event.setDamage(event.getDamage()*.7);
             }
         }
