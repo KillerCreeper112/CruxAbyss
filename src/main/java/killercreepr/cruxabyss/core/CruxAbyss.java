@@ -2,16 +2,20 @@ package killercreepr.cruxabyss.core;
 
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
+import killercreepr.crux.api.loot.LootPool;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.api.text.tags.TagParser;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
 import killercreepr.crux.core.communication.lang.SimpleCreateLang;
+import killercreepr.crux.core.loot.SimpleLootTable;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.cruxabyss.api.loot.MobWaveGroupLootTable;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -26,6 +30,7 @@ import killercreepr.cruxabyss.core.game.entity.MobWave;
 import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
+import killercreepr.cruxabyss.core.loot.SimpleMobWaveGroupLootTable;
 import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
 import killercreepr.cruxabyss.core.menu.action.AbyssOutpostUpgradeAction;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
@@ -47,6 +52,8 @@ import killercreepr.cruxadvancements.core.config.handler.FileSimpleAdvanceObject
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileLootCondition;
+import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileSimpleLootPool;
+import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileSimpleLootTable;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.SimpleFileLootCondition;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -67,6 +74,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
+import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,6 +115,15 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             reg.registerFileHandler(
                 new AutoFileHandler<>(MobWave.class),
                 new AutoFileHandler<>(MobWaveGroup.class)
+            );
+            reg.registerFileHandler(
+                MobWaveGroupLootTable.class, new FileSimpleLootTable<>(MobWaveGroup.class, new FileSimpleLootPool<>(MobWaveGroup.class)){
+                    @Nullable
+                    @Override
+                    public SimpleLootTable<MobWaveGroup> createLootTable(@NotNull Key key, @NotNull NumberProvider rolls, @NotNull List<LootPool<MobWaveGroup>> lootPools) {
+                        return new SimpleMobWaveGroupLootTable(key, rolls, lootPools);
+                    }
+                }
             );
         });
         /*CfgRegistries.JSON_REGISTRY.forEach(registry ->{

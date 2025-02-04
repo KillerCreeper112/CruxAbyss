@@ -19,7 +19,8 @@ public class ConquestMessenger {
     }
 
     public Collection<Player> getNearby(){
-        return node.getBlock().getWorld().getNearbyEntitiesByType(Player.class, node.getBlock().getLocation().toCenterLocation(), 500D);//todo
+        return node.getBlock().getWorld().getPlayers();
+        //return node.getBlock().getWorld().getNearbyEntitiesByType(Player.class, node.getBlock().getLocation().toCenterLocation(), 500D);//todo
     }
 
     public ActiveAbyssConquestNode getNode() {

@@ -1,10 +1,9 @@
 package killercreepr.cruxabyss.core.config;
 
 import killercreepr.crux.api.data.Holder;
-import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.cruxabyss.api.loot.MobWaveGroupLootTable;
 import killercreepr.cruxabyss.api.values.AbyssOutpostInvasionCfg;
-import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.bukkit.file.JsonCfg;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
@@ -19,7 +18,7 @@ import java.io.File;
 
 @Config(autoUpdate = true)
 public class AbyssOutpostInvasionEventConfig extends JsonCfg implements AbyssOutpostInvasionCfg {
-    public final CfgValue<LootTable<MobWaveGroup>> ABYSS_OUTPOST_INVASION_WAVES = new CommonValue<>(){};
+    public final CfgValue<MobWaveGroupLootTable> ABYSS_OUTPOST_INVASION_WAVES = new CommonValue<>(){};
     public final NumCfgValue ABYSS_OUTPOST_INVASION_MAX_CAPTURE_TIME = new NumCfgValue(NumberProvider.uniform(3000, 4200));
     public final NumCfgValue ABYSS_OUTPOST_INVASION_OUTSIDE_WALLS_CAPTURE_TIME_DECREASE = new NumCfgValue(NumberProvider.uniform(10f, 20f));
     public final NumCfgValue ABYSS_OUTPOST_INVASION_CAPTURE_AMOUNT_MAX_PER_ENTITY = new NumCfgValue(10f);
@@ -68,7 +67,7 @@ public class AbyssOutpostInvasionEventConfig extends JsonCfg implements AbyssOut
 
     @NotNull
     @Override
-    public Holder<LootTable<MobWaveGroup>> ABYSS_OUTPOST_INVASION_WAVES() {
+    public Holder<MobWaveGroupLootTable> ABYSS_OUTPOST_INVASION_WAVES() {
         return ABYSS_OUTPOST_INVASION_WAVES;
     }
 
