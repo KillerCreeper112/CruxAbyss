@@ -510,7 +510,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     @Override
     public boolean shouldStop() {
-        return forceStop || defeated || captured || (currentWave >= maxWave && spawnedEntities.isEmpty());
+        return forceStop || defeated || captured || (currentWave >= maxWave && spawnedEntities.isEmpty() && !CruxMath.hasOccurredWithin(lastSpawnedWave, 100));
     }
 
     public boolean shouldNextWave(){
@@ -532,7 +532,6 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
                 Lang.ABYSS_OUTPOST_INVASION_WAVE_SPAWNING.use(p, tags);
             });
         });
-
     }
 
     public void spawnWave(int wave){
@@ -555,7 +554,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             return findNearbySpawn(spawn, 3);
         }, e ->{
             if(!(e instanceof Mob mob)) return;
-            mob.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 0, false, false));
+            mob.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 500, 0, false, false));
             if(!(CruxGoalUtil.getGoal(mob, Goal.class, CruxGoalBase.defaultKey()) instanceof PathTargetMobGoal goal)){
                 Crux.log(Level.SEVERE, "Goal from " + mob.getName() + " is not a PathTargetMobGoal!");
                 return;

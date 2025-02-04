@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core;
 
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.loot.LootPool;
@@ -60,6 +61,7 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
+import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxmenus.CruxMenusModule;
@@ -80,6 +82,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     private static CruxAbyss instance;
@@ -114,7 +117,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CfgRegistries.SIMPLE_REGISTRY.forEach(reg ->{
             reg.registerFileHandler(
                 new AutoFileHandler<>(MobWave.class),
-                new AutoFileHandler<>(MobWaveGroup.class)
+                new AutoFileHandler<>(MobWaveGroup.class, AutoFileOptions.builder()
+                    .addTypeToken("waves", new TypeToken<List<MobWave>>() {})
+                    .build())
             );
             reg.registerFileHandler(
                 MobWaveGroupLootTable.class, new FileSimpleLootTable<>(MobWaveGroup.class, new FileSimpleLootPool<>(MobWaveGroup.class)){

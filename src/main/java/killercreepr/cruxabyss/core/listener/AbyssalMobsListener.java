@@ -2,12 +2,14 @@ package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxentities.entity.CruxMob;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+//todo suffocation damage is weird in MEG https://git.lumine.io/mythiccraft/model-engine-4/-/issues/181
 public class AbyssalMobsListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityDamage(EntityDamageEvent event) {
@@ -20,7 +22,8 @@ public class AbyssalMobsListener implements Listener {
             case FALL, CONTACT, FIRE, CAMPFIRE, LAVA, FREEZE -> {
                 event.setDamage(event.getDamage()/2);
             }
-            case SUFFOCATION, DROWNING, THORNS -> {
+            case /*SUFFOCATION, */DROWNING, THORNS -> {
+                Bukkit.broadcastMessage(event.getDamage() + "");
                 event.setDamage(event.getDamage()*.7);
             }
         }
