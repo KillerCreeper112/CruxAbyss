@@ -41,7 +41,7 @@ public class Toxintrawl extends SimpleAbyssMob {
             e.setSilent(true);
 
             if(e instanceof LivingEntity ee){
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(36D);
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
                 ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.5D);
             }
@@ -52,7 +52,7 @@ public class Toxintrawl extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-            CruxAttributeModifier.baseModifier(CruxMath.random(6D, 9D) * (world == null ? 1D : world.getDifficulty())));
+            CruxAttributeModifier.baseModifier(CruxMath.random(8D, 12D) * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(-3));

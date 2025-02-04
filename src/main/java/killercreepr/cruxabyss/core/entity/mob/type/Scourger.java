@@ -5,6 +5,7 @@ import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.ScourgerGoal;
@@ -15,6 +16,7 @@ import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -47,6 +49,8 @@ public class Scourger extends SimpleAbyssMob {
                     if(!items.isEmpty()) mob.getEquipment().setHelmet(items.getFirst());
                 }
                 mob.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(30D, 50D));
+                mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
             }
         };
     }

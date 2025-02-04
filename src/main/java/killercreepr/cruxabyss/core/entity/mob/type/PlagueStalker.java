@@ -43,8 +43,8 @@ public class PlagueStalker extends SimpleAbyssMob {
             e.setSilent(true);
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
-                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40D);
-                mob.setHealth(40D);
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(40D, 50D));
+                mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
                 mob.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(1.2D);
                 CruxAttribute.addModifier(
                     e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(

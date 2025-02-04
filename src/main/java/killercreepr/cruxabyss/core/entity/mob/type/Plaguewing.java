@@ -15,6 +15,7 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -38,6 +39,10 @@ public class Plaguewing extends SimpleAbyssMob {
             e.customName(Component.text("Plague Wing"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
+            if(e instanceof Mob mob){
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(30D, 40D));
+                mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
+            }
         };
     }
 

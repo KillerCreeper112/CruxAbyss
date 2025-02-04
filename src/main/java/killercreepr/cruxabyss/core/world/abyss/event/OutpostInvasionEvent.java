@@ -14,6 +14,7 @@ import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
 import killercreepr.cruxabyss.core.block.active.ActiveAbyssConquestNode;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
@@ -69,6 +70,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     protected final StoredStructure targetStructure;
     protected final StructureWorldModule structures;
     protected final NaturalEntitySpawnGroup spawns;
+    protected final MobWaveGroup waveGroup;
     protected final int maxWave;
     protected final float maxCaptureTime;
     protected float captureTime;
@@ -81,7 +83,11 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     protected final Map<UUID, Float> participants = new HashMap<>();
 
-    public OutpostInvasionEvent(CruxWorld world, StoredStructure targetStructure, NaturalEntitySpawnGroup spawns, int maxWave, float maxCaptureTime) {
+    public OutpostInvasionEvent(CruxWorld world,
+                                StoredStructure targetStructure,
+                                NaturalEntitySpawnGroup spawns,
+                                int maxWave,
+                                float maxCaptureTime) {
         this.world = world;
         this.structures = world.getModule(StructureWorldModule.class);
         this.targetStructure = targetStructure;
@@ -529,11 +535,39 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     }
 
     public void spawnWave(int wave){
+        CruxPosition pos = targetStructure.getPosition().add(11, 0, 0)
+            .rotateAroundY(targetStructure.getPosition(), targetStructure.getRotation());
+
+        double distance = targetStructure.getBoundingBox().getWidthX()*.6;
+
         totalEntitiesSpawnedThisWave = 0;
-        spawnEntities(
+
+        Collection<Entity> spawned = waveGroup.spawnWave(wave, null, e ->{
+            if(!(e instanceof Mob mob)) return;
+            if(!(CruxGoalUtil.getGoal(mob, Goal.class, CruxGoalBase.defaultKey()) instanceof PathTargetMobGoal goal)){
+                Crux.log(Level.SEVERE, "Goal from " + mob.getName() + " is not a PathTargetMobGoal!");
+                return;
+            }
+            goal.setPath(GoalPath.goalPath(List.of(GoalNode.distanceGoalNode(pos, distance))));
+            if(goal instanceof OutpostTargeterGoal g) g.setOutpostTarget(targetStructure);
+            onEntitySpawn(mob);
+
+            for(Entity passenger : mob.getPassengers()){
+                if(passenger instanceof Mob passengerMob){
+                    if(!(CruxGoalUtil.getGoal(passengerMob, Goal.class, CruxGoalBase.defaultKey()) instanceof PathTargetMobGoal goalPassenger)){
+                        continue;
+                    }
+                    goalPassenger.setPath(GoalPath.goalPath(List.of(GoalNode.distanceGoalNode(pos, distance))));
+                    if(goalPassenger instanceof OutpostTargeterGoal g) g.setOutpostTarget(targetStructure);
+                }
+                onEntitySpawn(passenger);
+            }
+        });
+
+        /*spawnEntities(
             3, 2, 5,
             16D, 32D
-        );
+        );*/
     }
 
     public boolean isValidGround(Block b){
@@ -637,11 +671,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         Collection<Entity> list = new HashSet<>();
         BoundingBox box = getTargetStructureBox();
         CruxPosition pos = targetStructure.getPosition().add(11, 0, 0)
-            .rotateAroundY(targetStructure.getPosition(), targetStructure.getRotation());/*getFinalTargetLocationFromStructure();
-        if(targetLoc == null){
-            Crux.log(Level.SEVERE, "No node is found on structure! " + targetStructure.getPosition() + ", " + targetStructure.getChunk());
-            return list;
-        }*/
+            .rotateAroundY(targetStructure.getPosition(), targetStructure.getRotation());
 
         double distance = targetStructure.getBoundingBox().getWidthX()*.6;
         while(groupAmount > 0){

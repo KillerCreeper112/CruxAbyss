@@ -28,7 +28,6 @@ import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -177,7 +176,8 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         };
 
         events.addWorldEvent(new OutpostInvasionEvent(
-            world, stored, spawnGroup, 3,
+            world, stored, spawnGroup,
+            CruxMath.randomSkewed(1, 4, .9D),
             CruxMath.random(3000, 4200) //2.5 min - 3.5 min
         ));
     }
@@ -192,7 +192,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         if(tick < 200) return;
         tick = 0;
 
-        if(CruxMath.testChance(0.1)){
+        if(CruxMath.testChance(10)){
             if(!wasInvadedWithin(1200*5)){
                 attemptInvasion();
             }

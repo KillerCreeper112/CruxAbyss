@@ -16,6 +16,7 @@ import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -43,6 +44,8 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
                 mob.setSilent(true);
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(30D, 50D));
+                mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
             }
         };
     }

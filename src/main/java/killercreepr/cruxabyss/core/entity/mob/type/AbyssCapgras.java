@@ -14,6 +14,7 @@ import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -39,6 +40,8 @@ public class AbyssCapgras extends SimpleAbyssMob {
             new ModelEntity(e, key.value()).getOrCreateModeledEntity().setBaseEntityVisible(false);
             if(e instanceof Mob mob){
                 mob.setSilent(true);
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(80D, 90D));
+                mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
             }
         };
     }
@@ -47,7 +50,7 @@ public class AbyssCapgras extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(CruxMath.random(4D, 6D) *
+                CruxAttributeModifier.baseModifier(CruxMath.random(8D, 10D) *
                     (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
