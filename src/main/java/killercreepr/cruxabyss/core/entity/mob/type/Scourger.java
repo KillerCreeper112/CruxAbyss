@@ -51,6 +51,7 @@ public class Scourger extends SimpleAbyssMob {
                 mob.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
                 mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(30D, 50D));
                 mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()*1.1);
             }
         };
     }

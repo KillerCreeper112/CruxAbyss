@@ -54,6 +54,7 @@ public class Toxicator extends SimpleAbyssMob {
                 mob.getAttribute(Attribute.ATTACK_DAMAGE).setBaseValue(
                     mob.getAttribute(Attribute.ATTACK_DAMAGE).getBaseValue()*1.7D
                 );
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()*1.1);
             }
         };
     }
