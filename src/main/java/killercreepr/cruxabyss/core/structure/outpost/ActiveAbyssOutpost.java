@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.tick.ManagedTicked;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
+import killercreepr.cruxabyss.api.values.AbyssOutpostInvasionCfg;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import org.bukkit.entity.Player;
@@ -70,9 +71,12 @@ public class ActiveAbyssOutpost implements ManagedTicked {
         tick++;
         activeUpgrades.values().forEach(t -> t.tick(tick, tickRate));
         if(data.owner == null) return;
+
+        AbyssOutpostInvasionCfg cfg = data.cfg();
+
         if(tick % 100 == 0){
-            if(CruxMath.testChance(invasionChance)){
-                if(!data.wasInvadedWithin(1200)) data.attemptInvasion();
+            if(CruxMath.testChance(cfg.ABYSS_OUTPOST_INVASION_ACTIVE_CHANCE().value().doubleValue())){
+                if(!data.wasInvadedWithin(cfg.ABYSS_OUTPOST_INVASION_COOLDOWN().value().intValue())) data.attemptInvasion();
             }
         }
         /*World world = active.getChunk().getWorld();

@@ -1,31 +1,28 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
+import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
-import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.api.values.AbyssOutpostInvasionCfg;
 import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
+import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxstructures.api.component.StoredStructureComponent;
 import killercreepr.cruxstructures.api.component.TickedStoredComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.CruxWorld;
-import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
-import killercreepr.cruxworlds.api.world.entity.SpawnContext;
-import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.entity.Player;
@@ -45,6 +42,10 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
 
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;
+    }
+
+    public AbyssOutpostInvasionCfg cfg(){
+        return CruxAbyss.inst().worldEventCfgs().ABYSS_OUTPOST_INVASION;
     }
 
     public void invasion(){
@@ -147,38 +148,13 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         if(events == null) return;
         if(events.hasApplicableWorldEvents(OutpostInvasionEvent.class, e -> e.getTargetStructure().equals(stored))) return;
 
-        NaturalEntitySpawnGroup spawnGroup = new SimpleNaturalEntitySpawnGroup(
-            0, 0f, Set.of(
-            new NaturalCruxMobSpawn(10, 0f, AbyssMob.TOXICATOR) {
-                @Override
-                public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                    return true;
-                }
-            },
-            new NaturalCruxMobSpawn(6, 0f, AbyssMob.SCOURGER) {
-                @Override
-                public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                    return true;
-                }
-            },
-            new NaturalCruxMobSpawn(3, 0f, AbyssMob.PLAGUEWING_MOUNT_SCOURGER) {
-                @Override
-                public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                    return true;
-                }
-            }
-        )
-        ) {
-            @Override
-            public boolean canSpawn(@NotNull SpawnContext spawnContext) {
-                return true;
-            }
-        };
+        AbyssOutpostInvasionCfg cfg = CruxAbyss.inst().worldEventCfgs().ABYSS_OUTPOST_INVASION;
+        MobWaveGroup waveGroup = cfg.ABYSS_OUTPOST_INVASION_WAVES().valueOrThrow().populateLoot(
+            LootContext.empty()
+        ).getFirst();
 
-        events.addWorldEvent(new OutpostInvasionEvent(
-            world, stored, spawnGroup,
-            CruxMath.randomSkewed(1, 4, .9D),
-            CruxMath.random(3000, 4200) //2.5 min - 3.5 min
+        events.addWorldEvent(new OutpostInvasionEvent(cfg,
+            world, stored, waveGroup, cfg.ABYSS_OUTPOST_INVASION_MAX_CAPTURE_TIME().value().intValue()
         ));
     }
 
@@ -192,8 +168,9 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         if(tick < 200) return;
         tick = 0;
 
-        if(CruxMath.testChance(10)){
-            if(!wasInvadedWithin(1200*5)){
+        AbyssOutpostInvasionCfg cfg = cfg();
+        if(CruxMath.testChance(cfg.ABYSS_OUTPOST_INVASION_STORED_CHANCE().value().doubleValue())){
+            if(!wasInvadedWithin(cfg.ABYSS_OUTPOST_INVASION_COOLDOWN().value().intValue())){
                 attemptInvasion();
             }
         }
@@ -205,15 +182,6 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
             }
             upgrade.tick(tick, tickRate);
             return false;
-        });
-
-        /*Player p = Crux.getServer().getPlayer(owner);
-        if(p == null) return;*/
-        Crux.scheduler().runTask(() ->{
-            ValuesProvider cfg = CruxAbyss.inst().values();
-            cfg.ABYSS_OUTPOST_TAKE_OVER_EFFECTS().valueOr(Set.of()).forEach(pot ->{
-                p.addPotionEffect(pot);
-            });
         });
     }
 

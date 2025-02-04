@@ -22,4 +22,8 @@ public class MobWaveGroup {
     public MobWave getWave(int index){
         return index < 0 || index >= waves.size() ? null : waves.get(index);
     }
+
+    public int getMaxWave(){
+        return waves.size();
+    }
 }

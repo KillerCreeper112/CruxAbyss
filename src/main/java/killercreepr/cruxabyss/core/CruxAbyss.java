@@ -18,9 +18,12 @@ import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.command.AbyssCommands;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.config.Config;
+import killercreepr.cruxabyss.core.config.WorldEventConfigs;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
+import killercreepr.cruxabyss.core.game.entity.MobWave;
+import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
@@ -47,10 +50,9 @@ import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileLootCondition
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.SimpleFileLootCondition;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
-import killercreepr.cruxconfig.config.common.FileRegistry;
-import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxmenus.CruxMenusModule;
@@ -59,14 +61,12 @@ import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
 import killercreepr.cruxstructures.core.CruxStructuresModule;
 import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
 import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructureGen;
-import killercreepr.cruxstructures.core.structure.CfgFAWEStructure;
 import killercreepr.cruxstructures.core.structure.generation.InstantLocationSetListStructureGen;
 import killercreepr.cruxstructures.core.structure.generation.LocationSetListStructureGen;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
-import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,6 +87,11 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         this.values = values;
     }
 
+    protected WorldEventConfigs worldEventCfgs;
+    public WorldEventConfigs worldEventCfgs(){
+        return worldEventCfgs;
+    }
+
     protected LangProvider langProvider;
     @Override
     public void onLoad() {
@@ -98,12 +103,18 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
         registerCruxStructure();
         new AbyssCommands(this).register();
-        CfgRegistries.JSON_REGISTRY.forEach(registry ->{
-            /*registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
-            registry.registerFileHandler(StoredAbyssSafezone.class, new FileAbyssSafezone());*/
+        CfgRegistries.SIMPLE_REGISTRY.forEach(reg ->{
+            reg.registerFileHandler(
+                new AutoFileHandler<>(MobWave.class),
+                new AutoFileHandler<>(MobWaveGroup.class)
+            );
         });
+        /*CfgRegistries.JSON_REGISTRY.forEach(registry ->{
+            registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
+            registry.registerFileHandler(StoredAbyssSafezone.class, new FileAbyssSafezone());
+        });*/
 
-        CfgRegistries.SIMPLE_REGISTRY.forEach(registry -> {
+        /*CfgRegistries.SIMPLE_REGISTRY.forEach(registry -> {
             registry.getParsedObjectRegistry().register(new FileParsedObjectHandler<CfgFAWEStructure>() {
                 @Override
                 public int getPriority() {
@@ -124,7 +135,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                     String type = registry.deserializeFromFile(String.class, o.get("type"));
                     if(type==null) return current;
                     switch (type.toLowerCase()){
-                       /* case "test" ->{
+                       *//* case "test" ->{
                             return new TestStructure(current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(), current.getModules());
                         }
                         case "abyss_outpost" ->{
@@ -142,7 +153,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                                 current.key(), current.getHolder(), current.isPersistent(), current.getBeforePlacementModules(),
                                 current.getModules()
                             );
-                        }*/
+                        }*//*
                     }
                     return current;
                 }
@@ -152,7 +163,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                     return Crux.key("abyss_structures");
                 }
             });
-        });
+        });*/
         registerLootConditions(BukkitCfgHandlers.LOOT_CONDITION);
         registerObjectives(CruxAdvanceCfgData.fileAdvancementObjective());
 
@@ -190,12 +201,10 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         instance = this;
         if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
             values(new Config(this, "config"));
+            langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
+            worldEventCfgs = new WorldEventConfigs(this);
         }else{
             values(new DefaultValues());
-        }
-        if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
-            langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
-        }else{
             langProvider = this;
             LangPopulator.populate(lang, Msg.class);
         }
@@ -228,6 +237,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         super.reload();
         values.reload(this);
         langProvider.reload(this);
+        worldEventCfgs.reload();
 
         CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
             new CruxFolder(this, "menus").file()

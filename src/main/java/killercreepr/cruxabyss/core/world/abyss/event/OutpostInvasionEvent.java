@@ -11,6 +11,7 @@ import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
+import killercreepr.cruxabyss.api.values.AbyssOutpostInvasionCfg;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
 import killercreepr.cruxabyss.core.block.active.ActiveAbyssConquestNode;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -34,8 +35,6 @@ import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.registries.StructureRegistries;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
-import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
-import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Bukkit;
@@ -66,6 +65,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     public static final int MAX_EVENT_TIME = 9600;
     public static final int MAX_EVENT_OVER_TIME = 18000;
 
+    protected final AbyssOutpostInvasionCfg cfg;
     protected final CruxWorld world;
     protected final StoredStructure targetStructure;
     protected final StructureWorldModule structures;
@@ -83,23 +83,23 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     protected final Map<UUID, Float> participants = new HashMap<>();
 
-    public OutpostInvasionEvent(CruxWorld world,
+    public OutpostInvasionEvent(AbyssOutpostInvasionCfg cfg, CruxWorld world,
                                 StoredStructure targetStructure,
                                 MobWaveGroup waveGroup,
-                                int maxWave,
                                 float maxCaptureTime) {
+        this.cfg = cfg;
         this.world = world;
         this.structures = world.getModule(StructureWorldModule.class);
         this.targetStructure = targetStructure;
         this.waveGroup = waveGroup;
-        this.maxWave = maxWave;
+        this.maxWave = waveGroup.getMaxWave();
         this.maxCaptureTime = maxCaptureTime;
 
         this.normalTick = () ->{
             Collection<Entity> withinWalls = getSpawnedWithinWalls();
             if(withinWalls.isEmpty()){
                 attackingOutpost = false;
-                captureTime = Math.max(0f, captureTime - CruxMath.random(20f, 40f));
+                captureTime = Math.max(0f, captureTime - cfg.ABYSS_OUTPOST_INVASION_OUTSIDE_WALLS_CAPTURE_TIME_DECREASE().value().floatValue());
                 return;
             }
             attackingOutpost = true;
@@ -212,10 +212,11 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     public float calculateCaptureTickAmount(Collection<Entity> entities, CruxPosition center) {
         float amount = 0f;
-        float maxContribution = 10f; // Maximum contribution from an entity
-        float falloffRate = 10f;     // Adjust for smoother drop-off (higher = slower falloff)
+        float maxContribution = cfg.ABYSS_OUTPOST_INVASION_CAPTURE_AMOUNT_MAX_PER_ENTITY().value().floatValue(); // Maximum contribution from an entity
+        float falloffRate = cfg.ABYSS_OUTPOST_INVASION_CAPTURE_AMOUNT_FALL_OFF_RATE().value().floatValue();     // Adjust for smoother drop-off (higher = slower falloff)
 
         for (Entity e : entities) {
+            if(!e.getWorld().equals(world.toBukkitWorld())) continue;
             float distanceSquared = (float) center.distanceSquared(CruxPosition.precise(e.getLocation()));
             if (distanceSquared == 0) {
                 // Assume maximum contribution if the entity is exactly at the center
@@ -539,11 +540,22 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
             .rotateAroundY(targetStructure.getPosition(), targetStructure.getRotation());
 
         double distance = targetStructure.getBoundingBox().getWidthX()*.6;
+        BoundingBox box = getTargetStructureBox();
 
         totalEntitiesSpawnedThisWave = 0;
 
-        Collection<Entity> spawned = waveGroup.spawnWave(wave, null, e ->{
+        Collection<Entity> spawned = waveGroup.spawnWave(wave, () ->{
+            Location spawn = findSpawn(
+                box, targetStructure.getPosition().y(),
+                cfg.ABYSS_OUTPOST_INVASION_WALL_MIN_SPAWN_DISTANCE().value().intValue(),
+                cfg.ABYSS_OUTPOST_INVASION_WALL_MAX_SPAWN_DISTANCE().value().intValue(),
+                8
+            );
+            if(spawn == null) return null;
+            return findNearbySpawn(spawn, 3);
+        }, e ->{
             if(!(e instanceof Mob mob)) return;
+            mob.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 0, false, false));
             if(!(CruxGoalUtil.getGoal(mob, Goal.class, CruxGoalBase.defaultKey()) instanceof PathTargetMobGoal goal)){
                 Crux.log(Level.SEVERE, "Goal from " + mob.getName() + " is not a PathTargetMobGoal!");
                 return;
