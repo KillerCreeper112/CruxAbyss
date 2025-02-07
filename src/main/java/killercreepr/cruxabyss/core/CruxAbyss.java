@@ -27,6 +27,7 @@ import killercreepr.cruxabyss.core.config.WorldEventConfigs;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
+import killercreepr.cruxabyss.core.entity.tickable.AbyssTickables;
 import killercreepr.cruxabyss.core.game.entity.MobWave;
 import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.lang.Lang;
@@ -113,6 +114,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         AbyssStatistic.register();
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
         registerCruxStructure();
+        AbyssTickables.register();
         new AbyssCommands(this).register();
         CfgRegistries.SIMPLE_REGISTRY.forEach(reg ->{
             reg.registerFileHandler(
