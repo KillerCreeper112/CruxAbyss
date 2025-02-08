@@ -50,6 +50,7 @@ public class AbyssTickables {
         @Override
         public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
             Map data = (Map) mod.getData();
+            if(data==null) data= Map.of();
             ParticleBuilderSupplier particleSupplier = (ParticleBuilderSupplier) data.get("particle");
             if(particleSupplier == null){
                 particleSupplier = ParticleBuilderSupplier.builder()
@@ -71,6 +72,60 @@ public class AbyssTickables {
                 (float) data.getOrDefault("range", 2f),
                 (List<PotionEffect>) data.get("effects"),
                 particleSupplier, sound
+            );
+        }
+    });
+
+    public static final EntityTickable SCOURGER_HORN = register(new SimpleDataEntityTickable(Crux.key("scourger_horn")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("spore_attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, e -> (CruxAttributeContainer) e.get("spore_attributes")))
+            .field("spore_effects", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, e -> (List<PotionEffect>) e.get("spore_effects")))
+            .field("spore_particle", TextInputField.field(ComponentInputParsers.PARTICLE_BUILDER_SUPPLIER, e -> (ParticleBuilderSupplier) e.get("spore_particle")))
+            .field("spore_spawn_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, e -> (CreateSound) e.get("spore_spawn_sound")))
+            .field("run_up", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("run_up")))
+            .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("cooldown")))
+            .field("max_spores", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("max_spores")))
+            .field("spore_spawn_rate", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("spore_spawn_rate")))
+            .field("spore_lifespan", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("spore_lifespan")))
+            .field("item_dmg", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("item_dmg")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+            if(data==null) data= Map.of();
+            ParticleBuilderSupplier particleSupplier = (ParticleBuilderSupplier) data.get("spore_particle");
+            if(particleSupplier == null){
+                particleSupplier = ParticleBuilderSupplier.builder()
+                    .particle(Particle.DUST_COLOR_TRANSITION)
+                    .data(new Particle.DustTransition(Color.GREEN, Color.YELLOW, 1f))
+                    .offset(.5, .5, .5)
+                    .extra(.2)
+                    .count(10)
+                    .build();
+            }
+            CreateSound sound = (CreateSound) data.get("spore_spawn_sound");
+            if(sound == null){
+                sound = CreateSound.sound(Sound.ENTITY_PUFFER_FISH_BLOW_UP, 2f);
+            }
+            return new ActiveScourgerHornTickable(
+                entity, this, slot,
+                (CruxAttributeContainer) data.getOrDefault("spore_attributes", CruxAttributeContainer.empty()),
+                (List<PotionEffect>) data.get("spore_effects"),
+                (int) data.getOrDefault("run_up", 60),
+                (int) data.getOrDefault("cooldown", 100),
+                (int) data.getOrDefault("max_spores", 4),
+                (int) data.getOrDefault("item_dmg", 1),
+                (int) data.getOrDefault("spore_spawn_rate", 3),
+                (int) data.getOrDefault("spore_lifespan", 100),
+                particleSupplier,
+                sound
             );
         }
     });
