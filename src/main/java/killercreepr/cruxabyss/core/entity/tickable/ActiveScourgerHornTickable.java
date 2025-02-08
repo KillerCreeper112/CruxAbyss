@@ -65,6 +65,7 @@ public class ActiveScourgerHornTickable extends SimpleActiveEntityTickable imple
                 tickSporeCloud(spore);
                 return false;
             });
+            tickingSpores = false;
         };
     }
 
@@ -127,8 +128,11 @@ public class ActiveScourgerHornTickable extends SimpleActiveEntityTickable imple
 
     public final Runnable tickSporeClouds;
 
+    protected boolean tickingSpores = false;
     public void tickSporeClouds(){
         if(sporeClouds.isEmpty()) return;
+        if(tickingSpores) return;
+        tickingSpores = true;
         Crux.scheduler().runTask(tickSporeClouds);
     }
 
@@ -169,13 +173,17 @@ public class ActiveScourgerHornTickable extends SimpleActiveEntityTickable imple
     }
 
     protected boolean spawnedSpore;
+    protected boolean reachedMax;
     public void tickTrail(){
         if(sporeSpawnRate != 0 && sprintingTick % sporeSpawnRate != 0) return;
         if(!canSpawnSpore()){
             setCooldown(cooldown);
             damageItem(itemDmg);
+            reachedMax = true;
             return;
         }
+        if(reachedMax && isOnCooldown()) return;
+        reachedMax = false;
         spawnedSpore = true;
         spawnSpore(entity.getLocation());
     }
@@ -189,6 +197,8 @@ public class ActiveScourgerHornTickable extends SimpleActiveEntityTickable imple
                 return;
             }
             tickTrail();
+        }else{
+            if(isOnCooldown()) reachedMax = true;
         }
         sprintingTick++;
     }
@@ -200,9 +210,9 @@ public class ActiveScourgerHornTickable extends SimpleActiveEntityTickable imple
             spawnedSpore = false;
             setCooldown(cooldown);
             damageItem(itemDmg);
+            reachedMax = false;
         }
     }
 
-    public record SporeCloud(Location location, long time){
-    }
+    public record SporeCloud(Location location, long time){ }
 }
