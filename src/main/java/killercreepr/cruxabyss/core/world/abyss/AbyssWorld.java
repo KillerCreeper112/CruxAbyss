@@ -16,6 +16,8 @@ import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
 import killercreepr.cruxabyss.core.world.generation.decoration.RockPopulator;
 import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
 import killercreepr.cruxabyss.core.world.module.SimpleWorldEventsModule;
+import killercreepr.cruxblocks.api.event.CustomBlockExplodeEvent;
+import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
@@ -40,8 +42,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -223,7 +223,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onBlockExplode(BlockExplodeEvent event) {
+    public void onBlockExplode(CustomBlockExplodeEvent event) {
         if(!event.getBlock().getLocation().getWorld().equals(world)) return;
         float yield = event.getYield();
         int blocksToFling = (int) (event.blockList().size() * yield);
@@ -245,7 +245,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onEntityExplode(EntityExplodeEvent event) {
+    public void onEntityExplode(CustomEntityExplodeEvent event) {
         if(!event.getLocation().getWorld().equals(world)) return;
         float yield = event.getYield();
         int blocksToFling = (int) (event.blockList().size() * yield);

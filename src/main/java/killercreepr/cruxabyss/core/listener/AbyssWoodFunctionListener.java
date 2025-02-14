@@ -5,15 +5,15 @@ import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.persistence.AbyssPersist;
 import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.event.CustomBlockExplodeEvent;
+import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxcore.CruxCore;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -41,12 +41,12 @@ public class AbyssWoodFunctionListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onEntityExplode(EntityExplodeEvent event) {
+    public void onEntityExplode(CustomEntityExplodeEvent event) {
         onExplode(event.blockList());
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onBlockExplode(BlockExplodeEvent event) {
+    public void onBlockExplode(CustomBlockExplodeEvent event) {
         onExplode(event.blockList());
     }
 

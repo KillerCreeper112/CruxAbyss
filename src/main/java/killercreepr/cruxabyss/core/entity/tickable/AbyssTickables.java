@@ -9,7 +9,6 @@ import killercreepr.crux.api.data.ParticleBuilderSupplier;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
-import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.cruxtickables.api.entity.tickable.ActiveEntityTickable;

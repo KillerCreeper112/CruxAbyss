@@ -12,7 +12,6 @@ import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
 import killercreepr.usurvive.api.entity.player.UPlayer;
-import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
