@@ -19,8 +19,8 @@ public class AbyssWorldType implements CruxWorldType {
     }
 
     @Override
-    public @NotNull CruxWorld generate(@NotNull String name) {
-        World world = new WorldCreator(name).type(WorldType.AMPLIFIED)/*.generator(new AbyssChunkGenerator())*/.createWorld();
+    public @NotNull CruxWorld generate(@NotNull Key name) {
+        World world = new WorldCreator(name.value()).type(WorldType.AMPLIFIED)/*.generator(new AbyssChunkGenerator())*/.createWorld();
         if(world==null) throw new IllegalStateException("Cannot generate world! " + key);
 
         world.getWorldBorder().setCenter(0, 0);
@@ -32,8 +32,8 @@ public class AbyssWorldType implements CruxWorldType {
     }
 
     @Override
-    public @NotNull String defaultWorldName() {
-        return "world_abyss";
+    public @NotNull Key defaultWorldKey() {
+        return Key.key("world_abyss");
     }
 
     @Override

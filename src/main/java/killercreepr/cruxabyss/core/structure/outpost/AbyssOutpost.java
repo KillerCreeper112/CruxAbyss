@@ -1,8 +1,8 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
+import killercreepr.crux.api.data.world.StoredChunk;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;

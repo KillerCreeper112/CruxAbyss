@@ -385,7 +385,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     public ActiveAbyssOutpost outpost(){
         if(outpost == null){
             if(CruxMath.hasOccurredWithin(lastCheckedOutpost, 20)) return outpost;
-            StructureWorldModule module = CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
+            StructureWorldModule module = CruxCore.core().worldManager().getWorld(block.getWorld().key())
                 .getModule(StructureWorldModule.class);
             ActiveStructure structure = module.getFirstActiveAt(ActiveStructure.class, block,
                 check -> check.has(AbyssComponents.ACTIVE_ABYSS_OUTPOST));
@@ -401,7 +401,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     public boolean isBeingInvaded(){
         outpost();
         if(structure == null) return false;
-        WorldEventsModule module = CruxCore.core().worldManager().getWorld(block.getWorld().getUID())
+        WorldEventsModule module = CruxCore.core().worldManager().getWorld(block.getWorld().key())
             .getModule(WorldEventsModule.class);
         if(module == null) return false;
         return !module.getApplicableWorldEvents(OutpostInvasionEvent.class, e -> e.getTargetStructure().equals(structure)).isEmpty();

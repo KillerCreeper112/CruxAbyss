@@ -31,7 +31,7 @@ public class AbyssOutpostSetLocationList extends InstantLocationSetListStructure
         List<UUID> previousOwners = AbyssWorld.WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(world.getName());
         if(previousOwners == null || previousOwners.isEmpty()) return;
 
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(world.getUID());
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(world.key());
         if(crux == null) return;
 
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);

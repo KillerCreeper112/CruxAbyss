@@ -52,7 +52,7 @@ public class AbyssSpecificsListener implements Listener {
     }
 
     public void animalDeath(Entity e){
-        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().getUID());
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
 
         Location loc = e.getLocation().add(0, e.getHeight()/2, 0);
@@ -80,7 +80,7 @@ public class AbyssSpecificsListener implements Listener {
         if(!event.isGliding()) return;
         if(!(event.getEntity() instanceof Player p)) return;
         if(p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) return;
-        CruxWorld world = CruxCore.inst().worldManager().getWorld(p.getWorld().getUID());
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(p.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
 
         ItemStack elytra = p.getInventory().getChestplate();
@@ -96,7 +96,7 @@ public class AbyssSpecificsListener implements Listener {
         if(!event.getAction().isRightClick()) return;
         Block b = event.getClickedBlock();
         if(b == null) return;
-        CruxWorld world = CruxCore.inst().worldManager().getWorld(b.getWorld().getUID());
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(b.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         if(!(b.getBlockData() instanceof Bed)) return;
         event.setCancelled(true);
@@ -106,7 +106,7 @@ public class AbyssSpecificsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
-        CruxWorld world = CruxCore.inst().worldManager().getWorld(p.getWorld().getUID());
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(p.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         Block b = p.getLocation().getBlock();
         if(!isWater(b)) return;
@@ -122,7 +122,7 @@ public class AbyssSpecificsListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityRegainHealth(EntityRegainHealthEvent event) {
         Entity e = event.getEntity();
-        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().getUID());
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         if(event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED){
             double multiplier = cfg.ABYSS_NATURAL_HEALING_MULTIPLIER().value().doubleValue();

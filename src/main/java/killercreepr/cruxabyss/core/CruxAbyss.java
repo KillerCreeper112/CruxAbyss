@@ -203,9 +203,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         });*/
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
-        worldManager.getCreatorRegistry().register("world_abyss", AbyssWorld::new);
+        worldManager.getCreatorRegistry().register(Key.key("world_abyss"), AbyssWorld::new);
         worldManager.getWorldTypeRegistry().register(AbyssWorldTypes.ABYSS);
-        worldManager.getModuleCreatorRegistry().register("world", new CruxWorldModuleCreator() {
+        worldManager.getModuleCreatorRegistry().register(Key.key("world"), new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld cruxWorld) {
                 return new SimpleWorldEventsModule(cruxWorld);

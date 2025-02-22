@@ -1,11 +1,11 @@
 package killercreepr.cruxabyss.core.world.abyss.event;
 
 import com.destroystokyo.paper.entity.ai.Goal;
+import killercreepr.crux.api.data.world.StoredChunk;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.data.world.StoredChunk;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
@@ -438,7 +438,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     public void onCaptured(){
         ActiveAbyssConquestNode node = active ? getConquestNode() : null;
         if(node == null && active){
-            Crux.log(Level.SEVERE, "OutpostInvasionEvent: " + targetStructure.getPosition() + " has no conquest node! " + world.getName());
+            Crux.log(Level.SEVERE, "OutpostInvasionEvent: " + targetStructure.getPosition() + " has no conquest node! " + world.key());
             return;
         }
         Player owner = getOnlineOwner();

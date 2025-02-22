@@ -51,7 +51,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
     }
 
     public ActiveAbyssOutpost findActiveOutpost(){
-        CruxWorld world = CruxCore.core().worldManager().getWorld(active.getChunk().getWorld().getUID());
+        CruxWorld world = CruxCore.core().worldManager().getWorld(active.getChunk().getWorld().key());
         if(world == null) return null;
         StructureWorldModule module = world.getModule(StructureWorldModule.class);
         if(module == null) return null;

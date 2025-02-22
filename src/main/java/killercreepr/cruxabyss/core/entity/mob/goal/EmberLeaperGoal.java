@@ -59,7 +59,7 @@ public class EmberLeaperGoal extends CruxMobModeledGoal implements Listener {
     public void updateStats(){
         int size = getSize();
         float scale = .7f + (size * .17f);
-        AbyssWorld world = CruxCore.inst().worldManager().getWorldOrNull(mob.getWorld().getUID(), AbyssWorld.class);
+        AbyssWorld world = CruxCore.inst().worldManager().getWorldOrNull(mob.getWorld().key(), AbyssWorld.class);
         CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(
             (CruxMath.random(4D, 6D) * (world == null ? 1D : world.getDifficulty())) * scale
         ));

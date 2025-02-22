@@ -172,7 +172,7 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return spawnAt(
-            CruxCore.inst().worldManager().getWorldOrNull(location.getWorld().getUID(), AbyssWorld.class), location, consumer
+            CruxCore.inst().worldManager().getWorldOrNull(location.getWorld().key(), AbyssWorld.class), location, consumer
         );
     }
 }

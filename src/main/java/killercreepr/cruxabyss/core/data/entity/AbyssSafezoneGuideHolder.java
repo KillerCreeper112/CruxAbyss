@@ -67,7 +67,7 @@ public class AbyssSafezoneGuideHolder extends PlayerTickedDataHolder {
     }
 
     public StoredStructure findSafezone(Player p){
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(p.getWorld().getUID());
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(p.getWorld().key());
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
         GetNear<StoredStructure> near = new GetStructureNear(module.getStoredStructures())
             .center(p.getLocation())

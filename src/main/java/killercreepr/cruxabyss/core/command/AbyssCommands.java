@@ -16,6 +16,7 @@ import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.core.USurvivePlugin;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -82,7 +83,7 @@ public class AbyssCommands {
                                                 //Crux.getServer().unloadWorld(active, false);
                                             }
                                             cancel();
-                                            CruxCore.inst().worldManager().deleteWorld("world_abyss");
+                                            CruxCore.inst().worldManager().deleteWorld(Key.key("world_abyss"));
                                             //CruxWorldUtil.deleteWorld("world_abyss");
                                             sender.sendMessage("Creating new world...");
                                             AbyssWorld.getOrCreate(plugin, "world_abyss");

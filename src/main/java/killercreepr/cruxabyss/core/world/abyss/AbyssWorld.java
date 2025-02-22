@@ -28,6 +28,7 @@ import killercreepr.cruxworlds.core.world.SimpleWorld;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntityWorldSpawner;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.world.generation.OreGenerator;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.GameRule;
@@ -50,10 +51,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
-    public static final Map<String, List<UUID>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
+    public static final Map<Key, List<UUID>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
 
     public static @Nullable AbyssWorld getOrCreate(@NotNull CruxPlugin plugin, @NotNull String worldName){
-        return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, worldName);
+        return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, Key.key(worldName));
     }
 
     protected final NaturalEntitySpawnManager entitySpawnManager;
@@ -97,9 +98,9 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
                 abyssOwners.add(data.owner);
             });
             if(abyssOwners.isEmpty()){
-                WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(getName());
+                WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(key());
             }else{
-                WORLD_TO_ABYSS_OUTPOST_OWNERS.put(getName(), abyssOwners);
+                WORLD_TO_ABYSS_OUTPOST_OWNERS.put(key(), abyssOwners);
             }
         }
 

@@ -432,7 +432,7 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public StoredStructure findSafeZone(Location at){
-        CruxWorld world = CruxCore.core().worldManager().getWorld(at.getWorld().getUID());
+        CruxWorld world = CruxCore.core().worldManager().getWorld(at.getWorld().key());
         if(world == null) return null;
         StructureWorldModule module = world.getModule(StructureWorldModule.class);
         if(module == null) return null;
@@ -522,7 +522,7 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public CruxWorld getCruxWorld(){
-        return CruxCore.core().worldManager().getWorld(mob.getWorld().getUID());
+        return CruxCore.core().worldManager().getWorld(mob.getWorld().key());
     }
 
     public boolean hasSafeZone(){

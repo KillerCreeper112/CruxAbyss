@@ -42,7 +42,7 @@ public class AbyssAltarCrystalComponent implements AbyssAltarCrystal {
         if(user.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount()-1);
 
         Block b = altar.center();
-        CruxWorld world = CruxCore.inst().worldManager().getWorld(b.getWorld().getUID());
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(b.getWorld().key());
         if(world != null && AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))){
             BlockData data = b.getBlockData();
             Crux.handlers().block().setType(b, Material.AIR);

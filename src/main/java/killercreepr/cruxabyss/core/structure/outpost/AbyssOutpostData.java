@@ -142,7 +142,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     }
 
     public void attemptInvasion(){
-        CruxWorld world = CruxCore.core().worldManager().getWorld(stored.getChunk().worldUUID());
+        CruxWorld world = CruxCore.core().worldManager().getWorld(stored.getChunk().worldKey());
         if(world == null) return;
         WorldEventsModule events = world.getModule(WorldEventsModule.class);
         if(events == null) return;
@@ -205,7 +205,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         int previousLevel = getUpgradeLevel(upgrade);
         if(previousLevel == level) return;
 
-        ActiveStructure active = CruxCore.core().worldManager().getWorld(stored.getChunk().worldUUID())
+        ActiveStructure active = CruxCore.core().worldManager().getWorld(stored.getChunk().worldKey())
                 .getModule(StructureWorldModule.class)
                     .getActiveStructures().get(stored.getChunk().getChunkKey(), stored.getPosition());
         if(active != null && active.has(AbyssComponents.ACTIVE_ABYSS_OUTPOST)){
