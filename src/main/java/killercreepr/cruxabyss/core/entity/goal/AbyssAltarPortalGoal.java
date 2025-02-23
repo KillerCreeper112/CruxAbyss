@@ -79,7 +79,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         ValuesProvider cfg = CruxAbyss.inst().values();
         if("death".equalsIgnoreCase(teleportType)){
             DeathManager manager = USurvivePlugin.inst().getDeathManager();
-            PlayerDeath death = CruxCollection.getRandom(manager.getAllDeathsInWorld(p.getUniqueId(), world.getUID()));
+            PlayerDeath death = CruxCollection.getRandom(manager.getAllDeathsInWorld(p.getUniqueId(), world.key()));
             if(death == null) return RandomWorldTP.worldRandom(world);
 
             Location l = death.getPosition().toLocation(world);
