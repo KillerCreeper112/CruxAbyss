@@ -3,20 +3,16 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
-import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.cruxworlds.api.world.CruxWorld;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.Listener;
@@ -186,18 +182,8 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
     }
 
     @Override
-    public boolean isValidTarget(@NotNull LivingEntity target) {
-        return !CruxMob.isInCategory(target, AbyssMobCategory.ABYSS_SAFEZONE) && super.isValidTarget(target);
-    }
-
-    @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        return CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
-    }
-
-    @Override
-    public boolean isValidHitTarget(@NotNull Entity target) {
-        return !CruxMob.isInCategory(target, AbyssMobCategory.ABYSS_SAFEZONE) && super.isValidHitTarget(target);
+        return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
     }
 
     @Override
@@ -219,9 +205,4 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
         combatTick();
         movementTick();
     }
-
-    public CruxWorld getCruxWorld(){
-        return CruxCore.core().worldManager().getWorld(mob.getWorld().key());
-    }
-
 }

@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 public class AbyssalHusk extends SimpleAbyssMob {
 
     public AbyssalHusk() {
-        super(Crux.key("abyssal_husk"), EntityType.ZOMBIE);
+        super(Crux.key("abyssal_husk"), EntityType.PIG);
     }
 
     @Override
