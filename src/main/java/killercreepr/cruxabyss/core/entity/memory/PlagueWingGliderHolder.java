@@ -13,6 +13,7 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.cruxabyss.core.lang.Lang;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -35,29 +36,30 @@ public class PlagueWingGliderHolder extends EntityTickedDataHolder {
     }
 
     @Override
-    public boolean shouldRemoveFromMemory(@Nullable Entity e) {
-        return super.shouldRemoveFromMemory(e) || remove;
-    }
-
-    protected boolean remove = false;
-
-    protected Entity entity;
-    public void onDismount(){
-        remove = true;
-        Entity glide = parent.value();
-        if(glide == null) return;
+    protected void removingFromMemory(@Nullable Entity e) {
+        super.removingFromMemory(e);
+        if(!giveItem) return;
+        if(e==null) return;
         Crux.scheduler().runTask(() ->{
-            glide.remove();
             if(!CruxItem.isEmpty(item)){
                 if(CruxEntityUtil.isValid(entity) && entity instanceof HumanEntity p){
                     CruxEntityUtil.giveOrDrop(p, item);
                 }else{
-                    glide.getWorld().dropItem(glide.getLocation(), item);
+                    e.getWorld().dropItem(e.getLocation(), item);
                 }
             }
-            CreateSound.sound(Sound.ENTITY_WITHER_SHOOT, 2f).playAt(glide);
-            CreateSound.sound(Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.5f).playAt(glide);
+            CreateSound.sound(Sound.ENTITY_WITHER_SHOOT, 2f).playAt(e);
+            CreateSound.sound(Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.5f).playAt(e);
         });
+    }
+
+    protected boolean giveItem = true;
+
+    protected Entity entity;
+    public void onDismount(){
+        Entity glide = parent.value();
+        if(glide == null) return;
+        Crux.scheduler().runTask(glide::remove);
     }
 
     public void onLand(){
@@ -70,6 +72,30 @@ public class PlagueWingGliderHolder extends EntityTickedDataHolder {
         return modeled.getMountData().getMainMountManager().getDriver();
     }
 
+    public void damageItem(int amount, boolean playSound){
+        if(amount == 0) return;
+        int maxDamage = CruxItem.getMaxDurability(item);
+        if(maxDamage < 1) return;
+
+        Crux.handlers().item().damageItem(item, amount, null);
+        Integer dmg = item.getData(DataComponentTypes.DAMAGE);
+        if(dmg == null){
+            onDismount();
+            Entity e = parent.value();
+            if(e==null) return;
+            CreateSound.sound(Sound.ENTITY_ITEM_BREAK).playAt(e);
+            return;
+        }
+        if(playSound){
+            Entity e = parent.value();
+            if(e!=null) CreateSound.sound(Sound.ENTITY_ITEM_BREAK, 2f).playAt(e);
+        }
+        if(entity != null){
+            Lang.PLAGUE_WING_DURABILITY_HIT.use(entity, TagContainer.merged()
+                .add(Tag.parsed("durability", (maxDamage-dmg) + "")));
+        }
+    }
+
     public void itemDamageTick(Entity e){
         if(itemDamage < 1 || tick % 20 != 0) return;
 
@@ -78,14 +104,15 @@ public class PlagueWingGliderHolder extends EntityTickedDataHolder {
 
         Crux.handlers().item().damageItem(item, itemDamage, null);
         Integer dmg = item.getData(DataComponentTypes.DAMAGE);
-        if(dmg == null) return;
+        if(dmg == null){
+            onDismount();
+            CreateSound.sound(Sound.ENTITY_ITEM_BREAK).playAt(e);
+            return;
+        }
 
         if(dmg < maxDamage){
             warnTick(dmg, maxDamage);
-            return;
         }
-        onDismount();
-        CreateSound.sound(Sound.ENTITY_ITEM_BREAK).playAt(e);
     }
 
     public void warnTick(int dmg, int maxDamage){

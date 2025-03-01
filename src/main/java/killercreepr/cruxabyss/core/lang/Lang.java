@@ -178,6 +178,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg PLAGUE_WING_DURABILITY_HIT = create(
+        Communicator.builder()
+            .actionBar("<red><latinfont:\"<durability> durability...\">")
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }
