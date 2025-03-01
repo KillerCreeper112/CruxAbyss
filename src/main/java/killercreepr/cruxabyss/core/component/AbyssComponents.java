@@ -1,16 +1,15 @@
 package killercreepr.cruxabyss.core.component;
 
 import killercreepr.crux.api.component.DataComponentType;
+import killercreepr.crux.api.component.parser.ComponentTextInputParser;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
 import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
-import killercreepr.cruxabyss.core.component.impl.AbyssAltarCrystalComponent;
-import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
-import killercreepr.cruxabyss.core.component.impl.AbyssEntitySpawner;
-import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
+import killercreepr.cruxabyss.core.component.impl.*;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
@@ -22,8 +21,10 @@ import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
 import killercreepr.cruxblocks.core.structure.modules.PlaceCustomBlocksModule;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import org.bukkit.Color;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 
@@ -61,6 +62,22 @@ public class AbyssComponents {
     public static final DataComponentType<ActiveAbyssOutpostLootHolder> ACTIVE_ABYSS_OUTPOST_LOOT_HOLDER = register("active_abyss_outpost_loot_holder", builder -> builder);
     public static final DataComponentType<Vector> ABYSS_HOLOGRAM_OFFSET = register("abyss_hologram_offset", builder -> builder);
     public static final DataComponentType<String> ABYSS_HOLOGRAM_FORMAT = register("abyss_hologram_format", builder -> builder);
+    public static final DataComponentType<PlagueWingGliderComponent> PLAGUE_WING_GLIDER = register("plague_wing_glider", builder -> builder
+        .persistTextParser(PersistTextParser.mapBuilder(PlagueWingGliderComponent.class)
+            .field("move_speed", TextInputField.field(PersistTextParser.FLOAT, PlagueWingGliderComponent::getMoveSpeed))
+            .field("min_fall_distance", TextInputField.field(PersistTextParser.FLOAT, PlagueWingGliderComponent::getMinFallDistance))
+            .field("min_empty_block_distance", TextInputField.field(PersistTextParser.INTEGER, PlagueWingGliderComponent::getMinEmptyBlockDistance))
+            .field("glider_potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, PlagueWingGliderComponent::getGliderPotions))
+            .apply(ctx ->{
+                float moveSpeed = ctx.getOptional("move_speed", .1f);
+                List<PotionEffect> gliderPotions = ctx.getOptional("glider_potions");
+                return new PlagueWingGliderComponent(
+                    moveSpeed, gliderPotions,
+                    ctx.getOptional("min_fall_distance", 8f),
+                    ctx.getOptional("min_empty_block_distance", 4)
+                );
+            }).createInput(Crux.key("plague_wing_glider")))
+    );
 
     public static final DataComponentType<TeleporterComponent> TELEPORT_ABYSS_WORLD = register("teleport/abyss_world", builder ->
         builder);

@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
@@ -138,6 +139,8 @@ public class ToxicMireBiome extends GrimBiome {
             /*if(CruxMath.testChance(1)){
                 rootsPatch(worldInfo, random, limitedRegion, x, y, z, CruxMath.random(3, 6));
             }else flowerLogic(limitedRegion, x, y, z);*/
+        }else if(CruxMath.testChance(.64)){
+            fungiLogic(limitedRegion, x, y, z);
         }
     }
 
@@ -176,18 +179,58 @@ public class ToxicMireBiome extends GrimBiome {
         return null;
     }
 
+    public boolean isLiquid(Material m){
+        return m == Material.WATER || m == Material.LAVA;
+    }
+
+    private boolean fungiLogic(@NotNull LimitedRegion limitedRegion, int x, int y, int z){
+        if(!limitedRegion.isInRegion(x, y-1, z)) return false;
+        var ground = limitedRegion.getType(x, y-1, z);
+        if(!ground.isSolid() || isLiquid(ground)) return false;
+        if(!isReplaceable(limitedRegion, x, y, z)) return false;
+        CruxBlockGroup block;
+        int size;
+        if(CruxMath.testChance(25)){
+            size = 2;
+            block = AbyssBlocks.TALL_PLAGUE_SHROOM;
+        }else if(CruxMath.testChance(10)){
+            AbyssBlocks.MIREHORN.setBlock(limitedRegion, x, y, z);
+            return true;
+        }else{
+            AbyssBlocks.PLAGUE_SHROOM.setBlock(limitedRegion, x, y, z);
+            return true;
+        }
+        return attemptFlowerPlace(limitedRegion, x, y, z, size, block);
+    }
+
+    public boolean isReplaceable(LimitedRegion region, int x, int y, int z){
+        if(!region.isInRegion(x, y, z)) return false;
+        Block b = region.getBlockState(x, y, z).getBlock();
+        if(b.isLiquid()) return false;
+        return b.isEmpty() || b.isReplaceable();
+    }
+
     private boolean flowerLogic(@NotNull LimitedRegion limitedRegion, int x, int y, int z){
         if(!limitedRegion.isInRegion(x, y-1, z)) return false;
-        if(!limitedRegion.getType(x, y-1, z).isSolid()) return false;
-        int size = CruxMath.random(2, 4);
+        var ground = limitedRegion.getType(x, y-1, z);
+        if(!ground.isSolid() || isLiquid(ground)) return false;
+        if(!isReplaceable(limitedRegion, x, y, z)) return false;
+
+        CruxBlockGroup block;
+        int size;
+
+        size = CruxMath.random(2,4);
+        block = AbyssBlocks.PLAGUE_ROOTS;
+        return attemptFlowerPlace(limitedRegion, x, y, z, size, block);
+    }
+
+    private boolean attemptFlowerPlace(@NotNull LimitedRegion limitedRegion, int x, int y, int z,
+                                       int size, @NotNull CruxBlockGroup block){
         for(int i = 0; i < size; i++){
-            if(!limitedRegion.isInRegion(x, y + i, z)) return false;
-            Material m = limitedRegion.getType(x, y + i, z);
-            if(!m.isEmpty()) return false;
+            if(!isReplaceable(limitedRegion,x, y + i, z)) return false;
         }
 
-        setFlower(limitedRegion, x, y, z, size, AbyssBlocks.PLAGUE_ROOTS);
-        return true;
+        return setFlower(limitedRegion, x, y, z, size, block);
     }
 
     private void setDefaultFlower(@NotNull LimitedRegion limitedRegion, int x, int y, int z){
@@ -196,9 +239,9 @@ public class ToxicMireBiome extends GrimBiome {
 
     private boolean setFlower(@NotNull LimitedRegion region, int x, int y, int z, int length, @NotNull CruxBlockGroup bushBlock){
         //make sure it's all in region first
-        for(int i = 0; i < length; i++){
+        /*for(int i = 0; i < length; i++){
             if(!region.isInRegion(x, y + i, z)) return false;
-        }
+        }*/
         BushGroup bush = bushBlock.getComponents().get(CruxBlockComponents.BUSH_GROUP);
         for(int i = 0; i < length; i++){
             CruxBlock block;

@@ -158,6 +158,18 @@ public class Lang {
             .build()
     );
 
+    public static final Msg PLAGUE_WING_GLIDER_FALL_DISTANCE_INSUFFICIENT = create(
+        Communicator.builder()
+            .chat("<red>You must be falling to deploy this item.")
+            .build()
+    );
+
+    public static final Msg PLAGUE_WING_GLIDER_BLOCK_DISTANCE_INSUFFICIENT = create(
+        Communicator.builder()
+            .chat("<red>You must be falling from a greater height to deploy this item.")
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }

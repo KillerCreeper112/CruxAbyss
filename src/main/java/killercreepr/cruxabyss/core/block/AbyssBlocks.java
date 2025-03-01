@@ -13,6 +13,9 @@ public class AbyssBlocks {
     public static final CruxBlockGroup PLAGUE_STEM = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stem"));
     public static final CruxBlockGroup PLAGUE_WART =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_wart"));
     public static final CruxBlockGroup PLAGUE_ROOTS = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_roots"));
+    public static final CruxBlockGroup PLAGUE_SHROOM = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_shroom"));
+    public static final CruxBlockGroup TALL_PLAGUE_SHROOM = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("tall_plague_shroom"));
+    public static final CruxBlockGroup MIREHORN = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("mirehorn"));
     public static final CruxBlockGroup PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stone_red_abyss_crystal_ore"));
     public static final CruxBlockGroup ABYSS_CONQUEST_NODE =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("abyss_conquest_node"));
     public static final CruxBlockGroup CHARRED_PLANKS =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("charred_planks"));
