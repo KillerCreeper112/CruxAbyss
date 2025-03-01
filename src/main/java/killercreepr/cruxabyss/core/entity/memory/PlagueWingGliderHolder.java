@@ -15,6 +15,7 @@ import killercreepr.cruxabyss.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +49,7 @@ public class PlagueWingGliderHolder extends EntityTickedDataHolder {
                     e.getWorld().dropItem(e.getLocation(), item);
                 }
             }
-            CreateSound.sound(Sound.ENTITY_WITHER_SHOOT, 2f).playAt(e);
+            CreateSound.sound(Sound.ENTITY_ILLUSIONER_CAST_SPELL, 2f).playAt(e);
             CreateSound.sound(Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.5f).playAt(e);
         });
     }
@@ -124,12 +125,17 @@ public class PlagueWingGliderHolder extends EntityTickedDataHolder {
         );
     }
 
+    public boolean shouldDismount(Entity e){
+        Block b = e.getLocation().getBlock();
+        return b.isLiquid();
+    }
+
     protected int tick = 0;
     @Override
     public void tick(@NotNull Entity e) {
         tick++;
         Entity driver = getDriver(e);
-        if(driver == null || (entity != null && !driver.equals(entity))){
+        if(driver == null || (entity != null && !driver.equals(entity)) || shouldDismount(e)){
             onDismount();
             return;
         }

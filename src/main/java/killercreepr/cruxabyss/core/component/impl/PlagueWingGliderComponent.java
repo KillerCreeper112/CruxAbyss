@@ -91,6 +91,7 @@ public class PlagueWingGliderComponent implements InteractableComponent {
     }
 
     public boolean isEmpty(Block b){
+        if(b.isLiquid()) return false;
         return b.isEmpty() || b.isPassable();
     }
 
@@ -109,7 +110,7 @@ public class PlagueWingGliderComponent implements InteractableComponent {
 
     @Override
     public boolean isUsable(@NotNull ItemUseContext ctx) {
-        return ctx.getAction().isRightClick();
+        return ctx.getAction().isRightClick() && ctx.getPlayer().getVehicle() == null;
         /*if(!ctx.getAction().isRightClick()) return false;
         Player p = ctx.getPlayer();
         if(!hasEnoughEmptyBlocksBelow(p)) return false;
