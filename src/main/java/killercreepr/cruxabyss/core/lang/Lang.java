@@ -170,6 +170,14 @@ public class Lang {
             .build()
     );
 
+    public static final Msg PLAGUE_WING_DURABILITY_WARNING = create(
+        Communicator.builder()
+            .chat("<red>Your plague wing glider is about to break! <durability> durability...")
+            .actionBar("<red><latinfont:\"<durability> durability...\">")
+            .sound(CreateSound.sound(Sound.ITEM_WOLF_ARMOR_CRACK, 1.5f))
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }

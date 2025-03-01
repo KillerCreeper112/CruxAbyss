@@ -1,7 +1,6 @@
 package killercreepr.cruxabyss.core.component;
 
 import killercreepr.crux.api.component.DataComponentType;
-import killercreepr.crux.api.component.parser.ComponentTextInputParser;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.Crux;
@@ -68,13 +67,15 @@ public class AbyssComponents {
             .field("min_fall_distance", TextInputField.field(PersistTextParser.FLOAT, PlagueWingGliderComponent::getMinFallDistance))
             .field("min_empty_block_distance", TextInputField.field(PersistTextParser.INTEGER, PlagueWingGliderComponent::getMinEmptyBlockDistance))
             .field("glider_potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, PlagueWingGliderComponent::getGliderPotions))
+            .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, PlagueWingGliderComponent::getItemDamagePerSecond))
             .apply(ctx ->{
                 float moveSpeed = ctx.getOptional("move_speed", .1f);
                 List<PotionEffect> gliderPotions = ctx.getOptional("glider_potions");
                 return new PlagueWingGliderComponent(
                     moveSpeed, gliderPotions,
                     ctx.getOptional("min_fall_distance", 8f),
-                    ctx.getOptional("min_empty_block_distance", 4)
+                    ctx.getOptional("min_empty_block_distance", 4),
+                    ctx.getOptional("item_damage", 1)
                 );
             }).createInput(Crux.key("plague_wing_glider")))
     );

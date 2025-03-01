@@ -5,27 +5,16 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.persistence.CruxPersistence;
-import killercreepr.crux.core.util.CruxGoalUtil;
-import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.component.impl.PlagueWingGliderComponent;
-import killercreepr.cruxabyss.core.entity.goal.AbyssReturnPortalGoal;
 import killercreepr.cruxabyss.core.entity.memory.PlagueWingGliderHolder;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.modelengine.mount.controller.AbyssMountControllerTypes;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
-import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +38,7 @@ public class PlagueWingGlider extends SimpleCruxMob {
         modeled.getMountData().getMainMountManager().setCanRide(true);
 
         PlagueWingGliderHolder holder = EntityMemory.getOrCreateDataHolder(glider, PlagueWingGliderHolder.class, mem ->
-            new PlagueWingGliderHolder(mem, item));
+            new PlagueWingGliderHolder(mem, item, data.getItemDamagePerSecond()));
 
         modeled.getMountData().getMainMountManager().mountDriver(
             p, AbyssMountControllerTypes.plagueWingGlider(holder, data.getMoveSpeed())

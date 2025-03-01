@@ -1,6 +1,9 @@
 package killercreepr.cruxabyss.core.component.impl;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
@@ -21,12 +24,18 @@ public class PlagueWingGliderComponent implements InteractableComponent {
     protected final List<PotionEffect> gliderPotions;
     protected final float minFallDistance;
     protected final int minEmptyBlockDistance;
+    protected final int itemDamagePerSecond;
 
-    public PlagueWingGliderComponent(float moveSpeed, List<PotionEffect> gliderPotions, float minFallDistance, int minEmptyBlockDistance) {
+    public PlagueWingGliderComponent(float moveSpeed, List<PotionEffect> gliderPotions, float minFallDistance, int minEmptyBlockDistance, int itemDamagePerSecond) {
         this.moveSpeed = moveSpeed;
         this.gliderPotions = gliderPotions;
         this.minFallDistance = minFallDistance;
         this.minEmptyBlockDistance = minEmptyBlockDistance;
+        this.itemDamagePerSecond = itemDamagePerSecond;
+    }
+
+    public int getItemDamagePerSecond() {
+        return itemDamagePerSecond;
     }
 
     @Override
@@ -41,11 +50,22 @@ public class PlagueWingGliderComponent implements InteractableComponent {
             Lang.PLAGUE_WING_GLIDER_BLOCK_DISTANCE_INSUFFICIENT.use(p);
             return ItemUseResult.empty();
         }
-
         ItemStack item = ctx.getItem().item();
+
+        //needs at least 10 durability to deploy
+        int maxDamage = CruxItem.getMaxDurability(item);
+        if(maxDamage > 0){
+            Integer dmg = item.getData(DataComponentTypes.DAMAGE);
+            if(dmg != null){
+                int durability = maxDamage - dmg;
+                if(durability < 10) return ItemUseResult.empty();
+            }
+        }
+
         ItemStack copy = item.clone();
         copy.setAmount(1);
         if(p.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount()-1);
+        Crux.handlers().item().damageItem(copy, itemDamagePerSecond, p);
 
         AbyssMob.PLAGUE_WING_GLIDER.createAndMountGlider(p, this, copy);
         CreateSound.sound(Sound.ENTITY_ENDER_DRAGON_FLAP, 1.5f).playAt(p);
