@@ -10,8 +10,10 @@ import killercreepr.cruxcrafting.core.crafting.crafter.SimpleCraftingCrafter;
 import killercreepr.cruxmenus.api.menu.holder.MenuHolder;
 import killercreepr.cruxmenus.api.menu.slot.Slot;
 import killercreepr.cruxmenus.core.menu.ConfigMenu;
+import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
 import killercreepr.cruxmenus.core.menu.slot.SimpleSlot;
 import killercreepr.cruxmenus.core.menu.slot.SimpleTempStoredSlot;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -46,12 +48,36 @@ public class AbyssOutpostCraftingMenu extends ConfigMenu {
         19, 20, 21
     };
     protected static final int resultSlot = 15;
+    protected static final int recipesSlot = 9;
 
     public void setupSlots(){
         for(int slot : matrix){
             addSlot(buildCraftingSlot(slot));
         }
         addSlot(buildResultSlot(resultSlot));
+        addSlot(new SimpleFixedSlot(this, recipesSlot){
+            @Nullable
+            @Override
+            public ItemStack getSlottedItemReplacement() {
+                return CruxItem.create(Material.KNOWLEDGE_BOOK)
+                    .customName("Recipes")
+                    .loreFromString(List.of(
+                        "",
+                        "<gray>The abyss outpost has",
+                        "<gray>exclusive crafting recipes",
+                        "<gray>that you and your team",
+                        "<gray>may use!",
+                        "",
+                        "<yellow><latinfont:Click to view recipes>"
+                    ))
+                    .item();
+            }
+
+            @Override
+            public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
+                super.onClick(p, event);
+            }
+        });
     }
 
     @Override
