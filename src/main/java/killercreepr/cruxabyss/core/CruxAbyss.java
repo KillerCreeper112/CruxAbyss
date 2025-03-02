@@ -239,7 +239,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             menus.menuModuleRegistry()
         );
         menus.menuRegistry().menuHolders().register(new AbyssOutpostCraftingMenuHolder(
-            Crux.key("abyss/outpost/crafting"), "Abyss Outpost Crafting", NumberProvider.constant(27),
+            Crux.key("abyss/outpost/crafting"),
+            "<white><crux_space:-8><font:\"crux:abyss\">2<reset><crux_space:-145>Abyss Outpost Crafting",
+            NumberProvider.constant(27),
             MenuItems.items(new TreeMap<>()), DataExchange.empty(), Set.of()
         ));
     }
