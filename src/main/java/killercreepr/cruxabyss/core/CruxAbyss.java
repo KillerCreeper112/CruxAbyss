@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core;
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.loot.LootPool;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.registry.KeyedRegistry;
@@ -34,6 +35,7 @@ import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.loot.SimpleMobWaveGroupLootTable;
 import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
+import killercreepr.cruxabyss.core.menu.AbyssOutpostCraftingMenuHolder;
 import killercreepr.cruxabyss.core.menu.action.AbyssOutpostUpgradeAction;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
@@ -65,8 +67,13 @@ import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcrafting.api.crafting.CruxCraftingRecipeManager;
+import killercreepr.cruxcrafting.core.config.CruxCraftingCfg;
+import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
+import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
+import killercreepr.cruxmenus.api.menu.holder.MenuItems;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
 import killercreepr.cruxstructures.core.CruxStructuresModule;
 import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
@@ -79,11 +86,16 @@ import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.logging.Level;
 
 public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     private static CruxAbyss instance;
@@ -102,6 +114,12 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     protected WorldEventConfigs worldEventCfgs;
     public WorldEventConfigs worldEventCfgs(){
         return worldEventCfgs;
+    }
+
+    protected final CruxCraftingRecipeManager craftingManager = new SimpleCraftingRecipeManager();
+
+    public CruxCraftingRecipeManager getCraftingManager() {
+        return craftingManager;
     }
 
     protected LangProvider langProvider;
@@ -220,6 +238,10 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             menus.menuRegistry().menuModule(),
             menus.menuModuleRegistry()
         );
+        menus.menuRegistry().menuHolders().register(new AbyssOutpostCraftingMenuHolder(
+            Crux.key("abyss/outpost/crafting"), "Abyss Outpost Crafting", NumberProvider.constant(27),
+            MenuItems.items(new TreeMap<>()), DataExchange.empty(), Set.of()
+        ));
     }
 
     @Override
@@ -239,7 +261,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             new AbyssAltarPortalListener(),
             new AbyssSpecificsListener(values),
             new AbyssWoodFunctionListener(),
-            new AbyssSafezoneListener(this),
+            //new AbyssSafezoneListener(this),
             new AbyssTravelTrackingListener(values),
             new AbyssalListener(),
             new CustomProjectileListener(),
@@ -267,6 +289,13 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
 
         CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
             new CruxFolder(this, "menus").file()
+        );
+
+        new CruxCraftingRecipeLoader(CruxCraftingCfg.FILE_CRUX_CRAFTING_RECIPE, recipe ->{
+            craftingManager.addRecipe(recipe);
+            Crux.log(Level.INFO, "CruxAbyss abyss outpost crafting recipe registered: " + ((Keyed) recipe).key());
+        }).loadConfiguration(
+            new CruxFolder(this, "crafting/recipe/abyss_outpost").file()
         );
     }
 
