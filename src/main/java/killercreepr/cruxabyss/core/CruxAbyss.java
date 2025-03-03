@@ -249,7 +249,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         ));
         menus.menuRegistry().menuHolders().register(new AbyssOutpostCraftingRecipeListHolder(
             Crux.key("abyss/outpost/crafting_recipe_list"),
-            "<white><crux_space:-8><font:\"crux:crafting\">1<reset><crux_space:-145>Abyss Outpost Crafting",
+            "<white><crux_space:-8><font:\"crux:crafting\">1<reset><crux_space:-145>Abyss Outpost Recipes",
             NumberProvider.constant(54),
             MenuItems.items(new TreeMap<>()), DataExchange.single("crafting_recipe_manager", () -> craftingManager), Set.of()
         ));

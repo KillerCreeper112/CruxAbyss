@@ -1,9 +1,13 @@
 package killercreepr.cruxabyss.core.menu;
 
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.CruxAbyss;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcrafting.api.crafting.CruxCraftingRecipeManager;
 import killercreepr.cruxcrafting.api.crafting.crafter.CruxCraftingCrafter;
 import killercreepr.cruxcrafting.core.crafting.crafter.SimpleCraftingCrafter;
@@ -14,6 +18,7 @@ import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
 import killercreepr.cruxmenus.core.menu.slot.SimpleSlot;
 import killercreepr.cruxmenus.core.menu.slot.SimpleTempStoredSlot;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -40,6 +45,7 @@ public class AbyssOutpostCraftingMenu extends ConfigMenu {
     public void onRefresh() {
         super.onRefresh();
         crafter = new Crafter(CruxAbyss.inst().getCraftingManager(), inventory);
+        setItem(recipes.getIndex(), recipes.getSlottedItemReplacement());
     }
 
     protected static final int[] matrix = new int[]{
@@ -50,34 +56,39 @@ public class AbyssOutpostCraftingMenu extends ConfigMenu {
     protected static final int resultSlot = 15;
     protected static final int recipesSlot = 9;
 
+    protected final Slot recipes = new SimpleFixedSlot(this, recipesSlot){
+        @Nullable
+        @Override
+        public ItemStack getSlottedItemReplacement() {
+            return CruxItem.create(Material.KNOWLEDGE_BOOK)
+                .itemName("Recipes")
+                .loreFromString(List.of(
+                    "",
+                    "<gray>The abyss outpost has",
+                    "<gray>exclusive crafting recipes",
+                    "<gray>that you and your team",
+                    "<gray>may use!",
+                    "",
+                    "<yellow><latinfont:Click to view recipes>"
+                ))
+                .item();
+        }
+
+        @Override
+        public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
+            super.onClick(p, event);
+            CruxCore.core().cruxMenus().menuRegistry().menuHolders()
+                .get(Crux.key("abyss/outpost/crafting_recipe_list"))
+                .open(p, DataExchange.single("previous_menu_holder", Holder.direct(holder)));
+            CreateSound.sound(Sound.UI_BUTTON_CLICK).playFor(p);
+        }
+    };
     public void setupSlots(){
         for(int slot : matrix){
             addSlot(buildCraftingSlot(slot));
         }
         addSlot(buildResultSlot(resultSlot));
-        addSlot(new SimpleFixedSlot(this, recipesSlot){
-            @Nullable
-            @Override
-            public ItemStack getSlottedItemReplacement() {
-                return CruxItem.create(Material.KNOWLEDGE_BOOK)
-                    .customName("Recipes")
-                    .loreFromString(List.of(
-                        "",
-                        "<gray>The abyss outpost has",
-                        "<gray>exclusive crafting recipes",
-                        "<gray>that you and your team",
-                        "<gray>may use!",
-                        "",
-                        "<yellow><latinfont:Click to view recipes>"
-                    ))
-                    .item();
-            }
-
-            @Override
-            public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
-                super.onClick(p, event);
-            }
-        });
+        addSlot(recipes);
     }
 
     @Override
@@ -148,7 +159,7 @@ public class AbyssOutpostCraftingMenu extends ConfigMenu {
                 inv.setItem(resultSlot, null);
                 return;
             }
-            inv.setItem(resultSlot, list.getFirst());
+            inv.setItem(resultSlot, Crux.handlers().item().update(list.getFirst()));
         }
 
         @Override
