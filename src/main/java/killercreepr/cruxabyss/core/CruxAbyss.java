@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.loot.LootPool;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.registry.KeyedRegistry;
@@ -18,6 +19,7 @@ import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.api.loot.MobWaveGroupLootTable;
+import killercreepr.cruxabyss.api.structure.outpost.AbyssOutpostManager;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -41,7 +43,10 @@ import killercreepr.cruxabyss.core.menu.action.AbyssOutpostUpgradeAction;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
 import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationList;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.cruxabyss.core.structure.outpost.SimpleAbyssOutpostManager;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
+import killercreepr.cruxabyss.core.text.tags.object.AbyssPlayerTags;
 import killercreepr.cruxabyss.core.text.tags.object.ActiveAbyssOutpostTags;
 import killercreepr.cruxabyss.core.text.tags.object.StoredAbyssOutpostTags;
 import killercreepr.cruxabyss.core.values.DefaultValues;
@@ -73,9 +78,13 @@ import killercreepr.cruxcrafting.core.config.CruxCraftingCfg;
 import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
 import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
 import killercreepr.cruxmenus.CruxMenusModule;
+import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.holder.MenuItems;
+import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
+import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
+import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
 import killercreepr.cruxstructures.core.CruxStructuresModule;
 import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
 import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructureGen;
@@ -88,13 +97,12 @@ import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Level;
 
 public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
@@ -120,6 +128,16 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
 
     public CruxCraftingRecipeManager getCraftingManager() {
         return craftingManager;
+    }
+
+    protected AbyssOutpostManager abyssOutpostManager = new SimpleAbyssOutpostManager();
+
+    public AbyssOutpostManager getAbyssOutpostManager() {
+        return abyssOutpostManager;
+    }
+
+    public void setAbyssOutpostManager(AbyssOutpostManager abyssOutpostManager) {
+        this.abyssOutpostManager = abyssOutpostManager;
     }
 
     protected LangProvider langProvider;
@@ -316,11 +334,54 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     public void registerTextTags(TagParser tags){
         tags.register(List.of(
             new ActiveAbyssOutpostTags(),
-            new StoredAbyssOutpostTags()
+            new StoredAbyssOutpostTags(),
+            new AbyssPlayerTags()
         ));
     }
 
     public void registerMenuModules(@NotNull FileMenuHolder<?> fileMenuHolder, @NotNull KeyedRegistry<MenuModuleBuilder> registry) {
+        registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged/abyss/outpost/owned")) {
+            @NotNull
+            @Override
+            public MenuModule parsePaged(@NotNull String id,
+                                         @NotNull NumberProvider indexes,
+                                         @Nullable String valuesFilter,
+                                         @Nullable MenuItems valueItems,
+                                         @Nullable MenuItems emptyItems) {
+                return new SimplePagedMenuModule<AbyssOutpostData>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                    @Override
+                    public @NotNull Holder<List<AbyssOutpostData>> getValues(@NotNull CfgMenu cfgMenu) {
+                        Player player = cfgMenu.info().getOrThrow(Player.class);
+                        return () -> {
+                            List<AbyssOutpostData> list = new ArrayList<>(abyssOutpostManager.getAllOwnedAbyssOutposts(player.getUniqueId()));
+                            list.sort(Comparator.comparing(e -> e.timeCaptured));
+                            return list;
+                        };
+                    }
+                };
+            }
+        });
+        registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged/abyss/outpost/friendly")) {
+            @NotNull
+            @Override
+            public MenuModule parsePaged(@NotNull String id,
+                                         @NotNull NumberProvider indexes,
+                                         @Nullable String valuesFilter,
+                                         @Nullable MenuItems valueItems,
+                                         @Nullable MenuItems emptyItems) {
+                return new SimplePagedMenuModule<AbyssOutpostData>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                    @Override
+                    public @NotNull Holder<List<AbyssOutpostData>> getValues(@NotNull CfgMenu cfgMenu) {
+                        Player player = cfgMenu.info().getOrThrow(Player.class);
+                        return () -> {
+                            List<AbyssOutpostData> list = new ArrayList<>(abyssOutpostManager.getAllFriendlyAbyssOutposts(player.getUniqueId()));
+                            list.sort(Comparator.comparing(e -> e.timeCaptured));
+                            return list;
+                        };
+                    }
+                };
+            }
+        });
     }
 
     public void registerObjectives(FileAdvancementObjective file){

@@ -437,6 +437,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
                 CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("abyss/outpost/main"))
                     .open(p, DataExchange.builder()
                         .put(outpost)
+                        .put(outpost.getData())
                         .build());
                 //Lang.ABYSS_CONQUEST_NODE_SHIFT_INFO.use(p);
                 return Event.Result.DENY;

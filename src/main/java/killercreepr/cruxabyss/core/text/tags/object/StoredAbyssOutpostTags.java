@@ -10,9 +10,13 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class StoredAbyssOutpostTags implements ObjectTag<AbyssOutpostData> {
     @NotNull
@@ -35,8 +39,33 @@ public class StoredAbyssOutpostTags implements ObjectTag<AbyssOutpostData> {
                 return object.getUpgradeLevel(upgrade) + "";
             }))
             .add(Tag.string("owner", (args, ctx) -> object.owner + ""))
+            .add(Tag.string("owner_name", (args, ctx) ->{
+                UUID uuid = object.owner;
+                if(uuid==null) return "null";
+                var uPlay = UPlayer.getPlayer(uuid);
+                if(uPlay==null) return "null";
+                return uPlay.getLastKnownName() + "";
+            }))
+            .add(Tag.string("is_owner", (args, ctx) ->{
+                UUID uuid = UUID.fromString(ctx.deserializeString(args.get(0)));
+                return object.isOwner(uuid) + "";
+            }))
+            .add(Tag.string("is_member", (args, ctx) ->{
+                UUID uuid = UUID.fromString(ctx.deserializeString(args.get(0)));
+                return object.isExplicitMember(uuid) + "";
+            }))
+            .add(Tag.string("is_member_or_owner", (args, ctx) ->{
+                UUID uuid = UUID.fromString(ctx.deserializeString(args.get(0)));
+                return object.isMemberOrOwner(uuid) + "";
+            }))
             .add(Tag.string("time_captured", (args, ctx) ->{
                 return (object.timeCaptured == null ? 0L : object.timeCaptured) + "";
+            }))
+            .add(Tag.string("time_invaded", (args, ctx) ->{
+                return (object.timeInvaded == null ? 0L : object.timeInvaded) + "";
+            }))
+            .add(Tag.string("time_last_invasion", (args, ctx) ->{
+                return (object.timeLastInvasion == null ? 0L : object.timeLastInvasion) + "";
             }))
             ;
     }

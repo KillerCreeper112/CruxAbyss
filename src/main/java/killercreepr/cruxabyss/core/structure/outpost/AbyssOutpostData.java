@@ -79,6 +79,10 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         return uuid.equals(owner) || isMember(uuid);
     }
 
+    public boolean isOwner(UUID uuid){
+        return uuid.equals(owner);
+    }
+
     public boolean isMemberOrOwner(UUID uuid, UPlayer owner){
         if(this.owner == null) return false;
         return uuid.equals(this.owner) || isMember(uuid, owner);
@@ -87,6 +91,12 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     public boolean isMember(UUID uuid){
         if(owner == null) return false;
         return isMember(uuid, USurvivePlugin.inst().getPlayerManager().getPlayer(owner));
+    }
+
+    public boolean isExplicitMember(UUID uuid){
+        if(owner == null) return false;
+        UPlayer owner = USurvivePlugin.inst().getPlayerManager().getPlayer(this.owner);
+        return owner.isApartOfParty(uuid) || owner.hasFriend(uuid);
     }
 
     public boolean isMember(UUID uuid, UPlayer owner){

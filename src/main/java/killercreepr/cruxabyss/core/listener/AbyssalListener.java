@@ -4,7 +4,6 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.cruxabyss.core.entity.memory.PlagueWingGliderHolder;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxentities.entity.CruxMob;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

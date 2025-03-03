@@ -1,7 +1,6 @@
 package killercreepr.cruxabyss.core.menu;
 
 import killercreepr.crux.api.data.DataExchange;
-import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
@@ -11,7 +10,6 @@ import killercreepr.cruxmenus.api.menu.holder.MenuItems;
 import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.core.menu.holder.SimpleMenuHolder;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

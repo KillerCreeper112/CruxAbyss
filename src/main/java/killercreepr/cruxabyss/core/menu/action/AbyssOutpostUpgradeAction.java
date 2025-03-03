@@ -5,6 +5,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import killercreepr.cruxmenus.api.menu.contex.ActionContext;
 import killercreepr.cruxmenus.core.menu.action.SimpleMenuAction;
@@ -24,23 +25,22 @@ public class AbyssOutpostUpgradeAction extends SimpleMenuAction {
     @Override
     public boolean execute(@NotNull ActionContext ctx, @NotNull String[] args) {
         DataExchange info = ctx.getAllMergedInfo();
-        ActiveAbyssOutpost outpost = info.getOrThrow(ActiveAbyssOutpost.class);
+        AbyssOutpostData outpost = info.getOrDefault(AbyssOutpostData.class,
+            info.getOrThrow(ActiveAbyssOutpost.class).getData());
         switch (args[0].toLowerCase()){
             case "set" ->{
                 Key upgradeKey = Crux.key(args[1]);
                 OutpostUpgrade upgrade = AbyssRegistries.OUTPOST_UPGRADE.get(upgradeKey);
                 int level = (int) CruxMath.evaluate(args[2]);
-                outpost.getData().setUpgradeLevel(upgrade, level);
+                outpost.setUpgradeLevel(upgrade, level);
             }
             case "clear" ->{
-                new HashSet<>(outpost.getData().getUpgrades().keySet()).forEach(upgrade ->{
-                    outpost.getData().removeUpgrade(upgrade);
-                });
+                new HashSet<>(outpost.getUpgrades().keySet()).forEach(outpost::removeUpgrade);
             }
             case "remove" ->{
                 Key upgradeKey = Crux.key(args[1]);
                 OutpostUpgrade upgrade = AbyssRegistries.OUTPOST_UPGRADE.get(upgradeKey);
-                outpost.getData().removeUpgrade(upgrade);
+                outpost.removeUpgrade(upgrade);
             }
         }
         return true;
