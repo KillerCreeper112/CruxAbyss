@@ -194,6 +194,9 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
 
     @Override
     public void started() {
+        AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        data.invasionStarted();
+
         Crux.getServer().getPluginManager().registerEvents(this, Crux.getMainPlugin());
         MergedTagContainer tags = TagContainer.merged()
             .hook(targetStructure.getPosition());

@@ -35,6 +35,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     public UUID owner;
     public Long timeCaptured;
     public Long timeInvaded;
+    public Long timeLastInvasion;
     protected final Map<OutpostUpgrade, Integer> upgrades = new HashMap<>();
     protected final Map<OutpostUpgrade, TickedOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
     protected static final int tickRate = 1;
@@ -51,6 +52,10 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     public void invasion(){
         owner = null;
         timeInvaded = System.currentTimeMillis();
+    }
+
+    public void invasionStarted(){
+        timeLastInvasion = System.currentTimeMillis();
     }
 
     public Collection<UUID> getMembers(){
@@ -110,10 +115,17 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         if(timeInvaded != null){
             o.addProperty("time_invaded", timeInvaded);
         }
+        if(timeLastInvasion != null){
+            o.addProperty("time_last_invasion", timeLastInvasion);
+        }
     }
 
     public boolean wasInvadedWithin(int ticks){
         return timeInvaded != null && CruxMath.hasOccurredWithin(timeInvaded, ticks);
+    }
+
+    public boolean hadInvasionStartedWithin(int ticks){
+        return timeLastInvasion != null && CruxMath.hasOccurredWithin(timeLastInvasion, ticks);
     }
 
     @Override
@@ -170,7 +182,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
 
         AbyssOutpostInvasionCfg cfg = cfg();
         if(CruxMath.testChance(cfg.ABYSS_OUTPOST_INVASION_STORED_CHANCE().value().doubleValue())){
-            if(!wasInvadedWithin(cfg.ABYSS_OUTPOST_INVASION_COOLDOWN().value().intValue())){
+            if(!hadInvasionStartedWithin(cfg.ABYSS_OUTPOST_INVASION_COOLDOWN().value().intValue())){
                 attemptInvasion();
             }
         }

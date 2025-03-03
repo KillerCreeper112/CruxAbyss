@@ -72,8 +72,6 @@ import killercreepr.cruxcrafting.api.crafting.CruxCraftingRecipeManager;
 import killercreepr.cruxcrafting.core.config.CruxCraftingCfg;
 import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
 import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
-import killercreepr.cruxcrafting.core.menu.GenericRecipeListMenuHolder;
-import killercreepr.cruxcrafting.core.menu.GenericRecipeViewMenuHolder;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.holder.MenuItems;
@@ -95,7 +93,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;

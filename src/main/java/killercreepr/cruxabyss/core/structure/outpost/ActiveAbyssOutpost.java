@@ -76,7 +76,7 @@ public class ActiveAbyssOutpost implements ManagedTicked {
 
         if(tick % 100 == 0){
             if(CruxMath.testChance(cfg.ABYSS_OUTPOST_INVASION_ACTIVE_CHANCE().value().doubleValue())){
-                if(!data.wasInvadedWithin(cfg.ABYSS_OUTPOST_INVASION_COOLDOWN().value().intValue())) data.attemptInvasion();
+                if(!data.hadInvasionStartedWithin(cfg.ABYSS_OUTPOST_INVASION_COOLDOWN().value().intValue())) data.attemptInvasion();
             }
         }
         /*World world = active.getChunk().getWorld();

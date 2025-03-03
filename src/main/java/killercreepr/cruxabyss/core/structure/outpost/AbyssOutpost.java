@@ -38,6 +38,10 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
         if(time != null){
             outpostData.timeInvaded = time.longValue();
         }
+        time = reg.deserializeFromFile(Number.class, o.get("time_last_invasion"));
+        if(time != null){
+            outpostData.timeLastInvasion = time.longValue();
+        }
         if(o.get("upgrades") instanceof FileArray a){
             a.forEach(ele ->{
                 if(!(ele instanceof FileObject oo)) return;
