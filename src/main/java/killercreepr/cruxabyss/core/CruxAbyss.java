@@ -36,6 +36,7 @@ import killercreepr.cruxabyss.core.listener.*;
 import killercreepr.cruxabyss.core.loot.SimpleMobWaveGroupLootTable;
 import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
 import killercreepr.cruxabyss.core.menu.AbyssOutpostCraftingMenuHolder;
+import killercreepr.cruxabyss.core.menu.AbyssOutpostCraftingRecipeListHolder;
 import killercreepr.cruxabyss.core.menu.action.AbyssOutpostUpgradeAction;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
@@ -71,6 +72,8 @@ import killercreepr.cruxcrafting.api.crafting.CruxCraftingRecipeManager;
 import killercreepr.cruxcrafting.core.config.CruxCraftingCfg;
 import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
 import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
+import killercreepr.cruxcrafting.core.menu.GenericRecipeListMenuHolder;
+import killercreepr.cruxcrafting.core.menu.GenericRecipeViewMenuHolder;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.holder.MenuItems;
@@ -243,6 +246,12 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             "<white><crux_space:-8><font:\"crux:abyss\">2<reset><crux_space:-145>Abyss Outpost Crafting",
             NumberProvider.constant(27),
             MenuItems.items(new TreeMap<>()), DataExchange.empty(), Set.of()
+        ));
+        menus.menuRegistry().menuHolders().register(new AbyssOutpostCraftingRecipeListHolder(
+            Crux.key("abyss/outpost/crafting_recipe_list"),
+            "<white><crux_space:-8><font:\"crux:crafting\">1<reset><crux_space:-145>Abyss Outpost Crafting",
+            NumberProvider.constant(54),
+            MenuItems.items(new TreeMap<>()), DataExchange.single("crafting_recipe_manager", () -> craftingManager), Set.of()
         ));
     }
 
