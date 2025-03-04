@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.structure.outpost;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.api.structure.BlockPlaceInsideModule;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
@@ -11,10 +12,12 @@ import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
+import killercreepr.cruxabyss.core.structure.outpost.component.AbyssOutpostPlacedBlockComponent;
 import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
+import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.component.StoredStructureComponent;
@@ -22,10 +25,12 @@ import killercreepr.cruxstructures.api.component.TickedStoredComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.cruxstructures.core.structure.component.StructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -43,6 +48,14 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
 
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;
+        this.stored.set(StructureComponents.BLOCK_PLACE_INSIDE, new AbyssOutpostPlacedBlockComponent());
+    }
+
+    public void onBlockPlace(BlockPlaceEvent event){
+        if(event.isCancelled()) return;// optimize cancelled calls since they don't really matter
+        for(TickedOutpostUpgrade upgrade : storedUpgrades.values()){
+            if(upgrade instanceof BlockPlaceInsideModule m) m.onBlockPlace(event);
+        }
     }
 
     public AbyssOutpostInvasionCfg cfg(){
@@ -118,6 +131,11 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
                 FileObject obj = new FileObject();
                 obj.add("key", reg.serializeToFile(upgrade.key()));
                 obj.addProperty("level", level);
+                var stored = storedUpgrades.get(upgrade);
+                if(stored != null){
+                    FileElement ele = stored.serialize(ctx);
+                    if(ele != null) obj.add("data", ele);
+                }
                 a.add(obj);
             });
             o.add("upgrades", a);
@@ -154,8 +172,9 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     }
 
     public void initiateUpgrades(){
-        storedUpgrades.clear();
+        //storedUpgrades.clear();
         upgrades.forEach((upgrade, level) ->{
+            if(storedUpgrades.containsKey(upgrade)) return;
             TickedOutpostUpgrade stored = upgrade.createStored(this, level);
             if(stored == null) return;
             storedUpgrades.put(upgrade, stored);
@@ -227,6 +246,15 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         int previousLevel = getUpgradeLevel(upgrade);
         if(previousLevel == level) return;
 
+        if(level == 0){
+            upgrades.remove(upgrade);
+            TickedOutpostUpgrade ticked = storedUpgrades.remove(upgrade);
+            if(ticked != null){
+                ticked.stopped(tick, tickRate);
+            }
+            return;
+        }
+
         ActiveStructure active = CruxCore.core().worldManager().getWorld(stored.getChunk().worldKey())
                 .getModule(StructureWorldModule.class)
                     .getActiveStructures().get(stored.getChunk().getChunkKey(), stored.getPosition());
@@ -261,5 +289,9 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         upgrades.remove(upgrade);
         TickedOutpostUpgrade stored = storedUpgrades.remove(upgrade);
         if(stored != null) stored.stopped(tick, tickRate);
+    }
+
+    public StoredStructure getStored() {
+        return stored;
     }
 }

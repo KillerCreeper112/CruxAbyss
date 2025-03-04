@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.world.StoredChunk;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
+import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -54,7 +55,13 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
                     Crux.log(Level.SEVERE, "OutpostUpgrade of " + key + " not found! Skipping...");
                     return;
                 }
-                outpostData.upgrades.put(upgrade, level.intValue());
+                int l = level.intValue();
+                outpostData.upgrades.put(upgrade, l);
+
+                TickedOutpostUpgrade ticked = upgrade.deserialize(outpostData, l, context, oo.get("data"));
+                if(ticked != null){
+                    outpostData.storedUpgrades.put(upgrade, ticked);
+                }
             });
         }
 

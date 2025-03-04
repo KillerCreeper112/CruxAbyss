@@ -84,6 +84,8 @@ public class AbyssComponents {
         builder);
     public static final DataComponentType<PlaceCustomBlocksModule> STRUCTURE_REPLACEABLE_CUSTOM_BLOCKS = register("structure/place_custom_blocks/replaceable", builder ->
         builder);
+    public static final DataComponentType<TeleporterComponent> TELEPORT_OUTPOST_ABYSSAL_RECALL = register("teleport/outpost_abyssal_recall", builder ->
+        builder);
 
     public static final DataComponentType<AbyssOutpostCaptureEvent> LOOT_CAPTURED_ABYSS_OUTPOST = register("loot/abyss_outpost_capture", builder -> builder);
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){

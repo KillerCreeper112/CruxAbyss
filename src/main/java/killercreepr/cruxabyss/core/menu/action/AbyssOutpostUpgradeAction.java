@@ -25,8 +25,8 @@ public class AbyssOutpostUpgradeAction extends SimpleMenuAction {
     @Override
     public boolean execute(@NotNull ActionContext ctx, @NotNull String[] args) {
         DataExchange info = ctx.getAllMergedInfo();
-        AbyssOutpostData outpost = info.getOrDefault(AbyssOutpostData.class,
-            info.getOrThrow(ActiveAbyssOutpost.class).getData());
+        AbyssOutpostData outpost = info.get(AbyssOutpostData.class);
+        if(outpost == null) outpost = info.getOrThrow(ActiveAbyssOutpost.class).getData();
         switch (args[0].toLowerCase()){
             case "set" ->{
                 Key upgradeKey = Crux.key(args[1]);

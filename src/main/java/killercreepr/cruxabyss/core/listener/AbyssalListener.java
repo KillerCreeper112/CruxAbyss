@@ -16,7 +16,6 @@ public class AbyssalListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         Entity e = event.getEntity();
 
-
         PlagueWingGliderHolder holder = EntityMemory.getDataHolder(e, PlagueWingGliderHolder.class);
         if(holder!=null){
             switch (event.getCause()){

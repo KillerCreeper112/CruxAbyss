@@ -40,7 +40,7 @@ public class ActiveRegenerationUpgrade extends SimpleActiveOutpostUpgrade {
     protected UPlayer cachedUPlayer;
     @Override
     public void tick(int tick, int rate) {
-        if(tick % 100 != 0) return;
+        //if(tick % 100 != 0) return;
         AbyssOutpostData data = outpost.getData();
         if(data.owner == null) return;
 
