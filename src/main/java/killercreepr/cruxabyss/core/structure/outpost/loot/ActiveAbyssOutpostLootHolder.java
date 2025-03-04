@@ -13,6 +13,7 @@ import killercreepr.cruxabyss.api.values.AbyssOutpostLootHolderCfg;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
@@ -100,6 +101,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         if(uuid == null) return null;
         World world = active.getChunk().getWorld();
         if(world.getEntity(uuid) instanceof TextDisplay d) return d;
+        data.hologramUUID = null;
         Crux.log(Level.SEVERE, "[ABYSS OUTPOST LOOT HOLDER] ENTITY UUID: " + uuid + " not found or is not a TextDisplay! Chunk(" + active.getChunk().getX() + ", " + active.getChunk().getZ() + ")");
         return null;
     }
@@ -111,6 +113,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         World world = active.getChunk().getWorld();
         Location spawn = getHologramPosition();
         TextDisplay display = world.spawn(spawn, TextDisplay.class, e ->{
+            e.setPersistent(false);
             e.setBillboard(Display.Billboard.CENTER);
             e.setViewRange(12f);
             updateHologram(e);
@@ -118,7 +121,6 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         data.hologramUUID = display.getUniqueId();
         return display;
     }
-
 
     public Location getHologramPosition(){
         Location loc = active.getData().getPosition().toLocation(active.getChunk().getWorld()).toCenterLocation();
@@ -157,7 +159,13 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
     }
 
     public long getNextGenerationAddonTicks(){
-        return cfg().ABYSS_OUTPOST_LOOT_HOLDER_GENERATE_TIME().value().intValue();
+        var outpost = outpost();
+        int ticks = cfg().ABYSS_OUTPOST_LOOT_HOLDER_GENERATE_TIME().value().intValue();
+        if(outpost == null) return ticks;
+        int level = outpost.getData().getUpgradeLevel(AbyssOutpostUpgrades.PLAGUED_RICHES);
+        if(level < 1) return ticks;
+        float multiplier = 1 - (level * .1f);
+        return (int) (cfg().ABYSS_OUTPOST_LOOT_HOLDER_GENERATE_TIME().value().intValue() * multiplier);
     }
 
     //amount | nextGenTime
