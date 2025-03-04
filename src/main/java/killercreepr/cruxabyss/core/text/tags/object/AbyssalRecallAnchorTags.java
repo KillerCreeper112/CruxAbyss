@@ -29,6 +29,7 @@ public class AbyssalRecallAnchorTags implements SimpleObjectTag<AbyssRecallAncho
         return TagContainer.string(tags)
             .add(Tag.string("can_respawn_at", (args, ctx) -> anchor.canRespawnAt() + ""))
             .add(Tag.string("charges", (args, ctx) -> anchor.getCharges() + ""))
+            .add(Tag.string("is_destroyed", (args, ctx) -> anchor.isDestroyed() + ""))
             ;
     }
 

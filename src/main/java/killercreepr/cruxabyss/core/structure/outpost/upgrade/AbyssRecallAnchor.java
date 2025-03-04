@@ -54,6 +54,12 @@ public class AbyssRecallAnchor {
         return getCharges() > 0;
     }
 
+    public boolean isDestroyed(){
+        Block b = block();
+        if(b == null) return true;
+        return !(b.getBlockData() instanceof RespawnAnchor);
+    }
+
     public int getCharges(){
         Block b = block();
         if(b == null) return 0;
