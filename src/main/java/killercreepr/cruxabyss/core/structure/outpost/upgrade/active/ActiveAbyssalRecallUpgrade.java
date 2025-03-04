@@ -1,11 +1,13 @@
 package killercreepr.cruxabyss.core.structure.outpost.upgrade.active;
 
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.component.parser.DataComponentDecoder;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.cruxabyss.api.structure.BlockPlaceInsideModule;
 import killercreepr.cruxabyss.api.values.AbyssOutpostUpgradesCfg;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssRecallAnchor;
 import killercreepr.cruxabyss.core.teleport.module.TeleportAbyssalRecallModule;
@@ -18,9 +20,7 @@ import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.TeleportBuildContext;
 import killercreepr.cruxteleport.api.teleport.module.TeleportModule;
 import killercreepr.usurvive.core.util.RespawnUtil;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.Entity;
@@ -57,9 +57,8 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
         if(b.getType() != Material.RESPAWN_ANCHOR) return;
         Player p = event.getPlayer();
         if(!data.isMemberOrOwner(p.getUniqueId())) return;
-        if(getRespawnAnchors(b.getWorld()).size() >= getMaxRespawnAnchors()) return;
-        addRespawnAnchor(wrapAnchor(CruxPosition.block(b)));
-        p.sendMessage("Respawn anchor has been linked to Abyss Outpost Recall upgrade.");
+
+        Lang.ABYSS_OUTPOST_UPGRADE_RECALL_CAN_BE_RECALL_ANCHOR.use(p);
     }
 
     public boolean canTeleportToAnchor(Block b){
@@ -72,6 +71,7 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
         if(anchor.getCharges() < 1) return false;
         anchor.setCharges(anchor.getCharges()-1);
         b.setBlockData(anchor);
+        CreateSound.sound(Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE).playAt(b.getLocation().toCenterLocation().add(0, .5, 0));
         return true;
     }
 

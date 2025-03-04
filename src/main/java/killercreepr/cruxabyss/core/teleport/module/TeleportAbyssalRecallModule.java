@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core.teleport.module;
 
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.active.ActiveAbyssalRecallUpgrade;
 import killercreepr.cruxteleport.api.teleport.holder.EntityTeleportHolder;
 import killercreepr.cruxteleport.api.teleport.module.TeleportModule;
@@ -29,7 +30,9 @@ public class TeleportAbyssalRecallModule implements TeleportModule {
 
     @Override
     public boolean onSuccess(@NotNull EntityTeleportHolder holder, @NotNull Entity e, @NotNull Location spawn) {
-        upgrade.onTeleportToAnchor(block);
+        Crux.scheduler().runTask(() ->{
+            upgrade.onTeleportToAnchor(block);
+        });
         return TeleportModule.super.onSuccess(holder, e, spawn);
     }
 }

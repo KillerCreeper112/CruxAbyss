@@ -33,6 +33,7 @@ public class MobWave {
         if(one_time_spawns != null){
             one_time_spawns.forEach(group ->{
                 Location mobSpawn = mobSpawnHolder.value();
+                if(mobSpawn == null) return;
                 SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
                 NaturalEntitySpawner.spawn(
                     spawns.selectRandom(1, ctx), ctx
@@ -47,6 +48,7 @@ public class MobWave {
         while(amount > 0){
             amount--;
             Location mobSpawn = mobSpawnHolder.value();
+            if(mobSpawn == null) continue;
             SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
             NaturalEntitySpawner.spawn(
                 spawns.selectRandom(mob_group_rolls.value().intValue(), ctx), ctx

@@ -298,7 +298,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             new AbyssalListener(),
             new CustomProjectileListener(),
             new ObjectiveListener(),
-            new HostileMobListener()
+            new HostileMobListener(),
+            new AbyssOutpostListener()
         );
         AbyssBlocks.register();
         AbyssOutpostUpgrades.register();

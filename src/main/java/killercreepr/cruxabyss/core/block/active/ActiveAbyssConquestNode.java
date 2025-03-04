@@ -30,6 +30,7 @@ import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import net.kyori.adventure.key.Key;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -461,6 +462,9 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
             }
             user = new WeakReference<>(p);
             expToTakeEachTick = (int) Math.ceil((float) requiredExperience / (float) getMaxTime(p, p.getUniqueId().equals(outpost().getData().owner)));
+            if(p.getGameMode()== GameMode.CREATIVE){
+                progress = getMaxTime(p, false);
+            }
         }
         lastInteract = System.currentTimeMillis();
         return Event.Result.DEFAULT;

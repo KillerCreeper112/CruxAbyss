@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
 import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
@@ -15,11 +16,13 @@ public class ObjectiveListener implements Listener {
         Player p = event.getPlayer();
         AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
         if(holder==null) return;
-
-        holder.getAdvancementTracker().apply(AbyssOutpostCaptureObjective.class, (manager,
-                                                                                  advancement,
-                                                                                  objective) -> {
-            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        Crux.scheduler().runTask(() ->{
+            if(!p.isOnline()) return;
+            holder.getAdvancementTracker().apply(AbyssOutpostCaptureObjective.class, (manager,
+                                                                                      advancement,
+                                                                                      objective) -> {
+                objective.trigger(p.getUniqueId(), manager, advancement, event);
+            });
         });
     }
 }

@@ -190,6 +190,32 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ABYSS_OUTPOST_UPGRADE_RECALL_CAN_BE_RECALL_ANCHOR = create(
+        Communicator.builder()
+            .chat("<yellow>This respawn anchor may be turned into a <gold>recall anchor</gold>. Insert at least one glowstone and then shift right click on it to convert it into a recall anchor.")
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_UPGRADE_RECALL_REACHED_MAX = create(
+        Communicator.builder()
+            .chat("<red>You may not have any more recall anchors connected at once.")
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_UPGRADE_RECALL_REMOVED = create(
+        Communicator.builder()
+            .chat("<red>Disconnected abyss recall anchor.")
+            .sound(CreateSound.sound(Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 2f))
+            .build()
+    );
+
+    public static final Msg ABYSS_OUTPOST_UPGRADE_RECALL_ADDED = create(
+        Communicator.builder()
+            .chat("<yellow>Abyss recall anchor has been linked to the outpost!")
+            .sound(CreateSound.sound(Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN))
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }
