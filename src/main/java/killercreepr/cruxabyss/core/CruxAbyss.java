@@ -40,6 +40,7 @@ import killercreepr.cruxabyss.core.loot.condition.AbyssOutpostCaptureCondition;
 import killercreepr.cruxabyss.core.menu.AbyssOutpostCraftingMenuHolder;
 import killercreepr.cruxabyss.core.menu.AbyssOutpostCraftingRecipeListHolder;
 import killercreepr.cruxabyss.core.menu.action.AbyssOutpostUpgradeAction;
+import killercreepr.cruxabyss.core.menu.action.AbyssRecallAnchorTeleportAction;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
 import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationList;
@@ -254,6 +255,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
 
         CruxMenusModule menus = CruxCore.core().cruxMenus();
         menus.menuRegistry().menuActions().register(new AbyssOutpostUpgradeAction(Crux.key("abyss_outpost_upgrade")));
+        menus.menuRegistry().menuActions().register(new AbyssRecallAnchorTeleportAction(Crux.key("abyss/outpost/upgrade/recall/teleport")));
         registerTextTags(Crux.tags());
 
         registerMenuModules(

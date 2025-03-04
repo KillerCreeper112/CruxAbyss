@@ -21,7 +21,7 @@ public class AbyssalRecallAnchorTags implements SimpleObjectTag<AbyssRecallAncho
 
     @Override
     public @NotNull FormatPrefix defaultPrefix() {
-        return FormatPrefix.simple("abyss_recall_anchor");
+        return FormatPrefix.simple("abyss_recall_anchor_");
     }
 
     @Override

@@ -3,9 +3,11 @@ package killercreepr.cruxabyss.core.structure.outpost.upgrade;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.active.ActiveAbyssalRecallUpgrade;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
+import org.bukkit.entity.Entity;
 
 public class AbyssRecallAnchor {
     public static AbyssRecallAnchor abyssRecallAnchor(CruxPosition pos, AbyssOutpostData data){
@@ -14,6 +16,13 @@ public class AbyssRecallAnchor {
 
     protected final CruxPosition position;
     protected final AbyssOutpostData data;
+
+    public boolean attemptTeleport(Entity e){
+        if(!(data.getTickedOutpostUpgrade(AbyssOutpostUpgrades.ABYSSAL_RECALL) instanceof ActiveAbyssalRecallUpgrade upgrade)) return false;
+        Block block = block();
+        if(block == null) return false;
+        return upgrade.attemptTeleportToRespawnAnchor(e, block);
+    }
 
     public AbyssRecallAnchor(CruxPosition position, AbyssOutpostData data) {
         this.position = position;

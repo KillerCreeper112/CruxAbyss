@@ -23,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +75,7 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
         return true;
     }
 
-    public boolean attemptTeleportToRespawnAnchor(Player p, Block b){
+    public boolean attemptTeleportToRespawnAnchor(Entity p, Block b){
         if(!canTeleportToAnchor(b)) return false;
         Location loc = RespawnUtil.findRespawnLocationOrTop(b);
         if(loc == null) return false;
