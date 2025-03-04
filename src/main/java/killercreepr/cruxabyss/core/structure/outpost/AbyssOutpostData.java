@@ -8,6 +8,8 @@ import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.structure.outpost.TickedOutpostUpgrade;
 import killercreepr.cruxabyss.api.values.AbyssOutpostInvasionCfg;
+import killercreepr.cruxabyss.api.world.event.TargetStructureWorldEvent;
+import killercreepr.cruxabyss.api.world.event.WorldEvent;
 import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -36,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public class AbyssOutpostData implements StoredStructureComponent, TickedStoredComponent, OutpostData {
     public UUID owner;
@@ -181,6 +184,20 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
             storedUpgrades.put(upgrade, stored);
         });
         storedUpgrades.values().forEach(t -> t.started(tick, tickRate));
+    }
+
+    public <T extends WorldEvent> boolean hasWorldEvent(Class<T> clazz, Predicate<T> filter){
+        if(!TargetStructureWorldEvent.class.isAssignableFrom(clazz)) throw new IllegalArgumentException(
+            clazz + " must implement TargetStructureWorldEvent!"
+        );
+        CruxWorld world = CruxCore.core().worldManager().getWorld(stored.getChunk().worldKey());
+        if(world == null) return false;
+        WorldEventsModule events = world.getModule(WorldEventsModule.class);
+        if(events == null) return false;
+        return events.hasApplicableWorldEvents(clazz, e ->{
+            if(!((TargetStructureWorldEvent) e).getTargetStructure().equals(stored)) return false;
+            return filter == null || filter.test(e);
+        });
     }
 
     public void attemptInvasion(){

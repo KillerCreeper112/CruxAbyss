@@ -12,6 +12,7 @@ import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
 import killercreepr.cruxabyss.api.values.AbyssOutpostInvasionCfg;
+import killercreepr.cruxabyss.api.world.event.TargetStructureWorldEvent;
 import killercreepr.cruxabyss.api.world.event.WorldEvent;
 import killercreepr.cruxabyss.core.block.active.ActiveAbyssConquestNode;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -55,6 +56,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -62,7 +64,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-public class OutpostInvasionEvent implements WorldEvent, Listener {
+public class OutpostInvasionEvent implements WorldEvent, Listener, TargetStructureWorldEvent {
     public static final int MAX_EVENT_TIME = 9600;
     public static final int MAX_EVENT_OVER_TIME = 18000;
 
@@ -441,8 +443,7 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
     public void onCaptured(){
         ActiveAbyssConquestNode node = active ? getConquestNode() : null;
         if(node == null && active){
-            Crux.log(Level.SEVERE, "OutpostInvasionEvent: " + targetStructure.getPosition() + " has no conquest node! " + world.key());
-            return;
+            Crux.log(Level.WARNING, "OutpostInvasionEvent: " + targetStructure.getPosition() + " has no conquest node! " + world.key());
         }
         Player owner = getOnlineOwner();
         AbyssOutpostData data = targetStructure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
@@ -883,6 +884,8 @@ public class OutpostInvasionEvent implements WorldEvent, Listener {
         participants.compute(p.getUniqueId(), (u, f) -> f == null ? damage : f + damage);
     }
 
+    @NotNull
+    @Override
     public StoredStructure getTargetStructure() {
         return targetStructure;
     }

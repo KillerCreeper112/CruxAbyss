@@ -10,6 +10,7 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,15 @@ public class StoredAbyssOutpostTags implements ObjectTag<AbyssOutpostData> {
                 Key upgradeKey = Crux.key(args.get(0));
                 OutpostUpgrade upgrade = AbyssRegistries.OUTPOST_UPGRADE.get(upgradeKey);
                 return object.getUpgradeLevel(upgrade) + "";
+            }))
+            .add(Tag.string("has_event", (args, ctx) ->{
+                String type = ctx.deserializeString(args.get(0));
+                switch (type.toLowerCase()){
+                    case "outpost_invasion" ->{
+                        return object.hasWorldEvent(OutpostInvasionEvent.class, null) + "";
+                    }
+                }
+                return "false";
             }))
             .add(Tag.string("owner", (args, ctx) -> object.owner + ""))
             .add(Tag.string("owner_name", (args, ctx) ->{

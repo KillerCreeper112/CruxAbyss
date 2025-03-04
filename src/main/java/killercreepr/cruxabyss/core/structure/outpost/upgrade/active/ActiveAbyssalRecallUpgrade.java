@@ -29,6 +29,7 @@ import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,10 +59,21 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
         if(event.isCancelled()) return;
         Block b = event.getBlock();
         if(b.getType() != Material.RESPAWN_ANCHOR) return;
+        if(!isWithinRadius(b)) return;
         Player p = event.getPlayer();
         if(!data.isMemberOrOwner(p.getUniqueId())) return;
 
         Lang.ABYSS_OUTPOST_UPGRADE_RECALL_CAN_BE_RECALL_ANCHOR.use(p);
+    }
+
+    public boolean isWithinRadius(Block b){
+        return getBoxRadius().contains(b.getLocation().toVector());
+    }
+
+    public BoundingBox getBoxRadius(){
+        if(level < 2) return data.getStored().getBoundingBox();
+        return data.getStored().getBoundingBox().clone()
+            .expand((level-1) * 8);
     }
 
     public boolean canTeleportToAnchor(Block b){
@@ -146,7 +158,7 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
     @Override
     public FileElement serialize(@NotNull FileContext<?> ctx) {
         FileObject o = new FileObject();
-        o.add("respawn_anchors", ctx.getRegistry().serializeToFile(respawnAnchors));
+        o.add("respawn_anchors", ctx.getRegistry().serializeToFile(respawnAnchors.keySet()));
         return o;
     }
 }
