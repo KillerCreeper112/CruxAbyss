@@ -10,14 +10,15 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
-import killercreepr.cruxstructures.core.structure.component.StructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
@@ -26,11 +27,15 @@ public class AbyssOutpostListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(!event.getAction().isRightClick()) return;
         Player p = event.getPlayer();
-        if(!p.isSneaking()) return;
         Block b = event.getClickedBlock();
         if(b==null) return;
         if(!(b.getBlockData() instanceof RespawnAnchor anchor)) return;
         if(anchor.getCharges() < 1) return;
+
+        ItemStack item = event.getItem();
+        if(item != null && item.getType() == Material.GLOWSTONE){
+            return;
+        }
 
         CruxWorld crux = CruxCore.core().worldManager().getWorld(b.getWorld().key());
         if(crux==null) return;
@@ -48,6 +53,7 @@ public class AbyssOutpostListener implements Listener {
         AbyssOutpostData data = stored.get(AbyssComponents.ABYSS_OUTPOST_DATA);
         if(!(data.getTickedOutpostUpgrade(AbyssOutpostUpgrades.ABYSSAL_RECALL) instanceof ActiveAbyssalRecallUpgrade upgrade)) return;
         if(!data.isMemberOrOwner(p.getUniqueId())) return;
+
         event.setCancelled(true);
         CruxPosition pos = CruxPosition.block(b);
         if(upgrade.hasRespawnAnchor(pos)){

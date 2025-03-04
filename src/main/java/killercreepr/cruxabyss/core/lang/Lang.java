@@ -192,7 +192,7 @@ public class Lang {
 
     public static final Msg ABYSS_OUTPOST_UPGRADE_RECALL_CAN_BE_RECALL_ANCHOR = create(
         Communicator.builder()
-            .chat("<yellow>This respawn anchor may be turned into a <gold>recall anchor</gold>. Insert at least one glowstone and then shift right click on it to convert it into a recall anchor.")
+            .chat("<yellow>This respawn anchor may be turned into a <gold>recall anchor</gold>. Insert at least one glowstone and then right click on it to convert it into a recall anchor.")
             .build()
     );
 
