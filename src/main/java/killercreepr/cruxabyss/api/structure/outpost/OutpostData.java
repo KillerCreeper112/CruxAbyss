@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.api.structure.outpost;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 
 public interface OutpostData {
@@ -8,4 +10,6 @@ public interface OutpostData {
     int getUpgradeLevel(OutpostUpgrade upgrade);
     void setUpgradeLevel(OutpostUpgrade upgrade, int level);
     void removeUpgrade(OutpostUpgrade upgrade);
+
+    @Nullable TickedOutpostUpgrade getTickedOutpostUpgrade(OutpostUpgrade upgrade);
 }

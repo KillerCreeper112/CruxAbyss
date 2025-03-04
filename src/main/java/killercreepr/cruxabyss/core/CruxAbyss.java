@@ -46,6 +46,8 @@ import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationL
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.SimpleAbyssOutpostManager;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssRecallAnchor;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.active.ActiveAbyssalRecallUpgrade;
 import killercreepr.cruxabyss.core.text.tags.object.AbyssPlayerTags;
 import killercreepr.cruxabyss.core.text.tags.object.AbyssalRecallAnchorTags;
 import killercreepr.cruxabyss.core.text.tags.object.ActiveAbyssOutpostTags;
@@ -417,16 +419,14 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                                          @Nullable String valuesFilter,
                                          @Nullable MenuItems valueItems,
                                          @Nullable MenuItems emptyItems) {
-                return new SimplePagedMenuModule<OfflinePlayer>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                return new SimplePagedMenuModule<AbyssRecallAnchor>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
                     @Override
-                    public @NotNull Holder<List<OfflinePlayer>> getValues(@NotNull CfgMenu cfgMenu) {
+                    public @NotNull Holder<List<AbyssRecallAnchor>> getValues(@NotNull CfgMenu cfgMenu) {
                         AbyssOutpostData data = cfgMenu.info().getOrThrow(AbyssOutpostData.class);
                         return () -> {
-                            List<OfflinePlayer> list = new ArrayList<>();
-                            for(UUID uuid : data.getMembers()){
-                                list.add(getServer().getOfflinePlayer(uuid));
-                            }
-                            list.sort(Comparator.comparing(e -> e.getName() + ""));
+                            if(!(data.getTickedOutpostUpgrade(AbyssOutpostUpgrades.ABYSSAL_RECALL) instanceof ActiveAbyssalRecallUpgrade upgrade)) return List.of();
+                            List<AbyssRecallAnchor> list = new ArrayList<>(upgrade.getRespawnAnchors());
+                            list.sort(Comparator.comparing(AbyssRecallAnchor::getCharges));
                             return list;
                         };
                     }

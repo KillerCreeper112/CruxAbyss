@@ -32,6 +32,7 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -289,6 +290,12 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         upgrades.remove(upgrade);
         TickedOutpostUpgrade stored = storedUpgrades.remove(upgrade);
         if(stored != null) stored.stopped(tick, tickRate);
+    }
+
+    @Nullable
+    @Override
+    public TickedOutpostUpgrade getTickedOutpostUpgrade(OutpostUpgrade upgrade) {
+        return storedUpgrades.get(upgrade);
     }
 
     public StoredStructure getStored() {
