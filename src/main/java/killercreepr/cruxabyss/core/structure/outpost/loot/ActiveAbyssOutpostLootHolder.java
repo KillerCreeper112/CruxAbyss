@@ -102,7 +102,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         World world = active.getChunk().getWorld();
         if(world.getEntity(uuid) instanceof TextDisplay d) return d;
         data.hologramUUID = null;
-        Crux.log(Level.SEVERE, "[ABYSS OUTPOST LOOT HOLDER] ENTITY UUID: " + uuid + " not found or is not a TextDisplay! Chunk(" + active.getChunk().getX() + ", " + active.getChunk().getZ() + ")");
+        Crux.log(Level.WARNING, "[ABYSS OUTPOST LOOT HOLDER] ENTITY UUID: " + uuid + " not found or is not a TextDisplay! Chunk(" + active.getChunk().getX() + ", " + active.getChunk().getZ() + ")");
         return null;
     }
 
@@ -115,7 +115,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
         TextDisplay display = world.spawn(spawn, TextDisplay.class, e ->{
             e.setPersistent(false);
             e.setBillboard(Display.Billboard.CENTER);
-            e.setViewRange(12f);
+            e.setViewRange(.1f);
             updateHologram(e);
         });
         data.hologramUUID = display.getUniqueId();
@@ -189,7 +189,7 @@ public class ActiveAbyssOutpostLootHolder implements ManagedTicked {
     }
 
     public void generate(double probabilityMultiplier){
-        BoundingBox box = active.getData().get(StoredStructureComponents.OUTER_BOX);
+        BoundingBox box = active.getData().getOrDefault(StoredStructureComponents.OUTER_BOX, active.getData().getBoundingBox());
         Crux.scheduler().runTask(() ->{
             generateOre(active.getChunk().getWorld(), box, CruxMath.random(), probabilityMultiplier);
         });
