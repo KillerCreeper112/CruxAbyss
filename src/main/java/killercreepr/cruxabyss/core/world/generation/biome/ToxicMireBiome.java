@@ -113,12 +113,12 @@ public class ToxicMireBiome extends GrimBiome {
 
                 Block above = limitedRegion.isInRegion(x,y+1,z) ? limitedRegion.getBlockState(x,y+1,z).getBlock() : null;
                 if(y >= 62 && above != null && (above.isEmpty() || above.isPassable())){
-                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.PLAGUE_DIRT_FUNGIRE_ORE)) return;
+                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.FUNGIRE_ORE)) return;
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
                 }else if(y >= 58){
-                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.PLAGUE_DIRT_FUNGIRE_ORE)) return;
+                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.FUNGIRE_ORE)) return;
                     AbyssBlocks.PLAGUE_DIRT.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );

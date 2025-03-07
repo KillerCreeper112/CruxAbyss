@@ -32,6 +32,9 @@ public class AbyssPopulator extends GrimPopulator{
         if(MaterialTags.FENCES.isTagged(type)) return true;
         if(MaterialTags.DOORS.isTagged(type)) return true;
         if(MaterialTags.SPONGES.isTagged(type)) return true;
+        if(type == Material.SPAWNER) return true;
+        if(type == Material.VAULT) return true;
+        if(type == Material.TRIAL_SPAWNER) return true;
 
         return false;
     };
