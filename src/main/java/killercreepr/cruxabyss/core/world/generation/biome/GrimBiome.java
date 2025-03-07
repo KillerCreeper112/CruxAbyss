@@ -4,6 +4,7 @@ import com.destroystokyo.paper.MaterialTags;
 import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.generator.CraftLimitedRegion;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
@@ -13,6 +14,9 @@ import java.util.Random;
 
 public abstract class GrimBiome{
     public static boolean isOre(@NotNull Material m){
+        return MaterialTags.ORES.isTagged(m);
+    }
+    public static boolean isOre(@NotNull Block m){
         return MaterialTags.ORES.isTagged(m);
     }
 

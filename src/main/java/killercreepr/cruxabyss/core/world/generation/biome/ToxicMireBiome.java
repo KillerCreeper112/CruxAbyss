@@ -7,6 +7,7 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.world.biome.BiomeManager;
 import killercreepr.cruxabyss.core.world.generation.decoration.ToxicMireTreePopulator;
+import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
 import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.component.BushGroup;
@@ -99,25 +100,30 @@ public class ToxicMireBiome extends GrimBiome {
             return;
         }
 
+        if(AbyssPopulator.GENERAL_DO_NOT_REPLACE.test(limitedRegion.getBlockData(x,y,z))) return;
+
         //float n = noise.GetNoise(x,y,z);
         switch (m){
             default ->{
                 if(CruxBlocksRegistries.BLOCK.getByBlockData(limitedRegion.getBlockData(x, y, z)) != null) return;
 
-                if(MaterialTags.ORES.isTagged(b)){
+                if(isOre(b)){
                     if(!MaterialSetTag.DIAMOND_ORES.isTagged(b.getType())) return;
                 }
 
                 Block above = limitedRegion.isInRegion(x,y+1,z) ? limitedRegion.getBlockState(x,y+1,z).getBlock() : null;
                 if(y >= 62 && above != null && (above.isEmpty() || above.isPassable())){
+                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.PLAGUE_DIRT_FUNGIRE_ORE)) return;
                     AbyssBlocks.PLAGUE_MOSS.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
                 }else if(y >= 58){
+                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.PLAGUE_DIRT_FUNGIRE_ORE)) return;
                     AbyssBlocks.PLAGUE_DIRT.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
                 } else{
+                    if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.PLAGUE_STONE_FUNGIRE_ORE)) return;
                     AbyssBlocks.PLAGUE_STONE.getBaseBlock().setBlock(
                         limitedRegion, x, y, z
                     );
@@ -126,6 +132,14 @@ public class ToxicMireBiome extends GrimBiome {
         }
     }
 
+    public boolean diamondOre(LimitedRegion limitedRegion, int x, int y, int z, CruxBlockGroup group){
+        Material type = limitedRegion.getType(x,y,z);
+        if(MaterialSetTag.DIAMOND_ORES.isTagged(type)){
+            group.setBlock(limitedRegion, x, y, z);
+            return true;
+        }
+        return false;
+    }
 
     private void decorationLogic(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
         if(grasslandsNoise.noise(x, y, z) > grasslandsThreshold){

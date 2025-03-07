@@ -5,6 +5,7 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.world.biome.BiomeManager;
+import killercreepr.cruxabyss.core.world.generation.populator.AbyssPopulator;
 import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
@@ -81,24 +82,21 @@ public class CharredBiome extends GrimBiome {
             }
             return;
         }
-        switch (m){
-            case SHORT_GRASS -> {
-                if(CruxMath.random().nextBoolean()){
-                    limitedRegion.setType(x, y, z, Material.AIR);
-                    return;
-                }
-                limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
-                if(limitedRegion.getBlockData(x, y,z) instanceof Waterlogged l && l.isWaterlogged()){
-                    l.setWaterlogged(false);
-                    limitedRegion.setBlockData(x, y, z, l);
-                }
-            }
-            case TALL_GRASS -> {
+        if(m == Material.SHORT_GRASS){
+            if(CruxMath.random().nextBoolean()){
                 limitedRegion.setType(x, y, z, Material.AIR);
+                return;
             }
-            case SEA_PICKLE, SEAGRASS, TALL_SEAGRASS, KELP_PLANT -> {
-                limitedRegion.setType(x, y, z, Material.WATER);
+            limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
+            if(limitedRegion.getBlockData(x, y,z) instanceof Waterlogged l && l.isWaterlogged()){
+                l.setWaterlogged(false);
+                limitedRegion.setBlockData(x, y, z, l);
             }
+        }else if(m == Material.TALL_GRASS){
+            limitedRegion.setType(x, y, z, Material.AIR);
+
+        }else if(m == Material.SEA_PICKLE || m == Material.SEAGRASS || m == Material.TALL_SEAGRASS || m == Material.KELP_PLANT){
+            limitedRegion.setType(x, y, z, Material.WATER);
         }
     }
 
@@ -156,6 +154,7 @@ public class CharredBiome extends GrimBiome {
             }
         }*/
 
+        if(AbyssPopulator.GENERAL_DO_NOT_REPLACE.test(limitedRegion.getBlockData(x,y,z))) return;
         float n = noise.GetNoise(x,y,z);
         Material type;
         if(n > .95f) type = Material.GRAVEL;
