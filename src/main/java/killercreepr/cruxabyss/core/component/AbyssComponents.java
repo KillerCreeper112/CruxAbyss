@@ -82,6 +82,10 @@ public class AbyssComponents {
 
     public static final DataComponentType<TeleporterComponent> TELEPORT_ABYSS_WORLD = register("teleport/abyss_world", builder ->
         builder);
+    public static final DataComponentType<ToxsporeComponent> BLOCK_TOXSPORE = register("block/toxspore", builder ->
+        builder);
+    public static final DataComponentType<FungireOreComponent> BLOCK_FUNGIRE_ORE = register("block/fungire_ore", builder ->
+        builder);
     public static final DataComponentType<PlaceCustomBlocksModule> STRUCTURE_REPLACEABLE_CUSTOM_BLOCKS = register("structure/place_custom_blocks/replaceable", builder ->
         builder);
     public static final DataComponentType<TeleporterComponent> TELEPORT_OUTPOST_ABYSSAL_RECALL = register("teleport/outpost_abyssal_recall", builder ->

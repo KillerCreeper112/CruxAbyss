@@ -9,6 +9,8 @@ import killercreepr.crux.core.math.BlockPos;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
 import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
+import killercreepr.cruxabyss.core.component.impl.FungireOreComponent;
+import killercreepr.cruxabyss.core.component.impl.ToxsporeComponent;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
@@ -129,6 +131,18 @@ public class CfgAbyssComponents {
                     o.get("blocks")
                 );
                 return TypedDataComponent.create(AbyssComponents.STRUCTURE_REPLACEABLE_CUSTOM_BLOCKS, new PlaceCustomBlocksModule(blocks, false));
+            }
+        });
+        registry.register("block/toxspore", new FileDataComponentType<ToxsporeComponent>(){
+            @Override
+            public @Nullable TypedDataComponent<ToxsporeComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.BLOCK_TOXSPORE, new ToxsporeComponent());
+            }
+        });
+        registry.register("block/fungire_ore", new FileDataComponentType<FungireOreComponent>(){
+            @Override
+            public @Nullable TypedDataComponent<FungireOreComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.BLOCK_FUNGIRE_ORE, new FungireOreComponent());
             }
         });
     }

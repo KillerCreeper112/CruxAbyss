@@ -1,7 +1,6 @@
 package killercreepr.cruxabyss.core.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import com.destroystokyo.paper.MaterialTags;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -20,13 +19,38 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
+import java.util.function.Predicate;
 
 public class ToxicMireBiome extends GrimBiome {
+    public static final Predicate<BlockData> TOXIC_MIRE_DO_NOT_REPLACE = data ->{
+        if(AbyssPopulator.GENERAL_DO_NOT_REPLACE.test(data)) return true;
+        Material type = data.getMaterial();
+        if(type == Material.AMETHYST_BLOCK || type == Material.BUDDING_AMETHYST ||
+            type == Material.AMETHYST_CLUSTER ||
+            type == Material.LARGE_AMETHYST_BUD||
+            type == Material.SMALL_AMETHYST_BUD||
+            type == Material.MEDIUM_AMETHYST_BUD){
+            return true;
+        }
+        if(type == Material.SMOOTH_BASALT || type == Material.CALCITE){
+            return true;
+        }
+        if(type == Material.SCULK || type == Material.SCULK_CATALYST ||
+            type == Material.SCULK_SHRIEKER ||
+            type == Material.SCULK_SENSOR ||
+            type == Material.SCULK_VEIN){
+            return true;
+        }
+        //if(type == Material.DEEPSLATE) return true;
+        return false;
+    };
+
     private final CruxNoise noise = CruxNoise.fast()
         .frequency(0.005f)
         .noiseType(CruxNoise.NoiseType.OpenSimplex2)
@@ -93,6 +117,12 @@ public class ToxicMireBiome extends GrimBiome {
             return;
         }else if(MaterialSetTag.FLOWERS.isTagged(m)){
             limitedRegion.setType(x,y,z,Material.AIR);
+        }else if(MaterialSetTag.PLANKS.isTagged(m)){
+            AbyssBlocks.PLAGUE_PLANKS.setBlock(limitedRegion, x, y, z);
+            return;
+        }else if(m == Material.BAMBOO){
+            AbyssBlocks.PLAGUE_STEM.setBlock(limitedRegion, x, y, z);
+            return;
         }
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         if(!b.isSolid()){
@@ -100,7 +130,7 @@ public class ToxicMireBiome extends GrimBiome {
             return;
         }
 
-        if(AbyssPopulator.GENERAL_DO_NOT_REPLACE.test(limitedRegion.getBlockData(x,y,z))) return;
+        if(TOXIC_MIRE_DO_NOT_REPLACE.test(limitedRegion.getBlockData(x,y,z))) return;
 
         //float n = noise.GetNoise(x,y,z);
         switch (m){

@@ -15,9 +15,7 @@ import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public class AbyssPopulator extends GrimPopulator{

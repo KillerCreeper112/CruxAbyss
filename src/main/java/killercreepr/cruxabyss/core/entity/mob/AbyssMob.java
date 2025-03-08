@@ -30,6 +30,7 @@ public interface AbyssMob extends CruxMob {
     CruxMob EMBER_LEAPER = REGISTRY.register(new EmberLeaper());
     CruxMob TOXINTRAWL = REGISTRY.register(new Toxintrawl());
     CruxMob ABYSSAL_HUSK = REGISTRY.register(new AbyssalHusk());
+    CruxMob FUNGALMORPH = REGISTRY.register(new Fungalmorph());
 
     CruxMob PLAGUEWING_MOUNT_SCOURGER = REGISTRY.register(new PlaguewingMounted(Crux.key("plaguewing/mount/scourger"), SCOURGER));
     CruxMob PLAGUEWING_MOUNT_TOXICATOR = REGISTRY.register(new PlaguewingMounted(Crux.key("plaguewing/mount/toxicator"), TOXICATOR));

@@ -19,6 +19,7 @@ public class AbyssBlocks {
     public static final CruxBlockGroup PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stone_red_abyss_crystal_ore"));
     public static final CruxBlockGroup ABYSS_CONQUEST_NODE =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("abyss_conquest_node"));
     public static final CruxBlockGroup CHARRED_PLANKS =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("charred_planks"));
+    public static final CruxBlockGroup PLAGUE_PLANKS =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_planks"));
 
     public static final CruxBlockGroup FUNGIRE_ORE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("fungire_ore"));
     public static final CruxBlockGroup DEEPSLATE_FUNGIRE_ORE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("deepslate_fungire_ore"));

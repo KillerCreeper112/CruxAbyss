@@ -95,7 +95,7 @@ public class CharredBiome extends GrimBiome {
         }else if(m == Material.TALL_GRASS){
             limitedRegion.setType(x, y, z, Material.AIR);
 
-        }else if(m == Material.SEA_PICKLE || m == Material.SEAGRASS || m == Material.TALL_SEAGRASS || m == Material.KELP_PLANT){
+        }else if(m == Material.SEA_PICKLE || m == Material.SEAGRASS || m == Material.TALL_SEAGRASS || m == Material.KELP_PLANT || m == Material.KELP){
             limitedRegion.setType(x, y, z, Material.WATER);
         }
     }
