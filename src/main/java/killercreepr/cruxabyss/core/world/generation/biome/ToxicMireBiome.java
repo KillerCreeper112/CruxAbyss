@@ -209,6 +209,9 @@ public class ToxicMireBiome extends GrimBiome {
         }else if(CruxMath.testChance(10)){
             AbyssBlocks.MIREHORN.setBlock(limitedRegion, x, y, z);
             return true;
+        }else if(CruxMath.testChance(3)){
+            AbyssBlocks.TOXSPORE.setBlock(limitedRegion, x, y, z);
+            return true;
         }else{
             AbyssBlocks.PLAGUE_SHROOM.setBlock(limitedRegion, x, y, z);
             return true;
