@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
@@ -14,9 +15,7 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Color;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -133,6 +132,46 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
                     });
             }
         }
+    }
+
+    protected int deathTime = 0;
+    @Override
+    protected void onRemovalOrDeath(boolean died) {
+        super.onRemovalOrDeath(died);
+        if(!died) return;
+        Location loc = mob.getLocation();
+        Crux.getServer().getScheduler().runTaskTimer(Crux.getMainPlugin(), task ->{
+            deathTime++;
+            if(deathTime >= 10){
+                task.cancel();
+                explode(loc);
+                return;
+            }
+            checkIfEntityStandingOnTick(loc);
+        }, 0L, 2L);
+    }
+
+    public void checkIfEntityStandingOnTick(Location loc){
+        loc.getWorld().getNearbyEntities(mob.getBoundingBox(),
+            e -> e instanceof LivingEntity d && this.isValidNaturalTarget(d)).forEach(hit ->{
+                EntityDamager.entityDamager(hit, mob)
+                    .attack(EntityDamager.getDamage(mob),
+                        CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK) * 2,
+                        (CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK_UP) * 1.5) + 15);
+        });
+    }
+
+    public void explode(Location loc){
+        new GetEntityNear<>(LivingEntity.class)
+            .center(loc)
+            .range(4)
+            .filter(this::isValidNaturalTarget)
+            .find().forEach(hit ->{
+                EntityDamager.entityDamager(hit, mob)
+                    .attack(EntityDamager.getDamage(mob),
+                        CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK) * 2,
+                        (CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK_UP) * 1.5) + 15);
+            });
     }
 
     public void combatUsingStrongAttackTick(){
