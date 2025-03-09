@@ -19,9 +19,13 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
@@ -113,7 +117,7 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
                     .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
                     .offset(range/2, range/2, range/2)
                     .extra(.3)
-                    .count(CruxMath.random(15, 25))
+                    .count(CruxMath.random(25, 30))
                     .colorTransition(
                         Color.fromRGB(0xC3FF87),
                         Color.fromRGB(0x3AA4D8),
@@ -140,9 +144,11 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
         super.onRemovalOrDeath(died);
         if(!died) return;
         Location loc = mob.getLocation();
+
+        CreateSound.sound(Sound.ENTITY_CREEPER_PRIMED, 1.2f).playAt(loc);
         Crux.getServer().getScheduler().runTaskTimer(Crux.getMainPlugin(), task ->{
             deathTime++;
-            if(deathTime >= 10){
+            if(deathTime >= 13){
                 task.cancel();
                 explode(loc);
                 return;
@@ -162,9 +168,10 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public void explode(Location loc){
+        double range = 4D;
         new GetEntityNear<>(LivingEntity.class)
             .center(loc)
-            .range(4)
+            .range(range)
             .filter(this::isValidNaturalTarget)
             .find().forEach(hit ->{
                 EntityDamager.entityDamager(hit, mob)
@@ -172,6 +179,20 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
                         CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK) * 2,
                         (CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK_UP) * 1.5) + 15);
             });
+
+        new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+            .location(loc.clone().add(0, mob.getHeight()/2, 0))
+            .offset(range/2, range/2, range/2)
+            .extra(.3)
+            .count(CruxMath.random(30, 40))
+            .colorTransition(
+                Color.fromRGB(0xC3FF87),
+                Color.fromRGB(0x3AA4D8),
+                1.2f
+            )
+            .spawn();
+        CreateSound.sound(Sound.BLOCK_SLIME_BLOCK_FALL, .8f).playAt(loc);
+        CreateSound.sound(Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, .85f).playAt(loc);
     }
 
     public void combatUsingStrongAttackTick(){
@@ -292,4 +313,51 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
         combatTick();
         movementTick();
     }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        if(!CruxMath.testChance(10)) return;
+
+        new BukkitRunnable(){
+            private final Location loc = mob.getLocation();
+            private int tick = 0;
+            private final int maxTicks = CruxMath.random(8, 12);
+            private final double range = CruxMath.random(2,3);
+            @Override
+            public void run() {
+                tick++;
+                if(tick >= maxTicks){
+                    cancel();
+                    return;
+                }
+                new GetEntityNear<>(LivingEntity.class)
+                    .center(loc)
+                    .range(range)
+                    .filter(FungalmorphGoal.this::isValidNaturalTarget)
+                    .find().forEach(hit ->{
+                        hit.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 100, 0));
+                        hit.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0));
+                        hit.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, 400, 0));
+                        EntityDamager.entityDamager(hit, mob)
+                            .attack(EntityDamager.getDamage(mob)/2,
+                                CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK)/2,
+                                CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK_UP)/2);
+                    });
+
+                new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+                    .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
+                    .offset(range/2, range/2, range/2)
+                    .extra(.3)
+                    .count(CruxMath.random(15, 25))
+                    .colorTransition(
+                        Color.fromRGB(0x2478A1),
+                        Color.fromRGB(0x0B0272),
+                        1.2f
+                    )
+                    .spawn();
+            }
+        }.runTaskTimer(Crux.getMainPlugin(), 0L, 5L);
+    }
+
 }
