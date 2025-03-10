@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.core.world.generation.biome;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import killercreepr.crux.api.block.CruxBlockWrapper;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -61,6 +62,19 @@ public class CharredBiome extends GrimBiome {
         return CruxCollection.getRandom(smallBurntDecorations);
     }
 
+    public void setRandomBurntDecoration(LimitedRegion limitedRegion, int x, int y, int z){
+        if(CruxMath.testChance(9)){
+            AbyssBlocks.EMBERWEED.setBlock(limitedRegion, x, y, z);
+            return;
+        }
+
+        limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
+        if(limitedRegion.getBlockData(x, y,z) instanceof Waterlogged l && l.isWaterlogged()){
+            l.setWaterlogged(false);
+            limitedRegion.setBlockData(x, y, z, l);
+        }
+    }
+
     public void acceptNotSolid(
         @NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z,
         Block b
@@ -75,11 +89,7 @@ public class CharredBiome extends GrimBiome {
                 limitedRegion.setType(x, y, z, Material.AIR);
                 return;
             }
-            limitedRegion.setType(x, y, z, randomSmallBurntDecoration());
-            if(limitedRegion.getBlockData(x, y,z) instanceof Waterlogged l && l.isWaterlogged()){
-                l.setWaterlogged(false);
-                limitedRegion.setBlockData(x, y, z, l);
-            }
+            setRandomBurntDecoration(limitedRegion, x, y, z);
             return;
         }
         if(m == Material.SHORT_GRASS){

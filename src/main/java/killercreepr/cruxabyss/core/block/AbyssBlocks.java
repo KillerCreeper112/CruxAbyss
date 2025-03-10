@@ -25,4 +25,5 @@ public class AbyssBlocks {
     public static final CruxBlockGroup DEEPSLATE_FUNGIRE_ORE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("deepslate_fungire_ore"));
     public static final CruxBlockGroup PLAGUE_STONE_FUNGIRE_ORE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stone_fungire_ore"));
     public static final CruxBlockGroup TOXSPORE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("toxspore"));
+    public static final CruxBlockGroup EMBERWEED = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("emberweed"));
 }
