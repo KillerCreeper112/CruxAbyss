@@ -21,6 +21,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
@@ -140,6 +141,14 @@ public class AbyssSpecificsListener implements Listener {
         }
         if(b.getBlockData() instanceof Waterlogged l && l.isWaterlogged()) return true;
         return false;
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityCombust(EntityCombustEvent event) {
+        Entity e = event.getEntity();
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+        event.setCancelled(true);
     }
 
 }

@@ -180,6 +180,21 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
                         (CruxAttribute.get(mob, CruxAttribute.ATTACK_KNOCKBACK_UP) * 1.5) + 15);
             });
 
+        new ParticleBuilder(Particle.EXPLOSION)
+            .location(loc.clone().add(0, mob.getHeight()/2, 0))
+            .offset(.3, .3, .3)
+            .extra(.3)
+            .count(CruxMath.random(2, 3))
+            .spawn();
+
+
+        new ParticleBuilder(Particle.SPLASH)
+            .location(loc.clone().add(0, mob.getHeight()/2, 0))
+            .offset(.4, .4, .4)
+            .extra(.3)
+            .count(CruxMath.random(10, 15))
+            .spawn();
+
         new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
             .location(loc.clone().add(0, mob.getHeight()/2, 0))
             .offset(range/2, range/2, range/2)

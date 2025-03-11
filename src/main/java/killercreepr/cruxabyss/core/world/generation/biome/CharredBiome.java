@@ -63,7 +63,7 @@ public class CharredBiome extends GrimBiome {
     }
 
     public void setRandomBurntDecoration(LimitedRegion limitedRegion, int x, int y, int z){
-        if(CruxMath.testChance(9)){
+        if(CruxMath.testChance(12)){
             AbyssBlocks.EMBERWEED.setBlock(limitedRegion, x, y, z);
             return;
         }
@@ -85,7 +85,7 @@ public class CharredBiome extends GrimBiome {
                 limitedRegion.setType(x, y, z, Material.AIR);
                 return;
             }
-            if(CruxMath.random().nextBoolean()){
+            if(CruxMath.testChance(30)){
                 limitedRegion.setType(x, y, z, Material.AIR);
                 return;
             }

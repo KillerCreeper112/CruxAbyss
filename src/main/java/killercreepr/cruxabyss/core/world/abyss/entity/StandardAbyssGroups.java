@@ -9,6 +9,7 @@ import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -125,6 +126,21 @@ public class StandardAbyssGroups {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             if(CruxMath.random(1, 100) <= 9) return false;
+            Block b = ctx.getBlock();
+            NamespacedKey k = BiomeUtils.getBiome(b);
+            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+        }
+    };
+
+    public static final NaturalEntitySpawnGroup ABYSSAL_HUSK = new NaturalSpawnPartGroup(10, 0f,
+        StandardAbyssSpawns.ABYSSAL_HUSK){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 6) return false;
+            World world = ctx.getWorld();
+            //if it's not night, return
+            if(!(world.getTime() >= 13_000 && world.getTime() <= 23_000)) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
             return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;

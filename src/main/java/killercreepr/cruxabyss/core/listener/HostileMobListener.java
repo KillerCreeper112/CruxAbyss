@@ -20,7 +20,6 @@ public class HostileMobListener implements Listener {
     public void onEntitySpawn(EntitySpawnEvent event) {
     }
 
-
     public void load(Entity e){
         if(!(e instanceof Mob mob)) return;
         if(!(e instanceof Enemy)) return;
