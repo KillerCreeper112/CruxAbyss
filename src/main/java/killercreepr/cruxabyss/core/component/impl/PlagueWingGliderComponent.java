@@ -39,7 +39,7 @@ public class PlagueWingGliderComponent implements InteractableComponent {
     }
 
     @Override
-    public @NotNull ItemUseResult onUse(@NotNull ItemUseContext ctx) {
+    public @NotNull ItemUseResult onInteract(@NotNull ItemUseContext ctx) {
         Player p = ctx.getPlayer();
 
         if(!hasEnoughFallDistance(p)){
@@ -109,7 +109,7 @@ public class PlagueWingGliderComponent implements InteractableComponent {
     }
 
     @Override
-    public boolean isUsable(@NotNull ItemUseContext ctx) {
+    public boolean isInteractable(@NotNull ItemUseContext ctx) {
         return ctx.getAction().isRightClick() && ctx.getPlayer().getVehicle() == null;
         /*if(!ctx.getAction().isRightClick()) return false;
         Player p = ctx.getPlayer();

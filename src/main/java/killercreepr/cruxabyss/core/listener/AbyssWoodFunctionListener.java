@@ -10,6 +10,7 @@ import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.event.CustomBlockExplodeEvent;
 import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxcore.CruxCore;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractArrow;
@@ -83,6 +84,7 @@ public class AbyssWoodFunctionListener implements Listener {
         Vector dir = proj.getVelocity();
         Vector v = CruxMath.reflect(dir, normal).multiply(.7);
         double speed = v.length();
+        Bukkit.broadcastMessage("speed=" + speed);
         if(speed < 0.16) return;
         proj.setVelocity(v);
         if(event.getHitEntity() == null){

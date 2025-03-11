@@ -8,8 +8,10 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import net.kyori.adventure.key.Key;
@@ -21,10 +23,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -149,6 +148,30 @@ public class AbyssSpecificsListener implements Listener {
         CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        Entity e = event.getEntity();
+        if(CruxMob.is(e)) return;
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+        Location spawn = event.getLocation();
+        if(e instanceof AbstractVillager){
+            event.setCancelled(true);
+            AbyssMob.VILDER.spawn(spawn);
+            return;
+        }
+        if(e instanceof Pillager){
+            event.setCancelled(true);
+            AbyssMob.SCOURGER.spawn(spawn);
+            return;
+        }
+        if(e instanceof Vindicator){
+            event.setCancelled(true);
+            AbyssMob.TOXICATOR.spawn(spawn);
+            return;
+        }
     }
 
 }
