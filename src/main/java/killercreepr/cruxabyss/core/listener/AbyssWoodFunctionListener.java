@@ -84,8 +84,7 @@ public class AbyssWoodFunctionListener implements Listener {
         Vector dir = proj.getVelocity();
         Vector v = CruxMath.reflect(dir, normal).multiply(.7);
         double speed = v.length();
-        Bukkit.broadcastMessage("speed=" + speed);
-        if(speed < 0.16) return;
+        if(speed < 0.32) return;
         proj.setVelocity(v);
         if(event.getHitEntity() == null){
             Location spawn = CruxLoc.shift(proj.getLocation(), v, .2, 0, 0);
