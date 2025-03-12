@@ -13,14 +13,27 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class SporeburstChargeComponent implements InteractableComponent {
+    protected final int cooldown;
+
+    public SporeburstChargeComponent(int cooldown) {
+        this.cooldown = cooldown;
+    }
+
+    public int getCooldown() {
+        return cooldown;
+    }
+
     @Override
     public @NotNull ItemUseResult onInteract(@NotNull ItemUseContext ctx) {
         CruxItem crux = ctx.getItem();
         ItemStack item = crux.item();
+
+        Player p = ctx.getPlayer();
+        if(p.hasCooldown(item)) return ItemUseResult.empty();
+
         ItemStack copy = item.clone();
         item.setAmount(item.getAmount()-1);
 
-        Player p = ctx.getPlayer();
         AbyssMob.SPOREBURST.throwBurst(this, CruxItem.wrap(copy), p.getEyeLocation(), e ->{
             e.setShooter(p);
             e.setItem(copy);
@@ -28,6 +41,10 @@ public class SporeburstChargeComponent implements InteractableComponent {
             e.setVelocity(vel);
         });
         CreateSound.sound(Sound.ENTITY_SNOWBALL_THROW, .8f).playAt(p);
+        if(cooldown > 0){
+            p.setCooldown(item, cooldown);
+        }
+        p.swingHand(ctx.getHand());
         return ItemUseResult.cancelled();
     }
 

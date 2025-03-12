@@ -81,8 +81,9 @@ public class AbyssComponents {
     );
     public static final DataComponentType<SporeburstChargeComponent> SPOREBURST_CHARGE = register("sporeburst_charge", builder ->
         builder.persistTextParser(PersistTextParser.mapBuilder(SporeburstChargeComponent.class)
+            .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, SporeburstChargeComponent::getCooldown))
             .apply(ctx ->{
-                return new SporeburstChargeComponent();
+                return new SporeburstChargeComponent(ctx.getOptional("cooldown", 10));
             }).createInput(Crux.key("sporeburst_charge")))
     );
 

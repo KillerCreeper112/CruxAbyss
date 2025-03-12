@@ -91,7 +91,7 @@ public class ActivePlagueStalkerTickable extends ListenerActiveEntityTickable im
             var uPlay = UPlayer.getPlayer(entity);
             return uPlay != null && (uPlay.hasFriend(e.getUniqueId()) || uPlay.isApartOfParty(e.getUniqueId()));
         }
-        if(!(e instanceof Tameable t)) return false;
+        if(!(e instanceof Wolf t)) return false;
         AnimalTamer tamer = t.getOwner();
         if(tamer == null) return false;
         UUID tamerUUID = tamer.getUniqueId();
