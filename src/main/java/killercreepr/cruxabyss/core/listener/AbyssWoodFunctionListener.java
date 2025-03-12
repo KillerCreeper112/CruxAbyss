@@ -17,6 +17,7 @@ import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -63,7 +64,7 @@ public class AbyssWoodFunctionListener implements Listener {
         });
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile proj = event.getEntity();
         Block block = event.getHitBlock();

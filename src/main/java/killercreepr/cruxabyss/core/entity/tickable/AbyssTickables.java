@@ -24,6 +24,7 @@ import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -125,6 +126,40 @@ public class AbyssTickables {
                 (int) data.getOrDefault("spore_lifespan", 100),
                 particleSupplier,
                 sound
+            );
+        }
+    });
+
+    public static final EntityTickable PLAGUE_STALKER = register(new SimpleDataEntityTickable(Crux.key("plague_stalker")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("friends_range", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("friends_range")))
+            .field("min_time", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("min_time")))
+            .field("max_time", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("max_time")))
+            .field("timed_effects", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, e -> (List<PotionEffect>) e.get("timed_effects")))
+            .field("combat_friend_nearby_effects", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, e -> (List<PotionEffect>) e.get("combat_friend_nearby_effects")))
+            .field("min_friends", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("min_friends")))
+            .field("combat_cooldown", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("combat_cooldown")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+            if(data==null) data = Map.of();
+            return new ActivePlagueStalkerTickable(
+                entity, this, slot,
+                (int) data.getOrDefault("friends_range", 16D),
+                (int) data.getOrDefault("min_time", 13000),
+                (int) data.getOrDefault("max_time", 24000),
+                (Collection<PotionEffect>) data.get("timed_effects"),
+                (Collection<PotionEffect>) data.get("combat_friend_nearby_effects"),
+                (int) data.getOrDefault("min_friends", 2),
+                (int) data.getOrDefault("combat_cooldown", 200)
             );
         }
     });

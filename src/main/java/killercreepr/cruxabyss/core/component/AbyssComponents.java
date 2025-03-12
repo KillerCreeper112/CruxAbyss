@@ -79,6 +79,12 @@ public class AbyssComponents {
                 );
             }).createInput(Crux.key("plague_wing_glider")))
     );
+    public static final DataComponentType<SporeburstChargeComponent> SPOREBURST_CHARGE = register("sporeburst_charge", builder ->
+        builder.persistTextParser(PersistTextParser.mapBuilder(SporeburstChargeComponent.class)
+            .apply(ctx ->{
+                return new SporeburstChargeComponent();
+            }).createInput(Crux.key("sporeburst_charge")))
+    );
 
     public static final DataComponentType<TeleporterComponent> TELEPORT_ABYSS_WORLD = register("teleport/abyss_world", builder ->
         builder);

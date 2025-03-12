@@ -45,5 +45,7 @@ public interface AbyssMob extends CruxMob {
     AbyssCrystal ABYSS_CRYSTAL = REGISTRY.register(new AbyssCrystal());
     AltarPlacedItem ALTAR_PLACED_ITEM = REGISTRY.register(new AbyssAltarPlacedItem(Crux.key("altar_placed_item")));
     PlagueWingGlider PLAGUE_WING_GLIDER = REGISTRY.register(new PlagueWingGlider());
+
+    Sporeburst SPOREBURST = REGISTRY.register(new Sporeburst());
     @NotNull Entity spawn(@Nullable AbyssWorld world, @NotNull Location at);
 }

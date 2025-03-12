@@ -143,7 +143,7 @@ public class StandardAbyssGroups {
             if(!(world.getTime() >= 13_000 && world.getTime() <= 23_000)) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 6) < 12;
         }
     };
 
@@ -157,5 +157,6 @@ public class StandardAbyssGroups {
         registry.register(PLAGUEWING);
         registry.register(EMBER_LEAPER);
         registry.register(TOXINTRAWL);
+        registry.register(ABYSSAL_HUSK);
     }
 }
