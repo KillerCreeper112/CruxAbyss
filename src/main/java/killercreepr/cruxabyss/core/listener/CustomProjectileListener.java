@@ -140,6 +140,12 @@ public class CustomProjectileListener implements Listener {
             .count(CruxMath.random(15, 20))
             .location(loc)
             .spawn();
+        new ParticleBuilder(Particle.EXPLOSION)
+            .count(CruxMath.random(2, 3))
+            .extra(.5)
+            .offset(range/3, range/3, range/3)
+            .location(loc)
+            .spawn();
 
         CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1.5f).playAt(e);
         CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 1.5f).playAt(e);

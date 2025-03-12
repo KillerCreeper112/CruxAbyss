@@ -6,6 +6,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.SporeburstChargeComponent;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -39,7 +41,13 @@ public class Sporeburst extends SimpleCruxMob {
                                       @NotNull Location location, @Nullable Consumer<ThrowableProjectile> consumer){
         return location.getWorld().spawn(location, Snowball.class, e ->{
             CruxEntity crux = CruxEntity.entity(e);
-            item.forEachOrDefaultData(crux::set);
+            item.forEachOrDefaultData(data ->{
+                if(data.getType() == CruxAttributeComponents.STORED_CRUX_ATTRIBUTES){
+                    crux.set(CruxAttributeComponents.CRUX_ATTRIBUTES, (CruxAttributeContainer) data.getValue());
+                    return;
+                }
+                crux.set(data);
+            });
             //crux.set(AbyssComponents.SPOREBURST_CHARGE, comp);
             load(e);
             if(consumer != null) consumer.accept(e);
