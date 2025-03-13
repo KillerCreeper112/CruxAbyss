@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.structure.outpost;
 
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.structure.BlockPlaceInsideModule;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostData;
@@ -300,6 +301,20 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
             return;
         }
         stored.setLevel(level);
+    }
+
+    public void removeRandomUpgradeLevel(){
+        if(upgrades.isEmpty()) return;
+        List<OutpostUpgrade> list = new ArrayList<>(upgrades.keySet());
+        OutpostUpgrade upgrade = CruxCollection.getRandom(list);
+        if(upgrade==null) return;
+        int level = getUpgradeLevel(upgrade);
+        int newLevel = level - 1;
+        if(newLevel < 1){
+            removeUpgrade(upgrade);
+            return;
+        }
+        setUpgradeLevel(upgrade, level);
     }
 
     @Override
