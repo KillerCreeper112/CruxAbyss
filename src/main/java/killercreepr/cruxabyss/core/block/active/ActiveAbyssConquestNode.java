@@ -240,6 +240,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
             outpost().capture(p);
             var data = outpost().getData();
             data.removeRandomUpgradeLevel();
+            data.removeRandomUpgradeLevel();
             storedExperience = experienceGiven;
             Lang.ABYSS_CONQUEST_NODE_TAKE_OVER.use(p);
         }
