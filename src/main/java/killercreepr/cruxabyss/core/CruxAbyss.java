@@ -81,6 +81,7 @@ import killercreepr.cruxcrafting.api.crafting.CruxCraftingRecipeManager;
 import killercreepr.cruxcrafting.core.config.CruxCraftingCfg;
 import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
 import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
+import killercreepr.cruxcrafting.core.registries.CruxCraftingRegistries;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
@@ -129,7 +130,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         return worldEventCfgs;
     }
 
-    protected final CruxCraftingRecipeManager craftingManager = new SimpleCraftingRecipeManager();
+    protected final CruxCraftingRecipeManager craftingManager = CruxCraftingRegistries.RECIPE_MANAGER.register(
+        new SimpleCraftingRecipeManager(Crux.key("abyss/outpost"))
+    );
 
     public CruxCraftingRecipeManager getCraftingManager() {
         return craftingManager;
