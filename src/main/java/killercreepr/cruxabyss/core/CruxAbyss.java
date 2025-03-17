@@ -14,6 +14,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
 import killercreepr.crux.core.communication.lang.SimpleCreateLang;
+import killercreepr.crux.core.entity.tag.BaseEntityTag;
 import killercreepr.crux.core.loot.SimpleLootTable;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
@@ -82,6 +83,8 @@ import killercreepr.cruxcrafting.core.config.CruxCraftingCfg;
 import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
 import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
 import killercreepr.cruxcrafting.core.registries.CruxCraftingRegistries;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
@@ -103,6 +106,7 @@ import killercreepr.cruxworlds.api.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -159,6 +163,14 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
         registerCruxStructure();
         AbyssTickables.register();
+
+        CruxRegistries.ENTITY_TAG.register(new BaseEntityTag(Crux.key("abyssal")) {
+            @Override
+            public boolean isTagged(@NotNull Entity entity) {
+                return CruxMob.isInCategory(entity, AbyssMobCategory.ABYSSAL);
+            }
+        });
+
         new AbyssCommands(this).register();
         CfgRegistries.SIMPLE_REGISTRY.forEach(reg ->{
             reg.registerFileHandler(
