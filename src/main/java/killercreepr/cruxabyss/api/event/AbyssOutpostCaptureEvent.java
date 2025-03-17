@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.api.event;
 
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,12 +23,8 @@ public class AbyssOutpostCaptureEvent extends Event implements Cancellable {
         return player;
     }
 
-    /**
-     * The default constructor is defined for cleaner code. This constructor
-     * assumes the event is synchronous.
-     */
     public AbyssOutpostCaptureEvent(ActiveAbyssOutpost outpost, Player player) {
-        super(!Bukkit.isPrimaryThread());
+        super(!Crux.isPrimaryThread());
         this.outpost = outpost;
         this.player = player;
     }
