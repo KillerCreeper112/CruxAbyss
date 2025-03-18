@@ -4,6 +4,7 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ public class DepthsOfMadnessHolder extends EntityTickedDataHolder {
             }
         }
         double y = e.getLocation().getY();
-        if(y >= -66 && y <= -63){
+        if(y >= -66 && y <= -62.8){
             return true;
         }
         return false;

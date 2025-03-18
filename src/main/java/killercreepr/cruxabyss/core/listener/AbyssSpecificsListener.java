@@ -110,13 +110,20 @@ public class AbyssSpecificsListener implements Listener {
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
         Block b = p.getLocation().getBlock();
         if(!isWater(b)) return;
+        if(p.getVehicle() != null){
+            if(!isWater(p.getEyeLocation().getBlock())) return;
+        }
+
         Key biome = b.getBiome().key();
         Collection<PotionEffect> effects = cfg.ABYSS_WATER_EFFECTS().valueOr(Map.of()).get(biome);
-        if(effects != null) effects.forEach(pot ->{
-            if(pot.getType() == PotionEffectType.POISON && p.hasPotionEffect(PotionEffectType.POISON)) return;
-            if(pot.getType() == PotionEffectType.WITHER && p.hasPotionEffect(PotionEffectType.WITHER)) return;
-            p.addPotionEffect(pot);
-        });
+        if(effects != null){
+            effects.forEach(pot ->{
+                if(pot.getType().equals(PotionEffectType.POISON) || pot.getType().equals(PotionEffectType.WITHER)){
+                    if(p.hasPotionEffect(pot.getType())) return;
+                }
+                p.addPotionEffect(pot);
+            });
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
