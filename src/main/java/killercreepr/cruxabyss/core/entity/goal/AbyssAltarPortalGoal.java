@@ -3,8 +3,11 @@ package killercreepr.cruxabyss.core.entity.goal;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.key.tag.KeyPredicate;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.persistence.CruxPersistence;
+import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxabyss.api.event.EntityTravelThroughRiftEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
@@ -18,6 +21,8 @@ import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import org.bukkit.*;
 import org.bukkit.damage.DamageSource;
@@ -142,6 +147,10 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         for (Entity e : mob.getWorld().getNearbyEntities(mob.getBoundingBox(), e -> e instanceof Player)) {
             Player p = (Player) e;
             CruxTeleport.Builder tp = CruxTeleport.builder().teleportTo(buildRandomTP(p));
+            var blacklist = CruxRegistries.KEY_TAG.get(Crux.key("abyss_outpost"));
+            if(blacklist != null){
+                tp.component(USurviveComponents.TELEPORT_STRUCTURE_CHECK, new TeleportCheckInStructure(KeyPredicate.fromTag(blacklist)));
+            }
             EntityTravelThroughRiftEvent event = new EntityTravelThroughRiftEvent(e, this, tp);
             if(!event.callEvent()){
                 continue;
