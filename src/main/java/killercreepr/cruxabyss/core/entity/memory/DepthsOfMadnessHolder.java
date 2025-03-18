@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.entity.memory;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -59,7 +60,10 @@ public class DepthsOfMadnessHolder extends EntityTickedDataHolder {
         if(duration >= 600){
             markForRemoval();
             if(!isInDepths(entity)) return;
-            onComplete.accept(entity);
+            Crux.scheduler().runTask(() ->{
+                if(!CruxEntityUtil.isValid(entity)) return;
+                onComplete.accept(entity);
+            });
         }
     }
 }
