@@ -34,18 +34,6 @@ public class OutpostLockerMenu extends BukkitMenu {
         this.upgrade = upgrade;
     }
 
-    @Override
-    public void onClose(@NotNull HumanEntity p) {
-        super.onClose(p);
-        if(inventory == null) return;
-
-        int size = inventory.getSize();
-        int start = size-9;
-        for(int i = start; i < size; i++){
-            inventory.setItem(i, null);
-        }
-    }
-
     protected int page = 0;
     @Override
     public void load(){
