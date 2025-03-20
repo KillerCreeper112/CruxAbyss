@@ -7,6 +7,7 @@ import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxabyss.core.CruxAbyss;
+import killercreepr.cruxabyss.core.entity.memory.AbyssHolder;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,10 @@ public class AbyssPlayerTags implements ObjectTag<OfflinePlayer> {
     @Override
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull OfflinePlayer object, @NotNull TagParser tags) {
         return TagContainer.string(tags)
+            .add(Tag.string("longest_abyss_outpost_control_duration",(args, ctx) ->{
+                if(!object.isOnline()) return "0";
+                return AbyssHolder.abyssHolder(object.getPlayer()).getLongestAbyssOutpostControlDuration() + "";
+            }))
             .add(Tag.string("owned_abyss_outposts", (args, ctx) ->
                 CruxAbyss.inst().getAbyssOutpostManager().getAllOwnedAbyssOutposts(object.getUniqueId()).size() + ""))
             .add(Tag.string("friendly_abyss_outposts", (args, ctx) ->

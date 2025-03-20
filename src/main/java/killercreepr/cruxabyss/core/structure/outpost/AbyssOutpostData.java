@@ -14,6 +14,7 @@ import killercreepr.cruxabyss.api.world.event.WorldEvent;
 import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.entity.memory.AbyssHolder;
 import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.structure.outpost.component.AbyssOutpostPlacedBlockComponent;
 import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
@@ -227,6 +228,11 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         tick++;
         if(tick < 200) return;
         tick = 0;
+        AbyssHolder holder = AbyssHolder.abyssHolder(p);
+        long capturedFor = System.currentTimeMillis() - timeCaptured;
+        if(capturedFor > holder.getLongestAbyssOutpostControlDuration()){
+            holder.setLongestAbyssOutpostControlDuration(capturedFor);
+        }
 
         AbyssOutpostInvasionCfg cfg = cfg();
         if(CruxMath.testChance(cfg.ABYSS_OUTPOST_INVASION_STORED_CHANCE().value().doubleValue())){
