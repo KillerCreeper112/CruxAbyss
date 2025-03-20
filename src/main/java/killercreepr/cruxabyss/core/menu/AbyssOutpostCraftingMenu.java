@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.menu;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.DataExchange;
-import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.core.Crux;
@@ -17,8 +16,6 @@ import killercreepr.cruxcrafting.api.crafting.ingredient.CruxRecipeIngredient;
 import killercreepr.cruxcrafting.api.crafting.recipe.CruxCraftingRecipe;
 import killercreepr.cruxcrafting.core.crafting.crafter.SimpleCraftingCrafter;
 import killercreepr.cruxcrafting.core.menu.CraftingRecipeMenuViewer;
-import killercreepr.cruxcrafting.core.menu.module.PagedCruxCraftingRecipesMenuModule;
-import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.container.MenuContainer;
 import killercreepr.cruxmenus.api.menu.holder.MenuHolder;
 import killercreepr.cruxmenus.api.menu.slot.Slot;

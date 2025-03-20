@@ -3,13 +3,18 @@ package killercreepr.cruxabyss.core.world.abyss;
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.math.BlockPos;
 import killercreepr.crux.core.plugin.CruxPlugin;
+import killercreepr.crux.core.util.CruxKey;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
 import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
+import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.generation.BlockGenerator;
@@ -19,8 +24,16 @@ import killercreepr.cruxabyss.core.world.module.SimpleWorldEventsModule;
 import killercreepr.cruxblocks.api.event.CustomBlockExplodeEvent;
 import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.common.element.FileElement;
+import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxgeneration.util.CruxNoise;
+import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
+import killercreepr.cruxstatistics.api.statistic.CruxStatisticHolder;
+import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.core.world.NaturalEntitySpawnManager;
@@ -43,6 +56,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +66,44 @@ import java.util.*;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public static final Map<Key, List<UUID>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
+
+    protected final Map<UUID, PlayerData> PLAYER_DATA = new HashMap<>();
+    public PlayerData getOrCreateData(Player p){
+        return PLAYER_DATA.computeIfAbsent(p.getUniqueId(), (e ->{
+            PlayerData fromFile = loadDataFromFile(e);
+            return fromFile == null ? new PlayerData() : fromFile;
+        }));
+    }
+
+    public void saveDataToFile(UUID uuid, PlayerData data){
+        DataFile file = getWorldFile(data != null && !data.isEmpty());
+        if(file == null) return;
+        FileObject playerDataObject;
+        if(file.getElement("player_data") instanceof FileObject o) playerDataObject = o;
+        else playerDataObject = new FileObject();
+        playerDataObject.add(uuid.toString(), file.fileRegistry().serializeToFile(data));
+        file.serialize("player_data", playerDataObject);
+        file.save();
+    }
+
+    public PlayerData loadDataFromFile(UUID uuid){
+        DataFile file = getWorldFile(false);
+        if(file == null) return null;
+        if(!(file.getElement("player_data") instanceof FileObject a)){
+            file.close();
+            return null;
+        }
+        file.close();
+        if(!(a.get(uuid.toString()) instanceof FileElement ele)) return null;
+        return file.fileRegistry().deserializeFromFile(PlayerData.class, ele);
+    }
+
+    public PlayerData getData(Player p){
+        return PLAYER_DATA.get(p.getUniqueId());
+    }
+    public PlayerData removePlayerData(Player p){
+        return PLAYER_DATA.remove(p.getUniqueId());
+    }
 
     public static @Nullable AbyssWorld getOrCreate(@NotNull CruxPlugin plugin, @NotNull String worldName){
         return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, Key.key(worldName));
@@ -103,6 +155,9 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
                 WORLD_TO_ABYSS_OUTPOST_OWNERS.put(key(), abyssOwners);
             }
         }
+
+        DataFile file = getWorldFile(false);
+        if(file != null) file.delete();
 
         super.onDelete();
     }
@@ -192,19 +247,39 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        load();
+    }
+
+    @Override
     public void onUnload(boolean save) {
         super.onUnload(save);
         HandlerList.unregisterAll(this);
+        if(save) save();
+    }
+
+    public DataFile getWorldFile(boolean createIfNeeded){
+        return BukkitDataFile.parseFromGeneralPath(
+            CruxFolder.file(Crux.getMainPlugin(), "data/cruxabyss/world/" + CruxKey.toFileName(key()) + ".json"),
+            createIfNeeded
+        );
     }
 
     @Override
     public void save() {
-
+        DataFile file = getWorldFile(!PLAYER_DATA.isEmpty());
+        if(file == null) return;
+        FileObject aPlayerData = new FileObject();
+        PLAYER_DATA.forEach((uuid, data) ->{
+            aPlayerData.add(uuid.toString(), file.fileRegistry().serializeToFile(data));
+        });
+        file.serialize("player_data", aPlayerData);
+        file.save();
     }
 
     @Override
     public void load() {
-
     }
 
     public NaturalEntitySpawnManager getEntitySpawnManager() {
@@ -222,6 +297,28 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public int getDaysPassed() {
         return daysPassed;
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player p = event.getPlayer();
+        var data = removePlayerData(p);
+        if(data==null) return;
+        saveDataToFile(p.getUniqueId(), data);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAbyssOutpostCapture(AbyssOutpostCaptureEvent event) {
+        World world = event.getOutpost().getActive().getChunk().getWorld();
+        if(!key().equals(world.key())) return;
+        StoredStructure structure = event.getOutpost().getActive().getData();
+        Player p = event.getPlayer();
+        PlayerData data = getOrCreateData(p);
+        if(data.hasClaimedOutpost(structure)) return;
+        data.addClaimedOutpost(structure);
+        CruxStatisticHolder holder = BukkitStatisticHolder.statisticHolder(p);
+        if(holder != null) holder.incrementStatistic(AbyssStatistic.ABYSS_OUTPOSTS_CAPTURED, 1);
+    }
+
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockExplode(CustomBlockExplodeEvent event) {
@@ -265,6 +362,33 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
                 falling.setVelocity(dir);
                 if(CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
             });
+        }
+    }
+
+    public static class PlayerData{
+        protected final Collection<BlockPos> claimedOutposts = new ArrayList<>();
+        public boolean isEmpty(){
+            return claimedOutposts.isEmpty();
+        }
+        public boolean hasClaimedOutpost(BlockPos pos){
+            return claimedOutposts.contains(pos);
+        }
+        public void setClaimedOutposts(Collection<BlockPos> poses){
+            claimedOutposts.clear();
+            claimedOutposts.addAll(poses);
+        }
+        public boolean hasClaimedOutpost(StoredStructure structure){
+            return hasClaimedOutpost(BlockPos.asBlock(structure.getPosition()));
+        }
+        public boolean addClaimedOutpost(BlockPos pos){
+            return claimedOutposts.add(pos);
+        }
+        public boolean addClaimedOutpost(StoredStructure structure){
+            return addClaimedOutpost(BlockPos.asBlock(structure.getPosition()));
+        }
+
+        public Collection<BlockPos> getClaimedOutposts() {
+            return claimedOutposts;
         }
     }
 }

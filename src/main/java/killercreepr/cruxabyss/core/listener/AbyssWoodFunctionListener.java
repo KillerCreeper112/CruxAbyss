@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.core.listener;
 
-import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
@@ -10,7 +9,6 @@ import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.event.CustomBlockExplodeEvent;
 import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxcore.CruxCore;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractArrow;

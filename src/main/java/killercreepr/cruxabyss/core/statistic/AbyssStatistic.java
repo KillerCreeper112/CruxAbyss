@@ -8,6 +8,7 @@ public class AbyssStatistic {
     public static void register(){}
 
     public static final CruxStatisticType<?> ABYSS_TRAVEL = register(CruxStatisticType.statisticType(Crux.key("abyss_travel")));
+    public static final CruxStatisticType<?> ABYSS_OUTPOSTS_CAPTURED = register(CruxStatisticType.statisticType(Crux.key("abyss_outposts_captured")));
 
     private static CruxStatisticType<?> register(CruxStatisticType<?> type){
         return CruxStatisticRegistries.STATISTIC_TYPE.register(type);

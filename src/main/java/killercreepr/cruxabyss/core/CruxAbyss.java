@@ -28,6 +28,7 @@ import killercreepr.cruxabyss.core.command.AbyssCommands;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.config.Config;
 import killercreepr.cruxabyss.core.config.WorldEventConfigs;
+import killercreepr.cruxabyss.core.config.handler.FileAbyssWorldPlayerData;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
@@ -85,7 +86,6 @@ import killercreepr.cruxcrafting.core.config.loader.CruxCraftingRecipeLoader;
 import killercreepr.cruxcrafting.core.crafting.SimpleCraftingRecipeManager;
 import killercreepr.cruxcrafting.core.registries.CruxCraftingRegistries;
 import killercreepr.cruxentities.entity.CruxMob;
-import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
@@ -191,6 +191,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                     }
                 }
             );
+            reg.registerFileHandler(AbyssWorld.PlayerData.class, new FileAbyssWorldPlayerData());
         });
         /*CfgRegistries.JSON_REGISTRY.forEach(registry ->{
             registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
