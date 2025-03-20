@@ -11,6 +11,7 @@ public class AbyssOutpostUpgrades {
     public static final OutpostUpgrade ABYSSAL_FORGE = register(new AbyssalForgeUpgrade(Crux.key("abyssal_forge")));
     public static final OutpostUpgrade ABYSSAL_RECALL = register(new AbyssalRecallUpgrade(Crux.key("abyssal_recall")));
     public static final OutpostUpgrade PLAGUED_RICHES = register(new PlaguedRichesUpgrade(Crux.key("plagued_riches")));
+    public static final OutpostUpgrade OUTPOST_LOCKER = register(new OutpostLockerUpgrade(Crux.key("outpost_locker")));
     private static OutpostUpgrade register(OutpostUpgrade upgrade){
         return AbyssRegistries.OUTPOST_UPGRADE.register(upgrade);
     }
