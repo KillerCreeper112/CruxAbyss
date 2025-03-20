@@ -40,7 +40,7 @@ public class OutpostLockerUpgrade extends AbstractOutpostUpgrade{
 
     public Inventory deserializeInv(FileElement ele, int invIndex){
         if(!(ele instanceof FileArray a)) return null;
-        Inventory inv = Crux.getServer().createInventory(null, INVENTORY_SIZE, Component.text("Outpost Locker #" + invIndex+1));
+        Inventory inv = Crux.getServer().createInventory(null, INVENTORY_SIZE, Component.text("Outpost Locker #" + (invIndex+1)));
         int index = 0;
         for (FileElement ee : a) {
             String itemBase = ee.getAsString();

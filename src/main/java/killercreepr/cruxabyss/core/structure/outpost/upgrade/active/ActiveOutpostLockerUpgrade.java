@@ -62,7 +62,7 @@ public class ActiveOutpostLockerUpgrade extends SimpleActiveOutpostUpgrade {
             return;
         }
         while(newStorage.size() < levels){
-            newStorage.add(Crux.getServer().createInventory(null, OutpostLockerUpgrade.INVENTORY_SIZE, Component.text("Outpost Locker #" + newStorage.size()+1)));
+            newStorage.add(Crux.getServer().createInventory(null, OutpostLockerUpgrade.INVENTORY_SIZE, Component.text("Outpost Locker #" + (newStorage.size()+1))));
         }
         setStorage(newStorage.toArray(new Inventory[0]));
     }
