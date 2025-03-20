@@ -72,7 +72,7 @@ public class OutpostLockerMenu extends BukkitMenu {
                 if(upgrade.getStorage() == null) return;
                 int newPage = page + add;
                 if(newPage < 0 || newPage >= upgrade.getStorage().length) return;
-                load(page);
+                load(newPage);
                 open(p);
                 CreateSound.sound(Sound.BLOCK_ENDER_CHEST_OPEN, 2f).playFor(p);
             }
