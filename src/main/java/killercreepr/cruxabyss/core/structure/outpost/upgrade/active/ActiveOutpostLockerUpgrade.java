@@ -9,6 +9,7 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -61,7 +62,7 @@ public class ActiveOutpostLockerUpgrade extends SimpleActiveOutpostUpgrade {
             return;
         }
         while(newStorage.size() < levels){
-            newStorage.add(Crux.getServer().createInventory(null, OutpostLockerUpgrade.INVENTORY_SIZE));
+            newStorage.add(Crux.getServer().createInventory(null, OutpostLockerUpgrade.INVENTORY_SIZE, Component.text("Outpost Locker #" + newStorage.size()+1)));
         }
         setStorage(newStorage.toArray(new Inventory[0]));
     }
