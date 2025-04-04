@@ -8,6 +8,7 @@ import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.entity.memory.AbyssHolder;
+import killercreepr.cruxabyss.core.entity.memory.AbyssWorldDwellerHolder;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,10 @@ public class AbyssPlayerTags implements ObjectTag<OfflinePlayer> {
                 return CruxAbyss.inst().getAbyssOutpostManager().checkFirstTrue(e ->{
                     return e.getUpgradeLevel(AbyssOutpostUpgrades.ABYSSAL_RELAY) > 0 && e.isMemberOrOwner(uuid);
                 }) + "";
+            }))
+            .add(Tag.string("abyss_world_dwell_ticks", (args, ctx) ->{
+                if(!object.isOnline()) return "0";
+                return AbyssWorldDwellerHolder.getAbyssDwellTicks(object.getPlayer()) + "";
             }))
             ;
     }

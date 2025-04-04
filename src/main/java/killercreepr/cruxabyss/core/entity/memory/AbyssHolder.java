@@ -9,8 +9,10 @@ import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AbyssHolder extends PlayerDataHolder implements Loadable {
     public static AbyssHolder abyssHolder(Player p){
@@ -27,6 +29,12 @@ public class AbyssHolder extends PlayerDataHolder implements Loadable {
     }
     public AbyssHolder(@NotNull PlayerMemory parent) {
         this(KEY, parent);
+    }
+
+    @Override
+    protected void removingFromMemory(@Nullable Entity e) {
+        super.removingFromMemory(e);
+        save();
     }
 
     protected long longestAbyssOutpostControlDuration;

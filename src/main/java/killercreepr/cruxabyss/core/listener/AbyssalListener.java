@@ -1,14 +1,17 @@
 package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.cruxabyss.core.entity.memory.AbyssWorldDwellerHolder;
 import killercreepr.cruxabyss.core.entity.memory.PlagueWingGliderHolder;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxentities.entity.CruxMob;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 //todo suffocation damage is weird in MEG https://git.lumine.io/mythiccraft/model-engine-4/-/issues/181
 public class AbyssalListener implements Listener {
@@ -46,6 +49,12 @@ public class AbyssalListener implements Listener {
         PlagueWingGliderHolder holder = EntityMemory.getDataHolder(e, PlagueWingGliderHolder.class);
         if(holder==null) return;
         holder.damageItem((int)Math.round(event.getFinalDamage()), true);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        Player p = event.getPlayer();
+        AbyssWorldDwellerHolder.abyssWorldDweller(p);
     }
 
 }

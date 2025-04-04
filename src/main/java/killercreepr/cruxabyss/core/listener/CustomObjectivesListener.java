@@ -2,10 +2,18 @@ package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.cruxabyss.api.event.PlayerSurvive1MinuteInAbyssEvent;
+import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
+import killercreepr.cruxabyss.core.advancement.objective.Survive1MinuteAbyssObjective;
 import killercreepr.cruxabyss.core.entity.memory.DepthsOfMadnessHolder;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
+import killercreepr.cruxadvancements.api.advancement.ObjectiveAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
+import killercreepr.cruxadvancements.core.data.TrackedAdvancement;
+import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
@@ -16,6 +24,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+
+import java.util.*;
 
 public class CustomObjectivesListener implements Listener {
     protected final Holder<CruxAdvancementManager> MANAGER = () -> AdvancementRegistries.ADVANCEMENT_MANAGERS
@@ -37,4 +47,34 @@ public class CustomObjectivesListener implements Listener {
             MANAGER.value().grantAdvancement(p, DEPTHS_OF_MADNESS.value());
         }));
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerSurvive1MinuteInAbyss(PlayerSurvive1MinuteInAbyssEvent event) {
+        Player p = event.getPlayer();
+        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        if(holder==null) return;
+
+        Map<TrackedAdvancement, Survive1MinuteAbyssObjective> foundObjectives = null;
+        for(TrackedAdvancement a : holder.getAdvancementTracker().getAllTracked()) {
+            var found = a.getAdvancementOrThrow(ObjectiveAdvancement.class).getObjectives(Survive1MinuteAbyssObjective.class);
+            if(found.isEmpty()) continue;
+            if(foundObjectives == null) foundObjectives = new HashMap<>();
+            for (Survive1MinuteAbyssObjective value : found.values()) {
+                foundObjectives.put(a, value);
+            }
+        }
+        if(foundObjectives == null) return;
+
+        Map<TrackedAdvancement, Survive1MinuteAbyssObjective> finalFoundObjectives = foundObjectives;
+        Crux.scheduler().runTask(() ->{
+            if(!CruxEntityUtil.isValid(p)) return;
+
+            finalFoundObjectives.forEach((key, value) ->{
+                CruxAdvancementManager<?> manager = key.getManager();
+                ObjectiveAdvancement advancement = key.getObjective();
+                value.trigger(p.getUniqueId(), manager, advancement, event);
+            });
+        });
+    }
+
 }
