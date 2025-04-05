@@ -67,7 +67,7 @@ public class AbyssWoodFunctionListener implements Listener {
 
         if(!canReflect(block)) return;
 
-        int reflected = AbyssPersist.REFLECTED_TIMES.get(proj, 0);
+        int reflected = CruxPersist.RICOCHET_BLOCK.get(proj, 0);
         if(reflected > 3) return;
 
         Vector normal;
@@ -88,7 +88,10 @@ public class AbyssWoodFunctionListener implements Listener {
             ProjectileReflectListener.reflectProjectile(
                 proj, normal, reflected,
                 CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_BLOCK_VELOCITY_DROP_OFF, .7D),
-                CruxPersist.RICOCHET_BLOCK, block, event.getHitBlockFace(), event.getHitEntity()
+                CruxPersist.RICOCHET_BLOCK, block, event.getHitBlockFace(), event.getHitEntity(),
+                ee ->{
+                    AbyssPersist.PLAGUE_REFLECTED.set(ee, AbyssPersist.PLAGUE_REFLECTED.get(ee, 0) + 1);
+                }
             );
 
             /*proj.getWorld().spawnEntity(spawn, proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
