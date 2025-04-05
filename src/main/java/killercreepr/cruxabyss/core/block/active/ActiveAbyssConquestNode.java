@@ -10,6 +10,7 @@ import killercreepr.crux.core.util.CruxColor;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
+import killercreepr.cruxabyss.api.event.AbyssOutpostDeactivateEvent;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
@@ -229,6 +230,9 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         Location center = block.getLocation().toCenterLocation();
         Location spawn = CruxLoc.shiftToward(center, p.getEyeLocation(), .75);
         if(isDeactivating(p, isOutpostOwner)){
+            AbyssOutpostDeactivateEvent event = new AbyssOutpostDeactivateEvent(outpost, p);
+            if(!event.callEvent()) return;
+
             outpost().resetOwner();
             p.setExperienceLevelAndProgress(p.calculateTotalExperiencePoints() + storedExperience);
             storedExperience = 0;
