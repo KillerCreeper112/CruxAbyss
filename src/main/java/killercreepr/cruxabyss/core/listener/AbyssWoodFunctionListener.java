@@ -1,23 +1,20 @@
 package killercreepr.cruxabyss.core.listener;
 
-import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.persistence.AbyssPersist;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.event.CustomBlockExplodeEvent;
 import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxcore.CruxCore;
-import org.bukkit.Location;
+import killercreepr.usurvive.core.listener.ProjectileReflectListener;
 import org.bukkit.block.Block;
-import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -86,8 +83,15 @@ public class AbyssWoodFunctionListener implements Listener {
         if(speed < 0.32) return;
         proj.setVelocity(v);
         if(event.getHitEntity() == null){
-            Location spawn = CruxLoc.shift(proj.getLocation(), v, .2, 0, 0);
-            proj.getWorld().spawnEntity(spawn, proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
+            //Location spawn = CruxLoc.shift(proj.getLocation(), v, .2, 0, 0);
+
+            ProjectileReflectListener.reflectProjectile(
+                proj, normal, reflected,
+                CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_BLOCK_VELOCITY_DROP_OFF, .7D),
+                CruxPersist.RICOCHET_BLOCK, block, event.getHitBlockFace(), event.getHitEntity()
+            );
+
+            /*proj.getWorld().spawnEntity(spawn, proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
                 CruxTag.copyAll(x, proj);
                 x.setVelocity(v);
                 x.setGlowing(proj.isGlowing());
@@ -115,7 +119,7 @@ public class AbyssWoodFunctionListener implements Listener {
                 }
                 AbyssPersist.REFLECTED_TIMES.set(x, reflected+1);
             });
-            proj.remove();
+            proj.remove();*/
         }
     }
 
