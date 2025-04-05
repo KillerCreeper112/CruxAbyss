@@ -23,6 +23,10 @@ public class SimpleAbyssAltar implements AbyssAltar {
     public static final Predicate<Block> CANDLE_PREDICATE = b -> b.getBlockData() instanceof Candle c && c.isLit();
     public static final Predicate<Block> ENCHANTING_TABLE_PREDICATE = b -> b.getType() == Material.ENCHANTING_TABLE;
 
+    public static boolean isAnyAltarBlock(Block block){
+        return OBSIDIAN_PREDICATE.test(block) || CANDLE_PREDICATE.test(block) || ENCHANTING_TABLE_PREDICATE.test(block);
+    }
+
     public static final Map<CruxPosition, Predicate<Block>> STRUCTURE = new MapBuilder<CruxPosition, Predicate<Block>>(new LinkedHashMap<>())
         .put(CruxPosition.block(0, 0, 0), ENCHANTING_TABLE_PREDICATE) // Check enchanting table first.
         .put(CruxPosition.block(1, 0, 0), OBSIDIAN_PREDICATE)

@@ -4,8 +4,9 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.cruxabyss.api.event.PlayerAbyssAltarBuildEvent;
 import killercreepr.cruxabyss.api.event.PlayerSurvive1MinuteInAbyssEvent;
-import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
+import killercreepr.cruxabyss.core.advancement.objective.AbyssAltarBuildObjective;
 import killercreepr.cruxabyss.core.advancement.objective.Survive1MinuteAbyssObjective;
 import killercreepr.cruxabyss.core.entity.memory.DepthsOfMadnessHolder;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
@@ -74,6 +75,19 @@ public class CustomObjectivesListener implements Listener {
                 ObjectiveAdvancement advancement = key.getObjective();
                 value.trigger(p.getUniqueId(), manager, advancement, event);
             });
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerAbyssAltarBuild(PlayerAbyssAltarBuildEvent event) {
+        Player p = event.getPlayer();
+        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        if(holder==null) return;
+
+        holder.getAdvancementTracker().apply(AbyssAltarBuildObjective.class, (manager,
+                                                                              advancement,
+                                                                              objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
         });
     }
 

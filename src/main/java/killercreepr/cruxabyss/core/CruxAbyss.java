@@ -22,6 +22,7 @@ import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.api.loot.MobWaveGroupLootTable;
 import killercreepr.cruxabyss.api.structure.outpost.AbyssOutpostManager;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
+import killercreepr.cruxabyss.core.advancement.objective.AbyssAltarBuildObjective;
 import killercreepr.cruxabyss.core.advancement.objective.AbyssOutpostCaptureObjective;
 import killercreepr.cruxabyss.core.advancement.objective.Survive1MinuteAbyssObjective;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -473,6 +474,14 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 Integer maxProgress = e.getObject(Integer.class, "amount");
                 if(maxProgress==null) maxProgress = 1;
                 return new Survive1MinuteAbyssObjective(data, maxProgress);
+            }
+        });
+        file.registerCustomHandler(new FileSimpleAdvanceObjective<>(key("abyss_altar_build")) {
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if(maxProgress==null) maxProgress = 1;
+                return new AbyssAltarBuildObjective(data, maxProgress);
             }
         });
     }
