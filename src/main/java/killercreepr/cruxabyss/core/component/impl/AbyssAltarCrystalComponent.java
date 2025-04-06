@@ -7,6 +7,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
+import killercreepr.cruxabyss.api.event.AbyssAltarActivatePortalEvent;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxcore.CruxCore;
@@ -56,6 +57,9 @@ public class AbyssAltarCrystalComponent implements AbyssAltarCrystal {
             b.getWorld().createExplosion(b.getLocation().toCenterLocation().add(0, .5, 0), 4f, true, true);
             return;
         }
+
+        AbyssAltarActivatePortalEvent event = new AbyssAltarActivatePortalEvent(user, altar, cruxItem.item());
+        if(!event.callEvent()) return;
 
         Location spawn = altar.generalPlaceLocation();
         Entity crystalMob = AbyssMob.ABYSS_CRYSTAL.place(spawn, altar, clonedItem);
