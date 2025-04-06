@@ -45,16 +45,20 @@ public class SimpleAbyssAltar implements AbyssAltar {
     }
 
     public static AbyssAltar findAltar(@NotNull Block block){
+        //if(!isAnyAltarBlock(block)) return null;
         CruxPosition blockPos = CruxPosition.block(block);
         World world = block.getWorld();
-        for (Map.Entry<CruxPosition, Predicate<Block>> entry : STRUCTURE.entrySet()) {
-            CruxPosition pos = entry.getKey();
-            Predicate<Block> filter = entry.getValue();
-            if(!filter.test(block)) continue;
 
-            CruxPosition centerPos = blockPos.subtract(pos);
-            AbyssAltar altar = getFromCenter(centerPos.getBlock(world));
-            if(altar != null) return altar;
+        for(short rotation : validRotations){
+            for (Map.Entry<CruxPosition, Predicate<Block>> entry : STRUCTURE.entrySet()) {
+                Predicate<Block> filter = entry.getValue();
+                if(!filter.test(block)) continue;
+                CruxPosition pos = entry.getKey().rotateAroundY(CruxPosition.zero(), rotation);
+
+                CruxPosition centerPos = blockPos.subtract(pos);
+                AbyssAltar altar = getFromCenter(centerPos.getBlock(world));
+                if(altar != null) return altar;
+            }
         }
         return null;
     }
