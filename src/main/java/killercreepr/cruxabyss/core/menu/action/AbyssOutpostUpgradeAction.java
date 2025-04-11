@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.menu.action;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.api.event.EntityUpgradeAbyssOutpostEvent;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.registries.AbyssRegistries;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
@@ -32,6 +33,13 @@ public class AbyssOutpostUpgradeAction extends SimpleMenuAction {
                 Key upgradeKey = Crux.key(args[1]);
                 OutpostUpgrade upgrade = AbyssRegistries.OUTPOST_UPGRADE.get(upgradeKey);
                 int level = (int) CruxMath.evaluate(args[2]);
+
+                EntityUpgradeAbyssOutpostEvent event = new EntityUpgradeAbyssOutpostEvent(
+                    ctx.getPlayer(), upgrade, outpost.getUpgradeLevel(upgrade), level, outpost
+                );
+                if(!event.callEvent()) return true;
+                level = event.getNewLevel();
+
                 outpost.setUpgradeLevel(upgrade, level);
             }
             case "clear" ->{

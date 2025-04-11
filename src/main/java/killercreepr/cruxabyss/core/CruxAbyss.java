@@ -506,6 +506,14 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 return new AbyssAltarActivatePortalObjective(data, maxProgress);
             }
         });
+        file.registerCustomHandler(new FileSimpleAdvanceObjective<>(key("abyss_outpost_upgrade")) {
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if(maxProgress==null) maxProgress = 1;
+                return new AbyssOutpostUpgradeObjective(data, maxProgress);
+            }
+        });
     }
 
     public void registerLootConditions(FileLootCondition file){

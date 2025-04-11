@@ -4,12 +4,8 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
-import killercreepr.cruxabyss.api.event.AbyssAltarActivatePortalEvent;
-import killercreepr.cruxabyss.api.event.PlayerAbyssAltarBuildEvent;
-import killercreepr.cruxabyss.api.event.PlayerSurvive1MinuteInAbyssEvent;
-import killercreepr.cruxabyss.core.advancement.objective.AbyssAltarActivatePortalObjective;
-import killercreepr.cruxabyss.core.advancement.objective.AbyssAltarBuildObjective;
-import killercreepr.cruxabyss.core.advancement.objective.Survive1MinuteAbyssObjective;
+import killercreepr.cruxabyss.api.event.*;
+import killercreepr.cruxabyss.core.advancement.objective.*;
 import killercreepr.cruxabyss.core.entity.memory.DepthsOfMadnessHolder;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
@@ -22,6 +18,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import killercreepr.usurvive.core.USurvivePlugin;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,6 +31,20 @@ public class CustomObjectivesListener implements Listener {
     protected final Holder<CruxAdvancementManager> MANAGER = () -> AdvancementRegistries.ADVANCEMENT_MANAGERS
         .get(USurvivePlugin.inst().key("abyss"));
     protected final Holder<CruxAdvancement> DEPTHS_OF_MADNESS = () -> MANAGER.value().getAdvancement(USurvivePlugin.inst().key("abyss/depths_of_madness"));
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityTravelThroughAbyssPortalGateway(EntityTravelThroughAbyssPortalGatewayEvent event) {
+        Entity p = event.getEntity();
+        AdvancementHolder holder = EntityMemory.getDataHolder(p, AdvancementHolder.class);
+        if(holder==null) return;
+
+        holder.getAdvancementTracker().apply(TravelThroughAbyssPortalGatewayObjective.class, (manager,
+                                                                                              advancement,
+                                                                                              objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -50,6 +61,20 @@ public class CustomObjectivesListener implements Listener {
             MANAGER.value().grantAdvancement(p, DEPTHS_OF_MADNESS.value());
         }));
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityUpgradeAbyssOutpost(EntityUpgradeAbyssOutpostEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        if(holder==null) return;
+
+        holder.getAdvancementTracker().apply(AbyssOutpostUpgradeObjective.class, (manager,
+                                                                                  advancement,
+                                                                                  objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerSurvive1MinuteInAbyss(PlayerSurvive1MinuteInAbyssEvent event) {
