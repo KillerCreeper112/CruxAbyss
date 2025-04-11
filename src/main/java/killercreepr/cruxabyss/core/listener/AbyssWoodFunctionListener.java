@@ -1,6 +1,9 @@
 package killercreepr.cruxabyss.core.listener;
 
+import killercreepr.crux.api.block.tag.BlockTag;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.persistence.CruxPersist;
+import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.persistence.AbyssPersist;
@@ -26,6 +29,10 @@ public class AbyssWoodFunctionListener implements Listener {
     public boolean canReflect(@NotNull Block block){
         CruxBlock crux = CruxCore.inst().cruxBlocks().getBlockRegistry().getByBlock(block);
         if(crux == null) return false;
+
+        BlockTag tag = CruxRegistries.BLOCK_TAG.get(Crux.key("abyss_projectile_reflectable"));
+        if(tag != null) return tag.isTagged(Crux.handlers().block().getBlock(block));
+
         return AbyssBlocks.PLAGUE_STEM.containsBlock(crux) || AbyssBlocks.PLAGUE_WART.containsBlock(crux);
     }
 
