@@ -121,6 +121,7 @@ public class ActiveAbyssPortalGateway extends SimpleActiveCruxBlock implements A
             AbyssReturnPortalGoal goal = (AbyssReturnPortalGoal) Crux.getServer().getMobGoals().getGoal(mob, AbyssAltarPortalGoal.defaultKey());
             if(goal != null){
                 goal.setLifeSpan(-1);
+                goal.setEventReason("abyss_portal_gateway");
             }
         }
         return spawnedPortal;

@@ -6,6 +6,7 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.util.*;
+import killercreepr.cruxabyss.api.event.EntityTravelThroughAbyssPortalGatewayEvent;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
@@ -16,6 +17,7 @@ import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -28,6 +30,14 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
         super(key, mob);
         returnTo = CruxTag.get(mob, "return_to", CruxPersistence.LOCATION, null);
         Objects.requireNonNull(returnTo, "Return portal does not have a return location!");
+    }
+
+    public String getEventReason(){
+        return CruxTag.get(mob, "event_reason", PersistentDataType.STRING, null);
+    }
+
+    public void setEventReason(String text){
+        CruxTag.set(mob, "event_reason", PersistentDataType.STRING, text);
     }
 
     protected @NotNull Location returnTo;
@@ -115,7 +125,13 @@ public class AbyssReturnPortalGoal extends CruxMobModeledGoal {
             }
 
             Player p = (Player) e;
-            p.teleport(returnTo);
+            if(p.teleport(returnTo)){
+                String reason = getEventReason();
+                if(reason != null){
+                    EntityTravelThroughAbyssPortalGatewayEvent event = new EntityTravelThroughAbyssPortalGatewayEvent(e, returnTo);
+                    event.callEvent();
+                }
+            }
         }
     }
 

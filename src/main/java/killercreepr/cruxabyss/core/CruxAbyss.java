@@ -482,6 +482,14 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 return new Survive1MinuteAbyssObjective(data, maxProgress);
             }
         });
+        file.registerCustomHandler(new FileSimpleAdvanceObjective<>(key("travel_through_abyss_portal_gateway")) {
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if(maxProgress==null) maxProgress = 1;
+                return new TravelThroughAbyssPortalGatewayObjective(data, maxProgress);
+            }
+        });
         file.registerCustomHandler(new FileSimpleAdvanceObjective<>(key("abyss_altar_build")) {
             @Override
             public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
