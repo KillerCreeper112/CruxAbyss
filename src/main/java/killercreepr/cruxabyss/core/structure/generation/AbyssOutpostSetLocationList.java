@@ -62,6 +62,7 @@ public class AbyssOutpostSetLocationList extends InstantLocationSetListStructure
             if(index >= dataList.size()) break;
             AbyssOutpostData data = dataList.get(index);
             data.owner = oldData.owner;
+            data.timeCaptured = oldData.timeCaptured;
             oldData.getUpgrades().forEach(data::setUpgradeLevel);
         }
     }
