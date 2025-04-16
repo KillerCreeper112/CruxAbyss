@@ -65,7 +65,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
-    public static final Map<Key, List<UUID>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
+    public static final Map<Key, List<AbyssOutpostData>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
 
     protected final Map<UUID, PlayerData> PLAYER_DATA = new HashMap<>();
     public PlayerData getOrCreateData(Player p){
@@ -142,12 +142,12 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public void onDelete() {
         StructureWorldModule module = getModule(StructureWorldModule.class);
         if(module != null){
-            List<UUID> abyssOwners = new ArrayList<>();
+            List<AbyssOutpostData> abyssOwners = new ArrayList<>();
             module.getStored(stored -> stored.has(AbyssComponents.ABYSS_OUTPOST_DATA)).forEach(stored ->{
                 AbyssOutpostData data = stored.get(AbyssComponents.ABYSS_OUTPOST_DATA);
                 Objects.requireNonNull(data);
                 if(data.owner == null) return;
-                abyssOwners.add(data.owner);
+                abyssOwners.add(data);
             });
             if(abyssOwners.isEmpty()){
                 WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(key());
@@ -344,23 +344,23 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityExplode(CustomEntityExplodeEvent event) {
-        if(!event.getLocation().getWorld().equals(world)) return;
+        if (!event.getLocation().getWorld().equals(world)) return;
         float yield = event.getYield();
         int blocksToFling = (int) (event.blockList().size() * yield);
         event.setYield(0f);
         Location center = event.getLocation().toCenterLocation();
         int flung = 0;
-        for(Block b : event.blockList()){
-            if(flung >= blocksToFling) break;
+        for (Block b : event.blockList()) {
+            if (flung >= blocksToFling) break;
             flung++;
             Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
             dir.setY(CruxMath.random(.8f, 1f));
             dir.multiply(CruxMath.random(.7f, 1f));
 
-            center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling ->{
+            center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling -> {
                 falling.setBlockData(b.getBlockData());
                 falling.setVelocity(dir);
-                if(CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
+                if (CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
             });
         }
     }

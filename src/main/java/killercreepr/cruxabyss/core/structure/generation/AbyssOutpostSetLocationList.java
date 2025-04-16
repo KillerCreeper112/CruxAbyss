@@ -28,7 +28,7 @@ public class AbyssOutpostSetLocationList extends InstantLocationSetListStructure
     @Override
     public void onComplete(World world,Chunk chunk) {
         super.onComplete(world, chunk);
-        List<UUID> previousOwners = AbyssWorld.WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(world.getName());
+        List<AbyssOutpostData> previousOwners = AbyssWorld.WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(world.key());
         if(previousOwners == null || previousOwners.isEmpty()) return;
 
         CruxWorld crux = CruxCore.core().worldManager().getWorld(world.key());
@@ -57,11 +57,12 @@ public class AbyssOutpostSetLocationList extends InstantLocationSetListStructure
         Collections.shuffle(dataList);
 
         int index = -1;
-        for(UUID uuid : previousOwners){
+        for(var oldData : previousOwners){
             index++;
             if(index >= dataList.size()) break;
             AbyssOutpostData data = dataList.get(index);
-            data.owner = uuid;
+            data.owner = oldData.owner;
+            oldData.getUpgrades().forEach(data::setUpgradeLevel);
         }
     }
 }
