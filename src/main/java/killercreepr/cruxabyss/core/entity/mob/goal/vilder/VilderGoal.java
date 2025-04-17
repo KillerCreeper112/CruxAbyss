@@ -5,6 +5,7 @@ import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.ticxo.modelengine.core.ModelEngine;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
@@ -41,6 +42,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.view.MerchantView;
 import org.bukkit.persistence.PersistentDataType;
@@ -80,19 +82,19 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public static final List<MerchantRecipe> OFFERS = List.of(
-        recipe(Material.AMETHYST_BLOCK, 1, 20, Material.EMERALD, 10),
+        recipe(Material.AMETHYST_BLOCK, 1, 8, Material.EMERALD, 10),
 
-        recipe(Material.LEATHER, 5, 20, Material.EMERALD, 1),
+        recipe(Material.LEATHER, 5, 12, Material.EMERALD, 1),
 
-        recipe(Material.BEEF, 1, 20, Material.IRON_INGOT, 1),
+        recipe(Material.BEEF, 1, 9, Material.IRON_INGOT, 1),
 
-        recipe(Material.EMERALD, 8, 20, Material.IRON_INGOT, 5),
+        recipe(Material.EMERALD, 8, 10, Material.IRON_INGOT, 5),
 
-        recipe(Material.LEATHER, 5, 20, Material.EMERALD, 2),
+        recipe(Material.LEATHER, 5, 8, Material.EMERALD, 2),
 
-        recipe(Material.BUNDLE, 1, 20, Material.EMERALD, 40),
+        recipe(Material.BUNDLE, 1, 2, Material.EMERALD, 40),
 
-        recipe(new ItemStack(Material.BUNDLE), 20, new ItemStack(Material.EMERALD, 40), new ItemStack(Material.AMETHYST_SHARD, 10)),
+        recipe(new ItemStack(Material.BUNDLE), 2, new ItemStack(Material.EMERALD, 40), new ItemStack(Material.AMETHYST_SHARD, 10)),
 
         recipe(new ItemStack(Material.IRON_SWORD), 5, new ItemStack(Material.COPPER_INGOT, 15)),
 
@@ -108,8 +110,25 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
 
         recipe(new ItemStack(Material.RAW_GOLD, 5), 5, new ItemStack(Material.BEEF, 12)),
 
-        recipe(CruxItemRegistries.ITEMS.get(Crux.key("scourger_horns")).buildItem(), 5, new ItemStack(Material.EMERALD, 64),
-            new ItemStack(Material.LEATHER, 16))
+        recipe(new ItemStack(Material.COPPER_INGOT, 16), 5, new ItemStack(Material.HONEYCOMB, 4)),
+
+        recipe(CruxItemRegistries.ITEMS.get(Crux.key("scourger_horns")).buildItem(), 1, new ItemStack(Material.EMERALD, 64),
+            new ItemStack(Material.LEATHER, 16)),
+
+        recipe(new ItemStack(Material.LAPIS_LAZULI, 20), 5,
+            CruxItemRegistries.ITEMS.get(Crux.key("toxic_wolf_pelt")).buildItem()),
+
+        recipe(new ItemStack(Material.GOLD_INGOT, 30), 5,
+            CruxItemRegistries.ITEMS.get(Crux.key("toxspore")).buildItem()),
+
+        recipe(new ItemStack(Material.EMERALD, 4), 7,
+            CruxItem.wrap(CruxItemRegistries.ITEMS.get(Crux.key("charred_bone")).buildItem()).amount(10).item()),
+
+        recipe(new ItemStack(Material.EMERALD, 3), 8,
+            CruxItem.wrap(CruxItemRegistries.ITEMS.get(Crux.key("plague_shroom")).buildItem()).amount(15).item()),
+
+        recipe(new ItemStack(Material.COAL, 48), 6,
+            CruxItem.wrap(CruxItemRegistries.ITEMS.get(Crux.key("mirehorn")).buildItem()).amount(8).item())
     );
 
     public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
@@ -308,10 +327,11 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         if(!event.getRightClicked().equals(mob)) return;
         Player p = event.getPlayer();
         List<MerchantRecipe> recipes = recipes();
-        /*if(recipes == null) return;
+        if(recipes == null) return;
         Crux.scheduler().runTask(() ->{
             if(!CruxEntityUtil.isValid(p)) return;
-        });*/
+            p.openInventory(merchantView(p));
+        });
         //Player p = event.getPlayer();
         //MerchantView view = merchantView(p);
         //if(view == null) return;
@@ -322,8 +342,10 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     public MerchantView merchantView(Player p){
         List<MerchantRecipe> recipes = recipes();
         if(recipes == null) return null;
-        MerchantView view = MenuType.MERCHANT.create(p, mob.getName());
-        view.getMerchant().setRecipes(recipes);
+        MerchantView view = MenuType.MERCHANT.builder()
+            .merchant((Merchant) mob)
+            .build(p);
+        //view.getMerchant().setRecipes(recipes);
         return view;
     }
 
@@ -350,14 +372,14 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     public List<MerchantRecipe> buildRecipes(){
         List<MerchantRecipe> list = new ArrayList<>();
         Random random = new Random(recipesSeed());
-        int numRecipes = CruxMath.random(3, 7, random);
+        int numRecipes = CruxMath.random(1, 4, random);
         List<MerchantRecipe> choose = new ArrayList<>(OFFERS);
         for (int i = 0; i < numRecipes; i++) {
             int index = random.nextInt(choose.size());
             MerchantRecipe recipe = choose.get(index);
             choose.remove(index);
             recipe = new MerchantRecipe(recipe);
-            recipe.setMaxUses(CruxMath.random(5, 15));
+            //recipe.setMaxUses(CruxMath.random(2, 13));
             list.add(recipe);
             if(choose.isEmpty()) break;
         }
