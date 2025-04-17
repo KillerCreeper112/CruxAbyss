@@ -88,11 +88,11 @@ public class AbyssWoodFunctionListener implements Listener {
         Vector v = CruxMath.reflect(dir, normal).multiply(.7);
         double speed = v.length();
         if(speed < 0.32) return;
-        proj.setVelocity(v);
+        //proj.setVelocity(v);
         if(event.getHitEntity() == null){
             //Location spawn = CruxLoc.shift(proj.getLocation(), v, .2, 0, 0);
 
-            ProjectileReflectListener.reflectProjectile(
+            var x = ProjectileReflectListener.reflectProjectile(
                 proj, normal, reflected,
                 CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_BLOCK_VELOCITY_DROP_OFF, .7D),
                 CruxPersist.RICOCHET_BLOCK, block, event.getHitBlockFace(), event.getHitEntity(),
@@ -100,6 +100,12 @@ public class AbyssWoodFunctionListener implements Listener {
                     AbyssPersist.PLAGUE_REFLECTED.set(ee, AbyssPersist.PLAGUE_REFLECTED.get(ee, 0) + 1);
                 }
             );
+            if(x.isCancelled()){
+                event.setCancelled(false);
+                x.getNewProjectile().remove();
+            }else{
+                proj.remove();
+            }
 
             /*proj.getWorld().spawnEntity(spawn, proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
                 CruxTag.copyAll(x, proj);
