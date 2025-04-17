@@ -43,7 +43,7 @@ public class Vilder extends SimpleAbyssMob {
     );
 
     public Vilder() {
-        super(Crux.key("vilder"), EntityType.PIG);
+        super(Crux.key("vilder"), EntityType.VILLAGER);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Vilder extends SimpleAbyssMob {
             e.setSilent(true);
 
             if(e instanceof LivingEntity ee){
-                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
+                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7D;
                 ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(40D, 70D));
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());

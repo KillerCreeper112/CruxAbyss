@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.entity.mob.goal.vilder;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
+import com.ticxo.modelengine.core.ModelEngine;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.math.CruxPosition;
@@ -9,6 +10,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
 import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -32,10 +34,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -308,9 +307,15 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if(!event.getRightClicked().equals(mob)) return;
         Player p = event.getPlayer();
-        MerchantView view = merchantView(p);
-        if(view == null) return;
-        p.openInventory(view);
+        List<MerchantRecipe> recipes = recipes();
+        /*if(recipes == null) return;
+        Crux.scheduler().runTask(() ->{
+            if(!CruxEntityUtil.isValid(p)) return;
+        });*/
+        //Player p = event.getPlayer();
+        //MerchantView view = merchantView(p);
+        //if(view == null) return;
+        //p.openInventory(view);
     }
 
     protected List<MerchantRecipe> recipes;
@@ -324,7 +329,12 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
 
     public List<MerchantRecipe> recipes(){
         if(CruxMath.testChance(new Random(recipesSeed()), 60)) return null;
-        if(this.recipes == null) return this.recipes = buildRecipes();
+        if(this.recipes == null){
+            this.recipes = buildRecipes();
+            if(mob instanceof AbstractVillager villager){
+                villager.setRecipes(this.recipes);
+            }
+        }
         return recipes;
     }
 
