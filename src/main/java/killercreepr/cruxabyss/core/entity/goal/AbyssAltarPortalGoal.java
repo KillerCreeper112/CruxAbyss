@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.entity.goal;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.component.DataComponentHandler;
 import killercreepr.crux.api.key.tag.KeyPredicate;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.DynamicLocation;
@@ -16,9 +17,13 @@ import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.TeleportAbyssWorldModule;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxteleport.api.component.TeleportLocationCheck;
+import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.core.component.StructureTeleportLocationCheck;
+import killercreepr.cruxteleport.core.component.TeleporterComponents;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
@@ -33,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
@@ -78,14 +84,19 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
     }
 
     public CompletableFuture<Location> buildRandomTP(Player p){
+        var data = DataComponentHandler.simple();
+        data.set(TeleporterComponents.TELEPORT_GENERIC_LOCATION_CHECK, new StructureTeleportLocationCheck(null, List.of(
+            Crux.key("abyss/outpost_1"), Crux.key("abyss/outpost_2"), Crux.key("abyss/outpost_3"),
+            Crux.key("abyss/safezone_1"), Crux.key("abyss/safezone_2"), Crux.key("abyss/safezone_3")
+        )));
         if(crystal == null){
-            return RandomWorldTP.worldRandom(world);
+            return RandomWorldTP.worldRandom(world, data);
         }
         ValuesProvider cfg = CruxAbyss.inst().values();
         if("death".equalsIgnoreCase(teleportType)){
             DeathManager manager = USurvivePlugin.inst().getDeathManager();
             PlayerDeath death = CruxCollection.getRandom(manager.getAllDeathsInWorld(p.getUniqueId(), world.key()));
-            if(death == null) return RandomWorldTP.worldRandom(world);
+            if(death == null) return RandomWorldTP.worldRandom(world, data);
 
             Location l = death.getPosition().toLocation(world);
             return RandomWorldTP.centerNear(l, cfg.ABYSS_GEMS_DEATH_TP_NEAR_DISTANCE());
@@ -101,7 +112,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
             Location center = safezone.getPosition().toLocation(world);
             return RandomWorldTP.tpNear(center, cfg.ABYSS_GEMS_SAFEZONE_TP_NEAR_DISTANCE());
         }*/
-        return RandomWorldTP.worldRandom(world);
+        return RandomWorldTP.worldRandom(world, data);
     }
 
     protected int particle;
@@ -120,7 +131,7 @@ public class AbyssAltarPortalGoal extends CruxMobModeledGoal {
         ;
     }
 
-    protected final GetNear<Player> getNearestPlayer = new GetEntityNear<>(DynamicLocation.from(mob), Player.class)
+    protected final GetNear<Player> getNearestPlayer = new GetEntityNear<>(DynamicLocation.createEntity(mob), Player.class)
         .range(4D)
         .amount(1)
         .operation(GetNear.Operation.NEAREST)
