@@ -332,8 +332,12 @@ public class EmberLeaperGoal extends CruxMobModeledGoal implements Listener {
     public void jumpToTarget(Location target){
         stopAnimation("prepare_jump");
         playAnimation("jump", true);
-        Vector vel = CruxMath.parabolicMotion(mob.getLocation().toVector(), target.toVector(), CruxMath.random(1, 5), CruxMath.random(1.6, 1.7));//gravity=1.65
-        mob.setVelocity(vel);
+        try{
+            Vector vel = CruxMath.parabolicMotion(mob.getLocation().toVector(), target.toVector(), CruxMath.random(1, 5), CruxMath.random(1.6, 1.7));//gravity=1.65
+            mob.setVelocity(vel);
+        }catch (Exception ignored){
+            ignored.printStackTrace();
+        }
         CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_JUMP, 1.5f).playAt(mob);
     }
 
