@@ -182,7 +182,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         }
         wave++;
         if(wave % 5 == 0){
-            difficulty = CruxMath.clamp(difficulty + .1f, .5f, 1.5f);
+            //difficulty = CruxMath.clamp(difficulty + .1f, .5f, 1.5f);
         }
     }
 
