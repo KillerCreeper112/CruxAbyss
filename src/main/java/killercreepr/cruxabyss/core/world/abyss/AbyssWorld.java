@@ -174,12 +174,12 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     private void dayEvent(){
         daysPassed++;
-        Component c = MiniMessage.miniMessage().deserialize(
+        /*Component c = MiniMessage.miniMessage().deserialize(
             "<gradient:#E62525:#6E1212>The world feels slightly less stable...</gradient>"
         );
         for(Player p : world.getPlayers()){
             p.sendMessage(c);
-        }
+        }*/
         wave++;
         if(wave % 5 == 0){
             //difficulty = CruxMath.clamp(difficulty + .1f, .5f, 1.5f);
