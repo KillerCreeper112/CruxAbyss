@@ -48,7 +48,7 @@ public class AbyssCharredBones extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = super.getAttributes(world, e);
         setAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(CruxMath.random(8D, 14D) *
+                CruxAttributeModifier.baseModifier(14D *
                         (world == null ? 1D : world.getDifficulty())));
         setAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-15));
         setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(36));

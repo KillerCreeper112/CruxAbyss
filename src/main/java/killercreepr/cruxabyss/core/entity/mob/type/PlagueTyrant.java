@@ -56,7 +56,7 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(CruxMath.random(12D, 17D) *
+                CruxAttributeModifier.baseModifier(26D *
                          (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
