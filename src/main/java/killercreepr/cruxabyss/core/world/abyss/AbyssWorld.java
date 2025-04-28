@@ -44,10 +44,7 @@ import killercreepr.usurvive.core.world.generation.OreGenerator;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
@@ -323,6 +320,10 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockExplode(CustomBlockExplodeEvent event) {
         if(!event.getBlock().getLocation().getWorld().equals(world)) return;
+        switch (event.getResult()){
+            case DESTROY, DESTROY_WITH_DECAY -> {}
+            default -> { return; }
+        }
         float yield = event.getYield();
         int blocksToFling = (int) (event.blockList().size() * yield);
         event.setYield(0f);
@@ -330,14 +331,16 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         int flung = 0;
         for(Block b : event.blockList()){
             if(flung >= blocksToFling) break;
+            BlockData data = b.getBlockData().clone();
+            Crux.handlers().block().setType(b, Material.AIR);
             flung++;
             Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
             dir.setY(CruxMath.random(.8f, 1f));
             dir.multiply(CruxMath.random(.7f, 1f));
             center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling ->{
-                falling.setBlockData(b.getBlockData());
+                falling.setBlockData(data);
                 falling.setVelocity(dir);
-                if(CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
+                if(CruxBlocksRegistries.BLOCK.getByBlockData(data) != null) falling.setCancelDrop(true);
             });
         }
     }
@@ -345,6 +348,10 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityExplode(CustomEntityExplodeEvent event) {
         if (!event.getLocation().getWorld().equals(world)) return;
+        switch (event.getResult()){
+            case DESTROY, DESTROY_WITH_DECAY -> {}
+            default -> { return; }
+        }
         float yield = event.getYield();
         int blocksToFling = (int) (event.blockList().size() * yield);
         event.setYield(0f);
@@ -352,15 +359,17 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         int flung = 0;
         for (Block b : event.blockList()) {
             if (flung >= blocksToFling) break;
+            BlockData data = b.getBlockData().clone();
+            Crux.handlers().block().setType(b, Material.AIR);
             flung++;
             Vector dir = b.getLocation().toCenterLocation().toVector().subtract(center.toVector());
             dir.setY(CruxMath.random(.8f, 1f));
             dir.multiply(CruxMath.random(.7f, 1f));
 
             center.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, falling -> {
-                falling.setBlockData(b.getBlockData());
+                falling.setBlockData(data);
                 falling.setVelocity(dir);
-                if (CruxBlocksRegistries.BLOCK.getByBlockData(b.getBlockData()) != null) falling.setCancelDrop(true);
+                if (CruxBlocksRegistries.BLOCK.getByBlockData(data) != null) falling.setCancelDrop(true);
             });
         }
     }

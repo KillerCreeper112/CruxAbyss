@@ -10,6 +10,7 @@ import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.entity.memory.AbyssHolder;
 import killercreepr.cruxabyss.core.entity.memory.AbyssWorldDwellerHolder;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,8 +36,10 @@ public class AbyssPlayerTags implements ObjectTag<OfflinePlayer> {
                 if(!object.isOnline()) return "0";
                 return AbyssHolder.abyssHolder(object.getPlayer()).getLongestAbyssOutpostControlDuration() + "";
             }))
-            .add(Tag.string("owned_abyss_outposts", (args, ctx) ->
-                CruxAbyss.inst().getAbyssOutpostManager().getAllOwnedAbyssOutposts(object.getUniqueId()).size() + ""))
+            .add(Tag.string("owned_abyss_outposts", (args, ctx) -> {
+                Bukkit.broadcastMessage(CruxAbyss.inst().getAbyssOutpostManager().getAllOwnedAbyssOutposts(object.getUniqueId()).size()  + "");
+                return CruxAbyss.inst().getAbyssOutpostManager().getAllOwnedAbyssOutposts(object.getUniqueId()).size() + "";
+            }))
             .add(Tag.string("friendly_abyss_outposts", (args, ctx) ->
                 CruxAbyss.inst().getAbyssOutpostManager().getAllFriendlyAbyssOutposts(object.getUniqueId()).size() + ""))
             .add(Tag.string("owned_abyss_outposts_with_relay", (args, ctx) -> {
