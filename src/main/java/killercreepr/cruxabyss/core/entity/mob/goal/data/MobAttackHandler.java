@@ -8,10 +8,10 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MobAttackHandler {
     public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
@@ -20,11 +20,21 @@ public class MobAttackHandler {
 
     protected final List<MobAttack> attacks;
     protected final List<MobAttack> cooldownAttacks;
+    protected final Map<UUID, Long> lastAttacked = new HashMap<>();
     public MobAttackHandler(Mob mob, CruxMobModeledGoal goal, List<MobAttack> attacks, List<MobAttack> cooldownAttacks) {
         this.mob = mob;
         this.goal = goal;
         this.attacks = attacks;
         this.cooldownAttacks = cooldownAttacks;
+    }
+
+    public void hit(Entity e){
+        lastAttacked.put(e.getUniqueId(), System.currentTimeMillis());
+    }
+
+    public boolean wasHitWithin(Entity e, int ticks){
+        Long time = lastAttacked.get(e.getUniqueId());
+        return time != null && CruxMath.hasOccurredWithin(time, ticks);
     }
 
     protected int strongAttackCooldown;

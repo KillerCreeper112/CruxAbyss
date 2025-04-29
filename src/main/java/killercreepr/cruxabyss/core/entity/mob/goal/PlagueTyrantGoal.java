@@ -93,9 +93,13 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 @Override
                 public void onTick() {
                     applyBottomHandLocations(hand -> {
-                        BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
+                        BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D, 3.5D);
                         hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
-                            .forEach(e -> attack(e));
+                            .forEach(e ->{
+                                if(attackHandler.wasHitWithin(e, 10)) return;
+                                attackHandler.hit(e);
+                                attack(e);
+                            });
                     });
                     new ParticleBuilder(Particle.CLOUD)
                         .location(getRightHandLocation())
@@ -135,7 +139,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                         mountManager.setCanRide(true);
 
                         applyRightHandLocations(hand ->{
-                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D);
+                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D, 3.5D);
                             hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
                                 .forEach(e ->{
                                     mountManager.mountPassenger("right_hand", e,
@@ -198,9 +202,13 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                             CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_SWEEP, .5f).playAt(mob);
                         }
                         applyRightHandLocations(hand ->{
-                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
+                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D, 3.5D);
                             hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
-                                .forEach(e -> attack(e));
+                                .forEach(e ->{
+                                    if(attackHandler.wasHitWithin(e, 10)) return;
+                                    attackHandler.hit(e);
+                                    attack(e);
+                                });
                         });
                         new ParticleBuilder(Particle.CLOUD)
                             .location(getRightHandLocation())
@@ -247,7 +255,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                         mountManager.setCanRide(true);
 
                         applyRightHandLocations(hand ->{
-                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D);
+                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D, 3.5D);
                             hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
                                 .forEach(e ->{
                                     mountManager.mountPassenger("right_hand", e,
