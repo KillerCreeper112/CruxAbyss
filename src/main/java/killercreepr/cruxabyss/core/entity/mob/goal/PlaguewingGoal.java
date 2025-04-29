@@ -169,7 +169,7 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, Path
 
     protected long lastHitTarget;
     @Override
-    protected void attacked(@NotNull CruxEntityDamageEvent event) {
+    public void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
         if(event.isCancelled()) return;
         if((event.getEntity() instanceof LivingEntity victim)){

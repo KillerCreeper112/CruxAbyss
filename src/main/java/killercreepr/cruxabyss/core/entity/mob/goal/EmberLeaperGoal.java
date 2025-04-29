@@ -221,7 +221,7 @@ public class EmberLeaperGoal extends CruxMobModeledGoal implements Listener {
     }
 
     @Override
-    protected void attacked(@NotNull CruxEntityDamageEvent event) {
+    public void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
         if(CruxMath.testChance(35)) return;
         int fireTicks = getAttackFireTicks();

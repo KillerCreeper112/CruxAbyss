@@ -294,7 +294,7 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
     }
 
     @Override
-    protected void attacked(@NotNull CruxEntityDamageEvent event) {
+    public void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
         if(isUsingStrongAttack()) return;
         String id = generateAttackAnimationID();

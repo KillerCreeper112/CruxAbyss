@@ -42,8 +42,8 @@ public class PlagueTyrant extends SimpleAbyssMob {
 
             if(e instanceof LivingEntity ee){
                 ee.getAttribute(Attribute.STEP_HEIGHT).setBaseValue(2.5D);
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(180D);
-                ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.89D);
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(200D);
+                ee.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.9D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
 
                 CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED,
@@ -62,8 +62,8 @@ public class PlagueTyrant extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
         addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.85D));
-        addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(6D));
-        addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(3D));
+        addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(8D));
+        addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(4D));
         return map;
     }
 
