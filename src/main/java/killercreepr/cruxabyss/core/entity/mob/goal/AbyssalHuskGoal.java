@@ -78,7 +78,7 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
                     return 9;
                 }
             }
-        ));
+        ), List.of());
     }
 
     @Override

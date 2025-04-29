@@ -13,6 +13,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxedBoundingBox;
 import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.data.MobAttackHandler;
+import killercreepr.cruxabyss.core.entity.mob.goal.data.StrongMobAttack;
 import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -25,6 +27,7 @@ import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -40,13 +43,15 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, PathTargetMobGoal, OutpostTargeterGoal {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1.1D);
-    public static final Key STRONG_ATTACK_KEY = VilderGoal.STRONG_ATTACK_KEY;
+
+    protected final MobAttackHandler attackHandler;
     public PlagueTyrantGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
@@ -70,129 +75,167 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 return CreateSound.sound(Sound.ENTITY_VINDICATOR_DEATH, .2f);
             }
         });
-    }
+        attackHandler = new MobAttackHandler(mob, this, List.of(
+        ), List.of(
+            new StrongMobAttack(1) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                }
 
-    protected int strongAttackCooldown;
-    public boolean canUseStrongAttack(){
-        return strongAttackCooldown < 1 && !isUsingStrongAttack();
-    }
+                @Override
+                public void onTick() {
+                    applyHandLocations(hand -> {
+                        BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
+                        hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
+                            .forEach(e -> attack(e));
+                    });
+                    new ParticleBuilder(Particle.CLOUD)
+                        .location(getRightHandLocation())
+                        .extra(.1)
+                        .count(CruxMath.random(2, 3))
+                        .offset(1, 1, 1)
+                        .spawn()
+                    ;
+                }
 
-    public boolean isUsingStrongAttack(){
-        return maxAttackTime > 0;
-    }
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
 
-    public void combatTick(){
-        if(!isUsingStrongAttack()){
-            combatNotUsingStrongAttackTick();
-            return;
-        }
-        combatUsingStrongAttackTick();
-    }
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.2D;
+                    return getSquaredDistanceFromTarget() <= (range*range);
+                }
+            },
 
-    public void combatNotUsingStrongAttackTick(){
-        if(strongAttackCooldown > 0){
-            strongAttackCooldown--;
-        }
-    }
+            new StrongMobAttack(2) {
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
 
-    public void onHitAtTime(){
-        //this.attemptAttack();
-    }
+                @Override
+                public void onTick() {
+                    if(target != null) mob.lookAt(target);
+                    int time = getPlayingAnimationTimeTicks("pickup_and_throw");
+                    if(time < 0) return;
+                    //grab time
+                    if(time >= 15 && time <= 25){
+                        MountManager mountManager = getModel().getMountManager().orElseThrow();
+                        mountManager.setCanRide(true);
 
-    public void onCombatStrongAttackComplete(){
-        maxAttackTime = 0;
-        hitAt = 0;
-        currentAttackID = 0;
-        CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);
-    }
+                        applyHandLocations(hand ->{
+                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D);
+                            hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
+                                .forEach(e ->{
+                                    mountManager.mountPassenger("right_hand", e,
+                                        (entity, mount) -> MountControllerTypes.WALKING_FORCE.createController(e, mount));
+                                });
+                        });
+                        return;
+                    }
+                    if(time >= 25 && time <= 30){
+                        MountManager mountManager = getModel().getMountManager().orElseThrow();
+                        if(mountManager.getSeat("right_hand").orElseThrow().getPassengers().isEmpty()){
+                            stopAnimation("pickup_and_throw");
+                            return;
+                        }
+                    }
+                    //throw time
+                    if(time >= 35){
+                        MountManager mountManager = getModel().getMountManager().orElseThrow();
+                        mountManager.getSeat("right_hand").orElseThrow().getPassengers().forEach(e ->{
+                            mountManager.dismountPassenger(e);
+                            Vector dir = mob.getEyeLocation().getDirection()
+                                .multiply(1.5);
+                            dir.setY(1.4);
+                            e.setVelocity(dir);
+                        });
+                        CreateSound.sound(Sound.ENTITY_ENDER_DRAGON_FLAP, .8f).playAt(mob);
+                        return;
+                    }
+                }
 
-    public void usingStrongAttackTick(int id){
-        switch(id){
-            case 1 ->{
-                applyHandLocations(hand ->{
-                    BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
-                    hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
-                        .forEach(this::attack);
-                });
-                new ParticleBuilder(Particle.CLOUD)
-                    .location(getRightHandLocation())
-                    .extra(.1)
-                    .count(CruxMath.random(2, 3))
-                    .offset(1, 1, 1)
-                    .spawn()
-                ;
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+                    CreateSound.sound(Sound.ENTITY_VINDICATOR_AMBIENT, .1f).playAt(mob);
+                }
+
+                @Override
+                public String getAnimationID() {
+                    return "pickup_and_throw";
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.2D;
+                    return getSquaredDistanceFromTarget() <= (range*range);
+                }
+            },
+
+            new StrongMobAttack(3) {
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+
+                @Override
+                public void onTick() {
+                    if(getPlayingAnimationProgress("attack_swing") > .5f){
+                        if(!swungLastTick){
+                            swungLastTick = true;
+                            CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_SWEEP, .5f).playAt(mob);
+                        }
+                        applyHandLocations(hand ->{
+                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
+                            hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
+                                .forEach(e -> attack(e));
+                        });
+                        new ParticleBuilder(Particle.CLOUD)
+                            .location(getRightHandLocation())
+                            .extra(.1)
+                            .count(CruxMath.random(2, 3))
+                            .offset(1, 1, 1)
+                            .spawn()
+                        ;
+                    }else swungLastTick = false;
+                }
+
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+                    CreateSound.sound(Sound.ENTITY_VINDICATOR_AMBIENT, .1f).playAt(mob);
+                }
+
+                @Override
+                public String getAnimationID() {
+                    return "attack_swing";
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.2D;
+                    return getSquaredDistanceFromTarget() <= (range*range);
+                }
             }
-        }
-    }
-
-    public void combatUsingStrongAttackTick(){
-        attackTime++;
-        if(hitAt == attackTime){
-            onHitAtTime();
-            hitAt = 0;
-        }
-        usingStrongAttackTick(currentAttackID);
-        if(attackTime >= maxAttackTime){
-            onCombatStrongAttackComplete();
-            return;
-        }
-        onCombatUsingStrongAttackTick();
-    }
-    public void onCombatUsingStrongAttackTick(){}
-
-    public int generateStrongAttackID(){
-        return 1;//CruxMath.random(1,2);
-    }
-
-    public int getHitAtTime(int attackID){
-        return switch(attackID){
-            default -> 5;
+        )){
+            @Override
+            public int calculateStrongAttackCooldown(){
+                return CruxMath.random(50, 90);
+            }
         };
     }
-
-    public void onUseStrongAttack(int attackID){
-        switch(attackID){
-            case 1 ->{
-                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
-                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
-                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
-                CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
-            }
-        }
-    }
-
-    public void onUseStrongAttackApplyAllAttributes(int attackID){
-        CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-            CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
-    }
-
-    public int useStrongAttack(){
-        strongAttackCooldown = CruxMath.random(30, 80);
-        int atck = generateStrongAttackID();
-        String id = "attack_strong_" + atck;
-        playAnimation(id, true);
-        this.maxAttackTime = (int) Math.ceil(getAnimationLengthTicks(id) / 2f);
-        this.attackTime = 0;
-
-        this.hitAt = getHitAtTime(atck);
-        onUseStrongAttackApplyAllAttributes(atck);
-        onUseStrongAttack(atck);
-        return atck;
-    }
-
-    protected int attackTime = 0;
-    protected int maxAttackTime = 0;
-    protected int hitAt = 0;
-    protected int currentAttackID;
 
     /*@Override
     protected void attacked(@NotNull CruxEntityDamageEvent event) {
@@ -257,12 +300,13 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         setPath(GoalPath.goalPath(lastPath.getNodes()));
     }
 
-    //protected int attackTime = -1;
-    protected int attackSwingCooldown = CruxMath.random(60, 100);
-    protected int throwCooldown = CruxMath.random(60, 100);
     @Override
     public boolean preAttemptAttack() {
-        if(canUseStrongAttack()){
+        if(attackHandler.preAttemptAttack()){
+            return super.preAttemptAttack();
+        }
+        return false;
+        /*if(canUseStrongAttack()){
             currentAttackID = useStrongAttack();
             return false;
         }
@@ -275,17 +319,26 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
             CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.5f).playAt(mob);
             return false;
         }
-        return super.preAttemptAttack();
+        return super.preAttemptAttack();*/
     }
 
-    public void attackTick() {
+    @Override
+    public void attacked(@NotNull CruxEntityDamageEvent event) {
+        super.attacked(event);
+        if(attackHandler.isUsingStrongAttack()) return;
+        String id = generateAttackAnimationID();
+        if(id == null) return;
+        playAnimation(id, true);
+    }
+
+    /*public void attackTick() {
         if(this.attackTime < 1) return;
         this.attackTime--;
         if (this.attackTime < 1) {
             this.attemptAttack();
             attackTime = -1;
         }
-    }
+    }*/
 
     @Override
     public boolean shouldConstantlyLookAtTarget() {
@@ -309,74 +362,13 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
     @Override
     public void tick() {
         animationPropertyTick();
-        if(isPlayingAnimation("pickup_and_throw")){
-            if(target != null) mob.lookAt(target);
-            int time = getPlayingAnimationTimeTicks("pickup_and_throw");
-            if(time < 0) return;
-            //grab time
-            if(time >= 15 && time <= 25){
-                MountManager mountManager = getModel().getMountManager().orElseThrow();
-                mountManager.setCanRide(true);
-
-                applyHandLocations(hand ->{
-                    BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D);
-                    hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
-                        .forEach(e ->{
-                            mountManager.mountPassenger("right_hand", e,
-                                (entity, mount) -> MountControllerTypes.WALKING_FORCE.createController(e, mount));
-                        });
-                });
-                return;
-            }
-            if(time >= 25 && time <= 30){
-                MountManager mountManager = getModel().getMountManager().orElseThrow();
-                if(mountManager.getSeat("right_hand").orElseThrow().getPassengers().isEmpty()){
-                    stopAnimation("pickup_and_throw");
-                    return;
-                }
-            }
-            //throw time
-            if(time >= 35){
-                MountManager mountManager = getModel().getMountManager().orElseThrow();
-                mountManager.getSeat("right_hand").orElseThrow().getPassengers().forEach(e ->{
-                    mountManager.dismountPassenger(e);
-                    Vector dir = mob.getEyeLocation().getDirection()
-                        .multiply(1.5);
-                    dir.setY(1.4);
-                    e.setVelocity(dir);
-                });
-                CreateSound.sound(Sound.ENTITY_ENDER_DRAGON_FLAP, .8f).playAt(mob);
-                return;
-            }
-            return;
-        }
-
         super.tick();
+        attackHandler.tick();
         structureTick();
-        if(target != null) targetTick();
-        else pathTarget.tick();
-        attackTick();
+        if(target != null){
 
-        if(isPlayingAnimation("attack_swing")){
-            if(getPlayingAnimationProgress("attack_swing") > .5f){
-                if(!swungLastTick){
-                    swungLastTick = true;
-                    CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_SWEEP, .5f).playAt(mob);
-                }
-                applyHandLocations(hand ->{
-                    BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
-                    hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
-                        .forEach(this::attack);
-                });
-                new ParticleBuilder(Particle.CLOUD)
-                    .location(getRightHandLocation())
-                    .extra(.1)
-                    .count(CruxMath.random(2, 3))
-                    .offset(1, 1, 1)
-                    .spawn()
-                ;
-            }else swungLastTick = false;
-        }else CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, Crux.key("swing"));
+        } else pathTarget.tick();
+        //attackTick();
         movementTick();
     }
 
@@ -443,7 +435,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         return WALK_VICIOUS_RUN;
     }
 
-    public void targetTick(){
+    /*public void targetTick(){
         if(throwCooldown > 0){
             throwCooldown--;
         }
@@ -472,7 +464,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
             }
             return;
         }
-    }
+    }*/
 
     public void applyHandLocations(Consumer<Location> consumer){
         consumer.accept(getRightHandLocation());

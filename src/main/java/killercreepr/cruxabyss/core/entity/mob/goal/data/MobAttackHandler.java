@@ -10,6 +10,8 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Mob;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MobAttackHandler {
@@ -18,10 +20,12 @@ public class MobAttackHandler {
     protected final CruxMobModeledGoal goal;
 
     protected final List<MobAttack> attacks;
-    public MobAttackHandler(Mob mob, CruxMobModeledGoal goal, List<MobAttack> attacks) {
+    protected final List<MobAttack> cooldownAttacks;
+    public MobAttackHandler(Mob mob, CruxMobModeledGoal goal, List<MobAttack> attacks, List<MobAttack> cooldownAttacks) {
         this.mob = mob;
         this.goal = goal;
         this.attacks = attacks;
+        this.cooldownAttacks = cooldownAttacks;
     }
 
     protected int strongAttackCooldown;
@@ -56,12 +60,13 @@ public class MobAttackHandler {
         hitAt = 0;
         if(currentAttack != null) currentAttack.onFinish();
         currentAttack = null;
-        CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifiers(mob, STRONG_ATTACK_KEY);
+        /*CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, STRONG_ATTACK_KEY);
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);*/
     }
 
     public void combatUsingStrongAttackTick(){
@@ -79,8 +84,16 @@ public class MobAttackHandler {
     }
     public void onCombatUsingStrongAttackTick(){}
 
-    public MobAttack generateStrongAttackID(){
-        return CruxCollection.getRandom(attacks);
+    public MobAttack generateStrongAttack(List<MobAttack> attacks){
+        if(attacks.isEmpty()) return null;
+
+        List<MobAttack> list = new ArrayList<>(attacks);
+        while(!list.isEmpty()){
+            MobAttack got = CruxCollection.getRandom(list);
+            if(got.canUseAttack()) return got;
+            list.remove(got);
+        }
+        return null;
     }
 
     public void onUseStrongAttack(MobAttack attack){
@@ -92,10 +105,11 @@ public class MobAttackHandler {
             CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
     }
 
-    public MobAttack useStrongAttack(){
-        MobAttack attack = generateStrongAttackID();
+    public MobAttack useStrongAttack(List<MobAttack> attacks){
+        MobAttack attack = generateStrongAttack(attacks);
         if(attack == null) return null;
-        strongAttackCooldown = calculateStrongAttackCooldown();
+        int setCooldown = attack.getCooldown();
+        strongAttackCooldown = setCooldown < 0 ? calculateStrongAttackCooldown() : setCooldown;
         String id = attack.getAnimationID();
         goal.playAnimation(id, true);
         this.maxAttackTime = (int) Math.ceil((float) goal.getAnimationLengthTicks(id) / 2f);
@@ -118,7 +132,7 @@ public class MobAttackHandler {
 
     public boolean preAttemptAttack() {
         if(canUseStrongAttack()){
-            currentAttack = useStrongAttack();
+            currentAttack = useStrongAttack(attacks);
             return false;
         }
         if(isUsingStrongAttack() && hitAt != attackTime) return false;
@@ -130,8 +144,17 @@ public class MobAttackHandler {
         mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
     }
 
+    public void cooldownAttacksTick(){
+        if(isUsingStrongAttack()) return;
+        if(!canUseStrongAttack()) return;
+        currentAttack = useStrongAttack(cooldownAttacks);
+    }
+
     public void tick() {
         combatTick();
+        if(!cooldownAttacks.isEmpty()){
+            cooldownAttacksTick();
+        }
         movementTick();
     }
 }
