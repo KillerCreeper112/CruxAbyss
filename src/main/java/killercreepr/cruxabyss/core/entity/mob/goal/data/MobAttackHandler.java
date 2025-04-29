@@ -11,7 +11,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Mob;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MobAttackHandler {
@@ -76,7 +75,7 @@ public class MobAttackHandler {
             hitAt = 0;
         }
         if(currentAttack != null) currentAttack.onTick();
-        if(attackTime >= maxAttackTime){
+        if(currentAttack == null || attackTime >= maxAttackTime || !goal.isPlayingAnimation(currentAttack.getAnimationID())){
             onCombatStrongAttackComplete();
             return;
         }
@@ -101,8 +100,6 @@ public class MobAttackHandler {
     }
 
     public void onUseStrongAttackApplyAllAttributes(MobAttack attack){
-        CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-            CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
     }
 
     public MobAttack useStrongAttack(List<MobAttack> attacks){
@@ -152,7 +149,7 @@ public class MobAttackHandler {
 
     public void tick() {
         combatTick();
-        if(!cooldownAttacks.isEmpty()){
+        if(goal.getTarget() != null && !cooldownAttacks.isEmpty()){
             cooldownAttacksTick();
         }
         movementTick();

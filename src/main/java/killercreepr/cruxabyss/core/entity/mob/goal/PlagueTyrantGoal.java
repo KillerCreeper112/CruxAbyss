@@ -92,7 +92,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
 
                 @Override
                 public void onTick() {
-                    applyHandLocations(hand -> {
+                    applyBottomHandLocations(hand -> {
                         BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
                         hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
                             .forEach(e -> attack(e));
@@ -113,7 +113,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
 
                 @Override
                 public boolean canUseAttack() {
-                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.2D;
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.8D;
                     return getSquaredDistanceFromTarget() <= (range*range);
                 }
             },
@@ -127,14 +127,14 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 @Override
                 public void onTick() {
                     if(target != null) mob.lookAt(target);
-                    int time = getPlayingAnimationTimeTicks("pickup_and_throw");
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
                     if(time < 0) return;
                     //grab time
                     if(time >= 15 && time <= 25){
                         MountManager mountManager = getModel().getMountManager().orElseThrow();
                         mountManager.setCanRide(true);
 
-                        applyHandLocations(hand ->{
+                        applyRightHandLocations(hand ->{
                             BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D);
                             hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
                                 .forEach(e ->{
@@ -147,7 +147,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                     if(time >= 25 && time <= 30){
                         MountManager mountManager = getModel().getMountManager().orElseThrow();
                         if(mountManager.getSeat("right_hand").orElseThrow().getPassengers().isEmpty()){
-                            stopAnimation("pickup_and_throw");
+                            stopAnimation(getAnimationID());
                             return;
                         }
                     }
@@ -179,7 +179,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
 
                 @Override
                 public boolean canUseAttack() {
-                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.2D;
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.4D;
                     return getSquaredDistanceFromTarget() <= (range*range);
                 }
             },
@@ -197,7 +197,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                             swungLastTick = true;
                             CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_SWEEP, .5f).playAt(mob);
                         }
-                        applyHandLocations(hand ->{
+                        applyRightHandLocations(hand ->{
                             BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2.5D);
                             hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
                                 .forEach(e -> attack(e));
@@ -225,16 +225,77 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
 
                 @Override
                 public boolean canUseAttack() {
-                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.2D;
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.4D;
+                    return getSquaredDistanceFromTarget() <= (range*range);
+                }
+            },
+
+            new StrongMobAttack(4) {
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+
+                @Override
+                public void onTick() {
+                    if(target != null) mob.lookAt(target);
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time < 0) return;
+                    //grab time
+                    if(time >= 7 && time <= 17){
+                        MountManager mountManager = getModel().getMountManager().orElseThrow();
+                        mountManager.setCanRide(true);
+
+                        applyRightHandLocations(hand ->{
+                            BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 2D);
+                            hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
+                                .forEach(e ->{
+                                    mountManager.mountPassenger("right_hand", e,
+                                        (entity, mount) -> MountControllerTypes.WALKING_FORCE.createController(e, mount));
+                                });
+                        });
+                        return;
+                    }
+                    if(time >= 17 && time <= 25){
+                        MountManager mountManager = getModel().getMountManager().orElseThrow();
+                        if(mountManager.getSeat("right_hand").orElseThrow().getPassengers().isEmpty()){
+                            stopAnimation(getAnimationID());
+                            return;
+                        }
+                    }
+                    //throw time
+                    if(time >= 31){
+                        MountManager mountManager = getModel().getMountManager().orElseThrow();
+                        mountManager.getSeat("right_hand").orElseThrow().getPassengers().forEach(e ->{
+                            mountManager.dismountPassenger(e);
+                            Vector dir = mob.getEyeLocation().getDirection()
+                                .multiply(1.5);
+                            dir.setY(1.4);
+                            e.setVelocity(dir);
+                        });
+                        CreateSound.sound(Sound.ENTITY_ENDER_DRAGON_FLAP, .8f).playAt(mob);
+                        return;
+                    }
+                }
+
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.7D, CruxAttribute.Operation.MULTIPLY));
+                    CreateSound.sound(Sound.ENTITY_VINDICATOR_AMBIENT, .1f).playAt(mob);
+                }
+
+                @Override
+                public String getAnimationID() {
+                    return "pickup_and_throw_side";
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 2D;
                     return getSquaredDistanceFromTarget() <= (range*range);
                 }
             }
-        )){
-            @Override
-            public int calculateStrongAttackCooldown(){
-                return CruxMath.random(50, 90);
-            }
-        };
+        ));
     }
 
     /*@Override
@@ -466,9 +527,14 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         }
     }*/
 
-    public void applyHandLocations(Consumer<Location> consumer){
+    public void applyLeftHandLocations(Consumer<Location> consumer){
+        consumer.accept(getLeftHandLocation());
+        consumer.accept(getLeftHand2Location());
+    }
+
+    public void applyBottomHandLocations(Consumer<Location> consumer){
         consumer.accept(getRightHandLocation());
-        consumer.accept(getRightHand2Location());
+        consumer.accept(getLeftHandLocation());
     }
 
     public Location getRightHandLocation(){
@@ -478,6 +544,21 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
 
     public Location getRightHand2Location(){
         ModelBone hand = getModel().getBone("right_hand2").orElseThrow();
+        return hand.getLocation();
+    }
+
+    public void applyRightHandLocations(Consumer<Location> consumer){
+        consumer.accept(getRightHandLocation());
+        consumer.accept(getRightHand2Location());
+    }
+
+    public Location getLeftHandLocation(){
+        ModelBone hand = getModel().getBone("left_hand").orElseThrow();
+        return hand.getLocation();
+    }
+
+    public Location getLeftHand2Location(){
+        ModelBone hand = getModel().getBone("left_hand2").orElseThrow();
         return hand.getLocation();
     }
 

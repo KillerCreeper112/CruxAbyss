@@ -63,6 +63,9 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
             new StrongMobAttack(1) {
                 @Override
                 public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
