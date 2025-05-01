@@ -9,7 +9,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.goal.data.MobAttackHandler;
 import killercreepr.cruxabyss.core.entity.mob.goal.data.StrongMobAttack;
-import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -34,7 +33,7 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_AMBIENT, .6f);
+                return CreateSound.sound(Sound.ENTITY_VEX_AMBIENT, .6f);
             }
 
             /*@Override
@@ -54,12 +53,12 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_HURT, .6f);
+                return CreateSound.sound(Sound.ENTITY_VEX_HURT, .6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_DEATH, .6f);
+                return CreateSound.sound(Sound.ENTITY_VEX_DEATH, .6f);
             }
         });
 
@@ -90,19 +89,20 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
 
     @Override
     public boolean preAttemptAttack() {
-        if(attackHandler.preAttemptAttack()){
+        return super.preAttemptAttack();
+        /*if(attackHandler.preAttemptAttack()){
             return super.preAttemptAttack();
         }
-        return false;
+        return false;*/
     }
 
     @Override
     public void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
-        if(attackHandler.isUsingStrongAttack()) return;
+        /*if(attackHandler.isUsingStrongAttack()) return;
         String id = generateAttackAnimationID();
         if(id == null) return;
-        playAnimation(id, true);
+        playAnimation(id, true);*/
     }
 
 

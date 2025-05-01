@@ -73,6 +73,9 @@ public class SleeplessHorror extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        active.whenComplete((model, throwable) ->{
+            model.getAnimationHandler().playAnimation("hover", 0D, 0D, 1D, true);
+        });
         return new SleeplessHorrorGoal(e).model(active);
     }
 
