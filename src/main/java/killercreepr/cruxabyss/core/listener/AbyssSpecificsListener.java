@@ -1,9 +1,14 @@
 package killercreepr.cruxabyss.core.listener;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.location.DynamicLocation;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
@@ -14,6 +19,8 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
+import killercreepr.usurvive.core.entity.memory.SleeperHolder;
+import killercreepr.usurvive.core.util.RespawnUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -30,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.Map;
@@ -98,10 +106,30 @@ public class AbyssSpecificsListener implements Listener {
         if(b == null) return;
         CruxWorld world = CruxCore.inst().worldManager().getWorld(b.getWorld().key());
         if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
-        if(!(b.getBlockData() instanceof Bed)) return;
+        if(!(b.getBlockData() instanceof Bed bed)) return;
         event.setCancelled(true);
-        b.getWorld().createExplosion(b.getLocation(), 4f);
+
+        var pair = RespawnUtil.getFullBed(b, bed);
+        if(pair == null) return;
+        Location middle = getMiddleLocation(pair);
+        Crux.handlers().block().setType(pair.getFirst(), Material.AIR);
+        Crux.handlers().block().setType(pair.getSecond(), Material.AIR);
+        AbyssMob.SLEEPLESS_HORROR.spawn(middle);
+
+        //b.getWorld().createExplosion(b.getLocation(), 4f);
     }
+
+    public Location getMiddleLocation(Pair<Block,Block> pair){
+        Location loc = pair.getFirst().getLocation().toCenterLocation();
+        loc = CruxLoc.shiftToward(loc, pair.getSecond().getLocation().toCenterLocation(), 0.5D);
+
+        if(pair.getFirst().getBlockData() instanceof Bed bed){
+            loc.setDirection(bed.getFacing().getDirection().multiply(-1));
+        }
+
+        return loc;
+    }
+
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {

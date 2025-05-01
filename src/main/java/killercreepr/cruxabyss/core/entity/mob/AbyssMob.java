@@ -37,6 +37,8 @@ public interface AbyssMob extends CruxMob {
 
     CruxMob VILDER = REGISTRY.register(new Vilder());
 
+    CruxMob SLEEPLESS_HORROR = REGISTRY.register(new SleeplessHorror());
+
     CruxMob SCOURGER_BULLET = REGISTRY.register(new ScourgerBullet());
     CruxMob SCOURGER_BULLET_LARGE = REGISTRY.register(new ScourgerBulletLarge());
 

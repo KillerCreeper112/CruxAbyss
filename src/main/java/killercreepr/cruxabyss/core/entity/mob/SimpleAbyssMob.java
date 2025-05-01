@@ -75,10 +75,10 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
 
             Consumer<Entity> spawnFunction = spawnFunction(world, l);
             if(spawnFunction != null) spawnFunction.accept(e);
-            if(consumer != null) consumer.accept(e);
 
             //Mob goal
             load(e);
+            if(consumer != null) consumer.accept(e);
         });
     }
 
