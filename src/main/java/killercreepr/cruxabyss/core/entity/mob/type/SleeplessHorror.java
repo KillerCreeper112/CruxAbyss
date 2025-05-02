@@ -46,6 +46,9 @@ public class SleeplessHorror extends SimpleAbyssMob {
                 double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
                 ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(50D);
+                ee.getAttribute(Attribute.MOVEMENT_EFFICIENCY).setBaseValue(2D);
+                ee.getAttribute(Attribute.SAFE_FALL_DISTANCE).setBaseValue(1024D);
+                ee.getAttribute(Attribute.WATER_MOVEMENT_EFFICIENCY).setBaseValue(2D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
                 CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(movement));
             }
