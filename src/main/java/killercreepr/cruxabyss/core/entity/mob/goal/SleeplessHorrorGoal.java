@@ -20,7 +20,10 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -67,42 +70,48 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
                 @Override
                 public void onUse() {
                     CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.6D, CruxAttribute.Operation.MULTIPLY));
 
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
                 }
 
                 @Override
                 public int getHitTime() {
-                    return 9;
+                    return 10;
                 }
             }
         ), List.of());
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        playAnimation("hurt", false);
+    }
+
+
     @Override
     public boolean preAttemptAttack() {
-        return super.preAttemptAttack();
-        /*if(attackHandler.preAttemptAttack()){
+        if(attackHandler.preAttemptAttack()){
             return super.preAttemptAttack();
         }
-        return false;*/
+        return false;
     }
 
     @Override
     public void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
-        /*if(attackHandler.isUsingStrongAttack()) return;
+        if(attackHandler.isUsingStrongAttack()) return;
         String id = generateAttackAnimationID();
         if(id == null) return;
-        playAnimation(id, true);*/
+        playAnimation(id, true);
     }
 
 
@@ -129,7 +138,6 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
         if(target == null){
             if(hadTargetLastTick){
                 CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, targetSpeed);
-                //applyAnimation("walk", a -> a.setSpeed(1D));
             }
         }else{
             if(!hadTargetLastTick){
@@ -138,39 +146,17 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
                 ));
             }
         }
-        /*if(hasTarget){
-            if(isPlayingAnimation("walk")){
-                stopAnimation("walk", true);
-                playAnimation("vicious_run", false);
-            }else if(isPlayingAnimation("idle")){
-                stopAnimation("vicious_run");
-            }
-        }*/
         if(hasTarget == hadTargetLastTick) return;
         hadTargetLastTick = hasTarget;
-
-        /*if(hasTarget){
-            if(previousMoveProperty == null){
-                previousMoveProperty = getModel().getAnimationHandler().getDefaultProperty(ModelState.WALK);
-                getModel().getAnimationHandler().setDefaultProperty(new AnimationHandler.DefaultProperty(
-                    ModelState.WALK, "vicious_run", .2D, .2D, 1D
-                ));
-            }
-        }else{
-            if(previousMoveProperty != null){
-                getModel().getAnimationHandler().setDefaultProperty(previousMoveProperty);
-                previousMoveProperty = null;
-            }
-        }*/
     }
 
 
     protected final AnimationHandler.DefaultProperty WALK_VICIOUS_RUN = new AnimationHandler.DefaultProperty(
         ModelState.WALK, "vicious_run", .2D, .2D, 1D
     );
-    protected final AnimationHandler.DefaultProperty WALK_SWIM = new AnimationHandler.DefaultProperty(
+    /*protected final AnimationHandler.DefaultProperty WALK_SWIM = new AnimationHandler.DefaultProperty(
         ModelState.WALK, "swim", .2D, .2D, 1D
-    );
+    );*/
     protected final AnimationHandler.DefaultProperty WALK_NORMAL = new AnimationHandler.DefaultProperty(
         ModelState.WALK, "walk", .2D, .2D, 1D
     );
@@ -197,7 +183,7 @@ public class SleeplessHorrorGoal extends CruxMobModeledGoal implements Listener 
     public void tick() {
         animationPropertyTick();
         super.tick();
-        //attackHandler.tick();
+        attackHandler.tick();
         movementTick();
     }
 }

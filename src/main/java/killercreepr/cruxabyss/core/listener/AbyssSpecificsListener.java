@@ -115,6 +115,7 @@ public class AbyssSpecificsListener implements Listener {
         Crux.handlers().block().setType(pair.getFirst(), Material.AIR);
         Crux.handlers().block().setType(pair.getSecond(), Material.AIR);
         AbyssMob.SLEEPLESS_HORROR.spawn(middle);
+        CreateSound.sound(Sound.ENTITY_VEX_CHARGE, 0.6f).playAt(middle);
 
         //b.getWorld().createExplosion(b.getLocation(), 4f);
     }
