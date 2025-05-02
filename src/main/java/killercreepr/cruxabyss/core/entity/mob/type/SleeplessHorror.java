@@ -43,7 +43,7 @@ public class SleeplessHorror extends SimpleAbyssMob {
             }
 
             if(e instanceof LivingEntity ee){
-                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
+                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.45D;
                 ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(50D);
                 ee.getAttribute(Attribute.MOVEMENT_EFFICIENCY).setBaseValue(2D);
