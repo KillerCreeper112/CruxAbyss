@@ -45,7 +45,7 @@ public class SleeplessHorror extends SimpleAbyssMob {
             if(e instanceof LivingEntity ee){
                 double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
                 ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(30D, 50D));
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(50D);
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
                 CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(movement));
             }
@@ -56,7 +56,7 @@ public class SleeplessHorror extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(7D * (world == null ? 1D : world.getDifficulty())));
+                CruxAttributeModifier.baseModifier(8D * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.3D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-9));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
