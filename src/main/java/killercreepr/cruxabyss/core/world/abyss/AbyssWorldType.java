@@ -26,7 +26,7 @@ public class AbyssWorldType implements CruxWorldType {
 
         world.getWorldBorder().setCenter(0, 0);
         world.getWorldBorder().setSize(4096D);
-        world.setDifficulty(Difficulty.HARD);
+        world.setDifficulty(Difficulty.NORMAL);
 
         CruxWorld activeWorld = worldManager.getWorld(name);
         if(!(activeWorld instanceof AbyssWorld a)) throw new UnsupportedOperationException(name + " is not an AbyssWorld!");
