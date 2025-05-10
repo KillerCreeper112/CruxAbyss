@@ -86,7 +86,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
                     if(e instanceof Projectile proj){
                         proj.setShooter(mob);
                     }
-                    Vector vel = mob.getEyeLocation().getDirection().multiply(1.5f);
+                    Vector vel = mob.getEyeLocation().getDirection().multiply(CruxMath.random(1.5f, 3f));
                     e.setVelocity(vel);
                 });
             }
@@ -104,7 +104,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
                     if(e instanceof Projectile proj){
                         proj.setShooter(mob);
                     }
-                    Vector vel = mob.getEyeLocation().getDirection().multiply(1.5f);
+                    Vector vel = mob.getEyeLocation().getDirection().multiply(CruxMath.random(1.5f, 3f));
                     e.setVelocity(vel);
                 });
             }
