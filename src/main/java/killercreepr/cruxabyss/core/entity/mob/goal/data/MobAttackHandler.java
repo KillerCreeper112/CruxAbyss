@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.core.entity.mob.goal.data;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
@@ -69,6 +71,11 @@ public class MobAttackHandler {
         if(currentAttack != null) currentAttack.onFinish();
         currentAttack = null;
         CruxAttribute.removeModifiers(mob, STRONG_ATTACK_KEY);
+        for(Attribute a : RegistryAccess.registryAccess().getRegistry(RegistryKey.ATTRIBUTE)){
+            var instance = mob.getAttribute(a);
+            if(instance==null) continue;
+            instance.removeModifier(STRONG_ATTACK_KEY);
+        }
         /*CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
@@ -145,10 +152,14 @@ public class MobAttackHandler {
         return true;
     }
 
-    public void movementTick(){
+    public double getMovementSpeed(){
+        return mob.getAttribute(Attribute.MOVEMENT_SPEED).getValue();
+    }
+
+    /*public void movementTick(){
         double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
         mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
-    }
+    }*/
 
     public void cooldownAttacksTick(){
         if(isUsingStrongAttack()) return;
@@ -161,6 +172,6 @@ public class MobAttackHandler {
         if(goal.getTarget() != null && !cooldownAttacks.isEmpty()){
             cooldownAttacksTick();
         }
-        movementTick();
+        //movementTick();
     }
 }
