@@ -38,6 +38,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -315,6 +316,12 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         playAnimation(id, true);
     }*/
 
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if(event.getRightClicked().equals(mob)){
+            event.setCancelled(true);
+        }
+    }
 
     public String generateAttackAnimationID(){
         return "attack_" + CruxMath.random(1,3);

@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
+import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
@@ -13,7 +14,9 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +58,19 @@ public class AbyssCharredBones extends SimpleAbyssMob {
         setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, CruxAttributeModifier.baseModifier(12));
         setAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, CruxAttributeModifier.baseModifier(6));
         return map;
+    }
+
+    @Override
+    public void load(@NotNull Entity e) {
+        super.load(e);
+        if(!(e instanceof Mob mob)) return;
+        Crux.getServer().getMobGoals().getAllGoals(mob).forEach(goal ->{
+            switch (goal.getKey().getNamespacedKey().asString()){
+                case "minecraft:nearest_attackable", "minecraft:flee_sun", "minecraft:abstract_skeleton_melee" ->{
+                    Crux.getServer().getMobGoals().removeGoal(mob, goal.getKey());
+                }
+            }
+        });
     }
 
     @Override

@@ -54,7 +54,7 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(CruxMath.random(4D, 6D) *
+                CruxAttributeModifier.baseModifier(9D *
                         (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-5));

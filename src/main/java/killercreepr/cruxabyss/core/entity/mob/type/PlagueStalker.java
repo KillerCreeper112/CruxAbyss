@@ -16,11 +16,11 @@ import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class PlagueStalker extends SimpleAbyssMob {
+public class PlagueStalker extends SimpleAbyssMob implements Listener {
     public PlagueStalker() {
         super(Crux.key("plague_stalker"), EntityType.WOLF);
     }
@@ -77,8 +77,11 @@ public class PlagueStalker extends SimpleAbyssMob {
         if(!(e instanceof Mob mob)) return;
         //stop wolf from attacking skeletons
         Bukkit.getMobGoals().getAllGoals(mob).forEach(mobGoal -> {
-            if(!mobGoal.getKey().getNamespacedKey().equals(NamespacedKey.minecraft("nearest_attackable"))) return;
-            Bukkit.getMobGoals().removeGoal(mob, mobGoal.getKey());
+            switch (mobGoal.getKey().getNamespacedKey().asString()){
+                case "minecraft:nearest_attackable", "minecraft:melee_attack" ->{
+                    Bukkit.getMobGoals().removeGoal(mob, mobGoal.getKey());
+                }
+            }
         });
     }
 
@@ -93,4 +96,5 @@ public class PlagueStalker extends SimpleAbyssMob {
     public MobCategory[] getCategories() {
         return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL};
     }
+
 }
