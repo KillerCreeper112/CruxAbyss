@@ -247,7 +247,7 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 3, e -> CruxMob.is(e, mob)) < 6;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
         }

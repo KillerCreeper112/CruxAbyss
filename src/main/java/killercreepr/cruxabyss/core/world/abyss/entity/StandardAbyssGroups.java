@@ -8,6 +8,7 @@ import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
+import killercreepr.usurvive.core.world.entity.USurviveEntityGroups;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -158,5 +159,11 @@ public class StandardAbyssGroups {
         registry.register(EMBER_LEAPER);
         registry.register(TOXINTRAWL);
         registry.register(ABYSSAL_HUSK);
+
+        registry.register(USurviveEntityGroups.ELDRITCH_WASTES_HOSTILE);
+        registry.register(USurviveEntityGroups.ELDRITCH_WASTES_HOSTILE_NIGHT);
+        registry.register(USurviveEntityGroups.ELDRITCH_WASTES_PASSIVE);
+        registry.register(USurviveEntityGroups.STICK_BUG);
+        registry.register(USurviveEntityGroups.SCULK_BLIGHT);
     }
 }
