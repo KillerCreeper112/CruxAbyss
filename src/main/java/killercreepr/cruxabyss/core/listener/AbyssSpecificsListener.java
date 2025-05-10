@@ -10,6 +10,7 @@ import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.CruxAbyss;
@@ -23,9 +24,12 @@ import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.util.RespawnUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,8 +37,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -129,6 +135,63 @@ public class AbyssSpecificsListener implements Listener {
         }
 
         return loc;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDismount(EntityDismountEvent event) {
+        var e = event.getEntity();
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+        e.setFallDistance(event.getDismounted().getFallDistance());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityMount(EntityMountEvent event) {
+        var e = event.getEntity();
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(e.getWorld().key());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+        if(!(e instanceof LivingEntity living)) return;
+        float lastFallDistance = e.getFallDistance();
+        if(lastFallDistance <= 0f) return;
+        var attribute = living.getAttribute(Attribute.SAFE_FALL_DISTANCE);
+        if(attribute == null) return;
+        double safe = attribute.getValue();
+        if(lastFallDistance > safe){
+            float dmg = lastFallDistance - (float) safe;
+            if(dmg <= 0f) return;
+            living.damage(dmg, DamageSource.builder(DamageType.FALL).build());
+        }
+    }
+
+
+    @EventHandler(ignoreCancelled = true)
+    public void onVehicleMove(VehicleMoveEvent event) {
+        Location to = event.getTo();
+        CruxWorld world = CruxCore.inst().worldManager().getWorld(to.getWorld().key());
+        if(world == null || !AbyssWorldTypes.ABYSS.compare(world.get(CruxWorldsComponents.WORLD_TYPE))) return;
+        Location from = event.getFrom();
+        if(to.getY() >= from.getY()) return;
+        var vehicle = event.getVehicle();
+        if(vehicle.getPassengers().isEmpty()) return;
+        float fallDistance = vehicle.getFallDistance();
+        if(fallDistance <= 0f){
+            float lastFallDistance = CruxTag.get(vehicle, "last_fall_distance", PersistentDataType.FLOAT, 0f);
+            CruxTag.remove(vehicle, "last_fall_distance");
+            if(lastFallDistance <= 0f) return;
+            vehicle.getPassengers().forEach(e ->{
+                if(!(e instanceof LivingEntity living)) return;
+                var attribute = living.getAttribute(Attribute.SAFE_FALL_DISTANCE);
+                if(attribute == null) return;
+                double safe = attribute.getValue();
+                if(lastFallDistance > safe){
+                    float dmg = lastFallDistance - (float) safe;
+                    if(dmg <= 0f) return;
+                    living.damage(dmg, DamageSource.builder(DamageType.FALL).build());
+                }
+            });
+            return;
+        }
+        CruxTag.set(vehicle, "last_fall_distance", PersistentDataType.FLOAT, fallDistance);
     }
 
 

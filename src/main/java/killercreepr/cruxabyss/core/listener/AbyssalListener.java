@@ -43,6 +43,7 @@ public class AbyssalListener implements Listener {
         }
     }
 
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageHighest(EntityDamageEvent event) {
         Entity e = event.getEntity();
