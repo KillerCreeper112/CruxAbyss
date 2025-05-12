@@ -48,7 +48,7 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
                 mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(-999D);
                 mob.getAttribute(Attribute.KNOCKBACK_RESISTANCE).setBaseValue(.9);
                 mob.getAttribute(Attribute.JUMP_STRENGTH).setBaseValue(0);
-                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(30D, 40D));
+                mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(25D);
                 mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
                 mob.setSilent(true);
             }
