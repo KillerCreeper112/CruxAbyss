@@ -30,10 +30,10 @@ public class StandardAbyssGroups {
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(CruxMath.random(1, 100) <= 12) return false;
+            if(CruxMath.random(1, 100) <= 16) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return k.equals(BiomeManager.TOXIC_MIRE.key()) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+            return k.equals(BiomeManager.TOXIC_MIRE.key()) && getEntityAmountNearChunk(b.getChunk(), 4) < 12;
         }
     };
     public static final NaturalEntitySpawnGroup MOOSE = new NaturalSpawnPartGroup(6, 0f,
@@ -105,7 +105,7 @@ public class StandardAbyssGroups {
             if(b.getY() < 150) return false;
             if(!b.isEmpty()) return false;
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 16;
+            return BiomeManager.isToxicMireType(k) && getEntityAmountNearChunk(b.getChunk(), 4) < 10;
         }
     };
 

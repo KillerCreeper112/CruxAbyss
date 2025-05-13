@@ -148,6 +148,9 @@ public class CharredBiome extends GrimBiome {
             CruxBlock custom = AbyssBlocks.CHARRED_PLANKS.getBaseBlock();
             custom.setBlock(limitedRegion, x, y, z);
             return;
+        }else if(m == Material.VINE){
+            limitedRegion.setType(x,y,z, Material.AIR);
+            return;
         }
         if(isOre(m)) return;
         /*for(int adjX = 1; adjX < 2; adjX++){

@@ -123,6 +123,9 @@ public class ToxicMireBiome extends GrimBiome {
         }else if(m == Material.BAMBOO){
             AbyssBlocks.PLAGUE_STEM.setBlock(limitedRegion, x, y, z);
             return;
+        }else if(m == Material.VINE){
+            limitedRegion.setType(x,y,z, Material.AIR);
+            return;
         }
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         if(!b.isSolid()){
