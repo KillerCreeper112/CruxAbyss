@@ -1,8 +1,10 @@
 package killercreepr.cruxabyss.core.world.generation.biome;
 
+import com.destroystokyo.paper.MaterialTags;
 import killercreepr.cruxabyss.core.world.biome.BiomeManager;
 import killercreepr.cruxabyss.core.world.generation.populator.GrimPopulator;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
@@ -23,7 +25,20 @@ public class EldritchWastesBiome extends GrimBiome {
     public void accept(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
-        if(!b.isSolid() || b.getType() == Material.BEDROCK) return;
+        Material type = b.getType();
+        if(!b.isSolid() || type == Material.BEDROCK) return;
+
+        if(Tag.LOGS.isTagged(type) || Tag.LEAVES.isTagged(type)){
+            limitedRegion.setType(x, y, z, Material.AIR);
+
+            if(limitedRegion.isInRegion(x,y+1,z)){
+                Material aboveType = limitedRegion.getType(x,y+1,z);
+                if(aboveType == Material.SNOW || !limitedRegion.getBlockState(x,y+1,z).getBlock().isSolid()){
+                    limitedRegion.setType(x, y+1, z, Material.AIR);
+                }
+            }
+            return;
+        }
     }
 
 
