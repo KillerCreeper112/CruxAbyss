@@ -1,7 +1,10 @@
 package killercreepr.cruxabyss.core.listener;
 
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
+import killercreepr.cruxabyss.core.entity.mob.goal.PlagueTyrantGoal;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
@@ -10,12 +13,16 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,8 +48,8 @@ public class AbyssOutpostListener implements Listener {
         StructureWorldModule module = crux.getModule(StructureWorldModule.class);
         if(module==null) return;
         //Vector vec = b.getLocation().toVector();
-        StoredStructure stored = module.getFirstStoredAt(
-            StoredStructure.class, b, check ->{
+        StoredStructure stored = CruxCollection.getFirst(module.getStored(
+            StoredStructure.class, check ->{
                 if(!check.has(AbyssComponents.ABYSS_OUTPOST_DATA)) return false;
                 AbyssOutpostData data = check.get(AbyssComponents.ABYSS_OUTPOST_DATA);
                 if(!(data.getTickedOutpostUpgrade(AbyssOutpostUpgrades.ABYSSAL_RECALL) instanceof ActiveAbyssalRecallUpgrade upgrade)) return false;
@@ -50,7 +57,7 @@ public class AbyssOutpostListener implements Listener {
                 /*BoundingBox box = check.getOrDefault(StoredStructureComponents.OUTER_BOX, check.getBoundingBox());
                 return box.contains(vec);*/
             }
-        );
+        ));
         if(stored==null) return;
         AbyssOutpostData data = stored.get(AbyssComponents.ABYSS_OUTPOST_DATA);
         if(!(data.getTickedOutpostUpgrade(AbyssOutpostUpgrades.ABYSSAL_RECALL) instanceof ActiveAbyssalRecallUpgrade upgrade)) return;
@@ -69,6 +76,29 @@ public class AbyssOutpostListener implements Listener {
         }
         upgrade.addRespawnAnchor(upgrade.wrapAnchor(pos));
         Lang.ABYSS_OUTPOST_UPGRADE_RECALL_ADDED.use(p);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityDeath(EntityDeathEvent event) {
+        if(!(event.getEntity() instanceof Mob mob)) return;
+        var goal = CruxGoalUtil.getGoal(mob, PlagueTyrantGoal.class);
+        if(goal == null) return;
+        var pos = goal.getHomePosition();
+        if(pos == null) return;
+
+        var worldKey = goal.getHomeWorld();
+        if(worldKey == null) return;
+        var world = CruxCore.core().worldManager().getWorld(worldKey);
+        if(world == null) return;
+
+        var module = world.getModule(StructureWorldModule.class);
+        if(module == null) return;
+
+        var structure = module.getFirstStoredAt(StoredStructure.class, pos);
+        if(structure == null) return;
+        var data = structure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+        if(data == null) return;
+        data.setDefeatedPlagueTyrant(true);
     }
 
 }

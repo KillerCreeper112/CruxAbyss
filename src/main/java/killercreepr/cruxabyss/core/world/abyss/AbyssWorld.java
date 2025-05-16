@@ -9,6 +9,8 @@ import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxKey;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.api.event.AbyssOutpostCaptureEvent;
+import killercreepr.cruxabyss.api.structure.outpost.OutpostSnapshotData;
+import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.api.world.module.WorldEventsModule;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
@@ -42,8 +44,6 @@ import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntityWorldSpawner
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.world.generation.OreGenerator;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -62,7 +62,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
-    public static final Map<Key, List<AbyssOutpostData>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
+    public static final Map<Key, List<OutpostSnapshot>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
 
     protected final Map<UUID, PlayerData> PLAYER_DATA = new HashMap<>();
     public PlayerData getOrCreateData(Player p){
@@ -139,12 +139,14 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public void onDelete() {
         StructureWorldModule module = getModule(StructureWorldModule.class);
         if(module != null){
-            List<AbyssOutpostData> abyssOwners = new ArrayList<>();
+            List<OutpostSnapshot> abyssOwners = new ArrayList<>();
             module.getStored(stored -> stored.has(AbyssComponents.ABYSS_OUTPOST_DATA)).forEach(stored ->{
                 AbyssOutpostData data = stored.get(AbyssComponents.ABYSS_OUTPOST_DATA);
                 Objects.requireNonNull(data);
                 if(data.owner == null) return;
-                abyssOwners.add(data);
+
+                var snapshot = new OutpostSnapshot(data);
+                abyssOwners.add(snapshot);
             });
             if(abyssOwners.isEmpty()){
                 WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(key());
@@ -371,6 +373,36 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
                 falling.setVelocity(dir);
                 if (CruxBlocksRegistries.BLOCK.getByBlockData(data) != null) falling.setCancelDrop(true);
             });
+        }
+    }
+
+    public static class OutpostSnapshot {
+        protected final AbyssOutpostData data;
+        protected final Map<OutpostUpgrade, OutpostSnapshotData> snapshotData;
+
+        public OutpostSnapshot(AbyssOutpostData data, Map<OutpostUpgrade, OutpostSnapshotData> snapshotData) {
+            this.data = data;
+            this.snapshotData = snapshotData;
+        }
+        public OutpostSnapshot(AbyssOutpostData data) {
+            this.data = data;
+            this.snapshotData = new HashMap<>();
+            data.getUpgrades().forEach((up, level) ->{
+                var ticked = data.getTickedOutpostUpgrade(up);
+                if(ticked == null) return;
+
+                var snapshotData = ticked.createSnapshotData();
+                if(snapshotData == null) return;
+                this.snapshotData.put(up, snapshotData);
+            });
+        }
+
+        public AbyssOutpostData getData() {
+            return data;
+        }
+
+        public Map<OutpostUpgrade, OutpostSnapshotData> getSnapshotData() {
+            return snapshotData;
         }
     }
 

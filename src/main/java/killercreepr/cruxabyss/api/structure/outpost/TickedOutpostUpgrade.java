@@ -13,4 +13,12 @@ public interface TickedOutpostUpgrade extends ManagedTickedTime {
     default @Nullable FileElement serialize(@NotNull FileContext<?> ctx){
         return null;
     }
+
+    default @Nullable OutpostSnapshotData createSnapshotData(){
+        return null;
+    }
+
+    default void acceptSnapshot(@NotNull OutpostSnapshotData data){
+
+    }
 }

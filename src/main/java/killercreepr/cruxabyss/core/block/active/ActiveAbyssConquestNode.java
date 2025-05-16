@@ -342,7 +342,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         if(outpost().getData().owner == null){
             return;
         }
-        if(visualTick % 15 != 0) return;
+        if(visualTick % 20 != 0) return;
         visualTick = 0;
         new ParticleBuilder(Particle.WAX_ON)
             .offset(.5, .5, .5)
@@ -427,7 +427,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         if(!event.getAction().isRightClick()) return Event.Result.DENY;
         if(outpost() == null) return Event.Result.DENY;
         Player p = event.getPlayer();
-        if(cooldown > 0){
+        if(cooldown > 0 && p.getGameMode() != GameMode.CREATIVE){
             if(cooldownTick < 15){
                 return Event.Result.DENY;
             }
@@ -473,6 +473,19 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
                 p.sendMessage("Block must be placed in an abyss outpost.");
                 return Event.Result.DENY;
             }
+
+            if(p.getGameMode() != GameMode.CREATIVE && !outpost.getData().hasOwner() && !outpost.getData().isOwner(p.getUniqueId())){
+                if(!outpost.getData().hasDefeatedMobsToCapture()){
+                    p.sendMessage(Crux.format().deserialize(
+                        "<red>Something is preventing you from capturing the outpost."
+                    ));
+                    p.sendMessage(Crux.format().deserialize(
+                        "  <dark_gray>- <gray>Defeated Plague Tyrant <red>0/1"
+                    ));
+                    return Event.Result.DENY;
+                }
+            }
+
             user = new WeakReference<>(p);
             expToTakeEachTick = (int) Math.ceil((float) requiredExperience / (float) getMaxTime(p, p.getUniqueId().equals(outpost().getData().owner)));
             if(p.getGameMode()== GameMode.CREATIVE){

@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.structure.outpost.upgrade.active;
 
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
+import killercreepr.cruxabyss.api.structure.outpost.OutpostSnapshotData;
 import killercreepr.cruxabyss.core.menu.OutpostLockerMenu;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.OutpostLockerUpgrade;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-public class ActiveOutpostLockerUpgrade extends SimpleActiveOutpostUpgrade {
+public class ActiveOutpostLockerUpgrade extends SimpleActiveOutpostUpgrade implements OutpostSnapshotData {
     protected final AbyssOutpostData data;
     public ActiveOutpostLockerUpgrade(int level, AbyssOutpostData data) {
         super(level);
@@ -44,6 +45,19 @@ public class ActiveOutpostLockerUpgrade extends SimpleActiveOutpostUpgrade {
         OutpostLockerMenu menu = new OutpostLockerMenu(this);
         menu.load();
         return !menu.open(entity).isCancelled();
+    }
+
+    @Nullable
+    @Override
+    public OutpostSnapshotData createSnapshotData() {
+        return this;
+    }
+
+    @Override
+    public void acceptSnapshot(@NotNull OutpostSnapshotData data) {
+        if(!(data instanceof ActiveOutpostLockerUpgrade merge)) throw new IllegalArgumentException("Cannot accept " + data);
+
+        this.storage = merge.storage;
     }
 
     @Override

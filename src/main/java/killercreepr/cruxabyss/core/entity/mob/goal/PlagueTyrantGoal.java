@@ -10,14 +10,21 @@ import com.ticxo.modelengine.api.mount.controller.MountControllerTypes;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.math.BlockPos;
+import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.CruxedBoundingBox;
 import killercreepr.cruxabyss.api.entity.mob.goal.OutpostTargeterGoal;
+import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.goal.data.MobAttackHandler;
 import killercreepr.cruxabyss.core.entity.mob.goal.data.StrongMobAttack;
-import killercreepr.cruxabyss.core.entity.mob.goal.vilder.VilderGoal;
+import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
+import killercreepr.cruxabyss.core.structure.outpost.upgrade.active.ActiveAbyssalRecallUpgrade;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -25,9 +32,10 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -349,6 +357,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         return super.findAndSetTarget(targetCheck);
     }
     protected StoredStructure targetOutpost;
+    protected BlockPos homePosition;
     @Override
     public StoredStructure getOutpostTarget() {
         return targetOutpost;
@@ -432,11 +441,52 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         playAnimation(should.getAnimation(), false);
     }
 
+    public Key getHomeWorld(){
+        return CruxTag.get(mob, "home_world", CruxPersistence.CRUX_KEY, null);
+    }
+
+    public BlockPos getHomePosition() {
+        if(homePosition == null){
+            homePosition = CruxTag.get(mob, "home_position", CruxPersistence.BLOCK_POS, null);
+        }
+        return homePosition;
+    }
+
+    protected int findHomeCooldown = 0;
+    public void homeTick(){
+        if(findHomeCooldown > 0){
+            findHomeCooldown--;
+            return;
+        }
+
+        if(homePosition != null) return;
+        homePosition = CruxTag.get(mob, "home_position", CruxPersistence.BLOCK_POS, null);
+        if(homePosition != null) return;
+        findHomeCooldown = CruxMath.random(6, 16);
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(mob.getWorld().key());
+        if(crux == null) return;
+        var module = crux.getModule(StructureWorldModule.class);
+        if(module == null) return;
+        Vector vec = mob.getLocation().toVector();
+        StoredStructure stored = module.getFirstStoredAt(
+            StoredStructure.class, mob.getLocation().getBlock(), check ->{
+                if(!check.has(AbyssComponents.ABYSS_OUTPOST_DATA)) return false;
+                BoundingBox box = check.getOrDefault(StoredStructureComponents.OUTER_BOX, check.getBoundingBox());
+                return box.contains(vec);
+            }
+        );
+        if(stored == null) return;
+        homePosition = BlockPos.asBlock(stored.getPosition());
+        CruxTag.set(mob, "home_position", CruxPersistence.BLOCK_POS, homePosition);
+        CruxTag.set(mob, "home_world", CruxPersistence.CRUX_KEY, mob.getWorld().key());
+    }
+
     protected static final Key targetSpeed = Crux.key("target_speed");
     protected boolean hadTargetLastTick = false;
     protected boolean swungLastTick = false;
     @Override
     public void tick() {
+        homeTick();
         animationPropertyTick();
         super.tick();
         attackHandler.tick();

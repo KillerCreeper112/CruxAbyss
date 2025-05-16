@@ -28,7 +28,7 @@ public class AbyssOutpostSetLocationList extends InstantLocationSetListStructure
     @Override
     public void onComplete(World world,Chunk chunk) {
         super.onComplete(world, chunk);
-        List<AbyssOutpostData> previousOwners = AbyssWorld.WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(world.key());
+        List<AbyssWorld.OutpostSnapshot> previousOwners = AbyssWorld.WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(world.key());
         if(previousOwners == null || previousOwners.isEmpty()) return;
 
         CruxWorld crux = CruxCore.core().worldManager().getWorld(world.key());
@@ -57,13 +57,29 @@ public class AbyssOutpostSetLocationList extends InstantLocationSetListStructure
         Collections.shuffle(dataList);
 
         int index = -1;
-        for(var oldData : previousOwners){
+        for(var oldSnapshot : previousOwners){
             index++;
             if(index >= dataList.size()) break;
             AbyssOutpostData data = dataList.get(index);
+
+            AbyssOutpostData oldData = oldSnapshot.getData();
             data.owner = oldData.owner;
             data.timeCaptured = oldData.timeCaptured;
-            oldData.getUpgrades().forEach(data::setUpgradeLevel);
+            data.timeLastInvasion = oldData.timeLastInvasion;
+            data.timeInvaded = oldData.timeInvaded;
+            data.defeatedPlagueTyrant = oldData.defeatedPlagueTyrant;
+            oldData.getUpgrades().forEach((up, level) ->{
+                data.setUpgradeLevel(up, level);
+
+                var upgradeSnapshot = oldSnapshot.getSnapshotData().get(up);
+                if(upgradeSnapshot == null) return;
+                var ticked = data.getTickedOutpostUpgrade(up);
+                if(ticked == null){
+                    Crux.logError("Upgrade: " + up.key() + " has snapshot data but there is no ticked upgrade!");
+                    return;
+                }
+                ticked.acceptSnapshot(upgradeSnapshot);
+            });
         }
     }
 }

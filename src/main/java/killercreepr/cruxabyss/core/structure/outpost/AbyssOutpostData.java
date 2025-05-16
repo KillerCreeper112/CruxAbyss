@@ -51,10 +51,19 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     protected final Map<OutpostUpgrade, TickedOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
     protected static final int tickRate = 1;
     protected final StoredStructure stored;
+    public boolean defeatedPlagueTyrant;
 
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;
         this.stored.set(StructureComponents.BLOCK_PLACE_INSIDE, new AbyssOutpostPlacedBlockComponent());
+    }
+
+    public void setDefeatedPlagueTyrant(boolean defeatedPlagueTyrant) {
+        this.defeatedPlagueTyrant = defeatedPlagueTyrant;
+    }
+
+    public boolean hasDefeatedMobsToCapture(){
+        return defeatedPlagueTyrant;
     }
 
     public void onBlockPlace(BlockPlaceEvent event){
@@ -96,6 +105,10 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     public boolean isMemberOrOwner(UUID uuid){
         if(owner == null) return false;
         return uuid.equals(owner) || isMember(uuid);
+    }
+
+    public boolean hasOwner(){
+        return owner != null;
     }
 
     public boolean isOwner(UUID uuid){
@@ -152,6 +165,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         if(timeLastInvasion != null){
             o.addProperty("time_last_invasion", timeLastInvasion);
         }
+        o.addProperty("defeated_plague_tyrant", defeatedPlagueTyrant);
     }
 
     public boolean wasInvadedWithin(int ticks){

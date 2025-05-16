@@ -64,6 +64,9 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
                 }
             });
         }
+        if(o.has("defeated_plague_tyrant")){
+            outpostData.defeatedPlagueTyrant = o.getOrDefaultObject(Boolean.class, "defeated_plague_tyrant", false);
+        }
 
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
     }

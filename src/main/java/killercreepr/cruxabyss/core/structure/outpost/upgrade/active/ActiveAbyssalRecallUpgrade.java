@@ -3,7 +3,9 @@ package killercreepr.cruxabyss.core.structure.outpost.upgrade.active;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.component.parser.DataComponentDecoder;
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.structure.BlockPlaceInsideModule;
+import killercreepr.cruxabyss.api.structure.outpost.OutpostSnapshotData;
 import killercreepr.cruxabyss.api.values.AbyssOutpostUpgradesCfg;
 import killercreepr.cruxabyss.core.CruxAbyss;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -20,11 +22,10 @@ import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.TeleportBuildContext;
 import killercreepr.cruxteleport.api.teleport.module.TeleportModule;
 import killercreepr.usurvive.core.util.RespawnUtil;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,16 +34,81 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade implements BlockPlaceInsideModule {
+    public static class SnapshotBlock{
+        public final CruxPosition relativePosition;
+        public final BlockState blockState;
+
+        public SnapshotBlock(CruxPosition relativePosition, BlockState blockState) {
+            this.relativePosition = relativePosition;
+            this.blockState = blockState;
+        }
+    }
+
+    public static class SnapshotData implements OutpostSnapshotData{
+        public final List<SnapshotBlock> anchors;
+
+        public SnapshotData(List<SnapshotBlock> anchors) {
+            this.anchors = anchors;
+        }
+    }
+
     protected final AbyssOutpostData data;
     public ActiveAbyssalRecallUpgrade(int level, AbyssOutpostData data) {
         super(level);
         this.data = data;
+    }
+
+    @Nullable
+    @Override
+    public OutpostSnapshotData createSnapshotData() {
+        List<SnapshotBlock> anchors = new ArrayList<>();
+        getRespawnAnchors().forEach(anchor ->{
+            Block block = anchor.block();
+            if(block == null){
+                Crux.logError("AbyssRecallAnchor is null! " + anchor.getPosition());
+                return;
+            }
+            if(anchor.isDestroyed()){
+                return;
+            }
+
+            CruxPosition blockPos = anchor.getPosition();
+            CruxPosition centerStructurePos = data.getStored().getPosition();
+
+            CruxPosition relativePos = blockPos.subtract(centerStructurePos);
+
+            SnapshotBlock snapBlock = new SnapshotBlock(relativePos, block.getState().copy());
+            anchors.add(snapBlock);
+        });
+        if(anchors.isEmpty()) return null;
+        return new SnapshotData(anchors);
+    }
+
+    @Override
+    public void acceptSnapshot(@NotNull OutpostSnapshotData data) {
+        if(!(data instanceof SnapshotData merge)) return;
+        World world = this.data.getStored().getChunk().toBukkitWorld();
+        if(world == null){
+            Crux.logError("Cannot place abyss recall anchors! World is null: " + this.data.getStored().getChunk().worldKey());
+            return;
+        }
+        merge.anchors.forEach(block ->{
+            CruxPosition pos = this.data.getStored().getPosition()
+                .add(block.relativePosition);
+
+            Block b = pos.getBlock(world);
+            var state = block.blockState;
+            Crux.handlers().block().setType(b, state.getType());
+            b.setBlockData(state.getBlockData());
+            state.copy(b.getLocation()).update();
+
+
+            AbyssRecallAnchor recallAnchor = AbyssRecallAnchor.abyssRecallAnchor(pos, this.data);
+            addRespawnAnchor(recallAnchor);
+        });
     }
 
     public int getMaxRespawnAnchors(){
