@@ -223,6 +223,12 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         int canTake = Math.min(totalExp, expToTakeEachTick);
         p.setExperienceLevelAndProgress(Math.max(0, totalExp - canTake));
         experienceGiven += canTake;
+
+        if(progress == 1 && isDeactivating(p, isOutpostOwner)){
+            Lang.ABYSS_CONQUEST_NODE_DEACTIVATE_START.use(p,
+                TagContainer.merged().hook(outpost)
+            );
+        }
         return true;
     }
 

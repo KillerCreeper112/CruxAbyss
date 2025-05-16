@@ -76,6 +76,15 @@ public class StoredAbyssOutpostTags implements ObjectTag<AbyssOutpostData> {
             .add(Tag.string("time_last_invasion", (args, ctx) ->{
                 return (object.timeLastInvasion == null ? 0L : object.timeLastInvasion) + "";
             }))
+            .add(Tag.string("x", (args, ctx) ->{
+                return object.getStored().getPosition().x() + "";
+            }))
+            .add(Tag.string("y", (args, ctx) ->{
+                return object.getStored().getPosition().y() + "";
+            }))
+            .add(Tag.string("z", (args, ctx) ->{
+                return object.getStored().getPosition().z() + "";
+            }))
             ;
     }
 }

@@ -18,6 +18,12 @@ public class Lang {
         lang = l;
         return l;
     }
+    public static final Msg ABYSS_CONQUEST_NODE_DEACTIVATE_START = create(
+        Communicator.builder()
+            .chat("<#F0D941>You are deactivating <active_abyss_outpost_data/owner_name>'s outpost.")
+            //.sound(CreateSound.sound(Sound.BLOCK_NOTE_BLOCK_BANJO))
+            .build()
+    );
 
     public static final Msg ABYSS_CONQUEST_NODE_TAKING = create(
         Communicator.builder()
