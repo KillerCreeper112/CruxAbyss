@@ -94,6 +94,7 @@ import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
 import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
 import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
+import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.CruxStructuresModule;
 import killercreepr.cruxstructures.core.config.FileCfgStructureGen;
 import killercreepr.cruxstructures.core.config.FileInstantLocationSetListStructureGen;
@@ -106,10 +107,14 @@ import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
+import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -331,6 +336,63 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     public void disabled() {
         super.disabled();
     }
+
+    public void onComplete(World world, Chunk chunk) {
+        List<AbyssWorld.OutpostSnapshot> previousOwners = AbyssWorld.WORLD_TO_ABYSS_OUTPOST_OWNERS.remove(world.key());
+        if(previousOwners == null || previousOwners.isEmpty()) return;
+
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(world.key());
+        if(crux == null) return;
+
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        if(module == null) return;
+
+        List<AbyssOutpostData> dataList = new ArrayList<>();
+        module.getStored(stored -> stored.has(AbyssComponents.ABYSS_OUTPOST_DATA)).forEach(stored ->{
+            AbyssOutpostData data = stored.get(AbyssComponents.ABYSS_OUTPOST_DATA);
+            Objects.requireNonNull(data);
+            dataList.add(data);
+        });
+        if(dataList.isEmpty()){
+            Crux.log(Level.WARNING, world.getName() + " abyss world had previous outpost owners but no abyss outposts were generated!");
+            return;
+        }
+        if(dataList.size() < previousOwners.size()){
+            Crux.log(Level.WARNING, world.getName() + " abyss world had previous outpost owners but the generated abyss outposts that were generated is less than the previous owner amount!" +
+                " PreviousOwners=" + previousOwners.size() + ", AbyssOutposts=" + dataList.size());
+            Crux.log(Level.WARNING, world.getName() + " abyss world... Attempting to set previous owners anyway.");
+        }
+
+        Collections.shuffle(previousOwners);
+        Collections.shuffle(dataList);
+
+        int index = -1;
+        for(var oldSnapshot : previousOwners){
+            index++;
+            if(index >= dataList.size()) break;
+            AbyssOutpostData data = dataList.get(index);
+
+            AbyssOutpostData oldData = oldSnapshot.getData();
+            data.owner = oldData.owner;
+            data.timeCaptured = oldData.timeCaptured;
+            data.timeLastInvasion = oldData.timeLastInvasion;
+            data.timeInvaded = oldData.timeInvaded;
+            data.defeatedPlagueTyrant = oldData.defeatedPlagueTyrant;
+            oldData.getUpgrades().forEach((up, level) ->{
+                data.setUpgradeLevel(up, level);
+
+                var upgradeSnapshot = oldSnapshot.getSnapshotData().get(up);
+                if(upgradeSnapshot == null) return;
+                var ticked = data.getTickedOutpostUpgrade(up);
+                if(ticked == null){
+                    Crux.logError("Upgrade: " + up.key() + " has snapshot data but there is no ticked upgrade!");
+                    return;
+                }
+                ticked.acceptSnapshot(upgradeSnapshot);
+            });
+        }
+    }
+
 
     @Override
     public void reload() {

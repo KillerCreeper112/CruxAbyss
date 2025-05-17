@@ -52,7 +52,7 @@ public class Toxicator extends SimpleAbyssMob {
                 mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(36D, 64D));
                 mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
                 mob.getAttribute(Attribute.ATTACK_DAMAGE).setBaseValue(
-                    9D * (world == null ? 1D : world.getDifficulty())
+                    7.5D * (world == null ? 1D : world.getDifficulty())
                 );
                 mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()*1.1);
                 mob.getEquipment().setItemInMainHand(null);

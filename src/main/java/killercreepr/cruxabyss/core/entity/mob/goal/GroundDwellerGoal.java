@@ -28,22 +28,22 @@ public class GroundDwellerGoal extends CruxMobModeledGoal {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_HOGLIN_AMBIENT, 1.6f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_AMBIENT, 0.4f, 1.6f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_HOGLIN_ATTACK, 1.6f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_ATTACK, 0.4f, 1.6f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_HOGLIN_HURT, 1.6f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_HURT, 0.4f, 1.6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_HOGLIN_DEATH, 2f);
+                return CreateSound.sound(Sound.ENTITY_HOGLIN_DEATH, 0.4f, 2f);
             }
         });
     }

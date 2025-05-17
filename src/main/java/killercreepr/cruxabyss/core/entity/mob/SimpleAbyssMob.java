@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
@@ -36,6 +37,15 @@ public class SimpleAbyssMob extends SimpleCruxMob implements AbyssMob {
     public SimpleAbyssMob(@NotNull Key key, @NotNull EntityType spawnType) {
         super(key);
         this.spawnType = spawnType;
+    }
+
+    public void applyWhenCompleteModel(Mob mob, CompletableFuture<?> future){
+        future.whenComplete((model, throwable) ->{
+            onModelApplied(mob);
+        });
+    }
+
+    public void onModelApplied(Mob mob){
     }
 
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l){ return null; }

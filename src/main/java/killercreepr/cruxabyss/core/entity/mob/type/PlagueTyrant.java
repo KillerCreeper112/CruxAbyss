@@ -61,7 +61,6 @@ public class PlagueTyrant extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.85D));
         addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(8D));
         addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(4D));
         return map;
@@ -71,6 +70,15 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + 1D
+        ));
     }
 
     @Override

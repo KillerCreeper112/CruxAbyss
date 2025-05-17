@@ -55,12 +55,20 @@ public class AbyssalHusk extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(9.5D * (world == null ? 1D : world.getDifficulty())));
+                CruxAttributeModifier.baseModifier(7D * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.3D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-9));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2D));
         return map;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .5D
+        ));
     }
 
     @Override
@@ -72,6 +80,7 @@ public class AbyssalHusk extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         return new AbyssalHuskGoal(e).model(active);
     }
 

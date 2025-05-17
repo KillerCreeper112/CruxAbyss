@@ -136,7 +136,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
 
     @Override
-    public void onDelete() {
+    public void onPreDelete() {
         StructureWorldModule module = getModule(StructureWorldModule.class);
         if(module != null){
             List<OutpostSnapshot> abyssOwners = new ArrayList<>();
@@ -155,6 +155,11 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             }
         }
 
+        super.onDelete();
+    }
+
+    @Override
+    public void onDelete() {
         DataFile file = getWorldFile(false);
         if(file != null) file.delete();
 

@@ -51,15 +51,23 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .6D
+        ));
+    }
+
+    @Override
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(9D *
+                CruxAttributeModifier.baseModifier(7D *
                         (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-5));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(20));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(1.4D));
         return map;
     }
 
@@ -67,6 +75,7 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new DesignEntity(e)
             .setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         return new GroundDwellerGoal(e).model(active);
     }
 

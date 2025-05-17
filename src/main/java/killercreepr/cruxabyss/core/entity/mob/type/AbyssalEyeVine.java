@@ -62,11 +62,19 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
                 CruxAttributeModifier.baseModifier(6D *
                         (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-5));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(20));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.2D));
         addAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, CruxAttributeModifier.baseModifier(9999));
         return map;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .75D
+        ));
     }
 
     @Override
@@ -75,6 +83,7 @@ public class AbyssalEyeVine extends SimpleAbyssMob {
         CompletableFuture<ActiveModel> active = new DesignEntity(e)
             .setBaseEntityVisible(false)
             .getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         return new AbyssalEyeVineGoal(e).model(active);
     }
 

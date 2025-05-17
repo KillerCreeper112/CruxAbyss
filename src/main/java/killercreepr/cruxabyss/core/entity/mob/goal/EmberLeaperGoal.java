@@ -40,18 +40,18 @@ public class EmberLeaperGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_SQUISH, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_SQUISH, 0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
                 updateStats();
-                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_HURT, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_HURT, 0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_DEATH, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_DEATH, 0.4f, 1.5f);
             }
         });
     }

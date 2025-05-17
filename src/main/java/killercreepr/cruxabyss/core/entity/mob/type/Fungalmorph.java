@@ -57,10 +57,18 @@ public class Fungalmorph extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 CruxAttributeModifier.baseModifier(7D * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.3D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-9));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-13));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2D));
         return map;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .8D
+        ));
     }
 
     @Override
@@ -72,6 +80,7 @@ public class Fungalmorph extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         return new FungalmorphGoal(e).model(active);
     }
 

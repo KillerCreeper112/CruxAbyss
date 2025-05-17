@@ -53,9 +53,8 @@ public class Plaguewing extends SimpleAbyssMob {
                 CruxAttributeModifier.baseModifier(7D *
                         (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-9));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(CruxMath.random(10, 20)));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(1.8D));
         return map;
     }
 
@@ -63,6 +62,15 @@ public class Plaguewing extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .6D
+        ));
     }
 
     @Override
@@ -74,6 +82,7 @@ public class Plaguewing extends SimpleAbyssMob {
             animation.playAnimation("hover", 0D, 0D, 1D, true);
             animation.playAnimation("wings_flap", 0D, 0D, 1D, true);
         });
+        applyWhenCompleteModel(e, active);
         return new PlaguewingGoal(e).model(active);
     }
 

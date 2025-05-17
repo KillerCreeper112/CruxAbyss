@@ -13,6 +13,7 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
+import net.minecraft.world.entity.animal.Wolf;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -54,10 +55,18 @@ public class Toxintrawl extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
             CruxAttributeModifier.baseModifier(12D * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.35D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-14));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(-3));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(5D));
         return map;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + 1.6D
+        ));
     }
 
     @Override
@@ -69,6 +78,7 @@ public class Toxintrawl extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         ToxintrawlGoal goal = new ToxintrawlGoal(e);
         goal.model(active);
         return goal;

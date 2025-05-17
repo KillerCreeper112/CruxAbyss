@@ -65,9 +65,8 @@ public class PlagueStalker extends SimpleAbyssMob implements Listener {
                 CruxAttributeModifier.baseModifier(7D *
                         (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-14));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.6D));
         return map;
     }
 
@@ -86,9 +85,19 @@ public class PlagueStalker extends SimpleAbyssMob implements Listener {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .8D
+        ));
+    }
+
+    @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new DesignEntity(e)
             .setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         return new PlagueStalkerGoal(e).model(active);
     }
 

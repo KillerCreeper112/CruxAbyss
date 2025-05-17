@@ -39,7 +39,7 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, .6f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 0.4f, .6f);
             }
 
             /*@Override
@@ -59,12 +59,12 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_HURT, .6f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_HURT, 0.4f, .6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_DEATH, .6f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_DEATH, 0.4f, .6f);
             }
         });
     }

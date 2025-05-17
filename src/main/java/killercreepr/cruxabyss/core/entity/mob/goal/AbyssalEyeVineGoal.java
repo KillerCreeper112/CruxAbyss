@@ -30,22 +30,22 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK, 0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK, 0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_SLIME_DEATH, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_DEATH, 0.4f, 1.5f);
             }
         });
     }
@@ -130,7 +130,7 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
         if(strongAttack > 0){
             strongAttack--;
             //animation hit time at 7 ticks
-            if(strongAttack == 7){
+            if(strongAttack == 16){
                 if(CruxMath.hasOccurredWithin(lastHitTarget, 20)) return;
                 lastHitTarget = System.currentTimeMillis();
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
@@ -144,7 +144,7 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
                     Crux.key("strong_attack"));
                 hit(true, target);
                 CruxAttribute.removeModifiers(mob, Crux.key("strong_attack"));
-                setAttackCooldown(CruxMath.random(20, 40));
+                setAttackCooldown(CruxMath.random(30, 60));
             }
             return;
         }
@@ -157,7 +157,7 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
         if(range <= 0D) return;
         double distance = getDistanceFromTarget();
         if(distance <= (range*1.5)){//7
-            strongAttack = 11; //animation time
+            strongAttack = 20; //animation time
             playAnimation("strong_attack", true);
             strongAttackCooldown = CruxMath.random(95, 130);
         }

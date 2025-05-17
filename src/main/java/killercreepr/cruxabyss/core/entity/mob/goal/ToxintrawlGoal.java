@@ -22,22 +22,22 @@ public class ToxintrawlGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_STRIDER_AMBIENT, .75f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_AMBIENT, 0.4f, .75f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_STRIDER_STEP, 1.5f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_STEP, 0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_STRIDER_HURT, .75f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_HURT, 0.4f, .75f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_STRIDER_DEATH, .6f);
+                return CreateSound.sound(Sound.ENTITY_STRIDER_DEATH, 0.4f, .6f);
             }
         });
     }

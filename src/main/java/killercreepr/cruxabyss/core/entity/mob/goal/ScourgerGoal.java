@@ -36,7 +36,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_PILLAGER_AMBIENT, .6f);
+                return CreateSound.sound(Sound.ENTITY_PILLAGER_AMBIENT, 0.4f, .6f);
             }
 
             /*@Override
@@ -46,12 +46,12 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_PILLAGER_HURT, .6f);
+                return CreateSound.sound(Sound.ENTITY_PILLAGER_HURT, 0.4f, .6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_PILLAGER_DEATH, .6f);
+                return CreateSound.sound(Sound.ENTITY_PILLAGER_DEATH, 0.4f, .6f);
             }
         });
     }
@@ -86,7 +86,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
                     if(e instanceof Projectile proj){
                         proj.setShooter(mob);
                     }
-                    Vector vel = mob.getEyeLocation().getDirection().multiply(CruxMath.random(1.5f, 3f));
+                    Vector vel = mob.getEyeLocation().getDirection().multiply(CruxMath.random(2.5f, 3.8f));
                     e.setVelocity(vel);
                 });
             }
@@ -104,7 +104,7 @@ public class ScourgerGoal extends CruxMobModeledGoal implements Listener, PathTa
                     if(e instanceof Projectile proj){
                         proj.setShooter(mob);
                     }
-                    Vector vel = mob.getEyeLocation().getDirection().multiply(CruxMath.random(1.5f, 3f));
+                    Vector vel = mob.getEyeLocation().getDirection().multiply(CruxMath.random(2.5f, 3.8f));
                     e.setVelocity(vel);
                 });
             }

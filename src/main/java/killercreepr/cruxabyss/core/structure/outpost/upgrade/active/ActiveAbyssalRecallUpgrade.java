@@ -56,9 +56,11 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
     }
 
     protected final AbyssOutpostData data;
+    protected final World world;
     public ActiveAbyssalRecallUpgrade(int level, AbyssOutpostData data) {
         super(level);
         this.data = data;
+        this.world = data.getStored().getChunk().toBukkitWorld();
     }
 
     @Nullable
@@ -66,12 +68,13 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
     public OutpostSnapshotData createSnapshotData() {
         List<SnapshotBlock> anchors = new ArrayList<>();
         getRespawnAnchors().forEach(anchor ->{
-            Block block = anchor.block();
+            Block block = anchor.getPosition().getBlock(world);
             if(block == null){
                 Crux.logError("AbyssRecallAnchor is null! " + anchor.getPosition());
                 return;
             }
-            if(anchor.isDestroyed()){
+            if(!(block.getBlockData() instanceof RespawnAnchor)){
+                Crux.logError("AbyssRecallAnchor is destroyed! " + anchor.getPosition());
                 return;
             }
 
@@ -89,25 +92,27 @@ public class ActiveAbyssalRecallUpgrade extends SimpleActiveOutpostUpgrade imple
 
     @Override
     public void acceptSnapshot(@NotNull OutpostSnapshotData data) {
-        if(!(data instanceof SnapshotData merge)) return;
-        World world = this.data.getStored().getChunk().toBukkitWorld();
+        if(!(data instanceof SnapshotData merge)) throw new IllegalArgumentException("Does not support " + data);
+        World world = this.world == null ? this.data.getStored().getChunk().toBukkitWorld() : this.world;
         if(world == null){
             Crux.logError("Cannot place abyss recall anchors! World is null: " + this.data.getStored().getChunk().worldKey());
             return;
         }
-        merge.anchors.forEach(block ->{
-            CruxPosition pos = this.data.getStored().getPosition()
-                .add(block.relativePosition);
+        Crux.scheduler().runTask(() ->{
+            merge.anchors.forEach(block ->{
+                CruxPosition pos = this.data.getStored().getPosition()
+                    .add(block.relativePosition);
 
-            Block b = pos.getBlock(world);
-            var state = block.blockState;
-            Crux.handlers().block().setType(b, state.getType());
-            b.setBlockData(state.getBlockData());
-            state.copy(b.getLocation()).update();
+                Block b = pos.getBlock(world);
+                var state = block.blockState;
+                Crux.handlers().block().setType(b, state.getType());
+                b.setBlockData(state.getBlockData());
+                state.copy(b.getLocation()).update();
 
 
-            AbyssRecallAnchor recallAnchor = AbyssRecallAnchor.abyssRecallAnchor(pos, this.data);
-            addRespawnAnchor(recallAnchor);
+                AbyssRecallAnchor recallAnchor = AbyssRecallAnchor.abyssRecallAnchor(pos, this.data);
+                addRespawnAnchor(recallAnchor);
+            });
         });
     }
 
