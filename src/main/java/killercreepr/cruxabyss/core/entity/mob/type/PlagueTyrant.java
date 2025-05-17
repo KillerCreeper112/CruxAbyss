@@ -84,6 +84,7 @@ public class PlagueTyrant extends SimpleAbyssMob {
     @Override
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(e, active);
         return new PlagueTyrantGoal(e).model(active);
     }
 
