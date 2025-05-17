@@ -30,17 +30,17 @@ public class PlagueStalkerGoal extends CruxMobModeledGoal {
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_FOX_BITE, 0.5f, .85f);
+                return CreateSound.sound(Sound.ENTITY_FOX_BITE,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.5f, .85f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_HURT, 0.5f, .6f);
+                return CreateSound.sound(Sound.ENTITY_WOLF_HURT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.5f, .6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_DEATH, 0.5f, .6f);
+                return CreateSound.sound(Sound.ENTITY_WOLF_DEATH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.5f, .6f);
             }
         });
     }

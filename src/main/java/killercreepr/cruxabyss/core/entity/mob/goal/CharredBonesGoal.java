@@ -20,7 +20,7 @@ public class CharredBonesGoal extends CruxMobModeledGoal {
             new CruxGoalSounds(mob) {
                 @Override
                 public @NotNull CreateSound ambient() {
-                    return CreateSound.sound(Sound.ENTITY_SKELETON_AMBIENT, 0.4f, .9f);
+                    return CreateSound.sound(Sound.ENTITY_SKELETON_AMBIENT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .9f);
                 }
 
                 /*@Override
@@ -29,12 +29,12 @@ public class CharredBonesGoal extends CruxMobModeledGoal {
                 }*/
                 @Override
                 public @NotNull CreateSound hurt() {
-                    return CreateSound.sound(Sound.ENTITY_SKELETON_HURT, 0.4f, .9f);
+                    return CreateSound.sound(Sound.ENTITY_SKELETON_HURT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .9f);
                 }
 
                 @Override
                 public @NotNull CreateSound death() {
-                    return CreateSound.sound(Sound.ENTITY_SKELETON_DEATH, 0.4f, .9f);
+                    return CreateSound.sound(Sound.ENTITY_SKELETON_DEATH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .9f);
                 }
             }
         );

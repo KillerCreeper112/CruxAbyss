@@ -65,22 +65,22 @@ public class CapgrasGoal extends CruxMobModeledGoal {
             );
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(CruxCollection.getRandom(AMBIENT), 0.4f, 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(AMBIENT),  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.15f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(CruxCollection.getRandom(ATTACK), 0.4f, 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(ATTACK),  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.15f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(CruxCollection.getRandom(HURT), 0.4f, 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(HURT),  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.15f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(CruxCollection.getRandom(DEATH), 0.4f, 1.15f);
+                return CreateSound.sound(CruxCollection.getRandom(DEATH),  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.15f);
             }
         });
     }

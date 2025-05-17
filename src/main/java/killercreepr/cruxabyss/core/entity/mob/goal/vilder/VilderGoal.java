@@ -139,7 +139,7 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_VILLAGER_AMBIENT, .6f);
+                return CreateSound.sound(Sound.ENTITY_VILLAGER_AMBIENT,  net.kyori.adventure.sound.Sound.Source.NEUTRAL, 0.4f,.6f);
             }
 
             /*@Override
@@ -159,12 +159,12 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_VILLAGER_HURT, .6f);
+                return CreateSound.sound(Sound.ENTITY_VILLAGER_HURT, net.kyori.adventure.sound.Sound.Source.NEUTRAL, 0.4f,.6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_VILLAGER_DEATH, .6f);
+                return CreateSound.sound(Sound.ENTITY_VILLAGER_DEATH, net.kyori.adventure.sound.Sound.Source.NEUTRAL, 0.4f,.6f);
             }
         });
     }

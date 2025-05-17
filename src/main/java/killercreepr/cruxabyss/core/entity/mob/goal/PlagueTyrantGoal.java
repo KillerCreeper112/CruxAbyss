@@ -66,7 +66,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_VINDICATOR_AMBIENT, 0.4f, .2f);
+                return CreateSound.sound(Sound.ENTITY_VINDICATOR_AMBIENT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .2f);
             }
 
             /*@Override
@@ -76,12 +76,12 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_VINDICATOR_HURT, 0.4f, .2f);
+                return CreateSound.sound(Sound.ENTITY_VINDICATOR_HURT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .2f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_VINDICATOR_DEATH, 0.4f, .2f);
+                return CreateSound.sound(Sound.ENTITY_VINDICATOR_DEATH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .2f);
             }
         });
         attackHandler = new MobAttackHandler(mob, this, List.of(

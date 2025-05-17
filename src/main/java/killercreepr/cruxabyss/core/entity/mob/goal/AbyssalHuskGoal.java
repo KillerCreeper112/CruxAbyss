@@ -32,7 +32,7 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_AMBIENT, 0.4f, .6f);
+                return CreateSound.sound(Sound.ENTITY_HUSK_AMBIENT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .6f);
             }
 
             /*@Override
@@ -52,12 +52,12 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_HURT, 0.4f, .6f);
+                return CreateSound.sound(Sound.ENTITY_HUSK_HURT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .6f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_DEATH, 0.4f, .6f);
+                return CreateSound.sound(Sound.ENTITY_HUSK_DEATH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .6f);
             }
         });
 
