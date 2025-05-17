@@ -53,10 +53,12 @@ public class AbyssGroundDweller extends SimpleAbyssMob {
     @Override
     public void onModelApplied(Mob mob) {
         super.onModelApplied(mob);
-        if(CruxAttribute.hasAttributeData(mob)) return;
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-            mob.getWidth() + .6D
-        ));
+
+        if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+                mob.getWidth() + .67D
+            ));
+        }
     }
 
     @Override

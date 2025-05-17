@@ -130,7 +130,8 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
         if(strongAttack > 0){
             strongAttack--;
             //animation hit time at 7 ticks
-            if(strongAttack == 16){
+            int dif = 10 - strongAttack;
+            if(dif == 8){
                 if(CruxMath.hasOccurredWithin(lastHitTarget, 20)) return;
                 lastHitTarget = System.currentTimeMillis();
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
@@ -156,8 +157,8 @@ public class AbyssalEyeVineGoal extends CruxMobModeledGoal {
         double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE);
         if(range <= 0D) return;
         double distance = getDistanceFromTarget();
-        if(distance <= (range*1.5)){//7
-            strongAttack = 20; //animation time
+        if(distance <= (range*1.6)){//7
+            strongAttack = 20/2; //animation time
             playAnimation("strong_attack", true);
             strongAttackCooldown = CruxMath.random(95, 130);
         }

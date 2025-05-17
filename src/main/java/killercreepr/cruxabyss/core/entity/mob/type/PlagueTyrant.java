@@ -56,10 +56,10 @@ public class PlagueTyrant extends SimpleAbyssMob {
     public @Nullable Map<CruxAttribute, Collection<CruxAttributeModifier>> getAttributes(@Nullable AbyssWorld world, @NotNull Entity e) {
         Map<CruxAttribute, Collection<CruxAttributeModifier>> map = new HashMap<>();
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
-                CruxAttributeModifier.baseModifier(26D *
+                CruxAttributeModifier.baseModifier(20D *
                          (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-12));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-15));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
         addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(8D));
         addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(4D));
@@ -75,10 +75,12 @@ public class PlagueTyrant extends SimpleAbyssMob {
     @Override
     public void onModelApplied(Mob mob) {
         super.onModelApplied(mob);
-        if(CruxAttribute.hasAttributeData(mob)) return;
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-            mob.getWidth() + 1D
-        ));
+
+        if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+                mob.getWidth() + 1.6D
+            ));
+        }
     }
 
     @Override

@@ -70,9 +70,8 @@ public class Vilder extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_DAMAGE,
                 CruxAttributeModifier.baseModifier(12D * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
-        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-7));
+        addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-9));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
-        addAttribute(map, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.2D));
         addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(4D));
         addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(2D));
         return map;
@@ -82,6 +81,17 @@ public class Vilder extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+
+        if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+                mob.getWidth() + .9D
+            ));
+        }
     }
 
     @Override
@@ -95,6 +105,7 @@ public class Vilder extends SimpleAbyssMob {
         CompletableFuture<ActiveModel> active = new ModelEntity(e)
             .setBaseEntityVisible(false)
             .getOrAddModelAsync(typeID);
+        applyWhenCompleteModel(e, active);
 
         return TYPES.get(typeID).apply(e).model(active);
     }
