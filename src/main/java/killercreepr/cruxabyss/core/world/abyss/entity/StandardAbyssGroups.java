@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class StandardAbyssGroups {
-    public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(50, 0f) {
+    public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(80, 0f) {//was 50
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             return true;
