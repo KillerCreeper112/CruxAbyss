@@ -322,9 +322,8 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
         playAnimation(id, true);
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if(!event.getRightClicked().equals(mob)) return;
+    @Override
+    public void onPlayerInteractLow(PlayerInteractEntityEvent event) {
         Player p = event.getPlayer();
         List<MerchantRecipe> recipes = recipes();
         if(recipes == null) return;
@@ -332,10 +331,6 @@ public class VilderGoal extends CruxMobModeledGoal implements Listener {
             if(!CruxEntityUtil.isValid(p)) return;
             p.openInventory(merchantView(p));
         });
-        //Player p = event.getPlayer();
-        //MerchantView view = merchantView(p);
-        //if(view == null) return;
-        //p.openInventory(view);
     }
 
     protected List<MerchantRecipe> recipes;
