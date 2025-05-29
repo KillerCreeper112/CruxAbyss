@@ -324,13 +324,6 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
         playAnimation(id, true);
     }*/
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if(event.getRightClicked().equals(mob)){
-            event.setCancelled(true);
-        }
-    }
-
     public String generateAttackAnimationID(){
         return "attack_" + CruxMath.random(1,3);
     }

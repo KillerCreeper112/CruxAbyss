@@ -216,11 +216,4 @@ public class PlaguewingGoal extends CruxMobModeledGoal implements Listener, Path
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
     }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if(event.getRightClicked().equals(mob) || isModelPart(event.getRightClicked())){
-            event.setCancelled(true);
-        }
-    }
 }

@@ -119,9 +119,9 @@ public class AbyssAltarPlacedItemGoal extends CruxMobModeledGoal implements List
         return altar == null || altar.isValidCache();
     }
 
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if(!event.getRightClicked().equals(mob)) return;
+    @Override
+    public void onPlayerInteractLow(PlayerInteractEntityEvent event) {
+        super.onPlayerInteractLow(event);
         onRightClick(event.getPlayer());
     }
 
