@@ -48,6 +48,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     public Long timeInvaded;
     public Long timeLastInvasion;
     protected final Map<OutpostUpgrade, Integer> upgrades = new HashMap<>();
+    protected final Collection<UUID> previousCaptures = new HashSet<>();
     protected final Map<OutpostUpgrade, TickedOutpostUpgrade> storedUpgrades = new ConcurrentHashMap<>();
     protected static final int tickRate = 1;
     protected final StoredStructure stored;
@@ -56,6 +57,10 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;
         this.stored.set(StructureComponents.BLOCK_PLACE_INSIDE, new AbyssOutpostPlacedBlockComponent());
+    }
+
+    public boolean hasCapturedThisBefore(UUID uuid){
+        return previousCaptures.contains(uuid);
     }
 
     public void setDefeatedPlagueTyrant(boolean defeatedPlagueTyrant) {
@@ -166,6 +171,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
             o.addProperty("time_last_invasion", timeLastInvasion);
         }
         o.addProperty("defeated_plague_tyrant", defeatedPlagueTyrant);
+        if(!previousCaptures.isEmpty()) o.add("previous_captures", ctx.getRegistry().serializeToFile(previousCaptures));
     }
 
     public boolean wasInvadedWithin(int ticks){

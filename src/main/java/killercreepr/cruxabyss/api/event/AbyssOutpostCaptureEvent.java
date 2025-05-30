@@ -2,6 +2,8 @@ package killercreepr.cruxabyss.api.event;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -12,20 +14,26 @@ public class AbyssOutpostCaptureEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     protected boolean cancel = false;
     protected final ActiveAbyssOutpost outpost;
-    protected final Player player;
+    protected final Entity entity;
+    protected final Block conquestNode;
 
     public ActiveAbyssOutpost getOutpost() {
         return outpost;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Entity getEntity() {
+        return entity;
     }
 
-    public AbyssOutpostCaptureEvent(ActiveAbyssOutpost outpost, Player player) {
+    public AbyssOutpostCaptureEvent(ActiveAbyssOutpost outpost, Entity entity, Block conquestNode) {
         super(!Crux.isPrimaryThread());
         this.outpost = outpost;
-        this.player = player;
+        this.entity = entity;
+        this.conquestNode = conquestNode;
+    }
+
+    public Block getConquestNode() {
+        return conquestNode;
     }
 
     @Override

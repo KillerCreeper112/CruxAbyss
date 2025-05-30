@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.data.world.StoredChunk;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
@@ -17,6 +18,7 @@ import killercreepr.cruxstructures.core.structure.component.StructureTickedStore
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -66,6 +68,14 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
         }
         if(o.has("defeated_plague_tyrant")){
             outpostData.defeatedPlagueTyrant = o.getOrDefaultObject(Boolean.class, "defeated_plague_tyrant", false);
+        }
+        if(o.has("previous_captures")){
+            Collection<UUID> captures = reg.deserializeFromFile(
+                new TypeToken<Collection<UUID>>(){}.getType(), o.get("previous_captures")
+            );
+            if(captures != null){
+                outpostData.previousCaptures.addAll(captures);
+            }
         }
 
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);

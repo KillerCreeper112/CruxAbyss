@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 public class ObjectiveListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAbyssOutpostCapture(AbyssOutpostCaptureEvent event) {
-        Player p = event.getPlayer();
+        if(!(event.getEntity() instanceof Player p)) return;
         AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
         if(holder==null) return;
         Crux.scheduler().runTask(() ->{

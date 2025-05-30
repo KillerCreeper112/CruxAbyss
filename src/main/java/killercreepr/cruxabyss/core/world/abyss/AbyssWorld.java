@@ -64,7 +64,7 @@ import java.util.*;
 public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public static final Map<Key, List<OutpostSnapshot>> WORLD_TO_ABYSS_OUTPOST_OWNERS = new HashMap<>();
 
-    protected final Map<UUID, PlayerData> PLAYER_DATA = new HashMap<>();
+    /*protected final Map<UUID, PlayerData> PLAYER_DATA = new HashMap<>();
     public PlayerData getOrCreateData(Player p){
         return PLAYER_DATA.computeIfAbsent(p.getUniqueId(), (e ->{
             PlayerData fromFile = loadDataFromFile(e);
@@ -100,7 +100,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     }
     public PlayerData removePlayerData(Player p){
         return PLAYER_DATA.remove(p.getUniqueId());
-    }
+    }*/
 
     public static @Nullable AbyssWorld getOrCreate(@NotNull CruxPlugin plugin, @NotNull String worldName){
         return (AbyssWorld) CruxCore.inst().worldManager().getOrCreateWorld(AbyssWorldTypes.ABYSS, Key.key(worldName));
@@ -272,14 +272,14 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
 
     @Override
     public void save() {
-        DataFile file = getWorldFile(!PLAYER_DATA.isEmpty());
+        /*DataFile file = getWorldFile(!PLAYER_DATA.isEmpty());
         if(file == null) return;
         FileObject aPlayerData = new FileObject();
         PLAYER_DATA.forEach((uuid, data) ->{
             aPlayerData.add(uuid.toString(), file.fileRegistry().serializeToFile(data));
         });
         file.serialize("player_data", aPlayerData);
-        file.save();
+        file.save();*/
     }
 
     @Override
@@ -302,7 +302,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         return daysPassed;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
         var data = removePlayerData(p);
@@ -314,14 +314,15 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public void onAbyssOutpostCapture(AbyssOutpostCaptureEvent event) {
         World world = event.getOutpost().getActive().getChunk().getWorld();
         if(!key().equals(world.key())) return;
+        if(!(event.getEntity() instanceof Player p)) return;
+
         StoredStructure structure = event.getOutpost().getActive().getData();
-        Player p = event.getPlayer();
         PlayerData data = getOrCreateData(p);
         if(data.hasClaimedOutpost(structure)) return;
         data.addClaimedOutpost(structure);
         CruxStatisticHolder holder = BukkitStatisticHolder.statisticHolder(p);
         if(holder != null) holder.incrementStatistic(AbyssStatistic.ABYSS_OUTPOSTS_CAPTURED, 1);
-    }
+    }*/
 
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -411,7 +412,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         }
     }
 
-    public static class PlayerData{
+    /*public static class PlayerData{
         protected final Collection<BlockPos> claimedOutposts = new ArrayList<>();
         public boolean isEmpty(){
             return claimedOutposts.isEmpty();
@@ -436,5 +437,5 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
         public Collection<BlockPos> getClaimedOutposts() {
             return claimedOutposts;
         }
-    }
+    }*/
 }

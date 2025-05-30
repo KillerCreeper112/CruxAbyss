@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-public class FileAbyssWorldPlayerData implements FileObjectHandler<AbyssWorld.PlayerData> {
-    @Override
+public class FileAbyssWorldPlayerData /*implements FileObjectHandler<AbyssWorld.PlayerData>*/ {
+    /*@Override
     public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull AbyssWorld.PlayerData data) {
         FileRegistry reg = ctx.getRegistry();
         return new FileObject()
@@ -36,5 +36,5 @@ public class FileAbyssWorldPlayerData implements FileObjectHandler<AbyssWorld.Pl
         var data = new AbyssWorld.PlayerData();
         data.setClaimedOutposts(claimedOutposts);
         return data;
-    }
+    }*/
 }

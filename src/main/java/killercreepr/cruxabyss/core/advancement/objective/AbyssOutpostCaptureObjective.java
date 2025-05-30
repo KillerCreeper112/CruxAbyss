@@ -15,7 +15,7 @@ public class AbyssOutpostCaptureObjective extends GenericEventObjective<AbyssOut
     @Override
     protected LootContext buildContext(AbyssOutpostCaptureEvent event) {
         var outpost = event.getOutpost();
-        var player = event.getPlayer();
+        var player = event.getEntity();
         return LootContext.builder()
             .looted(outpost)
             .looter(player)

@@ -196,7 +196,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                     }
                 }
             );
-            reg.registerFileHandler(AbyssWorld.PlayerData.class, new FileAbyssWorldPlayerData());
+            //todo deprecated reg.registerFileHandler(AbyssWorld.PlayerData.class, new FileAbyssWorldPlayerData());
         });
         /*CfgRegistries.JSON_REGISTRY.forEach(registry ->{
             registry.registerFileHandler(StoredAbyssOutpost.class, new FileAbyssOutpost());
@@ -323,7 +323,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             new ObjectiveListener(),
             new HostileMobListener(),
             new AbyssOutpostListener(),
-            new CustomObjectivesListener()
+            new CustomObjectivesListener(),
+
+            new RewardsListener()
         );
         AbyssBlocks.register();
         AbyssOutpostUpgrades.register();

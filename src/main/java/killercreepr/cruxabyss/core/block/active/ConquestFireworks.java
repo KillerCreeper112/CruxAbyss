@@ -73,7 +73,7 @@ public class ConquestFireworks {
         NumberProvider rangeY = node.getNode().getFireworksRangeY();
         double paddingX = ((box.getWidthX() - 5));
         double paddingZ = ((box.getWidthZ() - 5));
-        InputContext ctx = InputContext.simple(TagContainer.string(
+        InputContext ctx = InputContext.inputContext(TagContainer.string(
             Tag.parsed("padding_x", paddingX + ""),
             Tag.parsed("padding_z", paddingZ + "")
         ));

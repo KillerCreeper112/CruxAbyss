@@ -244,7 +244,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
             storedExperience = 0;
             Lang.ABYSS_CONQUEST_NODE_DEACTIVATE.use(p);
         }else{
-            AbyssOutpostCaptureEvent event = new AbyssOutpostCaptureEvent(outpost, p);
+            AbyssOutpostCaptureEvent event = new AbyssOutpostCaptureEvent(outpost, p, block);
             if(!event.callEvent()) return;
 
             outpost().capture(p);
@@ -355,6 +355,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
 
     public boolean isValidInteractor(Player p){
         if(!p.getWorld().equals(block.getWorld())) return false;
+        if(p.getGameMode() == GameMode.CREATIVE) return true;
         Location checkLoc = p.getLocation().toCenterLocation();
         checkLoc.setY(p.getY() + p.getHeight()/2D);
         double distance = checkLoc.distanceSquared(block.getLocation().toCenterLocation());
@@ -427,7 +428,9 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         if(!event.getAction().isRightClick()) return Event.Result.DENY;
         if(outpost() == null) return Event.Result.DENY;
         Player p = event.getPlayer();
-        if(cooldown > 0 && p.getGameMode() != GameMode.CREATIVE){
+        boolean isCreative = p.getGameMode() == GameMode.CREATIVE;
+
+        if(cooldown > 0 && !isCreative){
             if(cooldownTick < 15){
                 return Event.Result.DENY;
             }
@@ -474,7 +477,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
                 return Event.Result.DENY;
             }
 
-            if(p.getGameMode() != GameMode.CREATIVE && !outpost.getData().hasOwner() && !outpost.getData().isOwner(p.getUniqueId())){
+            if(!isCreative && !outpost.getData().hasOwner() && !outpost.getData().isOwner(p.getUniqueId())){
                 if(!outpost.getData().hasDefeatedMobsToCapture()){
                     p.sendMessage(Crux.format().deserialize(
                         "<red>Something is preventing you from capturing the outpost."
@@ -488,7 +491,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
 
             user = new WeakReference<>(p);
             expToTakeEachTick = (int) Math.ceil((float) requiredExperience / (float) getMaxTime(p, p.getUniqueId().equals(outpost().getData().owner)));
-            if(p.getGameMode()== GameMode.CREATIVE){
+            if(isCreative){
                 progress = getMaxTime(p, false);
             }
         }
