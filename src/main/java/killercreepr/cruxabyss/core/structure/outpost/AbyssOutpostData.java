@@ -17,6 +17,7 @@ import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.entity.memory.AbyssHolder;
 import killercreepr.cruxabyss.core.game.entity.MobWaveGroup;
 import killercreepr.cruxabyss.core.structure.outpost.component.AbyssOutpostPlacedBlockComponent;
+import killercreepr.cruxabyss.core.structure.outpost.questline.AbyssOutpostQuestLineHolder;
 import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
@@ -53,6 +54,8 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     protected static final int tickRate = 1;
     protected final StoredStructure stored;
     public boolean defeatedPlagueTyrant;
+
+    public final AbyssOutpostQuestLineHolder questLineHolder = new AbyssOutpostQuestLineHolder();
 
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;

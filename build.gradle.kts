@@ -17,6 +17,7 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCore\\build\\libs\\CruxCore-1.0-all.jar",
         "E:\\Plugins\\YO\\uSurvive\\build\\libs\\uSurvive-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxTeleport\\build\\libs\\CruxTeleport-1.0-all.jar",
+        "E:\\Plugins\\YO\\CruxQuestLine\\build\\libs\\CruxQuestLine-1.0-all.jar",
         "D:\\ModelEngine-4.0.7.jar",
         //"D:\\Geyser-Spigot (1).jar"
     ))

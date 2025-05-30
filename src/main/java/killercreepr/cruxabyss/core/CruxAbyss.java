@@ -49,6 +49,7 @@ import killercreepr.cruxabyss.core.statistic.AbyssStatistic;
 import killercreepr.cruxabyss.core.structure.generation.AbyssOutpostSetLocationList;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.SimpleAbyssOutpostManager;
+import killercreepr.cruxabyss.core.structure.outpost.questline.AbyssQuestLineLoader;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssRecallAnchor;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.active.ActiveAbyssalRecallUpgrade;
@@ -169,6 +170,8 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CfgAbyssComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
         registerCruxStructure();
         AbyssTickables.register();
+
+        AbyssQuestLineLoader.load();
 
         CruxRegistries.ENTITY_TAG.register(new BaseEntityTag(Crux.key("abyssal")) {
             @Override

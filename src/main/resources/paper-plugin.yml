@@ -17,3 +17,5 @@ dependencies:
       load: BEFORE
     CruxTeleport:
       load: BEFORE
+    CruxQuestLine:
+      load: BEFORE
