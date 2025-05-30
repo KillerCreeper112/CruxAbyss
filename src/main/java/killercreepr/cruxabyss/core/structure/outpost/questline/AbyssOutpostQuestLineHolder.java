@@ -18,6 +18,10 @@ public class AbyssOutpostQuestLineHolder implements QuestLineHolder {
         return SimpleQuestGenerator.createGenericProgress(KEY, () -> outpost.questLineHolder);
     }
 
+    public AbyssOutpostQuestLineHolder(AbyssOutpostData data) {
+        setQuestLineProgress(createNewProgress(data));
+    }
+
     protected final Map<Key, QuestLineProgress> progress = new HashMap<>();
     @Nullable
     @Override

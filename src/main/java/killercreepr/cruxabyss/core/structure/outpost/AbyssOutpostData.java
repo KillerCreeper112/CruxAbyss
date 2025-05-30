@@ -25,6 +25,7 @@ import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxquestline.core.config.handler.QuestLineCfgHandlers;
 import killercreepr.cruxstructures.api.component.StoredStructureComponent;
 import killercreepr.cruxstructures.api.component.TickedStoredComponent;
 import killercreepr.cruxstructures.api.structure.ActiveStructure;
@@ -55,7 +56,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
     protected final StoredStructure stored;
     public boolean defeatedPlagueTyrant;
 
-    public final AbyssOutpostQuestLineHolder questLineHolder = new AbyssOutpostQuestLineHolder();
+    public final AbyssOutpostQuestLineHolder questLineHolder = new AbyssOutpostQuestLineHolder(this);
 
     public AbyssOutpostData(StoredStructure stored) {
         this.stored = stored;
@@ -175,6 +176,7 @@ public class AbyssOutpostData implements StoredStructureComponent, TickedStoredC
         }
         o.addProperty("defeated_plague_tyrant", defeatedPlagueTyrant);
         if(!previousCaptures.isEmpty()) o.add("previous_captures", ctx.getRegistry().serializeToFile(previousCaptures));
+        o.add("quest_line", QuestLineCfgHandlers.serialize(ctx, questLineHolder));
     }
 
     public boolean wasInvadedWithin(int ticks){

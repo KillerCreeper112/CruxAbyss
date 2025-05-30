@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.structure.outpost;
 
 import com.google.common.reflect.TypeToken;
+import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.world.StoredChunk;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
@@ -12,6 +14,7 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxquestline.core.config.handler.QuestLineCfgHandlers;
 import killercreepr.cruxstructures.api.component.StructureComponent;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.core.structure.component.StructureTickedStoredComponent;
@@ -76,6 +79,12 @@ public class AbyssOutpost extends StructureTickedStoredComponent implements Stru
             if(captures != null){
                 outpostData.previousCaptures.addAll(captures);
             }
+        }
+
+        if(o.has("quest_line")){
+            QuestLineCfgHandlers.deserialize(context, o.get("quest_line"),
+                DataExchange.single("abyss_outpost", Holder.direct(outpostData)),
+                outpostData.questLineHolder::setQuestLineProgress);
         }
 
         structure.set(AbyssComponents.ABYSS_OUTPOST_DATA, outpostData);
