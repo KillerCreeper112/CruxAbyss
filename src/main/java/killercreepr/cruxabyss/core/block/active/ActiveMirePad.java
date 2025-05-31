@@ -9,6 +9,7 @@ import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxEntityDamageOn;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxEntityMove;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxRedstonePowerable;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import net.kyori.adventure.key.Key;
@@ -19,7 +20,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxRedstonePowerable, ActiveCruxEntityMove,
+public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxTickedBlock, ActiveCruxRedstonePowerable, ActiveCruxEntityMove,
     ActiveCruxEntityDamageOn {
     protected final MirePadComponent data;
     public ActiveMirePad(@NotNull Block block, @NotNull CruxBlock cruxBlock, MirePadComponent data) {
@@ -52,6 +53,7 @@ public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxRe
     @Override
     public void update() {
         super.update();
+        if(!isValid()) return;
         boolean powered = CruxBlockUtil.findPowerSource(block) != null;
         this.powered = powered;
         CruxBlock state = powered ? getPoweredBlock() : getUnpoweredBlock();
@@ -105,5 +107,10 @@ public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxRe
         if(event.getCause() == EntityDamageEvent.DamageCause.FALL){
             event.setCancelled(true);
         }
+    }
+
+    @Override
+    public void tick() {
+
     }
 }
