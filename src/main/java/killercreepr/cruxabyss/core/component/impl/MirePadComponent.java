@@ -17,13 +17,17 @@ public class MirePadComponent implements CruxBlockComponent {
     public final NumberVector launchForce;
     public final Collection<PotionEffect> launchPotions;
     public final CreateSound launchSound;
-    public final boolean useEntityRotation;
+    public final float directionBoost;
     public final boolean useEntityPitch;
+    public final int launchCooldown;
 
-    public MirePadComponent(NumberVector launchForce, Collection<PotionEffect> launchPotions, CreateSound launchSound) {
+    public MirePadComponent(NumberVector launchForce, Collection<PotionEffect> launchPotions, CreateSound launchSound, float directionBoost, boolean useEntityPitch, int launchCooldown) {
         this.launchForce = launchForce;
         this.launchPotions = launchPotions;
         this.launchSound = launchSound;
+        this.directionBoost = directionBoost;
+        this.useEntityPitch = useEntityPitch;
+        this.launchCooldown = launchCooldown;
     }
 
     @Override

@@ -65,7 +65,10 @@ public class CfgAbyssComponents {
                     AbyssComponents.MIRE_PAD, new MirePadComponent(
                         reg.deserializeFromFile(NumberVector.class, e.get("launch_force")),
                         reg.deserializeFromFile(new TypeToken<Collection<PotionEffect>>(){}.getType(), e.get("launch_potions")),
-                        reg.deserializeFromFile(CreateSound.class, e.get("launch_sound"))
+                        reg.deserializeFromFile(CreateSound.class, e.get("launch_sound")),
+                        e.getOrDefaultObject(Float.class, "direction_boost", 0f),
+                        e.getOrDefaultObject(Boolean.class, "use_entity_pitch", false),
+                        e.getOrDefaultObject(Integer.class, "launch_cooldown", 20)
                     )
                 );
             }

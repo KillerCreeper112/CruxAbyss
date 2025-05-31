@@ -3,8 +3,10 @@ package killercreepr.cruxabyss.core.block.active;
 import killercreepr.crux.api.text.context.InputContext;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.util.CruxBlockUtil;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.component.impl.MirePadComponent;
 import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxEntityDamageOn;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxEntityMove;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxRedstonePowerable;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
@@ -13,10 +15,12 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxRedstonePowerable, ActiveCruxEntityMove {
+public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxRedstonePowerable, ActiveCruxEntityMove,
+    ActiveCruxEntityDamageOn {
     protected final MirePadComponent data;
     public ActiveMirePad(@NotNull Block block, @NotNull CruxBlock cruxBlock, MirePadComponent data) {
         super(block, cruxBlock);
@@ -59,31 +63,47 @@ public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxRe
         return powered;
     }
 
+    protected long lastLaunched;
+
+    public boolean isOnCooldown(){
+        return CruxMath.hasOccurredWithin(lastLaunched, data.launchCooldown);
+    }
     @Override
     public void onEntityMove(@NotNull Entity e) {
         if(!powered) return;
+        if(isOnCooldown()) return;
+        lastLaunched = System.currentTimeMillis();
 
         if(data.launchSound != null) data.launchSound.playAt(e);
         if(data.launchForce != null){
             var ctx = InputContext.inputContext(TagContainer.string().hook(e));
 
             Vector look;
-            if(data.useEntityRotation){
+            if(data.directionBoost != 0f){
                 look = e.getLocation().getDirection();
-                if(data.useEntityPitch)
-            }
+                if(!data.useEntityPitch) look.setY(0);
+            }else look = new Vector();
 
             Vector dir = new Vector(
                 data.launchForce.x().sample(ctx).doubleValue(),
                 data.launchForce.y().sample(ctx).doubleValue(),
                 data.launchForce.z().sample(ctx).doubleValue()
             );
-            e.setVelocity(dir);
+
+            Vector finalVelocity = dir.add(look.multiply(data.directionBoost));
+            e.setVelocity(finalVelocity);
         }
         if(data.launchPotions != null){
             if(e instanceof LivingEntity living){
                 living.addPotionEffects(data.launchPotions);
             }
+        }
+    }
+
+    @Override
+    public void onEntityDamage(@NotNull EntityDamageEvent event) {
+        if(event.getCause() == EntityDamageEvent.DamageCause.FALL){
+            event.setCancelled(true);
         }
     }
 }
