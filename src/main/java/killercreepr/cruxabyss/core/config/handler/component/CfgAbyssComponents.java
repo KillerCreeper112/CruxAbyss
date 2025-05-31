@@ -7,10 +7,7 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
-import killercreepr.cruxabyss.core.component.impl.AbyssConquestNode;
-import killercreepr.cruxabyss.core.component.impl.AbyssPortalGateway;
-import killercreepr.cruxabyss.core.component.impl.FungireOreComponent;
-import killercreepr.cruxabyss.core.component.impl.ToxsporeComponent;
+import killercreepr.cruxabyss.core.component.impl.*;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
 import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
@@ -54,6 +51,26 @@ public class CfgAbyssComponents {
                         takeOverTime, requiredExp,
                         deactivateTime, fireworksRange,
                         fireworksRangeY, takeOverSound
+                    )
+                );
+            }
+        });
+        registry.register("mire_pad", new FileDataComponentType<MirePadComponent>() {
+            @Override
+            public @Nullable TypedDataComponent<MirePadComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {
+                FileRegistry reg = ctx.getRegistry();
+                return TypedDataComponent.create(
+                    AbyssComponents.MIRE_PAD, new MirePadComponent()
+                );
+            }
+        });
+        registry.register("abyss_place_within_outpost", new FileDataComponentType<RequireOutpostComponent>() {
+            @Override
+            public @Nullable TypedDataComponent<RequireOutpostComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {
+                FileRegistry reg = ctx.getRegistry();
+                return TypedDataComponent.create(
+                    AbyssComponents.ABYSS_PLACE_WITHIN_OUTPOST, new RequireOutpostComponent(
+                        e.getOrDefaultObject(Boolean.class, "friendly", false)
                     )
                 );
             }

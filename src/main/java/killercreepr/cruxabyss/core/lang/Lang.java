@@ -222,6 +222,18 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ABYSS_REQUIRE_OUTPOST_PLACE_BLOCK = create(
+        Communicator.builder()
+            .chat("<red>This block may only be placed in an abyss outpost.")
+            .build()
+    );
+
+    public static final Msg ABYSS_REQUIRE_OUTPOST_PLACE_BLOCK_FRIENDLY = create(
+        Communicator.builder()
+            .chat("<red>This block may only be placed in an abyss outpost that you own or are a member of.")
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }

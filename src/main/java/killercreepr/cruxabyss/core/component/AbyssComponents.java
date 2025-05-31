@@ -32,6 +32,10 @@ public class AbyssComponents {
     public static void register(){}
     public static final DataComponentType<AbyssConquestNode> ABYSS_CONQUEST_NODE = register("abyss_conquest_node", builder ->
         builder);
+    public static final DataComponentType<MirePadComponent> MIRE_PAD = register("mire_pad", builder ->
+        builder);
+    public static final DataComponentType<RequireOutpostComponent> ABYSS_PLACE_WITHIN_OUTPOST = register("abyss_place_within_outpost", builder ->
+        builder);
     public static final DataComponentType<AbyssEntitySpawner> ABYSS_ENTITY_SPAWNER = register("abyss_entity_spawner", builder ->
         builder);
     public static final DataComponentType<AbyssPortalGateway> ABYSS_PORTAL_GATEWAY = register("abyss_portal_gateway", builder ->
