@@ -163,7 +163,7 @@ public class AbyssOutpostCraftingMenu extends ConfigMenu implements CrafterHolde
                             .get(Crux.key("abyss/outpost/crafting_recipe_list"))
                             .open(p, info)
                     );
-            CreateSound.sound(Sound.UI_BUTTON_CLICK).playFor(p);
+            CreateSound.sound(Sound.UI_BUTTON_CLICK, 0.2f, 1f).playFor(p);
         }
     };
     public void setupSlots(){
@@ -191,7 +191,7 @@ public class AbyssOutpostCraftingMenu extends ConfigMenu implements CrafterHolde
                     .build()
                 );
                 if(container != null) container.addOpenedMenu(opened);
-                CreateSound.sound(Sound.UI_BUTTON_CLICK).playFor(p);
+                CreateSound.sound(Sound.UI_BUTTON_CLICK, 0.2f, 1f).playFor(p);
             }
             return;
         }
