@@ -6,6 +6,7 @@ import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxBlockUtil;
 import killercreepr.crux.core.util.CruxColor;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
@@ -22,6 +23,7 @@ import killercreepr.cruxabyss.core.world.abyss.event.OutpostInvasionEvent;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxInteractable;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxRedstonePowerable;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
@@ -31,15 +33,11 @@ import killercreepr.cruxstructures.api.structure.ActiveStructure;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import net.kyori.adventure.key.Key;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
-public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements ActiveCruxTickedBlock, ActiveCruxInteractable {
+public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements ActiveCruxTickedBlock, ActiveCruxInteractable, ActiveCruxRedstonePowerable {
     protected final int requiredExperience;
     protected int storedExperience;
     protected final int deactivateTime;
@@ -58,6 +56,11 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         this.takeOverTime = node.getTakeOverTime().value().intValue();
         this.deactivateTime = node.getDeactivateTime().value().intValue();
         this.node = node;
+    }
+
+    @Override
+    public void redstonePowerChanged(Block from, int newPower) {
+        update();
     }
 
     public AbyssConquestNode getNode() {
@@ -142,14 +145,20 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
     public void update() {
         super.update();
         if(!isValid()) return;
-        if(outpost() == null) return;
+        if(outpost() == null){
+            boolean powered = CruxBlockUtil.findPowerSource(block) != null;
+            CruxBlock state = powered ? getPoweredBlock() : getUnpoweredBlock();
+            if(state.getTextureData().compareTexture(block)) return;
+            ActiveCruxBlock active = state.setBlock(BlockContext.context(block, null), true, false);
+            if(active instanceof ActiveAbyssConquestNode d){
+                d.load();
+            }
+            return;
+        }
         boolean powered = outpost().getData().owner != null;
         CruxBlock state = powered ? getPoweredBlock() : getUnpoweredBlock();
         if(state.getTextureData().compareTexture(block)) return;
-        CustomBlockData data = CustomBlockData.wrap(block);
-        PersistentDataContainer pdc = data.getData();
-        ActiveCruxBlock active = state.setBlock(BlockContext.context(block, null), true);
-        data.setData(pdc);
+        ActiveCruxBlock active = state.setBlock(BlockContext.context(block, null), true, false);
         if(active instanceof ActiveAbyssConquestNode d){
             d.load();
         }
@@ -450,7 +459,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         }
 
         if(!p.isSneaking()){
-            if(p.getUniqueId().equals(outpost().getData().owner)){
+            if(outpost().getData().isMemberOrOwner(p.getUniqueId())){
                 CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("abyss/outpost/main"))
                     .open(p, DataExchange.builder()
                         .put(outpost)
