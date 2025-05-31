@@ -1,6 +1,5 @@
 package killercreepr.cruxabyss.core.component.impl;
 
-import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.lang.Lang;
 import killercreepr.cruxblocks.api.block.CruxBlock;
@@ -32,7 +31,7 @@ public class RequireOutpostComponent implements CruxBlockComponent {
         if(!(ctx.getMiner() instanceof EntityMiner miner)) return null;
         Entity e = miner.getEntity();
 
-        var world = CruxCore.core().worldManager().getWorld(block.key());
+        var world = CruxCore.core().worldManager().getWorld(ctx.getBlock().getWorld().key());
         if(world == null){
             msg(e);
             return false;
@@ -44,7 +43,7 @@ public class RequireOutpostComponent implements CruxBlockComponent {
         }
         Vector vec = ctx.getBlock().getLocation().toVector();
         UUID uuid = e.getUniqueId();
-        StoredStructure stored = CruxCollection.getFirst(structures.getStored(
+        var stored = structures.getStored(
             StoredStructure.class, check ->{
                 if(!check.has(AbyssComponents.ABYSS_OUTPOST_DATA)) return false;
                 BoundingBox box = check.getOrDefault(StoredStructureComponents.OUTER_BOX, check.getBoundingBox());
@@ -53,8 +52,8 @@ public class RequireOutpostComponent implements CruxBlockComponent {
                 if(friendly && !data.isMemberOrOwner(uuid)) return false;
                 return true;
             }
-        ));
-        if(stored == null){
+        );
+        if(stored.isEmpty()){
             msg(e);
             return false;
         }

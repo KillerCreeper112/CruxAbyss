@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.valueproviders.vector.NumberVector;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
@@ -19,6 +20,7 @@ import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +62,11 @@ public class CfgAbyssComponents {
             public @Nullable TypedDataComponent<MirePadComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {
                 FileRegistry reg = ctx.getRegistry();
                 return TypedDataComponent.create(
-                    AbyssComponents.MIRE_PAD, new MirePadComponent()
+                    AbyssComponents.MIRE_PAD, new MirePadComponent(
+                        reg.deserializeFromFile(NumberVector.class, e.get("launch_force")),
+                        reg.deserializeFromFile(new TypeToken<Collection<PotionEffect>>(){}.getType(), e.get("launch_potions")),
+                        reg.deserializeFromFile(CreateSound.class, e.get("launch_sound"))
+                    )
                 );
             }
         });
