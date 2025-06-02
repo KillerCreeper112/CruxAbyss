@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core.block.active;
 
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.context.InputContext;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.util.CruxBlockUtil;
@@ -12,6 +13,8 @@ import killercreepr.cruxblocks.api.block.active.ActiveCruxRedstonePowerable;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxTickedBlock;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
+import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import net.kyori.adventure.key.Key;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -98,6 +101,14 @@ public class ActiveMirePad extends SimpleActiveCruxBlock implements ActiveCruxTi
         if(data.launchPotions != null){
             if(e instanceof LivingEntity living){
                 living.addPotionEffects(data.launchPotions);
+            }
+        }
+        if(data.launchCustomPotions != null){
+            PotionHolder holder = EntityMemory.getOrCreateDataHolder(e, SimplePotionHolder.class);
+            if(holder!=null){
+                data.launchCustomPotions.forEach(pot ->{
+                    holder.addPotion(pot.create(e));
+                });
             }
         }
     }

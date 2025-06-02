@@ -10,21 +10,29 @@ import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.AbyssOutpostUpgrades;
 import killercreepr.cruxabyss.core.structure.outpost.upgrade.active.ActiveAbyssalRecallUpgrade;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
+import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 public class AbyssOutpostListener implements Listener {
     @EventHandler
@@ -99,6 +107,30 @@ public class AbyssOutpostListener implements Listener {
         var data = structure.get(AbyssComponents.ABYSS_OUTPOST_DATA);
         if(data == null) return;
         data.setDefeatedPlagueTyrant(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        if(event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) return;
+        Entity e = event.getEntity();
+        if(!CruxMob.isInCategory(e, MobCategory.ENEMY)) return;
+
+        World world = e.getWorld();
+
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(world.key());
+        if(crux==null) return;
+        StructureWorldModule module = crux.getModule(StructureWorldModule.class);
+        if(module==null) return;
+
+        Vector vec = e.getLocation().toVector();
+
+        StoredStructure stored = CruxCollection.getFirst(module.getStored(
+            StoredStructure.class, check ->{
+                if(!check.has(AbyssComponents.ABYSS_OUTPOST_DATA)) return false;
+                BoundingBox box = check.getOrDefault(StoredStructureComponents.OUTER_BOX, check.getBoundingBox());
+                return box.contains(vec);
+            }
+        ));
     }
 
 }

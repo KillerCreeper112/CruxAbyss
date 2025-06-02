@@ -464,7 +464,7 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
                     .open(p, DataExchange.builder()
                         .put(outpost)
                         .put(outpost.getData())
-                        .build());
+                        .build(), TagContainer.merged().add(Tag.parsed("direct_access", "1")));
                 //Lang.ABYSS_CONQUEST_NODE_SHIFT_INFO.use(p);
                 return Event.Result.DENY;
             }

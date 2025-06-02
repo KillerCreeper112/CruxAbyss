@@ -18,6 +18,7 @@ import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxpotions.api.potion.StoredPotion;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
@@ -65,6 +66,7 @@ public class CfgAbyssComponents {
                     AbyssComponents.MIRE_PAD, new MirePadComponent(
                         reg.deserializeFromFile(NumberVector.class, e.get("launch_force")),
                         reg.deserializeFromFile(new TypeToken<Collection<PotionEffect>>(){}.getType(), e.get("launch_potions")),
+                        reg.deserializeFromFile(new TypeToken<Collection<StoredPotion>>(){}.getType(), e.get("launch_custom_potions")),
                         reg.deserializeFromFile(CreateSound.class, e.get("launch_sound")),
                         e.getOrDefaultObject(Float.class, "direction_boost", 0f),
                         e.getOrDefaultObject(Boolean.class, "use_entity_pitch", false),
