@@ -55,13 +55,19 @@ public class FungalGroveBiome extends GrimBiome {
             limitedRegion.setType(x, y, z, Material.AIR);
             return;
         }
+        Material type = b.getType();
         if(b.getType() == Material.BEDROCK) return;
-        BlockGenerator gen = replace.getOrDefault(limitedRegion.getType(x,y,z), null);
+        BlockGenerator gen = replace.getOrDefault(type, null);
         if(gen == null) return;
         gen.set(limitedRegion,x,y,z);
-        if(limitedRegion.getType(x,y,z) == Material.MYCELIUM && CruxMath.testChance(6.5) && limitedRegion.getType(x,y+1,z).isEmpty() &&
-                limitedRegion.getType(x,y+2,z).isEmpty()){
-            generateSpike(worldInfo, random, limitedRegion, x,y,z);
+        type = limitedRegion.getType(x,y,z);
+        if(type == Material.MYCELIUM && CruxMath.testChance(6.5)){
+            if(limitedRegion.isInRegion(x,y+1,z) && limitedRegion.isInRegion(x,y+2,z)){
+                if(limitedRegion.getType(x,y+1,z).isEmpty() &&
+                    limitedRegion.getType(x,y+2,z).isEmpty()){
+                    generateSpike(worldInfo, random, limitedRegion, x,y,z);
+                }
+            }
         }
     }
 

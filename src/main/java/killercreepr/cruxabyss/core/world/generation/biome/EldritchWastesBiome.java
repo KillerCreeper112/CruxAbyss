@@ -33,6 +33,11 @@ public class EldritchWastesBiome extends GrimBiome {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
         Material type = b.getType();
+        if(!b.isSolid()){
+            decorationLogic(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);
+            return;
+        }
+
         if(!b.isSolid() || type == Material.BEDROCK) return;
 
         if(Tag.LOGS.isTagged(type) || Tag.LEAVES.isTagged(type)){
@@ -46,11 +51,6 @@ public class EldritchWastesBiome extends GrimBiome {
             }
             return;
         }
-
-        if(!b.isSolid()){
-            decorationLogic(worldInfo, random, chunkX, chunkZ, limitedRegion, x, y, z);
-            return;
-        }
     }
 
     private void decorationLogic(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion, int x, int y, int z){
@@ -62,9 +62,11 @@ public class EldritchWastesBiome extends GrimBiome {
         var ground = limitedRegion.getType(x, y-1, z);
         if(!ground.isSolid() || isLiquid(ground)) return false;
         if(!isReplaceable(limitedRegion, x, y, z)) return false;
-        if(!CruxMath.testChance(20)) return false;
+        if(!CruxMath.testChance(1.8)) return false;
         if(true){
-            if(CruxMath.testChance(5)){
+            if(CruxMath.testChance(2)){
+                return attemptFlowerPlace(limitedRegion, x, y, z, 2, AbyssBlocks.EYEWITHER);
+            }else if(CruxMath.testChance(5)){
                 AbyssBlocks.VEILSTARE.setBlock(limitedRegion, x, y, z);
                 return true;
             }else {

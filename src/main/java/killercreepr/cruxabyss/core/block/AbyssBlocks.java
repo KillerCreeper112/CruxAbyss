@@ -30,4 +30,5 @@ public class AbyssBlocks {
 
     public static final CruxBlockGroup WISPTHISTLE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("wispthistle"));
     public static final CruxBlockGroup VEILSTARE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("veilstare"));
+    public static final CruxBlockGroup EYEWITHER = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("eyewither"));
 }
