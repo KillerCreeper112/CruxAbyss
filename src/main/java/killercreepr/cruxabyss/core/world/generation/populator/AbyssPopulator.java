@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.world.generation.populator;
 
 import com.destroystokyo.paper.MaterialTags;
+import killercreepr.crux.core.util.CruxBlockFace;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
 import killercreepr.cruxabyss.core.world.generation.biome.CharredBiome;
 import killercreepr.cruxabyss.core.world.generation.biome.EldritchWastesBiome;
@@ -16,6 +18,7 @@ import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
+import java.util.Vector;
 import java.util.function.Predicate;
 
 public class AbyssPopulator extends GrimPopulator{
@@ -75,12 +78,49 @@ public class AbyssPopulator extends GrimPopulator{
         );
     }
 
+    public boolean attemptMouldite(WorldInfo worldInfo, LimitedRegion region, int x, int y, int z){
+        if(y==worldInfo.getMinHeight()) return false;
+        double baseChance = 0.1;
+        double minChance = 0.01;
+
+        double minY = worldInfo.getMinHeight()+1;
+        double maxY = minY + 5;
+        double clampedY = Math.max(minY, Math.min(y, maxY));
+
+        double progress = (clampedY - minY) / (maxY - minY);  // 0 at minY, 1 at maxY
+        double chance = baseChance - (baseChance - minChance) * progress;
+
+        if (!CruxMath.testChance(chance)) return false;
+        if (!hasAtleast1SolidNear(region, x, y, z)) return false;
+
+        AbyssBlocks.MOULDITE_CRUST.setBlock(region, x, y, z);
+        return true;
+    }
+
+
+    public boolean hasAtleast1SolidNear(LimitedRegion region, int x, int y, int z){
+        for(var face : CruxBlockFace.CARTESIAN){
+            int xx = x + face.getModX();
+            int yy = y + face.getModY();
+            int zz = z + face.getModZ();
+            if(isBedrockSolid(region, xx, yy, zz)) return true;
+        }
+        return false;
+    }
+
+    public boolean isBedrockSolid(LimitedRegion region, int x, int y, int z){
+        if(!region.isInRegion(x, y, z)) return false;
+        Block block = region.getBlockState(x, y, z).getBlock();
+        if(block.getType() == Material.BEDROCK) return false;
+        return block.isSolid() && !block.isLiquid();
+    }
+
     @Override
     public void populateXYZ(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion,
                             int x, int y, int z) {
         Block b = limitedRegion.getBlockState(x,y,z).getBlock();
         if(b.getType() == Material.BEDROCK){
-            limitedRegion.setType(x,y,z, Material.AIR);
+            if(!attemptMouldite(worldInfo, limitedRegion, x, y, z)) limitedRegion.setType(x,y,z, Material.AIR);
             defaultBiome(worldInfo, random, limitedRegion, x, y, z);
             return;
         }

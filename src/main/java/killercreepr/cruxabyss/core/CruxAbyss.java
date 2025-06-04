@@ -330,7 +330,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             new AbyssOutpostListener(),
             new CustomObjectivesListener(),
 
-            new RewardsListener()
+            new RewardsListener(),
+
+            new NetheriteListener()
         );
         AbyssBlocks.register();
         AbyssOutpostUpgrades.register();

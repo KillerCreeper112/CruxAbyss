@@ -62,7 +62,7 @@ public class EldritchWastesBiome extends GrimBiome {
         var ground = limitedRegion.getType(x, y-1, z);
         if(!ground.isSolid() || isLiquid(ground)) return false;
         if(!isReplaceable(limitedRegion, x, y, z)) return false;
-        if(!CruxMath.testChance(1.8)) return false;
+        if(!CruxMath.testChance(1)) return false;
         if(true){
             if(CruxMath.testChance(2)){
                 return attemptFlowerPlace(limitedRegion, x, y, z, 2, AbyssBlocks.EYEWITHER);

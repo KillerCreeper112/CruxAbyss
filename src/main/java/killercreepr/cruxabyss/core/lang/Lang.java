@@ -234,6 +234,13 @@ public class Lang {
             .build()
     );
 
+    public static final Msg CANNOT_MINE_ANCIENT_DEBRIS = create(
+        Communicator.builder()
+            .chat("<red>WARNING! Ancient debris can no longer be mined with diamond! You must travel to the abyss and upgrade your tools to .")
+            .build()
+    );
+
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }
