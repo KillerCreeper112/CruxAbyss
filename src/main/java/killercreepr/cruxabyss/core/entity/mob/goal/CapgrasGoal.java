@@ -15,7 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
+//Cow: Heals slightly and becomes passive.
+//
+//Sheep: Becomes immune to projectiles briefly.
+//
+//Axolotl: Regenerates health and flees temporarily.
+//
+//Evoker: Casts a short-range magic burst or summons fangs.
+//
+//Slime-like form: Bounces to knock players back.
 public class CapgrasGoal extends CruxMobModeledGoal {
     public CapgrasGoal(@NotNull Mob mob) {
         super(mob);

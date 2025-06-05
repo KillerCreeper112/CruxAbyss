@@ -21,15 +21,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
+public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     protected final MobAttackHandler attackHandler;
-    public AbyssalHuskGoal(@NotNull Mob mob) {
+    public RotfiendGoal(@NotNull Mob mob) {
         super(mob);
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_AMBIENT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .6f);
+                return CreateSound.sound(Sound.ENTITY_DROWNED_AMBIENT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.5f);
             }
 
             /*@Override
@@ -49,12 +49,12 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_HURT,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .6f);
+                return CreateSound.sound(Sound.ENTITY_DROWNED_HURT_WATER,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_HUSK_DEATH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, .6f);
+                return CreateSound.sound(Sound.ENTITY_DROWNED_DEATH_WATER,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.5f);
             }
         });
 
@@ -86,6 +86,20 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
         ), List.of());
     }
 
+    public CreateSound prepareShootSound(){
+        return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.4f);
+    }
+    public CreateSound shootSound(){
+        return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.4f);
+    }
+    //todo ooze sounds
+    public CreateSound prepareOozeSound(){
+        return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.4f);
+    }
+    public CreateSound oozeSound(){
+        return CreateSound.sound(Sound.ENTITY_SLIME_ATTACK,  net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.4f);
+    }
+
     @Override
     public boolean preAttemptAttack() {
         if(attackHandler.preAttemptAttack()){
@@ -111,11 +125,6 @@ public class AbyssalHuskGoal extends CruxMobModeledGoal implements Listener {
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
-    }
-
-    @Override
-    public double getFindTargetRange() {
-        return 9D;
     }
 
     public void movementTick(){

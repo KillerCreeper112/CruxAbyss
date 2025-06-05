@@ -1,9 +1,7 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
-import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.CharredBonesGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
@@ -14,9 +12,7 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.jetbrains.annotations.NotNull;

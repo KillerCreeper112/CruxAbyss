@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;

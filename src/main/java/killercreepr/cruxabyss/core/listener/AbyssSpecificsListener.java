@@ -1,8 +1,6 @@
 package killercreepr.cruxabyss.core.listener;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
@@ -20,7 +18,6 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.util.RespawnUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.*;
@@ -43,7 +40,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.Map;

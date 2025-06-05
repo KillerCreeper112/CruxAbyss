@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.core.advancement.objective;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.cruxabyss.api.event.EntityUpgradeAbyssOutpostEvent;
-import killercreepr.cruxabyss.api.event.PlayerAbyssAltarBuildEvent;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.advancement.objective.standard.GenericEventObjective;
 import org.jetbrains.annotations.NotNull;

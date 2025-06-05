@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.entity.mob.goal.vilder;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
-import com.ticxo.modelengine.core.ModelEngine;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;

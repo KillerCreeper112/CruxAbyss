@@ -3,7 +3,6 @@ package killercreepr.cruxabyss.api.structure.outpost;
 import killercreepr.crux.api.data.tick.ManagedTickedTime;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

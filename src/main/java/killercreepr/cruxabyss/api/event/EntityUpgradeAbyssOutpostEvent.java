@@ -3,11 +3,9 @@ package killercreepr.cruxabyss.api.event;
 import killercreepr.cruxabyss.api.structure.outpost.OutpostUpgrade;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpostData;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class EntityUpgradeAbyssOutpostEvent extends EntityEvent implements Cancellable {

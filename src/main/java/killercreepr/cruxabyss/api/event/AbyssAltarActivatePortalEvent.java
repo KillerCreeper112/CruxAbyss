@@ -1,8 +1,6 @@
 package killercreepr.cruxabyss.api.event;
 
-import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.api.altar.AbyssAltar;
-import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

@@ -6,7 +6,6 @@ import killercreepr.cruxabyss.api.altar.AbyssAltar;
 import killercreepr.cruxabyss.api.component.AbyssAltarItemComponent;
 import killercreepr.cruxabyss.api.event.PlayerAbyssAltarBuildEvent;
 import killercreepr.cruxabyss.core.altar.SimpleAbyssAltar;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Candle;

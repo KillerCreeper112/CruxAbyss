@@ -2,7 +2,6 @@ package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.ToxintrawlGoal;
@@ -13,7 +12,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
-import net.minecraft.world.entity.animal.Wolf;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;

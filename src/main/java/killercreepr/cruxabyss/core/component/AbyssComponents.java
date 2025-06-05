@@ -18,7 +18,6 @@ import killercreepr.cruxabyss.core.structure.outpost.loot.ActiveAbyssOutpostLoot
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
 import killercreepr.cruxblocks.core.structure.modules.PlaceCustomBlocksModule;
-import killercreepr.cruxteleport.api.component.TeleportLocationCheck;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import org.bukkit.Color;
 import org.bukkit.potion.PotionEffect;

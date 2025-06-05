@@ -11,7 +11,6 @@ import killercreepr.cruxquestline.api.quest.QuestLineProgress;
 import killercreepr.cruxquestline.core.lang.Lang;
 import killercreepr.cruxquestline.core.quest.SimpleQuestGenerator;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

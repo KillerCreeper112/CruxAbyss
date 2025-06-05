@@ -6,7 +6,6 @@ import killercreepr.cruxabyss.core.block.active.ActiveMirePad;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.component.CruxBlockComponent;
-import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.api.potion.StoredPotion;
 import org.bukkit.block.Block;
 import org.bukkit.potion.PotionEffect;

@@ -25,7 +25,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomObjectivesListener implements Listener {
     protected final Holder<CruxAdvancementManager> MANAGER = () -> AdvancementRegistries.ADVANCEMENT_MANAGERS

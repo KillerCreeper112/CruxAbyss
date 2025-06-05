@@ -18,7 +18,6 @@ import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
-import java.util.Vector;
 import java.util.function.Predicate;
 
 public class AbyssPopulator extends GrimPopulator{
@@ -80,7 +79,7 @@ public class AbyssPopulator extends GrimPopulator{
 
     public boolean attemptMouldite(WorldInfo worldInfo, LimitedRegion region, int x, int y, int z){
         if(y==worldInfo.getMinHeight()) return false;
-        double baseChance = 0.1;
+        double baseChance = 0.08;
         double minChance = 0.01;
 
         double minY = worldInfo.getMinHeight()+1;

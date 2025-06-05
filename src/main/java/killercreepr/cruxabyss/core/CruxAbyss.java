@@ -28,7 +28,6 @@ import killercreepr.cruxabyss.core.command.AbyssCommands;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.config.Config;
 import killercreepr.cruxabyss.core.config.WorldEventConfigs;
-import killercreepr.cruxabyss.core.config.handler.FileAbyssWorldPlayerData;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
@@ -114,9 +113,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,7 +1,6 @@
 package killercreepr.cruxabyss.core.entity.mob.goal.data;
 
 import killercreepr.crux.core.Crux;
-import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
 
 public abstract class StrongMobAttack implements MobAttack{

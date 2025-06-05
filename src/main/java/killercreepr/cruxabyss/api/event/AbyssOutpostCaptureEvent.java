@@ -4,7 +4,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxabyss.core.structure.outpost.ActiveAbyssOutpost;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

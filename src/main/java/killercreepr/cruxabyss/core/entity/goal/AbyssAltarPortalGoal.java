@@ -17,8 +17,6 @@ import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.TeleportAbyssWorldModule;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.cruxteleport.api.component.TeleportLocationCheck;
-import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
