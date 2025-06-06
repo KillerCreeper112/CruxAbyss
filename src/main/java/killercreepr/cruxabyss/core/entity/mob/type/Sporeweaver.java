@@ -6,6 +6,7 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.RotfiendGoal;
+import killercreepr.cruxabyss.core.entity.mob.goal.SporeweaverGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -25,16 +26,16 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class Rotfiend extends SimpleAbyssMob {
+public class Sporeweaver extends SimpleAbyssMob {
 
-    public Rotfiend() {
-        super(Crux.key("rotfiend"), EntityType.PIG);
+    public Sporeweaver() {
+        super(Crux.key("sporeweaver"), EntityType.PIG);
     }
 
     @Override
     public @Nullable Consumer<Entity> spawnFunction(@Nullable AbyssWorld world, @NotNull Location l) {
         return e ->{
-            e.customName(Component.text("Rotfiend"));
+            e.customName(Component.text("Sporeweaver"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
             if(e instanceof Zombie z){
@@ -42,9 +43,9 @@ public class Rotfiend extends SimpleAbyssMob {
             }
 
             if(e instanceof LivingEntity ee){
-                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
+                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.05D;
                 ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
-                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(25D, 35D));
+                ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(45D, 55D));
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
                 CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(movement));
             }
@@ -58,7 +59,7 @@ public class Rotfiend extends SimpleAbyssMob {
                 CruxAttributeModifier.baseModifier(5.7D * (world == null ? 1D : world.getDifficulty())));
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.3D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-15));
-        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(9));
+        addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(12));
         return map;
     }
 
@@ -68,7 +69,7 @@ public class Rotfiend extends SimpleAbyssMob {
 
         if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
             CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-                mob.getWidth() + .7D
+                mob.getWidth() + .9D
             ));
         }
     }
@@ -83,7 +84,7 @@ public class Rotfiend extends SimpleAbyssMob {
     public @Nullable CruxMobGoal getGoal(@NotNull Mob e) {
         CompletableFuture<ActiveModel> active = new ModelEntity(e).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
         applyWhenCompleteModel(e, active);
-        return new RotfiendGoal(e).model(active);
+        return new SporeweaverGoal(e).model(active);
     }
 
     @Override

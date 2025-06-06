@@ -28,10 +28,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
+public class SporepodGoal extends CruxMobModeledGoal implements Listener {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
     protected final MobAttackHandler attackHandler;
-    public RotfiendGoal(@NotNull Mob mob) {
+    public SporepodGoal(@NotNull Mob mob) {
         super(mob);
         rangedGoal = new RangedAttackGoal(mob, 1.5D, 8, 12, () -> getTarget());
         sounds(new CruxGoalSounds(mob) {
