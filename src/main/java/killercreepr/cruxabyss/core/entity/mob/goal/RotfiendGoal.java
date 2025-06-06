@@ -2,28 +2,25 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
-import killercreepr.cruxabyss.core.entity.memory.RotfiendOozeHolder;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.usurvive.core.entity.mob.goals.RangedAttackGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttack;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.entity.AreaEffectCloud;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -36,6 +33,7 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
     protected final MobAttackHandler attackHandler;
     public RotfiendGoal(@NotNull Mob mob) {
         super(mob);
+        rangedGoal = new RangedAttackGoal(mob, 1.5D, 5, 10, () -> getTarget());
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
@@ -103,9 +101,8 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public void onUse() {
                     MobAttack.super.onUse();
-                    mob.getAttribute(Attribute.MOVEMENT_SPEED).addTransientModifier(
-                        new AttributeModifier(MobAttackHandler.STRONG_ATTACK_KEY, -0.7D, AttributeModifier.Operation.MULTIPLY_SCALAR_1)
-                    );
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -0.7D, CruxAttribute.Operation.MULTIPLY));
                 }
 
                 @Override
@@ -113,6 +110,8 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                     MobAttack.super.onTick();
                     if(attackHandler.getAttackTime() == 16){ //31 / 2 = 16 rounded up
                         ooze();
+                    }else if(attackHandler.getAttackTime() < 16){
+                        prepareOozeSound().playAt(mob);
                     }
                 }
 
@@ -124,7 +123,7 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public boolean canUseAttack() {
                     if(target == null) return false;
-                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 2;
+                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
                     return getSquaredDistanceFromTarget() < (distance*distance);
                 }
             },
@@ -137,9 +136,8 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public void onUse() {
                     MobAttack.super.onUse();
-                    mob.getAttribute(Attribute.MOVEMENT_SPEED).addTransientModifier(
-                        new AttributeModifier(MobAttackHandler.STRONG_ATTACK_KEY, -5D, AttributeModifier.Operation.MULTIPLY_SCALAR_1)
-                    );
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -5, CruxAttribute.Operation.MULTIPLY));
                 }
 
                 @Override
@@ -147,7 +145,9 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                     MobAttack.super.onTick();
                     if(attackHandler.getAttackTime() == 15){ //30 / 2 = 15
                         if(target == null) return;
-                        oozeShoot(target.getLocation());
+                        oozeShoot(target.getLocation(), CruxMath.random(2, 3));
+                    }else if(attackHandler.getAttackTime() < 15){
+                        prepareShootSound().playAt(mob);
                     }
                 }
 
@@ -159,38 +159,55 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public boolean canUseAttack() {
                     if(target == null) return false;
-                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 2;
+                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
                     return getSquaredDistanceFromTarget() > (distance*distance);
                 }
             }
         ));
     }
 
-    public void oozeShoot(Location target){
+    public void oozeShoot(Location target, int amount){
         var itemHolder = Crux.handlers().item().getItem(Crux.key("moldering_spore"));
         ItemStack item;
         if(itemHolder == null) item = new ItemStack(Material.SLIME_BALL);
         else item = itemHolder.value();
 
         Location spawn = getOozePos();
-        mob.getWorld().spawn(spawn, Snowball.class, e ->{
-            e.setItem(item);
-            Vector dir = CruxMath.parabolicMotion(spawn.toVector(), target.toVector(), 4, 0.115D);
-            e.setVelocity(dir);
-            EntityMemory.getOrCreateDataHolder(e, RotfiendOozeHolder.class);
-        });
+
+        for(int i = 0; i < amount; i++){
+            mob.getWorld().spawn(spawn, Snowball.class, e ->{
+                e.setItem(item);
+                Vector dir = CruxMath.parabolicMotion(spawn.toVector(), target.toVector(),
+                    CruxMath.random(2,4),
+                    CruxMath.random(0.1D, 0.15D));
+                dir.rotateAroundX(Math.toRadians(CruxMath.random(-25, 25)));
+                dir.rotateAroundZ(Math.toRadians(CruxMath.random(-25, 25)));
+                e.setVelocity(dir);
+                CruxTag.set(e, "rotfiend_ooze", PersistentDataType.BOOLEAN, true);
+            });
+        }
+
+        new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+            .location(spawn)
+            .count(CruxMath.random(4, 7))
+            .colorTransition(Color.fromRGB(0xC0FF00), Color.fromRGB(0x7F670E))
+            .offset(0.2, 0.2, 0.2)
+            .extra(.3)
+            .spawn();
+
+        shootSound().playAt(mob);
     }
 
     public void ooze(){
         mob.getWorld().spawn(mob.getLocation(), AreaEffectCloud.class, e ->{
-            e.setRadius(e.getRadius()*CruxMath.random(1.3f, 1.5f));
+            e.setRadius(e.getRadius()*CruxMath.random(1.1f, 1.3f));
             e.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 300, 0), true);
         });
 
         new GetEntityNear<>(LivingEntity.class)
             .center(mob)
             .filter(this::isValidNaturalTarget)
-            .range(CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 2)
+            .range(CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4)
             .find().forEach(this::attack);
 
         oozeSound().playAt(mob);
@@ -199,6 +216,7 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
 
         new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
             .location(oozePos)
+            .count(CruxMath.random(5, 8))
             .colorTransition(Color.fromRGB(0xC0FF00), Color.fromRGB(0x7F670E))
             .offset(0.5, 0.5, 0.5)
             .extra(.5)
@@ -270,9 +288,31 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
     }
 
     @Override
+    public void moveTo(double speed) {
+        if (this.target != null) {
+            if (this.lastKnownTargetLocation != null && this.lostTarget >= this.followLostTargetTicks()) {
+                if (this.lostTarget < this.searchLostTargetTicks()) {
+                    moveAwayFromTarget(this.target, speed);
+                } else if (this.lostTarget >= this.searchLostTargetTicks() && this.lostTarget <= this.searchLostTargetTicks() + 5) {
+                    this.moveTo(this.mob.getLocation(), speed);
+                }
+            } else {
+                moveAwayFromTarget(this.target, speed);
+            }
+
+        }
+    }
+
+    public void moveAwayFromTarget(Entity target, double speed){
+
+    }
+
+    protected final RangedAttackGoal rangedGoal;
+    @Override
     public void tick() {
         super.tick();
         attackHandler.tick();
         movementTick();
+        rangedGoal.tick();
     }
 }

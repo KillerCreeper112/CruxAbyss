@@ -36,6 +36,7 @@ public class CustomProjectileListener implements Listener {
     public void onProjectileHit(ProjectileHitEvent event) {
         Entity e = event.getEntity();
         sporeBurst(event);
+        if(CruxTag.has(e, "rotfiend_ooze")) performRotfiendOoze(event);
         if(event.getHitEntity() != null){
             if(CruxTag.has(e, "ignore_abyssal_mobs")){
                 if(CruxMob.isInCategory(event.getHitEntity(), AbyssMobCategory.ABYSSAL)){
@@ -58,6 +59,17 @@ public class CustomProjectileListener implements Listener {
             .spawn()
         ;
         CreateSound.sound(Sound.ENTITY_PLAYER_SPLASH, 1.5f).playAt(e);
+    }
+
+    public void performRotfiendOoze(ProjectileHitEvent event){
+        Entity proj = event.getEntity();
+        CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 1.3f)
+            .playAt(proj);
+        proj.getWorld().spawn(proj.getLocation(), AreaEffectCloud.class, e ->{
+            e.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 100, 1), true);
+            e.setDuration((int)(e.getDuration() * .5f));
+            e.setRadius(e.getRadius() * .65f);
+        });
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)

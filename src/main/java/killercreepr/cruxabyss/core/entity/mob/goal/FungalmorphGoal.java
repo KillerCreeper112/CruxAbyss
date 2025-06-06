@@ -101,12 +101,7 @@ public class FungalmorphGoal extends CruxMobModeledGoal implements Listener {
         maxAttackTime = 0;
         hitAt = 0;
         currentAttackID = 0;
-        CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, STRONG_ATTACK_KEY);
-        CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);
+        CruxAttribute.removeModifiers(mob, STRONG_ATTACK_KEY);
     }
 
     public void combatStrongFinish(int id){
