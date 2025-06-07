@@ -6,7 +6,9 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.*;
+import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -27,6 +29,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -83,6 +87,12 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                 }
 
                 @Override
+                public void onFinish() {
+                    MobAttack.super.onFinish();
+                    lastSporelink = System.currentTimeMillis();
+                }
+
+                @Override
                 public void onTick() {
                     MobAttack.super.onTick();
                     if(attackHandler.getAttackTime() == 48){
@@ -104,7 +114,54 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public boolean canUseAttack() {
                     if(target == null) return false;
-                    if(CruxMath.testChance(40)) return false;
+                    if(CruxMath.hasOccurredWithin(lastSporelink, 600)) return false;
+                    if(CruxMath.testChance(25)) return false;
+                    double minDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 3;
+                    double maxDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 7;
+                    double distance = getSquaredDistanceFromTargetHitbox();
+                    return distance > (minDistance*minDistance) && distance < (maxDistance*maxDistance);
+                }
+            },
+
+            new MobAttack() {
+                @Override
+                public String getAnimationID() {
+                    return "summon_sporepod";
+                }
+
+                @Override
+                public void onUse() {
+                    MobAttack.super.onUse();
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public void onFinish() {
+                    MobAttack.super.onFinish();
+                    lastSporepod = System.currentTimeMillis();
+                }
+
+                @Override
+                public void onTick() {
+                    MobAttack.super.onTick();
+                    if(attackHandler.getAttackTime() == 8){
+                        summonSporepod();
+                        return;
+                    }
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    if(target == null) return false;
+                    if(!CruxMath.hasOccurredWithin(lastSporelink, 200)) return false;
+                    if(CruxMath.hasOccurredWithin(lastSporepod, 300)) return false;
+                    if(CruxMath.testChance(10)) return false;
                     double minDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 3;
                     double maxDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 7;
                     double distance = getSquaredDistanceFromTargetHitbox();
@@ -199,7 +256,52 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
         ));
     }
 
+    protected long lastSporelink;
+    protected long lastSporepod;
     protected final Map<UUID, SporeLinkedEntity> sporeLinked = new HashMap<>();
+
+    public boolean canSpawnSporepod(Location loc){
+        Block b = loc.getBlock();
+        if(b.isSolid()) return false;
+        if(b.getRelative(BlockFace.UP).isSolid()) return false;
+        return true;
+    }
+
+    public Entity summonSporepod(){
+        Location l = mob.getEyeLocation();
+        l.setPitch(0f);
+        Location spawn = CruxLoc.shift(l, .5, 0, 0);
+
+        if(!canSpawnSporepod(spawn)) return null;
+
+        Entity sporepod = AbyssMob.SPOREPOD.spawn(spawn, e ->{
+            Vector vel = l.getDirection().normalize().setY(1.2f);
+            e.setVelocity(vel);
+            CruxPersist.OWNER.set(e, mob.getUniqueId());
+        });
+
+        CreateSound.sound(Sound.ENTITY_EVOKER_CAST_SPELL, net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f, 2f)
+            .playAt(mob);
+
+        new ParticleBuilder(Particle.FLASH)
+            .location(spawn)
+            .extra(.2)
+            .count(1)
+            .spawn();
+        new ParticleBuilder(Particle.ELECTRIC_SPARK)
+            .location(spawn)
+            .offset(.3, .3, .3)
+            .extra(.2)
+            .count(CruxMath.random(6, 9))
+            .spawn();
+
+        PotionHolder holder = EntityMemory.getOrCreateDataHolder(sporepod, SimplePotionHolder.class, SimplePotionHolder::new);
+        if(holder == null) return sporepod;
+        holder.addPotion(USurvivePotions.SPORELINK.create(sporepod, CruxMath.random(1200, 2400),
+            (int) CruxMath.randomSkewed(0f, 1.3f, 0.4f)));
+
+        return sporepod;
+    }
 
     public void sporeLinkComplete(){
         getNearbySporelinkValidTargets().forEach(e ->{
