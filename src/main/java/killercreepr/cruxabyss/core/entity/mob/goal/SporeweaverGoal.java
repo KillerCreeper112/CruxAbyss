@@ -21,10 +21,18 @@ import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.core.entity.mob.goals.RangedAttackGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttack;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
+import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
 import killercreepr.usurvive.core.potion.USurvivePotions;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,30 +68,6 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
         });
 
         attackHandler = new MobAttackHandler(mob, this, List.of(
-            /*new StrongMobAttack(1) {
-                @Override
-                public void onUse() {
-                    mob.getAttribute(Attribute.MOVEMENT_SPEED).addTransientModifier(
-                        new AttributeModifier(STRONG_ATTACK_KEY, -5D, AttributeModifier.Operation.MULTIPLY_SCALAR_1)
-                    );
-                    *//*CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));*//*
-
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
-                }
-
-                @Override
-                public int getHitTime() {
-                    return 9;
-                }
-            }*/
         ), List.of(
             new MobAttack() {
                 @Override
@@ -101,11 +85,14 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public void onTick() {
                     MobAttack.super.onTick();
+                    if(attackHandler.getAttackTime() == 48){
+                        sporeLinkComplete();
+                        return;
+                    }
+                    if(attackHandler.getAttackTime() > 48) return;
+
                     if(attackHandler.getAttackTime() >= 33){
                         sporeLinkingTick();
-                        if(attackHandler.getAttackTime() == 48){
-                            sporeLinkComplete();
-                        }
                     }
                 }
 
@@ -117,8 +104,96 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public boolean canUseAttack() {
                     if(target == null) return false;
-                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
-                    return getSquaredDistanceFromTarget() < (distance*distance);
+                    if(CruxMath.testChance(40)) return false;
+                    double minDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 3;
+                    double maxDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 7;
+                    double distance = getSquaredDistanceFromTarget();
+                    return distance > (minDistance*minDistance) && distance < (maxDistance*maxDistance);
+                }
+            },
+
+            new StrongMobAttack(1) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.9D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .75D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .7D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 10;
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.75D;
+                    return getSquaredDistanceFromTarget() <= (range*range);
+                }
+            },
+            new StrongMobAttack(2) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.75D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 0.4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .5D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .5D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public void onTick() {
+                    super.onTick();
+                    if(attackHandler.getAttackTime() == attackHandler.getHitAt()){
+                        onHit();
+                    }
+                }
+
+                public void onHit(){
+                    Location head = getHeadTopPos();
+                    new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+                        .location(head)
+                        .offset(.4, .4, .4)
+                        .count(CruxMath.random(9,12))
+                        .extra(.2)
+                        .colorTransition(Color.fromRGB(0xC0FF00), Color.fromRGB(0xE8BE3E),
+                            CruxMath.random(0.7f, 1f))
+                        .spawn()
+                    ;
+                    CreateSound.sound(Sound.ENTITY_PUFFER_FISH_BLOW_OUT, 1.3f).playAt(mob);
+
+                    mob.getWorld().getNearbyEntities(CruxedBoundingBox.boundingBox(head, .9, .9, .9), e ->{
+                        return  e instanceof LivingEntity ll && isValidNaturalTarget(ll);
+                    }).forEach(hit ->{
+                        attack(hit);
+                        if(!(hit instanceof LivingEntity h)) return;
+                        h.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 1));
+                    });
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.5D;
+                    return getSquaredDistanceFromTarget() <= (range*range);
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 22;
                 }
             }
         ));
@@ -239,10 +314,11 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
         }
     }
 
+    public static final double sporeLinkDistance = 24D;
     public boolean isValidSporeLinkEntity(LivingEntity e){
         if(!isValidNaturalTarget(e)) return false;
         if(!CruxEntityUtil.isValid(e)) return false;
-        if(!e.getWorld().equals(mob.getWorld())) return false;
+        if(e.getLocation().distanceSquared(mob.getLocation()) > (sporeLinkDistance * sporeLinkDistance)) return false;
         return true;
     }
 
@@ -274,12 +350,10 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
     public Collection<LivingEntity> getNearbySporelinkValidTargets(){
         return new GetEntityNear<>(LivingEntity.class)
             .center(mob)
-            .range(24D)
+            .range(sporeLinkDistance)
             .amount(8)
             .filter(e ->{
                 if(!isValidNaturalTarget(e)) return false;
-                PotionHolder holder = EntityMemory.getDataHolder(e, SimplePotionHolder.class);
-                if(holder != null && holder.hasPotion(USurvivePotions.SPORELINK)) return false;
                 return true;
             })
             .operation(GetNear.Operation.NEAREST)

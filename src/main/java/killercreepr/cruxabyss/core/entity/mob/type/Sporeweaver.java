@@ -5,7 +5,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.core.entity.mob.goal.RotfiendGoal;
 import killercreepr.cruxabyss.core.entity.mob.goal.SporeweaverGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
