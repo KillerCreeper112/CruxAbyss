@@ -107,7 +107,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                     if(CruxMath.testChance(40)) return false;
                     double minDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 3;
                     double maxDistance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 7;
-                    double distance = getSquaredDistanceFromTarget();
+                    double distance = getSquaredDistanceFromTargetHitbox();
                     return distance > (minDistance*minDistance) && distance < (maxDistance*maxDistance);
                 }
             },
@@ -188,7 +188,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public boolean canUseAttack() {
                     double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.5D;
-                    return getSquaredDistanceFromTarget() <= (range*range);
+                    return getSquaredDistanceFromTargetHitbox() <= (range*range);
                 }
 
                 @Override

@@ -45,6 +45,12 @@ public class Sporepod extends SimpleAbyssMob {
                 double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.1D;
                 ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(20D, 30D));
+                ee.getAttribute(Attribute.JUMP_STRENGTH).setBaseValue(
+                    ee.getAttribute(Attribute.JUMP_STRENGTH).getBaseValue()*1.5
+                );
+                ee.getAttribute(Attribute.SAFE_FALL_DISTANCE).setBaseValue(
+                    ee.getAttribute(Attribute.SAFE_FALL_DISTANCE).getBaseValue()*2
+                );
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
                 CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(movement));
             }

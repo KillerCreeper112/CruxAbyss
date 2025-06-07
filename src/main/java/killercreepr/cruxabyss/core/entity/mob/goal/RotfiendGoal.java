@@ -124,7 +124,7 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                 public boolean canUseAttack() {
                     if(target == null) return false;
                     double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
-                    return getSquaredDistanceFromTarget() < (distance*distance);
+                    return getSquaredDistanceFromTargetHitbox() < (distance*distance);
                 }
             },
             new MobAttack() {
@@ -160,7 +160,7 @@ public class RotfiendGoal extends CruxMobModeledGoal implements Listener {
                 public boolean canUseAttack() {
                     if(target == null) return false;
                     double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
-                    return getSquaredDistanceFromTarget() > (distance*distance);
+                    return getSquaredDistanceFromTargetHitbox() > (distance*distance);
                 }
             }
         ));
