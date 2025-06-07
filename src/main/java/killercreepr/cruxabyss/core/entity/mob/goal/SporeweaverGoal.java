@@ -300,6 +300,8 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
         holder.addPotion(USurvivePotions.SPORELINK.create(sporepod, CruxMath.random(1200, 2400),
             (int) CruxMath.randomSkewed(0f, 1.3f, 0.4f)));
 
+        CreateSound.sound(Sound.ENTITY_ILLUSIONER_CAST_SPELL, net.kyori.adventure.sound.Sound.Source.HOSTILE, 0.4f, 1.5f)
+            .playAt(mob);
         return sporepod;
     }
 
@@ -348,6 +350,10 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
             .extra(.2)
             .count(CruxMath.random(6, 9))
             .spawn();
+
+
+        CreateSound.sound(Sound.ENTITY_EVOKER_PREPARE_ATTACK, net.kyori.adventure.sound.Sound.Source.HOSTILE, 0.4f, 2f)
+            .playAt(mob);
     }
 
     public void sporeLinkingTick(){
@@ -359,6 +365,10 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                 sporeLinked.put(hit.getUniqueId(),new SporeLinkedEntity(hit, System.currentTimeMillis()));
             });
         }
+
+        CreateSound.sound(Sound.BLOCK_SPORE_BLOSSOM_FALL, net.kyori.adventure.sound.Sound.Source.HOSTILE, 0.5f,
+                CruxMath.random(0.5f, 0.7f))
+            .playAt(mob);
 
         if(tick % 3 == 0){
             sporeLinked.values().removeIf(e -> !isValidSporeLinkEntity(e.entity()));
@@ -418,7 +428,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
 
     public static final double sporeLinkDistance = 24D;
     public boolean isValidSporeLinkEntity(LivingEntity e){
-        if(!isValidNaturalTarget(e)) return false;
+        if(!isValidNaturalTarget(e) && !CruxMob.is(e, AbyssMob.SPOREPOD)) return false;
         if(!CruxEntityUtil.isValid(e)) return false;
         if(e.getLocation().distanceSquared(mob.getLocation()) > (sporeLinkDistance * sporeLinkDistance)) return false;
         return true;
@@ -455,7 +465,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
             .range(sporeLinkDistance)
             .amount(8)
             .filter(e ->{
-                if(!isValidNaturalTarget(e)) return false;
+                if(!isValidNaturalTarget(e) && !CruxMob.is(e, AbyssMob.SPOREPOD)) return false;
                 return true;
             })
             .operation(GetNear.Operation.NEAREST)
