@@ -143,6 +143,25 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
             PotionHolder holder = EntityMemory.getOrCreateDataHolder(e, SimplePotionHolder.class);
             if(holder == null) return;
             holder.addPotion(USurvivePotions.SPORELINK.create(e, duration, 0, new EntityInflictor(mob)));
+
+            ShapeScheduler.builder()
+                .locationTick(ctx ->{
+                    new ParticleBuilder(Particle.ELECTRIC_SPARK)
+                        .location(ctx.getLocation().toLocation(mob.getWorld()))
+                        .offset(0, 0, 0)
+                        .extra(0)
+                        .spawn();
+                })
+                .shape(CreateWarpedLine.builder()
+                    .start(() -> CruxLocation.location(getLeftHandPos()))
+                    .end(() -> CruxLocation.location(e.getLocation().add(0, e.getHeight()/2, 0)))
+                    .spacing(1D)
+                    .warpStrength(0.5D)
+                    .tickOffset(NumberProvider.holder(() ->{
+                        return (System.currentTimeMillis() / 50L) % 10000;
+                    }))
+                    .build())
+                .build().scheduleAsync(0);
         });
         sporeLinked.clear();
 
@@ -164,7 +183,8 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
             });
         }
 
-        if(tick % 12 == 0){
+        if(tick % 3 == 0){
+            sporeLinked.values().removeIf(e -> !isValidSporeLinkEntity(e.entity()));
             Map<String, List<SporeLinkedEntity>> split = splitLeftRight(sporeLinked.values(), linked ->{
                 Entity e = linked.entity;
                 PotionHolder holder = EntityMemory.getOrCreateDataHolder(e, SimplePotionHolder.class);
@@ -193,7 +213,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                             return (System.currentTimeMillis() / 50L) % 10000;
                         }))
                         .build())
-                    .build();
+                    .build().scheduleAsync(0);
             }
             if(!right.isEmpty()){
                 var target = CruxCollection.getFirst(right).entity;
@@ -214,7 +234,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                             return (System.currentTimeMillis() / 50L) % 10000;
                         }))
                         .build())
-                    .build();
+                    .build().scheduleAsync(0);
             }
         }
     }
@@ -254,7 +274,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
     public Collection<LivingEntity> getNearbySporelinkValidTargets(){
         return new GetEntityNear<>(LivingEntity.class)
             .center(mob)
-            .range(16D)
+            .range(24D)
             .amount(8)
             .filter(e ->{
                 if(!isValidNaturalTarget(e)) return false;
