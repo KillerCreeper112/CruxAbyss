@@ -6,10 +6,7 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
-import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.GetEntityNear;
-import killercreepr.crux.core.util.GetNear;
-import killercreepr.cruxabyss.core.entity.mob.WarpedParticleBeam;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -20,6 +17,7 @@ import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateWarpedLine;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
+import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.core.entity.mob.goals.RangedAttackGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttack;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
@@ -27,11 +25,11 @@ import killercreepr.usurvive.core.potion.USurvivePotions;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
     protected final SwimmerGoal swimmer = new SwimmerGoal(this);
@@ -93,42 +91,22 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
                     return "prepare_spell_sporelink";
                 }
 
-                protected ShapeScheduler d;
                 @Override
                 public void onUse() {
                     MobAttack.super.onUse();
                     CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -0.7D, CruxAttribute.Operation.MULTIPLY));
-
-                    d = ShapeScheduler.builder()
-                        .locationTick(ctx ->{
-                            new ParticleBuilder(Particle.ELECTRIC_SPARK)
-                                .location(ctx.getLocation().toLocation(mob.getWorld()))
-                                .offset(0, 0, 0)
-                                .extra(0)
-                                .spawn();
-                        })
-                        .shape(CreateWarpedLine.builder()
-                            .start(() -> CruxLocation.location(getRightHandPos()))
-                            .end(() -> CruxLocation.location(target.getLocation().add(0, target.getHeight()/2, 0)))
-                            .spacing(0.5D)
-                            .warpStrength(0.5D)
-                            .tickOffset(NumberProvider.holder(() ->{
-                                return (System.currentTimeMillis() / 50L) % 10000;
-                            }))
-                            .build())
-                        .build();
-
+                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
                 }
 
                 @Override
                 public void onTick() {
                     MobAttack.super.onTick();
-                    if(attackHandler.getAttackTime() == 33){ //65 / 2 = 33 rounded up
-                    }else if(attackHandler.getAttackTime() < 33){
+                    if(attackHandler.getAttackTime() >= 33){
+                        sporeLinkingTick();
+                        if(attackHandler.getAttackTime() == 48){
+                            sporeLinkComplete();
+                        }
                     }
-
-                    d.scheduleAsync(0);
                 }
 
                 @Override
@@ -146,15 +124,118 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
         ));
     }
 
-    public Map<String, List<LivingEntity>> splitLeftRight(Collection<LivingEntity> targets) {
-        List<LivingEntity> left = new ArrayList<>();
-        List<LivingEntity> right = new ArrayList<>();
+    protected final Map<UUID, SporeLinkedEntity> sporeLinked = new HashMap<>();
+
+    public void sporeLinkComplete(){
+        getNearbySporelinkValidTargets().forEach(e ->{
+            SporeLinkedEntity linked = sporeLinked.get(e.getUniqueId());
+            if(linked == null){
+                PotionHolder holder = EntityMemory.getOrCreateDataHolder(e, SimplePotionHolder.class);
+                if(holder == null) return;
+                holder.addPotion(USurvivePotions.SPORELINK.create(e, 100, 0, new EntityInflictor(mob)));
+                return;
+            }
+            long ticksGotted = (System.currentTimeMillis() - linked.time) / 50L;
+            float progress = (ticksGotted / 30f) + 0.1f;
+
+            int duration = (int) (1800 * progress);
+
+            PotionHolder holder = EntityMemory.getOrCreateDataHolder(e, SimplePotionHolder.class);
+            if(holder == null) return;
+            holder.addPotion(USurvivePotions.SPORELINK.create(e, duration, 0, new EntityInflictor(mob)));
+        });
+        sporeLinked.clear();
+
+        new ParticleBuilder(Particle.ELECTRIC_SPARK)
+            .location(getLeftHandPos())
+            .offset(.3, .3, .3)
+            .extra(.2)
+            .count(CruxMath.random(6, 9))
+            .spawn();
+    }
+
+    public void sporeLinkingTick(){
+        if(tick % 6 == 0){
+            sporeLinked.values().removeIf(e -> !isValidSporeLinkEntity(e.entity()));
+
+            getNearbySporelinkValidTargets().forEach(hit ->{
+                if(sporeLinked.containsKey(hit.getUniqueId())) return;
+                sporeLinked.put(hit.getUniqueId(),new SporeLinkedEntity(hit, System.currentTimeMillis()));
+            });
+        }
+
+        if(tick % 12 == 0){
+            Map<String, List<SporeLinkedEntity>> split = splitLeftRight(sporeLinked.values(), linked ->{
+                Entity e = linked.entity;
+                PotionHolder holder = EntityMemory.getOrCreateDataHolder(e, SimplePotionHolder.class);
+                if(holder == null) return;
+                holder.addPotion(USurvivePotions.SPORELINK.create(e, 100, 0, new EntityInflictor(mob)));
+            });
+            Collection<SporeLinkedEntity> left = split.get("left");
+            Collection<SporeLinkedEntity> right = split.get("right");
+
+            if(!left.isEmpty()){
+                var target = CruxCollection.getFirst(left).entity;
+                ShapeScheduler.builder()
+                    .locationTick(ctx ->{
+                        new ParticleBuilder(Particle.ELECTRIC_SPARK)
+                            .location(ctx.getLocation().toLocation(mob.getWorld()))
+                            .offset(0, 0, 0)
+                            .extra(0)
+                            .spawn();
+                    })
+                    .shape(CreateWarpedLine.builder()
+                        .start(() -> CruxLocation.location(getLeftHandPos()))
+                        .end(() -> CruxLocation.location(target.getLocation().add(0, target.getHeight()/2, 0)))
+                        .spacing(1D)
+                        .warpStrength(0.5D)
+                        .tickOffset(NumberProvider.holder(() ->{
+                            return (System.currentTimeMillis() / 50L) % 10000;
+                        }))
+                        .build())
+                    .build();
+            }
+            if(!right.isEmpty()){
+                var target = CruxCollection.getFirst(right).entity;
+                ShapeScheduler.builder()
+                    .locationTick(ctx ->{
+                        new ParticleBuilder(Particle.ELECTRIC_SPARK)
+                            .location(ctx.getLocation().toLocation(mob.getWorld()))
+                            .offset(0, 0, 0)
+                            .extra(0)
+                            .spawn();
+                    })
+                    .shape(CreateWarpedLine.builder()
+                        .start(() -> CruxLocation.location(getRightHandPos()))
+                        .end(() -> CruxLocation.location(target.getLocation().add(0, target.getHeight()/2, 0)))
+                        .spacing(1D)
+                        .warpStrength(0.5D)
+                        .tickOffset(NumberProvider.holder(() ->{
+                            return (System.currentTimeMillis() / 50L) % 10000;
+                        }))
+                        .build())
+                    .build();
+            }
+        }
+    }
+
+    public boolean isValidSporeLinkEntity(LivingEntity e){
+        if(!isValidNaturalTarget(e)) return false;
+        if(!CruxEntityUtil.isValid(e)) return false;
+        if(!e.getWorld().equals(mob.getWorld())) return false;
+        return true;
+    }
+
+    public Map<String, List<SporeLinkedEntity>> splitLeftRight(Collection<SporeLinkedEntity> targets, Consumer<SporeLinkedEntity> consumer) {
+        List<SporeLinkedEntity> left = new ArrayList<>();
+        List<SporeLinkedEntity> right = new ArrayList<>();
 
         Vector forward = mob.getLocation().getDirection().normalize();
         Location mobLoc = mob.getLocation();
 
-        for (LivingEntity entity : targets) {
-            Vector toEntity = entity.getLocation().toVector().subtract(mobLoc.toVector()).normalize();
+        for (SporeLinkedEntity entity : targets) {
+            if(consumer != null) consumer.accept(entity);
+            Vector toEntity = entity.entity.getLocation().toVector().subtract(mobLoc.toVector()).normalize();
             double crossY = forward.clone().crossProduct(toEntity).getY();
 
             if (crossY >= 0) {
@@ -164,7 +245,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
             }
         }
 
-        Map<String, List<LivingEntity>> result = new HashMap<>();
+        Map<String, List<SporeLinkedEntity>> result = new HashMap<>();
         result.put("left", left);
         result.put("right", right);
         return result;
@@ -194,33 +275,6 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
     public Location getHeadTopPos(){
         return getModel().getBone("head_top_pos").get().getLocation();
     }
-
-    public void spawnWarpedParticles(World world, Location start, Location end, int steps) {
-        Vector dir = end.toVector().subtract(start.toVector());
-        double length = dir.length();
-        dir.normalize();
-
-        Vector up = new Vector(0, 1, 0);
-        Vector side = dir.clone().crossProduct(up).normalize(); // perpendicular sideways vector
-
-        for (int i = 0; i <= steps; i++) {
-            double t = (double) i / steps;
-            Vector point = start.toVector().clone().add(dir.clone().multiply(length * t));
-
-            // Add warping using sine or noise
-            double warpStrength = 0.5;
-            double wobble = Math.sin(t * Math.PI * 4) * warpStrength;
-            point.add(side.clone().multiply(wobble));
-
-            // Add a slight vertical variation for more "spore-like" movement
-            double verticalWobble = Math.cos(t * Math.PI * 3) * warpStrength * 0.5;
-            point.setY(point.getY() + verticalWobble);
-
-            world.spawnParticle(Particle.DUST, point.toLocation(world), 0, 0, 0, 0, 0,
-                new Particle.DustOptions(Color.GREEN, .8f));
-        }
-    }
-
 
     @Override
     public boolean preAttemptAttack() {
@@ -280,12 +334,18 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
 
     }
 
+    protected int tick = 0;
     protected final RangedAttackGoal rangedGoal;
     @Override
     public void tick() {
+        tick++;
         super.tick();
         attackHandler.tick();
         movementTick();
         rangedGoal.tick();
+    }
+
+    public record SporeLinkedEntity(LivingEntity entity, long time){
+
     }
 }
