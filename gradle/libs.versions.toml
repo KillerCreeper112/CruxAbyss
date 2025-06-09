@@ -10,8 +10,8 @@ crunch = { group = "com.github.Redempt", name = "Crunch", version.ref = "crunch"
 
 [versions]
 shadow = "8.1.8"
-paperweight = "2.0.0-beta.13"
-paper = "1.21.4-R0.1-SNAPSHOT"
+paperweight = "2.0.0-beta.17"
+paper = "1.21.5-R0.1-SNAPSHOT"
 kotlin = "1.9.23"
 run_paper = "2.3.1"
 crunch = "2.0.3"
