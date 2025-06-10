@@ -1,12 +1,42 @@
 package killercreepr.cruxabyss.core.block;
 
 
+import killercreepr.crux.api.component.DataComponentHandler;
+import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.CruxComponents;
+import killercreepr.cruxabyss.core.block.active.ActiveAncientDebris;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.group.CruxBlockGroup;
+import killercreepr.cruxblocks.core.block.SimpleBlock;
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents;
+import killercreepr.cruxblocks.core.block.group.SingularBlockGroup;
+import killercreepr.cruxblocks.core.block.texture.MaterialTextureData;
 import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
+import net.kyori.adventure.key.Key;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class AbyssBlocks {
-    public static void register(){}
+    public static void register(){
+    }
+
+    public static final CruxBlockGroup ANCIENT_DEBRIS = CruxBlocksRegistries.BLOCK.registerGroup(new SingularBlockGroup(
+        new SimpleBlock(Key.key("ancient_debris"), new MaterialTextureData(Material.ANCIENT_DEBRIS), null){
+            @Override
+            public @NotNull ActiveCruxBlock createActive(@NotNull Block block) {
+                return new ActiveAncientDebris(block, this);
+            }
+        },
+        DataComponentHandler.simple(Set.of(
+            TypedDataComponent.create(CruxBlockComponents.REQUIRES_CORRECT_TOOL_FOR_DROPS, true),
+            TypedDataComponent.create(CruxBlockComponents.EXPLOSION_RESISTANCE, 1200f),
+            TypedDataComponent.create(CruxComponents.HARDNESS, 5f)
+        ))
+    ));
     public static final CruxBlockGroup PLAGUE_MOSS = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_moss"));
     public static final CruxBlockGroup PLAGUE_DIRT = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_dirt"));
     public static final CruxBlockGroup PLAGUE_STONE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stone"));
