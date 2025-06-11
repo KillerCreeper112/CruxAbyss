@@ -1,13 +1,10 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
+import com.destroystokyo.paper.entity.ai.Goal;
 import com.ticxo.modelengine.api.model.ActiveModel;
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxabyss.core.entity.memory.VoidDwellerHolder;
-import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
-import killercreepr.cruxabyss.core.entity.mob.goal.RotfiendGoal;
 import killercreepr.cruxabyss.core.entity.mob.goal.VoidDwellerGoal;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
@@ -16,7 +13,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -32,7 +28,7 @@ import java.util.function.Consumer;
 public class VoidDweller extends SimpleAbyssMob {
 
     public VoidDweller() {
-        super(Crux.key("void_dweller"), EntityType.ALLAY);
+        super(Crux.key("void_dweller"), EntityType.VEX);
     }
 
     @Override
@@ -44,6 +40,9 @@ public class VoidDweller extends SimpleAbyssMob {
             if(e instanceof Zombie z){
                 z.setShouldBurnInDay(false);
             }
+            /*if(e instanceof Mob mob){
+                mob.setAware(false);
+            }*/
 
             if(e instanceof LivingEntity ee){
                 double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
@@ -81,8 +80,15 @@ public class VoidDweller extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        if(Bukkit.getMobGoals().getGoal(mob, VoidDwellerGoal.defaultKey()) instanceof VoidDwellerGoal g){
-            EntityMemory.getOrCreateDataHolder(e, VoidDwellerHolder.class, mem -> new VoidDwellerHolder(mem, g));
+        /*if(Bukkit.getMobGoals().getGoal(mob, VoidDwellerGoal.defaultKey()) instanceof VoidDwellerGoal g){
+            EntityMemory.getOrCreate(e, mem -> new VoidDwellerMemory(e, g));
+        }*/
+        for (Goal<Mob> goal : Crux.getServer().getMobGoals().getAllGoals(mob)) {
+            switch (goal.getKey().getNamespacedKey().asString()){
+                case "minecraft:nearest_attackable", "minecraft:hurt_by" ->{
+                    Crux.getServer().getMobGoals().removeGoal(mob, goal);
+                }
+            }
         }
     }
 
