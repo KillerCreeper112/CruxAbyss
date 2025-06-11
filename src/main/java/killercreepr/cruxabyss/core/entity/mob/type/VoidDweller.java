@@ -1,8 +1,10 @@
 package killercreepr.cruxabyss.core.entity.mob.type;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.core.entity.memory.VoidDwellerHolder;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.mob.SimpleAbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.goal.RotfiendGoal;
@@ -14,6 +16,7 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -78,6 +81,9 @@ public class VoidDweller extends SimpleAbyssMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+        if(Bukkit.getMobGoals().getGoal(mob, VoidDwellerGoal.defaultKey()) instanceof VoidDwellerGoal g){
+            EntityMemory.getOrCreateDataHolder(e, VoidDwellerHolder.class, mem -> new VoidDwellerHolder(mem, g));
+        }
     }
 
     @Override

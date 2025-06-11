@@ -1,27 +1,18 @@
 package killercreepr.cruxabyss.core.entity.mob.goal;
 
-import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
-import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.CruxTag;
-import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.usurvive.core.entity.mob.goals.data.MobAttack;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,147 +81,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener {
                 }
             }*/
         ), List.of(
-            new MobAttack() {
-                @Override
-                public String getAnimationID() {
-                    return "ooze";
-                }
-
-                @Override
-                public void onUse() {
-                    MobAttack.super.onUse();
-                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -0.7D, CruxAttribute.Operation.MULTIPLY));
-                }
-
-                @Override
-                public void onTick() {
-                    MobAttack.super.onTick();
-                    if(attackHandler.getAttackTime() == 16){ //31 / 2 = 16 rounded up
-                        ooze();
-                    }else if(attackHandler.getAttackTime() < 16){
-                        prepareOozeSound().playAt(mob);
-                    }
-                }
-
-                @Override
-                public int getHitTime() {
-                    return 0;
-                }
-
-                @Override
-                public boolean canUseAttack() {
-                    if(target == null) return false;
-                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
-                    return getSquaredDistanceFromTargetHitbox() < (distance*distance);
-                }
-            },
-            new MobAttack() {
-                @Override
-                public String getAnimationID() {
-                    return "ooze_shoot";
-                }
-
-                @Override
-                public void onUse() {
-                    MobAttack.super.onUse();
-                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-                        CruxAttributeModifier.modifier(MobAttackHandler.STRONG_ATTACK_KEY, -5, CruxAttribute.Operation.MULTIPLY));
-                }
-
-                @Override
-                public void onTick() {
-                    MobAttack.super.onTick();
-                    if(attackHandler.getAttackTime() == 15){ //30 / 2 = 15
-                        if(target == null) return;
-                        oozeShoot(target.getLocation(), CruxMath.random(2, 3));
-                    }else if(attackHandler.getAttackTime() < 15){
-                        prepareShootSound().playAt(mob);
-                    }
-                }
-
-                @Override
-                public int getHitTime() {
-                    return 0;
-                }
-
-                @Override
-                public boolean canUseAttack() {
-                    if(target == null) return false;
-                    double distance = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4;
-                    return getSquaredDistanceFromTargetHitbox() > (distance*distance);
-                }
-            }
         ));
-    }
-
-    public void oozeShoot(Location target, int amount){
-        var itemHolder = Crux.handlers().item().getItem(Crux.key("moldering_spore"));
-        ItemStack item;
-        if(itemHolder == null) item = new ItemStack(Material.SLIME_BALL);
-        else item = itemHolder.value();
-
-        Location spawn = getOozePos();
-
-        for(int i = 0; i < amount; i++){
-            mob.getWorld().spawn(spawn, Snowball.class, e ->{
-                e.setItem(item);
-                Vector dir = CruxMath.parabolicMotion(spawn.toVector(), target.toVector(),
-                    CruxMath.random(2,4),
-                    CruxMath.random(0.1D, 0.15D));
-                dir.rotateAroundX(Math.toRadians(CruxMath.random(-25, 25)));
-                dir.rotateAroundZ(Math.toRadians(CruxMath.random(-25, 25)));
-                e.setVelocity(dir);
-                CruxTag.set(e, "rotfiend_ooze", PersistentDataType.BOOLEAN, true);
-            });
-        }
-
-        new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
-            .location(spawn)
-            .count(CruxMath.random(4, 7))
-            .colorTransition(Color.fromRGB(0xC0FF00), Color.fromRGB(0x7F670E))
-            .offset(0.2, 0.2, 0.2)
-            .extra(.3)
-            .spawn();
-
-        shootSound().playAt(mob);
-    }
-
-    public void ooze(){
-        mob.getWorld().spawn(mob.getLocation(), AreaEffectCloud.class, e ->{
-            e.setRadius(e.getRadius()*CruxMath.random(1.1f, 1.3f));
-            e.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 300, 0), true);
-        });
-
-        new GetEntityNear<>(LivingEntity.class)
-            .center(mob)
-            .filter(this::isValidNaturalTarget)
-            .range(CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 4)
-            .find().forEach(this::attack);
-
-        oozeSound().playAt(mob);
-        Location oozePos = getOozePos();
-        int amount = CruxMath.random(6, 10);
-
-        new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
-            .location(oozePos)
-            .count(CruxMath.random(5, 8))
-            .colorTransition(Color.fromRGB(0xC0FF00), Color.fromRGB(0x7F670E))
-            .offset(0.5, 0.5, 0.5)
-            .extra(.5)
-            .spawn();
-
-        for(int i = 0; i < amount; i++){
-            new ParticleBuilder(Particle.SPLASH)
-                .location(oozePos)
-                .offset(
-                    CruxMath.random(-1, 1),
-                    CruxMath.random(0.5, 1),
-                    CruxMath.random(-1, 1)
-                )
-                .extra(.3)
-                .spawn();
-        }
     }
 
     public CreateSound prepareShootSound(){
@@ -310,5 +161,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener {
         super.tick();
         attackHandler.tick();
         movementTick();
+
+        moveTo(CruxLoc.shift(mob.getLocation(), new Vector(), 6D, 0D, 0D));
     }
 }
