@@ -34,6 +34,7 @@ public interface AbyssMob extends CruxMob {
     CruxMob ROTFIEND = REGISTRY.register(new Rotfiend());
     CruxMob SPOREWEAVER = REGISTRY.register(new Sporeweaver());
     CruxMob SPOREPOD = REGISTRY.register(new Sporepod());
+    CruxMob VOID_DWELLER = REGISTRY.register(new VoidDweller());
 
     CruxMob PLAGUEWING_MOUNT_SCOURGER = REGISTRY.register(new PlaguewingMounted(Crux.key("plaguewing/mount/scourger"), SCOURGER));
     CruxMob PLAGUEWING_MOUNT_TOXICATOR = REGISTRY.register(new PlaguewingMounted(Crux.key("plaguewing/mount/toxicator"), TOXICATOR));

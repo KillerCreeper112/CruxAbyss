@@ -148,6 +148,17 @@ public class StandardAbyssGroups {
         }
     };
 
+    public static final NaturalEntitySpawnGroup VOID_DWELLER = new NaturalSpawnPartGroup(3, 0f,
+        StandardAbyssSpawns.VOID_DWELLER){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 3) return false;
+            Block b = ctx.getBlock();
+            return b.getY() < b.getWorld().getMinHeight() && getEntityAmountNearChunk(b.getChunk(), 6) < 8;
+        }
+    };
+
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
         registry.register(ABYSSAL_EYE_VINE);
@@ -159,6 +170,7 @@ public class StandardAbyssGroups {
         registry.register(EMBER_LEAPER);
         registry.register(TOXINTRAWL);
         registry.register(ABYSSAL_HUSK);
+        registry.register(VOID_DWELLER);
 
         registry.register(USurviveEntityGroups.ELDRITCH_WASTES_HOSTILE);
         registry.register(USurviveEntityGroups.ELDRITCH_WASTES_HOSTILE_NIGHT);

@@ -63,8 +63,9 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return b.getWorld().getNearbyEntities(b.getLocation(), 8D, 8D, 8D,
-                    x -> CruxMob.is(x, mob)).isEmpty();
+                return b.getWorld().getNearbyEntities(b.getLocation(), 10D, 10D, 10D,
+                    x -> CruxMob.is(x, mob)).isEmpty() &&
+                    CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
         }
@@ -104,8 +105,9 @@ public class StandardAbyssSpawns {
                 for(Block pass : CruxLoc.getNearbyBlocks(b, 3)){
                     if(pass.isPassable() || pass.isEmpty()) amount++;
                 }
-                return amount > 8 && b.getWorld().getNearbyEntities(b.getLocation(), 5D, 5D, 5D,
-                    x -> CruxMob.is(x, mob)).isEmpty();
+                return amount > 8 && b.getWorld().getNearbyEntities(b.getLocation(), 10D, 10D, 10D,
+                    x -> CruxMob.is(x, mob)).isEmpty() &&
+                    CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
         }
@@ -123,7 +125,7 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 3, e -> CruxMob.is(e, mob)) < 8;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 8;
             }
             return false;
         }
@@ -146,7 +148,7 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 3, e -> CruxMob.is(e, AbyssMob.PLAGUE_STALKER)) < 2;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, AbyssMob.PLAGUE_STALKER)) < 2;
             }
             return false;
         }
@@ -168,7 +170,7 @@ public class StandardAbyssSpawns {
                 if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                 if(!b.getRelative(f).isEmpty()) return false;
             }
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 9, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
         }
 
         @Override
@@ -195,8 +197,10 @@ public class StandardAbyssSpawns {
                 if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                 if(!down.getRelative(f).isSolid()) return false;
             }
-            return b.getWorld().getNearbyEntities(b.getLocation(), 8D, 8D, 8D,
-                x -> CruxMob.is(x, mob)).isEmpty();
+
+            return b.getWorld().getNearbyEntities(b.getLocation(), 12D, 12D, 12D,
+                x -> CruxMob.is(x, mob)).isEmpty() &&
+                CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
         }
 
         @Override
@@ -247,7 +251,7 @@ public class StandardAbyssSpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, mob)) < 6;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
         }
@@ -255,6 +259,24 @@ public class StandardAbyssSpawns {
         @Override
         public int getGroupSize(@NotNull SpawnContext ctx) {
             return CruxMath.random(1, 2);
+        }
+    };
+
+    public static final NaturalEntitySpawn VOID_DWELLER = new NaturalCruxMobSpawn(3, 0f, AbyssMob.VOID_DWELLER) {
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            Block b = ctx.getBlock();
+            if(!b.isEmpty()) return false;
+            for(int i = 1; i < 8; i++){
+                var check = b.getRelative(0, i, 0);
+                if(!check.isEmpty()) return false;
+            }
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob)) < 3;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
         }
     };
 }
