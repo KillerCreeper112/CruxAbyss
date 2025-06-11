@@ -196,6 +196,14 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         }
     }
 
+    public void generateMoveToTarget(Location to) {
+        PathType currentPathType = pickRandomPathType(); // e.g. random from enum
+        double radius = CruxMath.random(4.0, 10.0);
+        int steps = CruxMath.random(10, 16);
+        GoalPath path = generatePath(currentPathType, to, steps, radius);
+        setPath(path);
+    }
+
     public boolean isValidWanderLocation(Location loc){
         int minY = loc.getWorld().getMinHeight() - 5;
         return loc.getY() < minY;
@@ -331,11 +339,27 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
 
     public int aboveMinHeightTicks = 0;
 
+    protected int moveToCooldown = 0;
+    @Override
+    public void moveTo(@Nullable Location target, double speed) {
+        if(target == null){
+            super.moveTo(target, speed);
+            return;
+        }
+        if(hasValidPath()) return;
+        if(moveToCooldown > 0) return;
+        moveToCooldown = CruxMath.random(80, 120);
+        wanderCooldown = CruxMath.random(60, 100);
+        generateMoveToTarget(target);
+    }
+
     @Override
     public void tick() {
         super.tick();
         attackHandler.tick();
         movementTick();
+
+        if(moveToCooldown > 0) moveToCooldown--;
 
         heightLogicTick();
 
