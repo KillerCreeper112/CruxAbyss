@@ -2,10 +2,13 @@ package killercreepr.cruxabyss.core.entity.mob.goal;
 
 import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
@@ -15,9 +18,10 @@ import killercreepr.cruxentities.entity.mob.goal.path.CruxGoalPathTargetMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
-import net.minecraft.world.level.pathfinder.PathType;
+import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
+import net.minecraft.world.entity.monster.Vex;
 import org.bukkit.*;
-import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,11 +40,22 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         @Override
         public void onCurrentNodeTick(GoalNode node) {
             Vector target = new Vector(node.x(), node.y(), node.z());
-            Vector moveVec = target.subtract(mob.getLocation().toVector()).normalize().multiply(moveSpeed);
+            Vector moveVec = target.subtract(mob.getLocation().toVector()).normalize().multiply(
+                CruxAttribute.get(mob, CruxAttribute.FLYING_SPEED)
+            );
+            ((CraftMob) mob).getHandle().getMoveControl().setWantedPosition(node.x(), node.y(), node.z(),
+                CruxAttribute.get(mob, CruxAttribute.FLYING_SPEED));
+            /*try{
+                mob.setVelocity(moveVec.add(knockback));
+            }catch (Exception ignored){}*/
 
-            Location lookAt = CruxLoc.lookAt(mob.getEyeLocation(), target.toLocation(mob.getWorld()));
-            mob.setRotation(lookAt.getYaw(), lookAt.getPitch());
-            mob.setVelocity(moveVec.add(knockback));
+            try{
+                /*Location loc = CruxLoc.lookAt(mob.getEyeLocation(), target.toLocation(mob.getWorld()));
+                mob.setRotation(loc.getYaw(), loc.getPitch());*/
+
+                ((CraftMob) mob).getHandle().getLookControl().setLookAt(node.x(), node.y(), node.z(), 180f, 180f);
+                //mob.lookAt(node.x(), node.y(), node.z(), mob.getHeadRotationSpeed(), 180);
+            }catch (Exception ignored){}
         }
     };
     public VoidDwellerGoal(@NotNull Mob mob) {
@@ -78,31 +93,42 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         });
 
         attackHandler = new MobAttackHandler(mob, this, List.of(
-            /*new StrongMobAttack(1) {
+        ), List.of(
+            new StrongMobAttack(1) {
                 @Override
                 public void onUse() {
-                    mob.getAttribute(Attribute.MOVEMENT_SPEED).addTransientModifier(
-                        new AttributeModifier(STRONG_ATTACK_KEY, -5D, AttributeModifier.Operation.MULTIPLY_SCALAR_1)
-                    );
-                    *//*CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));*//*
+                    CruxAttribute.addModifier(mob, CruxAttribute.FLYING_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .6D, CruxAttribute.Operation.MULTIPLY));
+                    generateTargetPath(() ->{
+                        if(target == null) return mob.getLocation();
+                        return target.getLocation().add(0, target.getHeight()/2, 0);
+                    });
+                }
 
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
-                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                @Override
+                public int getCooldown() {
+                    return CruxMath.random(70, 200);
                 }
 
                 @Override
                 public int getHitTime() {
-                    return 9;
+                    return 0;
                 }
-            }*/
-        ), List.of(
+
+                @Override
+                public boolean canUseAttack() {
+                    if(target == null) return false;
+                    if(hasValidPath()) return false;
+                    return true;
+                }
+                public void generateTargetPath(Holder<Location> to) {
+                    PathType currentPathType = PathType.pickRandomTargetType();
+                    double radius = CruxMath.random(4D, 10D);
+                    int steps = CruxMath.random(10, 16);
+                    GoalPath path = generatePath(currentPathType, to, steps, radius);
+                    setPath(path);
+                }
+            }
         ));
     }
 
@@ -140,38 +166,16 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         }
     }
 
-    @Override
-    public void moveTo(double speed) {
-        if (this.target != null) {
-            if (this.lastKnownTargetLocation != null && this.lostTarget >= this.followLostTargetTicks()) {
-                if (this.lostTarget < this.searchLostTargetTicks()) {
-                    moveAwayFromTarget(this.target, speed);
-                } else if (this.lostTarget >= this.searchLostTargetTicks() && this.lostTarget <= this.searchLostTargetTicks() + 5) {
-                    this.moveTo(this.mob.getLocation(), speed);
-                }
-            } else {
-                moveAwayFromTarget(this.target, speed);
-            }
-
-        }
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityKnockback(EntityKnockbackEvent event) {
         if(!event.getEntity().equals(mob)) return;
         knockback = event.getKnockback().multiply(1.2D);
     }
 
-
-    public void moveAwayFromTarget(Entity target, double speed){
-
-    }
-
     protected int wanderCooldown = 0;
     protected double knockbackResistance = 0.8D;
 
     protected Vector knockback = new Vector();
-    protected final double moveSpeed = 0.3D;
 
     public void handleWandering() {
         if(hasValidPath()) return;
@@ -188,7 +192,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     public void generateWanderTarget() {
         if (!hasValidPath()) {
             Location center = mob.getLocation();
-            PathType currentPathType = pickRandomPathType(); // e.g. random from enum
+            PathType currentPathType = PathType.pickRandomWanderType();
             double radius = CruxMath.random(4.0, 10.0);
             int steps = CruxMath.random(10, 16);
             GoalPath path = generatePath(currentPathType, center, steps, radius);
@@ -197,7 +201,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     }
 
     public void generateMoveToTarget(Location to) {
-        PathType currentPathType = pickRandomPathType(); // e.g. random from enum
+        PathType currentPathType = PathType.pickRandomWanderType();
         double radius = CruxMath.random(4.0, 10.0);
         int steps = CruxMath.random(10, 16);
         GoalPath path = generatePath(currentPathType, to, steps, radius);
@@ -210,9 +214,14 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     }
 
     public double pathNodeCloseEnoughDistance = 1.5D;
-    public GoalPath generatePath(PathType type, Location origin, int steps, double radius) {
+    public GoalPath generatePath(PathType type, Location origin, int steps, double radius){
+        return generatePath(type, Holder.direct(origin), steps, radius);
+    }
+
+    public GoalPath generatePath(PathType type, Holder<Location> originHolder, int steps, double radius) {
         List<GoalNode> points = new ArrayList<>();
 
+        Location origin = originHolder.value();
         switch (type) {
            /* case RANDOM -> {
                 for (int i = 0; i < steps; i++) {
@@ -273,6 +282,95 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
                     points.add(GoalNode.distanceGoalNode(loc, pathNodeCloseEnoughDistance));
                 }
             }
+            case HELIX -> {
+                double spacing = radius / steps;
+                for (int i = 0; i < steps; i++) {
+                    double angle = i * Math.PI / 4;
+                    double dx = radius * Math.cos(angle);
+                    double dz = radius * Math.sin(angle);
+                    double dy = i * spacing * 0.5;
+                    points.add(GoalNode.distanceGoalNode(origin.clone().add(dx, dy, dz), pathNodeCloseEnoughDistance));
+                }
+            }
+            case STRAFE -> {
+                double angleStep = (2 * Math.PI) / steps;
+                for (int i = 0; i < steps; i++) {
+                    double angle = angleStep * i;
+                    double dx = radius * Math.cos(angle);
+                    double dz = radius * Math.sin(angle);
+                    points.add(GoalNode.distanceGoalNode(origin.clone().add(dx, 0, dz), pathNodeCloseEnoughDistance));
+                }
+                points.add(GoalNode.dynamicDistanceGoalNode(originHolder, pathNodeCloseEnoughDistance));
+            }
+            case DIVEBOMB -> {
+                for (int i = 0; i < steps; i++) {
+                    double progress = i / (double) steps;
+                    double angle = progress * 2 * Math.PI;
+                    double spiralRadius = radius * (1 - progress);
+                    double dx = spiralRadius * Math.cos(angle);
+                    double dz = spiralRadius * Math.sin(angle);
+                    double dy = radius - (radius * progress);
+                    points.add(GoalNode.distanceGoalNode(origin.clone().add(dx, dy, dz), pathNodeCloseEnoughDistance));
+                }
+                points.add(GoalNode.dynamicDistanceGoalNode(originHolder, pathNodeCloseEnoughDistance));
+            }
+            case BOUNCE_AROUND -> {
+                for (int i = 0; i < steps; i++) {
+                    double dx = CruxMath.random(-radius, radius);
+                    double dy = CruxMath.random(-radius / 2, radius / 2);
+                    double dz = CruxMath.random(-radius, radius);
+                    points.add(GoalNode.distanceGoalNode(origin.clone().add(dx, dy, dz), pathNodeCloseEnoughDistance));
+                }
+                points.add(GoalNode.dynamicDistanceGoalNode(originHolder, pathNodeCloseEnoughDistance));
+            }
+            case ORBIT_TARGET -> {
+                for (int i = 0; i < steps; i++) {
+                    double angle = 2 * Math.PI * i / steps;
+                    double dx = radius * Math.cos(angle);
+                    double dz = radius * Math.sin(angle);
+                    points.add(GoalNode.distanceGoalNode(origin.clone().add(dx, 0, dz), pathNodeCloseEnoughDistance));
+                }
+                points.add(GoalNode.dynamicDistanceGoalNode(originHolder, pathNodeCloseEnoughDistance));
+            }
+            case ZIGZAG_TOWARD -> {
+                Location originLoc = origin.clone();
+                Vector toTarget = target.getLocation().toVector().subtract(originLoc.toVector()).normalize();
+                Vector side = toTarget.clone().crossProduct(new Vector(0, 1, 0)).normalize().multiply(radius / 2);
+                for (int i = 0; i < steps; i++) {
+                    double offset = (i % 2 == 0 ? 1 : -1);
+                    Vector zigzagPoint = toTarget.clone().multiply(i * (radius / steps)).add(side.clone().multiply(offset));
+                    Location pathLoc = originLoc.clone().add(zigzagPoint);
+                    points.add(GoalNode.distanceGoalNode(pathLoc, pathNodeCloseEnoughDistance));
+                }
+                points.add(GoalNode.dynamicDistanceGoalNode(originHolder, pathNodeCloseEnoughDistance));
+            }
+            case RETREAT_AND_CHARGE ->{
+                Location mobLoc = mob.getLocation();
+                Vector awayVec = mobLoc.toVector().subtract(origin.toVector()).normalize().multiply(radius);
+
+                // Step 1: Retreat points (going away from player)
+                Location retreatStart = mobLoc.clone();
+                for (int i = 0; i < steps / 3; i++) {
+                    double fraction = i / (double)(steps / 3);
+                    Vector retreatPoint = awayVec.clone().multiply(fraction);
+                    points.add(GoalNode.distanceGoalNode(retreatStart.clone().add(retreatPoint), pathNodeCloseEnoughDistance));
+                }
+
+                // Step 2: Hover or pause (optional — flat movement)
+                Location hoverLoc = retreatStart.clone().add(awayVec);
+                for (int i = 0; i < steps / 6; i++) {
+                    points.add(GoalNode.distanceGoalNode(hoverLoc.clone(), pathNodeCloseEnoughDistance));
+                }
+
+                // Step 3: Charge toward player
+                Vector toPlayerVec = origin.toVector().subtract(hoverLoc.toVector()).normalize();
+                for (int i = 0; i < steps / 2; i++) {
+                    double fraction = i / (double)(steps / 2);
+                    Vector chargePoint = toPlayerVec.clone().multiply(fraction * radius);
+                    points.add(GoalNode.distanceGoalNode(hoverLoc.clone().add(chargePoint), pathNodeCloseEnoughDistance));
+                }
+                points.add(GoalNode.dynamicDistanceGoalNode(originHolder, pathNodeCloseEnoughDistance));
+            }
         }
 
         if(points.isEmpty()) return null;
@@ -292,10 +390,6 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         if(goalPath != null) lastPath = goalPath;
     }
 
-    public PathType pickRandomPathType() {
-        PathType[] types = PathType.values();
-        return types[CruxMath.random(0, types.length - 1)];
-    }
 
     public void aboveMinHeightTick(){
         aboveMinHeightTicks++;
@@ -313,7 +407,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     public void generateAboveHeightTarget() {
         Location center = mob.getLocation();
         center.setY(mob.getWorld().getMinHeight() - 6);
-        PathType currentPathType = pickRandomPathType();
+        PathType currentPathType = PathType.pickRandomWanderType();
         double radius = CruxMath.random(4.0, 10.0);
         int steps = CruxMath.random(10, 16);
         GoalPath path = generatePath(currentPathType, center, steps, radius);
@@ -357,7 +451,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     public void tick() {
         super.tick();
         attackHandler.tick();
-        movementTick();
+        //movementTick();
 
         if(moveToCooldown > 0) moveToCooldown--;
 
@@ -374,6 +468,37 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     public enum PathType {
         SPIRAL,
         CIRCLE,
-        WAVE
+        WAVE,
+        HELIX,
+
+        STRAFE,
+        DIVEBOMB,
+        BOUNCE_AROUND,
+        ORBIT_TARGET,
+        ZIGZAG_TOWARD,
+        RETREAT_AND_CHARGE,
+        ;
+
+        public static final List<PathType> TARGET = List.of(
+            STRAFE,
+            DIVEBOMB,
+            BOUNCE_AROUND,
+            ORBIT_TARGET,
+            ZIGZAG_TOWARD,
+            RETREAT_AND_CHARGE
+        );
+        public static final List<PathType> WANDER = List.of(
+            SPIRAL,
+            CIRCLE,
+            WAVE,
+            HELIX
+        );
+
+        public static PathType pickRandomTargetType(){
+            return CruxCollection.getRandom(TARGET);
+        }
+        public static PathType pickRandomWanderType(){
+            return CruxCollection.getRandom(WANDER);
+        }
     }
 }

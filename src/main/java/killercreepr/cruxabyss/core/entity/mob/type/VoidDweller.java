@@ -45,11 +45,8 @@ public class VoidDweller extends SimpleAbyssMob {
             }*/
 
             if(e instanceof LivingEntity ee){
-                double movement = ee.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.3D;
-                ee.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movement);
                 ee.getAttribute(Attribute.MAX_HEALTH).setBaseValue(CruxMath.random(25D, 35D));
                 ee.setHealth(ee.getAttribute(Attribute.MAX_HEALTH).getValue());
-                CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(movement));
             }
         };
     }
@@ -62,6 +59,7 @@ public class VoidDweller extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.3D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-15));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(9));
+        addAttribute(map, CruxAttribute.FLYING_SPEED, CruxAttributeModifier.baseModifier(0.3D));
         return map;
     }
 
@@ -84,8 +82,15 @@ public class VoidDweller extends SimpleAbyssMob {
             EntityMemory.getOrCreate(e, mem -> new VoidDwellerMemory(e, g));
         }*/
         for (Goal<Mob> goal : Crux.getServer().getMobGoals().getAllGoals(mob)) {
+            if(true){
+                if(goal.getKey().getNamespacedKey().getNamespace().equalsIgnoreCase("minecraft")){
+
+                    Crux.getServer().getMobGoals().removeGoal(mob, goal);
+                }
+                continue;
+            }
             switch (goal.getKey().getNamespacedKey().asString()){
-                case "minecraft:nearest_attackable", "minecraft:hurt_by" ->{
+                case "minecraft:nearest_attackable", "minecraft:hurt_by", "minecraft:look_at_player" ->{
                     Crux.getServer().getMobGoals().removeGoal(mob, goal);
                 }
             }
