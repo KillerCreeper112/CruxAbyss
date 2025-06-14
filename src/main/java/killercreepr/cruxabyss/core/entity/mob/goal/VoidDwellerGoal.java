@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core.entity.mob.goal;
 
+import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
 import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.DataExchange;
@@ -9,6 +10,7 @@ import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxedBoundingBox;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
@@ -37,7 +39,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, PathTargetMobGoal {
     protected final MobAttackHandler attackHandler;
@@ -209,7 +213,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         if(hasValidPath()) return;
         if (wanderCooldown-- <= 0) {
             generateWanderTarget();
-            wanderCooldown = CruxMath.random(60, 120); // ticks before next wander (3–6 seconds)
+            wanderCooldown = CruxMath.random(60, 120)/2; // ticks before next wander (3–6 seconds)
         }
     }
 
@@ -267,7 +271,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
     @Override
     public EntityHit.Result attemptAttack(@Nullable LivingEntity target, double distance) {
         var result = super.attemptAttack(target, distance);
-        List<Entity> hit = mob.getNearbyEntities(0D, 0D, 0D);
+        List<Entity> hit = mob.getNearbyEntities(.5D, .5D, .5D);
         if(result == null){
             result = new EntityHit.Result(hit, List.of());
         }else{
@@ -277,6 +281,14 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
             });
         }
         return result;
+    }
+
+    public int getTotalSegments(){
+        return 7;
+    }
+
+    public Location getSegmentLocation(int id){
+        return getModel().getBone(id + "").get().getLocation();
     }
 
     protected double currentSpeedMultiplier = 1D;
@@ -451,7 +463,7 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
                 points.add(endingNode);
             }
             case STRAIGHT_TO -> {
-                points.add(nodeWithSpeed(origin, currentSpeedMultiplier));
+                points.add(endingNode);
             }
         }
 
@@ -562,6 +574,19 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         }
         blockSoundCooldown = CruxMath.random(2, 4);
         digSound.playAt(mob);
+    }
+
+    public Collection<Entity> getNearbyEntitiesInSegment(int id, Predicate<Entity> filter){
+        var hitbox = getModel().getBone("sub_hitbox" + id).get()
+            .getBoneBehavior(BoneBehaviorTypes.SUB_HITBOX).get().getHitboxEntity()
+            .getOrientedBoundingBox();
+
+        return mob.getWorld().getNearbyEntities(CruxedBoundingBox.boundingBox(
+            getModel().getBone("sub_hitbox" + id).get().getLocation(), 1.2
+        ), hit ->{
+            if(!hitbox.intersects(hit.getBoundingBox())) return false;
+            return filter == null || filter.test(hit);
+        });
     }
 
     @Override
