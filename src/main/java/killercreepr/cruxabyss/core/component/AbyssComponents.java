@@ -3,7 +3,9 @@ package killercreepr.cruxabyss.core.component;
 import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
+import killercreepr.crux.api.data.ParticleBuilderSupplier;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxabyss.api.component.AbyssAltarCrystal;
@@ -17,9 +19,12 @@ import killercreepr.cruxabyss.core.structure.outpost.loot.AbyssOutpostLootHolder
 import killercreepr.cruxabyss.core.structure.outpost.loot.ActiveAbyssOutpostLootHolder;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZone;
 import killercreepr.cruxabyss.core.structure.safezone.AbyssSafeZoneData;
+import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxblocks.core.structure.modules.PlaceCustomBlocksModule;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import org.bukkit.Color;
+import org.bukkit.Particle;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -101,6 +106,26 @@ public class AbyssComponents {
         builder);
     public static final DataComponentType<TeleporterComponent> TELEPORT_OUTPOST_ABYSSAL_RECALL = register("teleport/outpost_abyssal_recall", builder ->
         builder);
+    public static final DataComponentType<StaglashComponent> STAGLASH = register("staglash", builder ->
+        builder.persistTextParser(PersistTextParser.mapBuilder(StaglashComponent.class)
+            .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, StaglashComponent::getCooldown))
+            .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, StaglashComponent::getAttributes))
+            .field("time", TextInputField.field(PersistTextParser.INTEGER, StaglashComponent::getTime))
+            .field("push_time", TextInputField.field(PersistTextParser.INTEGER, StaglashComponent::getPushTime))
+            .field("use_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, StaglashComponent::getUseSound))
+            .field("particle", TextInputField.field(ComponentInputParsers.PARTICLE_BUILDER_SUPPLIER, StaglashComponent::getParticleSupplier))
+            .apply(ctx ->{
+                return new StaglashComponent(
+                    ctx.getOptional("cooldown", 0),
+                    ctx.get("attributes"),
+                    ctx.getOptional("time", 60),
+                    ctx.getOptional("push_time", 60),
+                    ctx.getOptional("speed_drop_off", 0.8f),
+                    ctx.getOptional("use_sound"),
+                    ctx.getOptional("particle")
+                );
+            }).createInput(Crux.key("staglash")))
+    );
 
     public static final DataComponentType<AbyssOutpostCaptureEvent> LOOT_CAPTURED_ABYSS_OUTPOST = register("loot/abyss_outpost_capture", builder -> builder);
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){

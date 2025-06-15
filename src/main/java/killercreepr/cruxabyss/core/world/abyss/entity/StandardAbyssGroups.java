@@ -155,7 +155,7 @@ public class StandardAbyssGroups {
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             if(CruxMath.random(1, 100) <= 3) return false;
             Block b = ctx.getBlock();
-            return b.getY() < b.getWorld().getMinHeight() && getEntityAmountNearChunk(b.getChunk(), 6) < 8;
+            return b.getY() < b.getWorld().getMinHeight() && getEntityAmountNearChunk(b.getChunk(), 6) < 6;
         }
     };
 

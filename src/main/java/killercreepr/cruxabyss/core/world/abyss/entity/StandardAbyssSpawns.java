@@ -271,7 +271,7 @@ public class StandardAbyssSpawns {
                 var check = b.getRelative(0, i, 0);
                 if(!check.isEmpty()) return false;
             }
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob)) < 3;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
         }
 
         @Override
