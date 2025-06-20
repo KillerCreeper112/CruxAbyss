@@ -91,6 +91,10 @@ public class CharredBiome extends GrimBiome {
             setRandomBurntDecoration(limitedRegion, x, y, z);
             return;
         }
+        if(m == Material.LEAF_LITTER || m == Material.PINK_PETALS){
+            limitedRegion.setType(x, y, z, Material.AIR);
+            return;
+        }
         if(m == Material.SHORT_GRASS){
             if(CruxMath.random().nextBoolean()){
                 limitedRegion.setType(x, y, z, Material.AIR);

@@ -7,6 +7,7 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.api.valueproviders.vector.NumberVector;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
+import killercreepr.crux.core.util.CruxColor;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.component.impl.*;
 import killercreepr.cruxabyss.core.structure.outpost.AbyssOutpost;
