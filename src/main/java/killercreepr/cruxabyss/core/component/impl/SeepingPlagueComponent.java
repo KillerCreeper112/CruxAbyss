@@ -1,0 +1,43 @@
+package killercreepr.cruxabyss.core.component.impl;
+
+import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.GetEntityNear;
+import killercreepr.cruxblocks.api.block.component.CruxBlockComponent;
+import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
+
+public class SeepingPlagueComponent implements CruxBlockComponent {
+    @Override
+    public void onBroken(@NotNull CruxBlockBreakEvent event) {
+        Block b = event.getContext().getBlock();
+        Location center = b.getLocation().toCenterLocation();
+
+        CreateSound.sound(Sound.ENTITY_PUFFER_FISH_BLOW_OUT, 1.5f).playAt(center);
+
+        double range = 2.5D;
+        new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+            .location(center)
+            .count(CruxMath.random(15, 25))
+            .offset(range/2, range/2, range/2)
+            .extra(.3)
+            .colorTransition(org.bukkit.Color.fromRGB(0x74F43D),
+                org.bukkit.Color.fromRGB(0x58B227), 1.3f)
+            .spawn();
+
+        new GetEntityNear<>(LivingEntity.class)
+            .center(center)
+            .range(range)
+            .find().forEach(hit ->{
+                hit.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 120, 0));
+            });
+    }
+}

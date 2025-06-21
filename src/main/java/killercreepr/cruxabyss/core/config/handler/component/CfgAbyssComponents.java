@@ -174,5 +174,11 @@ public class CfgAbyssComponents {
                 return TypedDataComponent.create(AbyssComponents.BLOCK_FUNGIRE_ORE, new FungireOreComponent());
             }
         });
+        registry.register("block/seeping_plague", new FileDataComponentType<SeepingPlagueComponent>(){
+            @Override
+            public @Nullable TypedDataComponent<SeepingPlagueComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(AbyssComponents.BLOCK_SEEPING_PLAGUE, new SeepingPlagueComponent());
+            }
+        });
     }
 }
