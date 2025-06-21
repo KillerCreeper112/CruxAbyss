@@ -40,6 +40,7 @@ public class AbyssBlocks {
     public static final CruxBlockGroup PLAGUE_MOSS = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_moss"));
     public static final CruxBlockGroup PLAGUE_DIRT = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_dirt"));
     public static final CruxBlockGroup PLAGUE_STONE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stone"));
+    public static final CruxBlockGroup SEEPING_PLAGUE_STONE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("seeping_plague_stone"));
     public static final CruxBlockGroup PLAGUE_STEM = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_stem"));
     public static final CruxBlockGroup PLAGUE_WART =  CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_wart"));
     public static final CruxBlockGroup PLAGUE_ROOTS = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("plague_roots"));

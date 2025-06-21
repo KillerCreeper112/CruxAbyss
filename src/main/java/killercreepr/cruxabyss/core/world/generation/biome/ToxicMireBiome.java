@@ -157,9 +157,16 @@ public class ToxicMireBiome extends GrimBiome {
                     );
                 } else{
                     if(diamondOre(limitedRegion, x, y, z, AbyssBlocks.PLAGUE_STONE_FUNGIRE_ORE)) return;
-                    AbyssBlocks.PLAGUE_STONE.getBaseBlock().setBlock(
-                        limitedRegion, x, y, z
-                    );
+
+                    if(CruxMath.testChance(random, 1)){
+                        AbyssBlocks.SEEPING_PLAGUE_STONE.getBaseBlock().setBlock(
+                            limitedRegion, x, y, z
+                        );
+                    }else{
+                        AbyssBlocks.PLAGUE_STONE.getBaseBlock().setBlock(
+                            limitedRegion, x, y, z
+                        );
+                    }
                 }
             }
         }

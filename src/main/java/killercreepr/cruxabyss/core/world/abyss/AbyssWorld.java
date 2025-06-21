@@ -218,11 +218,13 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
             return true;
         }
 
+
         private boolean testBlock(BlockData data){
             Material m = data.getMaterial();
             return MaterialSetTag.STONE_ORE_REPLACEABLES.isTagged(m) ||
                 MaterialSetTag.DEEPSLATE_ORE_REPLACEABLES.isTagged(m) ||
                 AbyssBlocks.PLAGUE_STONE.getBlock(data) != null ||
+                AbyssBlocks.SEEPING_PLAGUE_STONE.getBlock(data) != null ||
                 AbyssBlocks.PLAGUE_DIRT.getBlock(data) != null;
         }
     };
