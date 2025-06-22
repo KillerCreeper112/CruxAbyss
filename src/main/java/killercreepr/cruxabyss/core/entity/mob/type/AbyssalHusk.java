@@ -88,6 +88,6 @@ public class AbyssalHusk extends SimpleAbyssMob {
 
     @Override
     public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL};
+        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL, MobCategory.UNDEAD};
     }
 }
