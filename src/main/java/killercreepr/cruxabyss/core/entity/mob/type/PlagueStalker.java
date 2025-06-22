@@ -67,6 +67,7 @@ public class PlagueStalker extends SimpleAbyssMob implements Listener {
         addAttribute(map, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.4D));
         addAttribute(map, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-14));
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11));
+        setAttribute(map, CruxAttribute.SHIELD_PIERCING, CruxAttributeModifier.baseModifier(30D));
         return map;
     }
 

@@ -62,6 +62,7 @@ public class PlagueTyrant extends SimpleAbyssMob {
         addAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(25));
         addAttribute(map, CruxAttribute.ARMOR, CruxAttributeModifier.baseModifier(8D));
         addAttribute(map, CruxAttribute.ARMOR_TOUGHNESS, CruxAttributeModifier.baseModifier(4D));
+        addAttribute(map, CruxAttribute.SHIELD_PIERCING, CruxAttributeModifier.baseModifier(90D));
         return map;
     }
 

@@ -35,6 +35,7 @@ public class ScourgerBullet extends SimpleCruxMob {
             CruxTag.set(e, "ignore_abyssal_mobs", PersistentDataType.INTEGER, 1);
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(CruxMath.random(10, 15)));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(CruxMath.random(6, 8)));
+            CruxAttribute.addModifier(e, CruxAttribute.SHIELD_PIERCING, CruxAttributeModifier.baseModifier(10));
             load(e);
             if(consumer != null) consumer.accept(e);
         });

@@ -53,6 +53,7 @@ public class AbyssCharredBones extends SimpleAbyssMob {
         setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(36));
         setAttribute(map, CruxAttribute.ATTACK_KNOCKBACK_UP, CruxAttributeModifier.baseModifier(12));
         setAttribute(map, CruxAttribute.KNOCKBACK_RESISTANCE, CruxAttributeModifier.baseModifier(6));
+        setAttribute(map, CruxAttribute.SHIELD_PIERCING, CruxAttributeModifier.baseModifier(75D));
         return map;
     }
 
