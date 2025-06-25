@@ -123,7 +123,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 @Override
                 public boolean canUseAttack() {
                     double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.8D;
-                    return getSquaredDistanceFromTarget() <= (range*range);
+                    return getSquaredDistanceFromTargetHitbox() <= (range*range);
                 }
             },
 
@@ -189,7 +189,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 @Override
                 public boolean canUseAttack() {
                     double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.4D;
-                    return getSquaredDistanceFromTarget() <= (range*range);
+                    return getSquaredDistanceFromTargetHitbox() <= (range*range);
                 }
             },
 
@@ -239,7 +239,7 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 @Override
                 public boolean canUseAttack() {
                     double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 1.4D;
-                    return getSquaredDistanceFromTarget() <= (range*range);
+                    return getSquaredDistanceFromTargetHitbox() <= (range*range);
                 }
             },
 
@@ -305,7 +305,44 @@ public class PlagueTyrantGoal extends CruxMobModeledGoal implements Listener, Pa
                 @Override
                 public boolean canUseAttack() {
                     double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 2D;
-                    return getSquaredDistanceFromTarget() <= (range*range);
+                    return getSquaredDistanceFromTargetHitbox() <= (range*range);
+                }
+            },
+            new StrongMobAttack(2) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .3D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .15D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public void onTick() {
+                    applyBottomHandLocations(hand -> {
+                        BoundingBox hitbox = CruxedBoundingBox.boundingBox(hand, 3D, 3D);
+                        hand.getWorld().getNearbyEntities(hitbox, e -> e instanceof LivingEntity dd && isValidNaturalTarget(dd))
+                            .forEach(e ->{
+                                if(attackHandler.wasHitWithin(e, 10)) return;
+                                attackHandler.hit(e);
+                                attack(e);
+                            });
+                    });
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE) * 2D;
+                    return getSquaredDistanceFromTargetHitbox() <= (range*range);
                 }
             }
         ));
