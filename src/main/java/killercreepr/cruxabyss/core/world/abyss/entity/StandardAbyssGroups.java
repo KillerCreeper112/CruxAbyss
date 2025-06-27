@@ -33,7 +33,7 @@ public class StandardAbyssGroups {
             if(CruxMath.random(1, 100) <= 16) return false;
             Block b = ctx.getBlock();
             NamespacedKey k = BiomeUtils.getBiome(b);
-            return k.equals(BiomeManager.TOXIC_MIRE.key()) && getEntityAmountNearChunk(b.getChunk(), 4) < 12;
+            return k.equals(BiomeManager.TOXIC_MIRE.key()) && getEntityAmountNearChunk(b.getChunk(), 3) < 12;
         }
     };
     public static final NaturalEntitySpawnGroup MOOSE = new NaturalSpawnPartGroup(6, 0f,
@@ -63,7 +63,7 @@ public class StandardAbyssGroups {
             }else if(bb.key().equals(BiomeManager.FUNGAL_GROVE.key())){
                 biome = true;
             }
-            return biome && getEntityAmountNearChunk(b.getChunk(), 8) < 4;
+            return biome && getEntityAmountNearChunk(b.getChunk(), 6) < 4;
         }
     };
 

@@ -45,7 +45,7 @@ public class StandardAbyssSpawns {
             return true;
         }
     };
-    public static final NaturalEntitySpawn ABYSSAL_EYE_VINE = new NaturalCruxMobSpawn(4, 0, AbyssMob.ABYSSAL_EYE_VINE) {
+    public static final NaturalEntitySpawn ABYSSAL_EYE_VINE = new NaturalCruxMobSpawn(5, 0, AbyssMob.ABYSSAL_EYE_VINE) {
 
         @Override
         public @NotNull Entity spawn(@NotNull SpawnContext ctx, Consumer<Entity> consumer) {
@@ -65,7 +65,7 @@ public class StandardAbyssSpawns {
                 }
                 return b.getWorld().getNearbyEntities(b.getLocation(), 10D, 10D, 10D,
                     x -> CruxMob.is(x, mob)).isEmpty() &&
-                    CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
+                    CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 5, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
         }
