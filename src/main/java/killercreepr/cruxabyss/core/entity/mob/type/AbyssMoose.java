@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -75,7 +76,7 @@ public class AbyssMoose extends SimpleAbyssMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.ANIMAL};
+    public Set<MobCategory> getCategories() {
+        return Set.of(MobCategory.ANIMAL);
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -89,7 +90,7 @@ public class Scourger extends SimpleAbyssMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL, AbyssMobCategory.ABYSS_OUTPOST};
+    public Set<MobCategory> getCategories() {
+        return Set.of(MobCategory.MONSTER, MobCategory.ENEMY, AbyssMobCategory.ABYSSAL, AbyssMobCategory.ABYSS_OUTPOST);
     }
 }

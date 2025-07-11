@@ -33,18 +33,7 @@ public class StandardAbyssSpawns {
         })
         .build();
 
-    public static final NaturalEntitySpawn EMPTY = new SimpleNaturalEntitySpawn(30, 0f) {
-        @Nullable
-        @Override
-        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
-            return null;
-        }
-
-        @Override
-        public boolean canSpawn(@NotNull SpawnContext ctx) {
-            return true;
-        }
-    };
+    public static final NaturalEntitySpawn EMPTY = NaturalEntitySpawn.empty(30);
     public static final NaturalEntitySpawn ABYSSAL_EYE_VINE = new NaturalCruxMobSpawn(5, 0, AbyssMob.ABYSSAL_EYE_VINE) {
 
         @Override

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -78,7 +79,7 @@ public class AbyssCharredBones extends SimpleAbyssMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.MONSTER, MobCategory.ENEMY, MobCategory.UNDEAD};
+    public Set<MobCategory> getCategories() {
+        return Set.of(MobCategory.MONSTER, MobCategory.ENEMY, MobCategory.UNDEAD);
     }
 }

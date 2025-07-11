@@ -22,6 +22,7 @@ import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -42,8 +43,8 @@ public class AbyssAltarPortal extends SimpleCruxMob implements AltarEntityType {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.OBJECT};
+    public Set<MobCategory> getCategories() {
+        return Set.of(MobCategory.OBJECT);
     }
 
     @Override
