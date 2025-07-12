@@ -92,6 +92,10 @@ public class ToxicMireBiome extends GrimBiome {
         Material m = limitedRegion.getType(x,y,z);
         acceptBiomeSet(worldInfo, random, limitedRegion, x, y, z);
         if(m == Material.BEDROCK) return;
+        if(m == Material.PUMPKIN){
+            AbyssBlocks.SPORECAP.setBlock(limitedRegion, x, y, z);
+            return;
+        }
         if(MaterialSetTag.LOGS.isTagged(m)){
             limitedRegion.setType(x, y, z, Material.AIR);
             /*CruxBlock block = AbyssBlocks.PLAGUE_STEM.getBlock(orientable.getAxis());
