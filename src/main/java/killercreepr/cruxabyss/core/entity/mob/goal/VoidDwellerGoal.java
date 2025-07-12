@@ -9,10 +9,14 @@ import killercreepr.crux.api.data.holder.DataInfoHolder;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxedBoundingBox;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
+import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
+import killercreepr.cruxblocks.api.event.CruxBlockPlaceEvent;
+import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
@@ -26,6 +30,7 @@ import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.Entity;
@@ -34,6 +39,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -421,8 +428,15 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
                 points.add(endingNode);
             }
             case ZIGZAG_TOWARD -> {
-                Location originLoc = origin.clone();
-                Vector toTarget = target.getLocation().toVector().subtract(originLoc.toVector()).normalize();
+                Location originLoc;
+                Vector toTarget;
+                if(target == null){
+                    originLoc = mob.getLocation();
+                    toTarget = origin.toVector().subtract(originLoc.toVector()).normalize();
+                }else{
+                    originLoc = origin.clone();
+                    toTarget = target.getLocation().toVector().subtract(originLoc.toVector()).normalize();
+                }
                 Vector side = toTarget.clone().crossProduct(new Vector(0, 1, 0)).normalize().multiply(radius / 2);
                 for (int i = 0; i < steps; i++) {
                     double offset = (i % 2 == 0 ? 1 : -1);
@@ -607,6 +621,63 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
         pathTarget.tick();
 
         if(isInBlock()) inBlockTick();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        rawOnBreakOrPlace(event.getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        rawOnBreakOrPlace(event.getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCruxBlockBreak(CruxBlockBreakEvent event) {
+        if(!(event.getContext().getMiner() instanceof EntityMiner)) return;
+        rawOnBreakOrPlace(event.getContext().getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCruxBlockPlace(CruxBlockPlaceEvent event) {
+        if(!(event.getContext().getMiner() instanceof EntityMiner)) return;
+        rawOnBreakOrPlace(event.getContext().getBlock());
+    }
+
+    public void rawOnBreakOrPlace(Block b){
+        if(target != null) return;
+        if(hasValidPath()) return;
+        if(findTargetCooldown < 8) return;
+        if(!b.getWorld().equals(mob.getWorld())) return;
+
+        Location loc = b.getLocation().toCenterLocation();
+        double distance = loc.distanceSquared(mob.getLocation());
+        double max = getFollowDistance() * 1.75D;
+        if(distance > (max*max)) return;
+
+        onBreakOrPlace(loc);
+    }
+
+    public void onBreakOrPlace(Location block){
+        double distance = block.distanceSquared(mob.getLocation());
+        double max = getFollowDistance() * 1.75D;
+        if(distance > (max*max)) return;
+
+        PathType currentPathType = PathType.pickRandomTargetType();
+        double radius = CruxMath.random(4D, 6D);
+        int steps = CruxMath.random(10, 16);
+        Location loc = CruxLoc.shiftToward(
+            block,
+            mob.getLocation(), CruxMath.random(3f, 5f)
+        );
+        Holder<Location> to = Holder.direct(loc);
+        var path = generatePath(currentPathType, to.value(),
+            GoalNode.builder()
+                .info(DataExchange.single("speed", Holder.direct(1.5D)))
+                .buildDynamicDistance(to, pathNodeCloseEnoughDistance*1.5),
+            steps, radius);
+        setPath(path);
     }
 
     public enum PathType {
