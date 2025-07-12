@@ -647,6 +647,10 @@ public class VoidDwellerGoal extends CruxMobModeledGoal implements Listener, Pat
 
     public void rawOnBreakOrPlace(Block b){
         if(target != null) return;
+        int y = b.getY();
+        int minY = b.getWorld().getMinHeight();
+        if(y > (minY+6)) return;
+
         if(hasValidPath()) return;
         if(findTargetCooldown < 8) return;
         if(!b.getWorld().equals(mob.getWorld())) return;
