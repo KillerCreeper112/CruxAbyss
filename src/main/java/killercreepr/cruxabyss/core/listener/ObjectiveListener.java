@@ -16,7 +16,7 @@ public class ObjectiveListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAbyssOutpostCapture(AbyssOutpostCaptureEvent event) {
         if(!(event.getEntity() instanceof Player p)) return;
-        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
         Crux.scheduler().runTask(() ->{
             if(!p.isOnline()) return;
@@ -30,7 +30,7 @@ public class ObjectiveListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAbyssOutpostDeactivate(AbyssOutpostDeactivateEvent event) {
         Player p = event.getPlayer();
-        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
         Crux.scheduler().runTask(() ->{
             if(!p.isOnline()) return;

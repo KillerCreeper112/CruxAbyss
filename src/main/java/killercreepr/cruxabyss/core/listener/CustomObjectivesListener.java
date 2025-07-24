@@ -36,7 +36,7 @@ public class CustomObjectivesListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityTravelThroughAbyssPortalGateway(EntityTravelThroughAbyssPortalGatewayEvent event) {
         Entity p = event.getEntity();
-        AdvancementHolder holder = EntityMemory.getDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
 
         holder.getAdvancementTracker().apply(TravelThroughAbyssPortalGatewayObjective.class, (manager,
@@ -66,7 +66,7 @@ public class CustomObjectivesListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityUpgradeAbyssOutpost(EntityUpgradeAbyssOutpostEvent event) {
         if(!(event.getEntity() instanceof Player p)) return;
-        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
 
         holder.getAdvancementTracker().apply(AbyssOutpostUpgradeObjective.class, (manager,
@@ -80,7 +80,7 @@ public class CustomObjectivesListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerSurvive1MinuteInAbyss(PlayerSurvive1MinuteInAbyssEvent event) {
         Player p = event.getPlayer();
-        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
 
         Map<TrackedAdvancement, Survive1MinuteAbyssObjective> foundObjectives = null;
@@ -109,7 +109,7 @@ public class CustomObjectivesListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerAbyssAltarBuild(PlayerAbyssAltarBuildEvent event) {
         Player p = event.getPlayer();
-        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
 
         holder.getAdvancementTracker().apply(AbyssAltarBuildObjective.class, (manager,
@@ -122,7 +122,7 @@ public class CustomObjectivesListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAbyssAltarActivatePortal(AbyssAltarActivatePortalEvent event) {
         Player p = event.getPlayer();
-        AdvancementHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementHolder.class);
+        AdvancementHolder holder = AdvancementHolder.holderIfLoaded(p);
         if(holder==null) return;
 
         holder.getAdvancementTracker().apply(AbyssAltarActivatePortalObjective.class, (manager,
