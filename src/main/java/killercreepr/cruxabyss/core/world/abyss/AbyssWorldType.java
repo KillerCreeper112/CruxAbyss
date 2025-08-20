@@ -4,10 +4,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Difficulty;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
+import org.bukkit.*;
 import org.jetbrains.annotations.NotNull;
 
 public class AbyssWorldType implements CruxWorldType {
@@ -27,6 +24,7 @@ public class AbyssWorldType implements CruxWorldType {
         world.getWorldBorder().setCenter(0, 0);
         world.getWorldBorder().setSize(4096D);
         world.setDifficulty(Difficulty.NORMAL);
+        world.setGameRule(GameRule.LOCATOR_BAR, false);
 
         CruxWorld activeWorld = worldManager.getWorld(name);
         if(!(activeWorld instanceof AbyssWorld a)) throw new UnsupportedOperationException(name + " is not an AbyssWorld!");
