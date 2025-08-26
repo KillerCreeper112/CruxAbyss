@@ -97,6 +97,15 @@ public class MobWave {
             return index + 1 < spawns.size();
         }
 
+        public Snapshot nextSnapshot(){
+            index++;
+            return currentSnapshot();
+        }
+
+        public Snapshot currentSnapshot(){
+            return new Snapshot(this, spawns.get(index));
+        }
+
         public Collection<Entity> nextSpawn(){
             index++;
             return currentSpawn();
@@ -115,6 +124,30 @@ public class MobWave {
                 if(consumer != null) consumer.accept(e);
             });
             return list;
+        }
+
+        public static class Snapshot{
+            protected final IteratorSpawner spawner;
+            protected final NaturalEntitySpawnGroup group;
+
+            public Snapshot(IteratorSpawner spawner, NaturalEntitySpawnGroup group) {
+                this.spawner = spawner;
+                this.group = group;
+            }
+
+            public Collection<Entity> spawn(){
+                Collection<Entity> list = new HashSet<>();
+                Location mobSpawn = spawner.mobSpawnHolder.value();
+                if(mobSpawn == null) return list;
+                SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
+                NaturalEntitySpawner.spawn(
+                    group.selectRandom(spawner.mob_group_rolls.value().intValue(), ctx), ctx
+                ).forEach(e ->{
+                    list.add(e);
+                    if(spawner.consumer != null) spawner.consumer.accept(e);
+                });
+                return list;
+            }
         }
     }
 }
