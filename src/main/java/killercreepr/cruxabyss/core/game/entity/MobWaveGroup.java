@@ -19,6 +19,11 @@ public class MobWaveGroup {
         return w.spawn(mobSpawnHolder, consumer);
     }
 
+    public MobWave.IteratorSpawner waveSpawnIterator(int wave, LocationHolder mobSpawnHolder, Consumer<Entity> consumer){
+        MobWave w = getWave(wave);
+        return w.iteratorSpawner(mobSpawnHolder, consumer);
+    }
+
     public MobWave getWave(int index){
         index = index-1;
         return index < 0 || index >= waves.size() ? null : waves.get(index);
