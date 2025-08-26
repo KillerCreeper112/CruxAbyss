@@ -163,15 +163,21 @@ public class MobWave {
         public static class Snapshot{
             protected final IteratorSpawner spawner;
             protected final NaturalEntitySpawnGroup group;
+            protected Location mobSpawn;
 
             public Snapshot(IteratorSpawner spawner, NaturalEntitySpawnGroup group) {
                 this.spawner = spawner;
                 this.group = group;
             }
 
+            public Location spawnLocation(){
+                if(mobSpawn != null) return mobSpawn;
+                return mobSpawn = spawner.mobSpawnHolder.value();
+            }
+
             public Collection<Entity> spawn(){
                 Collection<Entity> list = new HashSet<>();
-                Location mobSpawn = spawner.mobSpawnHolder.value();
+                Location mobSpawn = spawnLocation();
                 if(mobSpawn == null) return list;
                 SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
                 NaturalEntitySpawner.spawn(
