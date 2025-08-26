@@ -91,7 +91,41 @@ public class MobWave {
             mob_group_rolls = mobGroupRolls;
         }
 
+        public IteratorSpawner reset(){
+            resetIndex();
+            return resetSpawned();
+        }
+
+        public IteratorSpawner resetIndex(){
+            index = -1;
+            return this;
+        }
+
+        public IteratorSpawner resetSpawned(){
+            spawnedAmount = 0;
+            return this;
+        }
+
+        public int getSpawnedAmount() {
+            return spawnedAmount;
+        }
+
+        public IteratorSpawner setSpawnedAmount(int spawnedAmount) {
+            this.spawnedAmount = spawnedAmount;
+            return this;
+        }
+
+        public IteratorSpawner addSpawnedAmount(int amount){
+            this.spawnedAmount++;
+            return this;
+        }
+
+        public boolean hasSpawnedAll(){
+            return spawnedAmount >= spawns.size();
+        }
+
         protected int index = -1;
+        protected int spawnedAmount = 0;
 
         public boolean hasNext(){
             return index + 1 < spawns.size();
