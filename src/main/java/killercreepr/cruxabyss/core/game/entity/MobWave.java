@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MobWave {
     public final NaturalEntitySpawnGroup spawns;
@@ -26,16 +27,18 @@ public class MobWave {
         mob_group_rolls = mobGroupRolls;
     }
 
-    public IteratorSpawner iteratorSpawner(LocationHolder mobSpawnHolder, Consumer<Entity> consumer){
-        return new IteratorSpawner(listSpawns(), mobSpawnHolder, consumer, mob_group_rolls);
+    public IteratorSpawner iteratorSpawner(LocationHolder mobSpawnHolder,
+                                           Consumer<Entity> consumer,
+                                           Function<NumberProvider, Integer> mobRolls, Function<NumberProvider, Integer> mobGroupRolls){
+        return new IteratorSpawner(listSpawns(mobRolls), mobSpawnHolder, consumer, mob_group_rolls, mobGroupRolls);
     }
 
-    public List<NaturalEntitySpawnGroup> listSpawns(){
+    public List<NaturalEntitySpawnGroup> listSpawns(Function<NumberProvider, Integer> mobRolls){
         List<NaturalEntitySpawnGroup> list = new ArrayList<>();
 
         if(one_time_spawns != null) list.addAll(one_time_spawns);
 
-        int amount = mob_rolls.value().intValue();
+        int amount = mobRolls.apply(mob_rolls);
         while(amount > 0){
             amount--;
             list.add(spawns);
@@ -83,12 +86,14 @@ public class MobWave {
         protected final LocationHolder mobSpawnHolder;
         protected final Consumer<Entity> consumer;
         public final NumberProvider mob_group_rolls;
+        public final Function<NumberProvider, Integer> mobGroupRollsFunction;
 
-        public IteratorSpawner(List<NaturalEntitySpawnGroup> spawns, LocationHolder mobSpawnHolder, Consumer<Entity> consumer, NumberProvider mobGroupRolls) {
+        public IteratorSpawner(List<NaturalEntitySpawnGroup> spawns, LocationHolder mobSpawnHolder, Consumer<Entity> consumer, NumberProvider mobGroupRolls, Function<NumberProvider, Integer> mobGroupRollsFunction) {
             this.spawns = spawns;
             this.mobSpawnHolder = mobSpawnHolder;
             this.consumer = consumer;
             mob_group_rolls = mobGroupRolls;
+            this.mobGroupRollsFunction = mobGroupRollsFunction;
         }
 
         public IteratorSpawner reset(){
@@ -152,7 +157,7 @@ public class MobWave {
             if(mobSpawn == null) return list;
             SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
             NaturalEntitySpawner.spawn(
-                group.selectRandom(mob_group_rolls.value().intValue(), ctx), ctx
+                group.selectRandom(mobGroupRollsFunction.apply(mob_group_rolls), ctx), ctx
             ).forEach(e ->{
                 list.add(e);
                 if(consumer != null) consumer.accept(e);
@@ -181,7 +186,7 @@ public class MobWave {
                 if(mobSpawn == null) return list;
                 SpawnContext ctx = SpawnContext.simple(mobSpawn.getBlock(), CruxMath.random());
                 NaturalEntitySpawner.spawn(
-                    group.selectRandom(spawner.mob_group_rolls.value().intValue(), ctx), ctx
+                    group.selectRandom(spawner.mobGroupRollsFunction.apply(spawner.mob_group_rolls), ctx), ctx
                 ).forEach(e ->{
                     list.add(e);
                     if(spawner.consumer != null) spawner.consumer.accept(e);
