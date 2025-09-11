@@ -31,7 +31,7 @@ public class AbyssChallengeManager implements PluginLoadable {
     }
 
     protected LootTable<ChallengeRoll> availableChallenges;
-    private static final long TIME_PERIOD = 7 * 1728000L;
+    private static final long TIME_PERIOD = 1 * 1728000L;
 
     public AbyssChallengeManager(LootTable<ChallengeRoll> availableChallenges) {
         this.availableChallenges = availableChallenges;
