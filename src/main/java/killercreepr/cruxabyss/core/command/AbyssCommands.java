@@ -13,6 +13,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.cruxabyss.core.challenge.AbyssChallengeManager;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxcore.CruxCore;
@@ -63,6 +64,21 @@ public class AbyssCommands {
                                                                   LifecycleEventManager<?> manager){
         //cruxclaim view (player)
         dispatcher.then(
+            Commands.literal("challenges")
+                .then(
+                    Commands.literal("roll")
+                        .executes(ctx ->{
+                            var sender = getExecutor(ctx.getSource());
+                            if(AbyssChallengeManager.getMain() == null){
+                                sender.sendMessage("No abyss challenge manager.");
+                                return -1;
+                            }
+                            AbyssChallengeManager.getMain().roll();
+                            sender.sendMessage("Scheduled challenges");
+                            return 1;
+                        })
+                )
+        ).then(
             Commands.literal("world")
                 .then(
                     Commands.literal("create")

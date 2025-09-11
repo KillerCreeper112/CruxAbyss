@@ -19,3 +19,6 @@ dependencies:
       load: BEFORE
     CruxQuestLine:
       load: BEFORE
+    CruxChallenges:
+      load: BEFORE
+      required: false

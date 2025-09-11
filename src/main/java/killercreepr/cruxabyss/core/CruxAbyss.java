@@ -6,6 +6,7 @@ import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.loot.LootPool;
+import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.api.text.tags.TagParser;
@@ -24,11 +25,14 @@ import killercreepr.cruxabyss.api.structure.outpost.AbyssOutpostManager;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
 import killercreepr.cruxabyss.core.advancement.objective.*;
 import killercreepr.cruxabyss.core.block.AbyssBlocks;
+import killercreepr.cruxabyss.core.challenge.AbyssChallengeManager;
+import killercreepr.cruxabyss.core.challenge.ChallengeRoll;
 import killercreepr.cruxabyss.core.command.AbyssCommands;
 import killercreepr.cruxabyss.core.component.AbyssComponents;
 import killercreepr.cruxabyss.core.config.Config;
 import killercreepr.cruxabyss.core.config.WorldEventConfigs;
 import killercreepr.cruxabyss.core.config.handler.component.CfgAbyssComponents;
+import killercreepr.cruxabyss.core.config.loader.ChallengeRollLootTableLoader;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMobCategory;
 import killercreepr.cruxabyss.core.entity.tickable.AbyssTickables;
@@ -66,16 +70,20 @@ import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonD
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
 import killercreepr.cruxadvancements.core.config.handler.FileAdvancementObjective;
 import killercreepr.cruxadvancements.core.config.handler.FileSimpleAdvanceObjective;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileLootCondition;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileSimpleLootPool;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileSimpleLootTable;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.SimpleFileLootCondition;
+import killercreepr.cruxconfig.config.bukkit.loader.KeyLootTableLoader;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
@@ -334,6 +342,10 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         AbyssBlocks.register();
         AbyssOutpostUpgrades.register();
 
+        if(getServer().getPluginManager().getPlugin("CruxChallenges") != null){
+            AbyssChallengeManager.setManager(new AbyssChallengeManager(null));
+        }
+
         super.enabled();
         StandardAbyssGroups.register(AbyssRegistries.ABYSS_NATURAL_ENTITY_SPAWN_GROUP);
     }
@@ -417,6 +429,17 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         }).loadConfiguration(
             new CruxFolder(this, "crafting/recipe/abyss_outpost").file()
         );
+
+        if(AbyssChallengeManager.getMain() != null){
+            DataFile file = BukkitDataFile.parseFromGeneralPath(CruxFolder.file(this, "abyss_challenges_table.json"));
+            if(file != null){
+                LootTable<ChallengeRoll> table = ChallengeRollLootTableLoader.CHALLENGE_ROLL_LOOT_TABLE.deserializeFromFile(
+                    new FileContext<>(file.fileRegistry()), file.getRoot()
+                );
+                file.close();
+                AbyssChallengeManager.getMain().setAvailableChallenges(table);
+            }
+        }
     }
 
     protected final CreateLang lang = Lang.setLang(new SimpleCreateLang());

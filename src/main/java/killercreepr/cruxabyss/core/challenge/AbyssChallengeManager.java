@@ -4,9 +4,9 @@ import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.CruxTimeUtil;
 import killercreepr.cruxchallenges.api.challenge.CruxChallenge;
 import killercreepr.cruxchallenges.api.challenge.manager.ScheduledChallenge;
+import killercreepr.cruxchallenges.core.CruxChallengesPlugin;
 import killercreepr.cruxchallenges.core.time.RelativeTimeBuilder;
 
 import java.time.Instant;
@@ -16,11 +16,38 @@ import java.util.List;
 import java.util.Objects;
 
 public class AbyssChallengeManager {
-    protected final LootTable<ChallengeRoll> availableChallenges;
+    private static AbyssChallengeManager MANAGER;
+    public static void setManager(AbyssChallengeManager manager){
+        MANAGER = manager;
+    }
+
+    public static AbyssChallengeManager getMain(){
+        return MANAGER;
+    }
+
+    protected LootTable<ChallengeRoll> availableChallenges;
     private static final long TWO_WEEKS = 14 * 24000L;
 
     public AbyssChallengeManager(LootTable<ChallengeRoll> availableChallenges) {
         this.availableChallenges = availableChallenges;
+    }
+
+    public void setAvailableChallenges(LootTable<ChallengeRoll> availableChallenges) {
+        this.availableChallenges = availableChallenges;
+    }
+
+    public LootTable<ChallengeRoll> getAvailableChallenges() {
+        return availableChallenges;
+    }
+
+    public void tick(){
+    }
+
+    public void roll(){
+        long time = System.currentTimeMillis();
+        generateFullSchedule(time).forEach(challenge ->{
+            CruxChallengesPlugin.inst().getChallengeManager().getScheduler().scheduleChallenge(challenge);
+        });
     }
 
     private long randomGap() {
