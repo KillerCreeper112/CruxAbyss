@@ -13,7 +13,6 @@ import killercreepr.cruxchallenges.core.time.RelativeTimeBuilder;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +31,7 @@ public class AbyssChallengeManager implements PluginLoadable {
     }
 
     protected LootTable<ChallengeRoll> availableChallenges;
-    private static final long TWO_WEEKS = 14 * 1728000L;
+    private static final long TIME_PERIOD = 7 * 1728000L;
 
     public AbyssChallengeManager(LootTable<ChallengeRoll> availableChallenges) {
         this.availableChallenges = availableChallenges;
@@ -56,7 +55,7 @@ public class AbyssChallengeManager implements PluginLoadable {
     }
 
     public boolean shouldRoll(){
-        return !CruxMath.hasOccurredWithin(lastRolled, TWO_WEEKS);
+        return !CruxMath.hasOccurredWithin(lastRolled, TIME_PERIOD);
     }
 
     public void roll(){
@@ -72,7 +71,7 @@ public class AbyssChallengeManager implements PluginLoadable {
 
     public Collection<ScheduledChallenge> generateFullSchedule(long time) {
         List<ScheduledChallenge> schedule = new ArrayList<>();
-        long end = time + (TWO_WEEKS * 50L);
+        long end = time + (TIME_PERIOD * 50L);
 
         while (time < end) {
             Collection<ChallengeRoll> rolls = generateRandomRoll();
