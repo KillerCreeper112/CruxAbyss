@@ -1,21 +1,27 @@
 package killercreepr.cruxabyss.core.challenge;
 
+import killercreepr.crux.api.data.PluginLoadable;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.loot.LootTable;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxchallenges.api.challenge.CruxChallenge;
+import killercreepr.cruxchallenges.api.challenge.CruxChallengeType;
 import killercreepr.cruxchallenges.api.challenge.manager.ScheduledChallenge;
 import killercreepr.cruxchallenges.core.CruxChallengesPlugin;
 import killercreepr.cruxchallenges.core.time.RelativeTimeBuilder;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.common.file.DataFile;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Predicate;
 
-public class AbyssChallengeManager {
+public class AbyssChallengeManager implements PluginLoadable {
     private static AbyssChallengeManager MANAGER;
     public static void setManager(AbyssChallengeManager manager){
         MANAGER = manager;
@@ -26,7 +32,7 @@ public class AbyssChallengeManager {
     }
 
     protected LootTable<ChallengeRoll> availableChallenges;
-    private static final long TWO_WEEKS = 14 * 24000L;
+    private static final long TWO_WEEKS = 14 * 1728000L;
 
     public AbyssChallengeManager(LootTable<ChallengeRoll> availableChallenges) {
         this.availableChallenges = availableChallenges;
@@ -40,7 +46,17 @@ public class AbyssChallengeManager {
         return availableChallenges;
     }
 
+    protected long lastRolled;
     public void tick(){
+        if(!shouldRoll()){
+            return;
+        }
+        lastRolled = System.currentTimeMillis();
+        roll();
+    }
+
+    public boolean shouldRoll(){
+        return !CruxMath.hasOccurredWithin(lastRolled, TWO_WEEKS);
     }
 
     public void roll(){
@@ -51,38 +67,93 @@ public class AbyssChallengeManager {
     }
 
     private long randomGap() {
-        return CruxMath.random(0, 72000 * 2);
+        return CruxMath.randomSkewed(0, 72000 * 2, 0.2) * 50L;
     }
 
-    public Collection<ScheduledChallenge> generateFullSchedule(long time){
+    public Collection<ScheduledChallenge> generateFullSchedule(long time) {
         List<ScheduledChallenge> schedule = new ArrayList<>();
-        long end = time + TWO_WEEKS;
+        long end = time + (TWO_WEEKS * 50L);
 
         while (time < end) {
-
             Collection<ChallengeRoll> rolls = generateRandomRoll();
-            Collection<ChallengeRoll> finalRolls = rolls.stream().filter(ch -> rolls.stream()
-                .noneMatch(sched -> isSimilar(ch.challenge(), sched.challenge()))).toList();
+            Set<CruxChallengeType> seenTypes = new HashSet<>();
+            List<ChallengeRoll> finalRolls = new ArrayList<>();
 
-            long duration = randomDuration();
-            long challengeEnd = time + duration;
-
-            for (ChallengeRoll roll : finalRolls) {
-                schedule.add(ScheduledChallenge.scheduledChallenge(roll.challenge(), Instant.ofEpochMilli(time),
-                    new RelativeTimeBuilder(NumberProvider.constant(challengeEnd))));
+            for (ChallengeRoll roll : rolls) {
+                CruxChallengeType type = roll.challenge().getType();
+                if (type == null || seenTypes.add(type)) {
+                    finalRolls.add(roll);
+                }
             }
 
-            // move forward by event duration + random gap, but allow overlaps randomly
+            long nextStartTime = time;
+            long maxEndThisBatch = time;
+
+            long longestDuration = 0;
+            for (ChallengeRoll roll : finalRolls) {
+                long duration = randomDuration();
+                if(duration > longestDuration){
+                    longestDuration = duration;
+                }
+
+                // find latest end time of any similar challenge
+                long latestEnd = findLatestSimilarEndTime(schedule, roll.challenge());
+
+                long startTime = Math.max(nextStartTime, latestEnd);
+                long challengeEnd = startTime + duration;
+
+                var built = ScheduledChallenge.scheduledChallenge(
+                    roll.challenge(),
+                    Instant.ofEpochMilli(startTime),
+                    new RelativeTimeBuilder(NumberProvider.constant(duration/50L))
+                );
+
+                schedule.add(built);
+
+                // track how far this batch stretches
+                if (challengeEnd > maxEndThisBatch) {
+                    maxEndThisBatch = challengeEnd;
+                }
+            }
+
+            // advance the cursor for next batch
             if (CruxMath.random().nextBoolean()) {
-                // Overlap: start next event before current ends
-                time += duration / 2;
+                long overlapPoint = (long) (longestDuration * (0.25 + CruxMath.random().nextDouble() * 0.5));
+                time += overlapPoint;
             } else {
-                // Sequential: wait until event finishes, then add small gap
-                time = challengeEnd + randomGap();
+                time = maxEndThisBatch + (CruxMath.random().nextBoolean() ? (randomGap()) : 0);
             }
         }
-
         return schedule;
+    }
+
+    private long findLatestSimilarEndTime(Collection<ScheduledChallenge> schedule, CruxChallenge newChallenge) {
+        long latest = 0;
+        for (ScheduledChallenge sc : schedule) {
+            if (!isSimilar(sc.getChallenge(), newChallenge)) continue;
+            long endTime = sc.getExpireTimeOrChallengeExpire()
+                .createTime(sc.getTime())
+                .toEpochMilli();
+            if (endTime > latest) {
+                latest = endTime;
+            }
+        }
+        return latest;
+    }
+
+
+    public ScheduledChallenge getLongest(Collection<ScheduledChallenge> lastScheduled, Predicate<ScheduledChallenge> filter){
+        long time = 0;
+        ScheduledChallenge max = null;
+        for (ScheduledChallenge check : lastScheduled) {
+            if(!filter.test(check)) continue;
+            long checkTime = check.getExpireTimeOrChallengeExpire().createTime(check.getTime()).toEpochMilli() - check.getTime().toEpochMilli();
+            if(checkTime > time){
+                time = checkTime;
+                max = check;
+            }
+        }
+        return max;
     }
 
     public Collection<ChallengeRoll> generateRandomRoll(){
@@ -99,11 +170,31 @@ public class AbyssChallengeManager {
     }
 
     private long randomDuration() {
-        return CruxMath.random(72000 * 2, 72000 * 24);
+        return CruxMath.randomSkewed(1200, 72000 * 12, 0.35D) * 50L;
     }
 
     public boolean isSimilar(CruxChallenge first, CruxChallenge second){
         if(first.getType() == null && second.getType() == null) return false;
         return Objects.equals(first.getType(), second.getType());
+    }
+
+    public DataFile saveFile(Plugin plugin, boolean createIfNeeded){
+        return BukkitDataFile.parseFromGeneralPath(CruxFolder.file(plugin, "data/abyss_challenges_manager.json"), createIfNeeded);
+    }
+
+    @Override
+    public void save(@NotNull Plugin plugin) {
+        DataFile file = saveFile(plugin, true);
+        if(file == null) return;
+        file.serialize("last_rolled", lastRolled);
+        file.save();
+    }
+
+    @Override
+    public void load(@NotNull Plugin plugin) {
+        DataFile file = saveFile(plugin, false);
+        if(file == null) return;
+        file.deserializeOrDefault("last_rolled", Long.class, 0L);
+        file.close();
     }
 }

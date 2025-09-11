@@ -122,6 +122,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -343,7 +344,17 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         AbyssOutpostUpgrades.register();
 
         if(getServer().getPluginManager().getPlugin("CruxChallenges") != null){
-            AbyssChallengeManager.setManager(new AbyssChallengeManager(null));
+            var manager = new AbyssChallengeManager(null);
+            AbyssChallengeManager.setManager(manager);
+            manager.load(this);
+
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    if(AbyssChallengeManager.getMain() == null) return;
+                    AbyssChallengeManager.getMain().tick();
+                }
+            }.runTaskTimerAsynchronously(this, 100L, 100L);
         }
 
         super.enabled();
@@ -353,6 +364,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
     @Override
     public void disabled() {
         super.disabled();
+        if(AbyssChallengeManager.getMain() != null) AbyssChallengeManager.getMain().save(this);
     }
 
     public void onComplete(World world, Chunk chunk) {
