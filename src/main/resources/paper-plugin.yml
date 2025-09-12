@@ -20,5 +20,4 @@ dependencies:
     CruxQuestLine:
       load: BEFORE
     CruxChallenges:
-      load: BEFORE
       required: false
