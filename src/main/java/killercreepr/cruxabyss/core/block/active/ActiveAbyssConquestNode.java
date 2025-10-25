@@ -33,10 +33,7 @@ import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxworlds.api.world.module.WorldEventsModule;
 import net.kyori.adventure.key.Key;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -271,9 +268,11 @@ public class ActiveAbyssConquestNode extends SimpleActiveCruxBlock implements Ac
         save();
         reset();
         new ParticleBuilder(Particle.FLASH)
+            .color(Color.WHITE)
             .location(spawn)
             .spawn()
 
+            .data(null)
             .particle(Particle.ELECTRIC_SPARK)
             .count(15)
             .offset(.9, .9, .9)

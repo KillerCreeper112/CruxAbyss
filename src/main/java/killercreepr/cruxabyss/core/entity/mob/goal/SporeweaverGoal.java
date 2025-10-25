@@ -287,6 +287,7 @@ public class SporeweaverGoal extends CruxMobModeledGoal implements Listener {
             .location(spawn)
             .extra(.2)
             .count(1)
+            .color(Color.WHITE)
             .spawn();
         new ParticleBuilder(Particle.ELECTRIC_SPARK)
             .location(spawn)
