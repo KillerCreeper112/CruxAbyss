@@ -86,6 +86,7 @@ public class ActiveAbyssPortalGateway extends SimpleActiveCruxBlock implements A
                             CruxMath.random(-.1, .1),
                             CruxMath.random(-.1, .1)
                         ))
+                        .data(0.3f)
                         .count(0)
                         .offset(dir.getX(), dir.getY(), dir.getZ())
                         .extra(CruxMath.random(.05, .1))
