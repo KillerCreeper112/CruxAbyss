@@ -36,10 +36,7 @@ import killercreepr.cruxworlds.core.world.module.SimpleWorldEventsModule;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.world.generation.OreGenerator;
 import net.kyori.adventure.key.Key;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
@@ -163,7 +160,7 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     public void tick(){
         super.tick();
         entitySpawnManager.tick();
-        if(Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE)) && world.getTime() == 0){
+        if(Boolean.TRUE.equals(world.getGameRuleValue(GameRules.ADVANCE_TIME)) && world.getTime() == 0){
             if(world.getPlayers().isEmpty()) return;
             dayEvent();
         }
