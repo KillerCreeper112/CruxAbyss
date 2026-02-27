@@ -21,3 +21,6 @@ dependencies:
       load: BEFORE
     CruxChallenges:
       required: false
+    CruxWorldGen:
+      required: true
+      load: BEFORE

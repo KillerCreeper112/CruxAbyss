@@ -1,6 +1,9 @@
 package killercreepr.cruxabyss.core;
 
 import com.google.common.reflect.TypeToken;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Lifecycle;
+import io.papermc.paper.world.PaperWorldLoader;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.data.DataExchange;
@@ -20,6 +23,7 @@ import killercreepr.crux.core.loot.SimpleLootTable;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxabyss.api.loot.MobWaveGroupLootTable;
 import killercreepr.cruxabyss.api.structure.outpost.AbyssOutpostManager;
 import killercreepr.cruxabyss.api.values.ValuesProvider;
@@ -65,6 +69,7 @@ import killercreepr.cruxabyss.core.values.DefaultValues;
 import killercreepr.cruxabyss.core.world.AbyssWorldTypes;
 import killercreepr.cruxabyss.core.world.abyss.AbyssWorld;
 import killercreepr.cruxabyss.core.world.abyss.entity.StandardAbyssGroups;
+import killercreepr.cruxabyss.core.world.abyss.generation.AbyssGeneration;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
@@ -116,9 +121,26 @@ import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.cruxworlds.core.world.module.SimpleWorldEventsModule;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import org.bukkit.Chunk;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.WorldLoader;
+import net.minecraft.server.dedicated.DedicatedServerProperties;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.LevelSettings;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.levelgen.WorldDimensions;
+import net.minecraft.world.level.levelgen.WorldOptions;
+import net.minecraft.world.level.storage.LevelDataAndDimensions;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.level.validation.ContentValidationException;
+import org.bukkit.*;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -126,6 +148,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -275,6 +298,33 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
             }
         });*/
 
+        CruxWorldUtil.CUSTOM_WORLD_CREATORS.put(
+          "world_abyss",
+          name ->{
+              ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
+
+              LevelStorageSource.LevelStorageAccess levelStorageAccess;
+              try {
+                  levelStorageAccess = LevelStorageSource.createDefault(getServer().getWorldContainer().toPath()).validateAndCreateAccess(name, actualDimension);
+              } catch (ContentValidationException | IOException ex) {
+                  throw new RuntimeException(ex);
+              }
+
+              WorldLoader.DataLoadContext context = ((CraftServer) getServer()).getServer().worldLoaderContext;
+              RegistryAccess.Frozen registryAccess = context.datapackDimensions();
+              Registry<LevelStem> contextLevelStemRegistry = registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
+              Dynamic<?> dataTag = PaperWorldLoader.getLevelData(levelStorageAccess).dataTag();
+              PrimaryLevelData primaryLevelData;
+              if(dataTag == null) throw new RuntimeException("SHOULD NOT HAPPEN!");
+
+              LevelDataAndDimensions levelDataAndDimensions = LevelStorageSource.getLevelDataAndDimensions(dataTag, context.dataConfiguration(), contextLevelStemRegistry, context.datapackWorldgen());
+              primaryLevelData = (PrimaryLevelData)levelDataAndDimensions.worldData();
+
+              return new WorldCreator(name).generator(AbyssGeneration.INSTANCE
+                .buildGenerator(primaryLevelData.worldGenOptions().seed(), AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
+          }
+        );
+
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register(Key.key("world_abyss"), AbyssWorld::new);
         worldManager.getWorldTypeRegistry().register(AbyssWorldTypes.ABYSS);
@@ -342,6 +392,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         );
         AbyssBlocks.register();
         AbyssOutpostUpgrades.register();
+        AbyssGeneration.INSTANCE.register();
 
         if(getServer().getPluginManager().getPlugin("CruxChallenges") != null){
             var manager = new AbyssChallengeManager(null);

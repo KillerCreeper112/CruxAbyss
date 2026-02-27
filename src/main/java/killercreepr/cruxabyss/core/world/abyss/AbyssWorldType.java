@@ -1,5 +1,8 @@
 package killercreepr.cruxabyss.core.world.abyss;
 
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxabyss.core.world.abyss.generation.AbyssGeneration;
+import killercreepr.cruxworldgen.bukkit.generation.WorldDetails;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
@@ -18,7 +21,13 @@ public class AbyssWorldType implements CruxWorldType {
 
     @Override
     public @NotNull CruxWorld generate(@NotNull Key name) {
-        World world = new WorldCreator(name.value()).type(WorldType.AMPLIFIED)/*.generator(new AbyssChunkGenerator())*/.createWorld();
+        var seed = CruxMath.random().nextLong();
+
+        World world = new WorldCreator(name.value())
+          .seed(seed)
+          .generator(AbyssGeneration.INSTANCE.buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()))
+          .createWorld();
+        //World world = new WorldCreator(name.value()).type(WorldType.AMPLIFIED)/*.generator(new AbyssChunkGenerator())*/.createWorld();
         if(world==null) throw new IllegalStateException("Cannot generate world! " + key);
 
         world.getWorldBorder().setCenter(0, 0);

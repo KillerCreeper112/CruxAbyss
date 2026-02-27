@@ -229,15 +229,15 @@ public class AbyssWorld extends SimpleWorld implements Loadable, Listener {
     @Override
     public void onInitiate() {
         super.onInitiate();
-        world.getPopulators().add(new RockPopulator(new BlockGenerator() {
+        /*world.getPopulators().add(new RockPopulator(new BlockGenerator() {
             @Override
             public void set(@NotNull LimitedRegion region, int x, int y, int z) {
                 region.setType(x,y,z, Material.IRON_ORE);
             }
         }));
         AbyssPopulator master = new AbyssPopulator();
-        world.getPopulators().add(master);
-        world.getPopulators().add(ORBIT_ORE);
+        world.getPopulators().add(master);*/
+        //world.getPopulators().add(ORBIT_ORE);
 
         CruxAbyss.inst().registerListeners(this);
     }

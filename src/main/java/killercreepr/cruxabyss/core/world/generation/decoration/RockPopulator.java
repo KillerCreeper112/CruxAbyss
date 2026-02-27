@@ -56,7 +56,7 @@ public class RockPopulator extends GrimPopulator {
                 int zz = z + (chunkZ * 16);
                 if(spawned > 0){
                     if(CruxMath.random(1, 100) <= 70) continue;
-                    float noise = rockSpawnNoise.noise(xx, zz);
+                    var noise = rockSpawnNoise.noise(xx, zz);
                     if(noise < .6) continue;
                 }
                 for(int y = worldInfo.getMaxHeight()-10; y > 65; y--){

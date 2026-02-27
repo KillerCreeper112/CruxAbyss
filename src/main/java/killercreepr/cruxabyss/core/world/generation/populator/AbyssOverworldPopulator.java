@@ -19,7 +19,7 @@ public class AbyssOverworldPopulator extends GrimPopulator{
         .fractalOctaves(2)
         ;
     public void populate(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion){
-        float s = seep.noise(chunkX, chunkZ);
+        var s = seep.noise(chunkX, chunkZ);
         if(s > .3 && s < .5){
             spawnAbyssSeep(worldInfo, random, chunkX, chunkZ, limitedRegion);
         }

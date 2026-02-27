@@ -135,9 +135,9 @@ public class AbyssPopulator extends GrimPopulator{
             limitedRegion.setType(x, y, z, Material.PACKED_ICE);
         }
 
-        float t = temperature.noise(x,y,z);
-        float h = humidity.noise(x,y,z);
-        float c = continental.noise(x,y,z);
+      var t = temperature.noise(x,y,z);
+      var h = humidity.noise(x,y,z);
+      var c = continental.noise(x,y,z);
 
         //case DEEPSLATE_DIAMOND_ORE ->{
         //                AbyssBlocks.DEEPSLATE_FUNGIRE_ORE.setBlock(limitedRegion, x,y,z);
