@@ -24,6 +24,7 @@ import killercreepr.cruxworldgen.core.noise.SimpleNoiseBank
 import killercreepr.cruxworldgen.core.structure.SimpleStructurePipeline
 import killercreepr.cruxworldgen.core.structure.SimpleStructureRegistry
 import killercreepr.cruxworldgen.core.zone.SimpleZoneRegistry
+import killercreepr.cruxworldgen.core.generation.chunk.SimpleChunkSampler
 
 object AbyssGeneration {
   lateinit var abyssZone: AbyssZone
@@ -80,12 +81,16 @@ object AbyssGeneration {
     val features = SimpleFeaturePipeline(listOf())
 
     return BukkitGenerationChunkGenerator(
-      generationPipeline,
-      decorationPipeline,
-      structurePipeline,
-      noise,
-      worldDetails,
-      features
+      generation = generationPipeline,
+      decorations =decorationPipeline,
+      structures = structurePipeline,
+      noise = noise,
+      worldDetails = worldDetails,
+      features = features,
+      chunkSampler = SimpleChunkSampler(
+        generationPipeline,
+        noise, worldDetails, 8
+      )
     )
   }
 }
