@@ -1,5 +1,9 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
+import killercreepr.crux.api.data.Holder
+import killercreepr.cruxabyss.core.block.AbyssBlocks
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.GlitchOffsetTreeDecor
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.MangroveTanglesDecor
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
@@ -22,13 +26,16 @@ import killercreepr.cruxworldgen.api.signal.SignalWriter
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
+import killercreepr.cruxworldgen.bukkit.block.BukkitDataBlockData
 import killercreepr.cruxworldgen.core.feature.PlacedFeature
+import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.standard.cave.CathedralChambers
+import killercreepr.cruxworldgen.standard.cave.OffsetTunnels
+import killercreepr.cruxworldgen.standard.cave.VerticalTears
+import killercreepr.cruxworldgen.standard.cave.VoidPockets
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
-import killercreepr.cruxworldgen.test.cave.eldritch.CathedralChambers
-import killercreepr.cruxworldgen.test.cave.eldritch.OffsetTunnels
-import killercreepr.cruxworldgen.test.cave.eldritch.VerticalTears
-import killercreepr.cruxworldgen.test.cave.eldritch.VoidPockets
 import org.bukkit.Material
+import org.bukkit.block.BlockType
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -61,7 +68,7 @@ class EldritchWastes(
         noodleRadius = 0.42,
         verticalRadiusBlocks = 8.0,
         baseDepthBelowSurface = 44.0,
-        depthVariationBlocks = 20.0,
+        depthVariationBlocks = 100.0,
         strength = 1.14,
         openMarginBlocks = 9.0
       )
@@ -69,6 +76,14 @@ class EldritchWastes(
   ),
 
   override val decorations: List<Decoration> = listOf(
+    GlitchOffsetTreeDecor(
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.SHADE_LOG),
+      leafPicker = Holder.direct(BukkitDataBlockData(BlockType.JUNGLE_LEAVES.createBlockData { l -> l.isPersistent = true }))
+    ),
+    MangroveTanglesDecor(
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
+      leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l -> l.isPersistent = true }))
+    )
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(

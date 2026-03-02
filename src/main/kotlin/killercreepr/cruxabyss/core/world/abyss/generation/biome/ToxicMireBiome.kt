@@ -31,6 +31,9 @@ import killercreepr.cruxworldgen.core.feature.PlacedFeature
 import killercreepr.cruxworldgen.core.feature.ironHigh
 import killercreepr.cruxworldgen.core.feature.ironLow
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.standard.cave.CheeseCaves
+import killercreepr.cruxworldgen.standard.cave.LavaTubes
+import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import org.bukkit.Material
 import kotlin.math.abs
@@ -40,11 +43,19 @@ import kotlin.math.pow
 class ToxicMireBiome(
   override val caves: CaveShape = CaveProfile(
     listOf(
-
+      CheeseCaves(
+        threshold01 = 0.5,
+        strength = 100.0
+      ),
+      LavaTubes(
+        depthVariationBlocks = 100.0,
+        strength = 100.0
+      ),
     )
   ),
   override val decorations: List<Decoration> = listOf(
     ToxicMireTreeDecor(
+      chancePerPoint = 0.26,
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
       leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART))
     )

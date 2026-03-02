@@ -27,14 +27,31 @@ import killercreepr.cruxworldgen.api.util.NoiseShaper.Point
 import killercreepr.cruxworldgen.api.util.NoiseShaper.ShapingFunction
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
+import killercreepr.cruxworldgen.standard.cave.CheeseCaves
+import killercreepr.cruxworldgen.standard.cave.LavaTubes
+import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import org.bukkit.Material
 import kotlin.math.abs
 import kotlin.math.pow
 
 class CharredWastes(
   override val caves: CaveShape = CaveProfile(
-    buildList {
-    }
+    listOf(
+      CheeseCaves(
+        threshold01 = 0.5,
+        strength = 100.0
+      ),
+      LavaTubes(
+        depthVariationBlocks = 100.0,
+        strength = 100.0
+      ),
+      SpaghettiCaves(
+        noodleRadius = 6.0,
+        verticalRadiusBlocks = 9.0,
+        depthVariationBlocks = 100.0,
+        strength = 100.0
+      )
+    )
   ),
   override val decorations: List<Decoration> = listOf(
   ),
@@ -50,7 +67,9 @@ class CharredWastes(
         x,y+1,z,
         Signal.CRACK_MAGMA, 0.0
       )
-      if (crackMagma > 0.8 && context.depthBelowSurface < 9) {
+      if (crackMagma > 0.9 && context.depthBelowSurface < 9) {
+        if(context.generateContext.random.nextDouble() < 0.2)
+          return BukkitBlockAdapter.resolver().resolve(Material.LAVA)
         return BukkitBlockAdapter.resolver().resolve(Material.MAGMA_BLOCK)
       }
 
