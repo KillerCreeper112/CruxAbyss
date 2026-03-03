@@ -66,5 +66,7 @@ public class AbyssBlocks {
     public static final CruxBlockGroup MOULDITE_CRUST = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("mouldite_crust"));
 
     public static final CruxBlockGroup SHADE_LOG = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("shade_log"));
+    public static final CruxBlockGroup CHARRED_LOG = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("charred_log"));
+    public static final CruxBlockGroup EMBER_LOG = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("ember_log"));
     public static final CruxBlockGroup MISTWOOD_LOG = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("mistwood_log"));
 }

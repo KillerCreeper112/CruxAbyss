@@ -43,7 +43,7 @@ object AbyssGeneration {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
         ToxicMireBiome(),
-        //CharredWastes(),
+        CharredWastes(),
         //EldritchWastes()
       ),
       biomeCellSizeBlocks = 256,

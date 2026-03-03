@@ -4,6 +4,8 @@ import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.ToxicMireTreeDecor
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
+import killercreepr.cruxblocks.api.block.component.BushType
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
@@ -15,6 +17,8 @@ import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.decor.Decoration
+import killercreepr.cruxworldgen.api.decor.Placement
+import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
@@ -23,6 +27,7 @@ import killercreepr.cruxworldgen.api.noise.NoiseKey
 import killercreepr.cruxworldgen.api.noise.NoiseModule
 import killercreepr.cruxworldgen.api.signal.SignalWriter
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
+import killercreepr.cruxworldgen.api.util.HashUtil
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
@@ -31,10 +36,13 @@ import killercreepr.cruxworldgen.core.feature.PlacedFeature
 import killercreepr.cruxworldgen.core.feature.ironHigh
 import killercreepr.cruxworldgen.core.feature.ironLow
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.standard.cave.CathedralChambers
+import killercreepr.cruxworldgen.standard.cave.CavernRooms
 import killercreepr.cruxworldgen.standard.cave.CheeseCaves
-import killercreepr.cruxworldgen.standard.cave.LavaTubes
-import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
+import killercreepr.cruxworldgen.standard.cave.WormNoodleCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
+import killercreepr.cruxworldgen.test.decor.volumetric.GrassVolDecor
+import killercreepr.cruxworldgen.test.decor.volumetric.TallGrassDoubleVolDecor
 import org.bukkit.Material
 import kotlin.math.abs
 import kotlin.math.floor
@@ -43,14 +51,10 @@ import kotlin.math.pow
 class ToxicMireBiome(
   override val caves: CaveShape = CaveProfile(
     listOf(
-      CheeseCaves(
-        threshold01 = 0.5,
-        strength = 100.0
-      ),
-      LavaTubes(
-        depthVariationBlocks = 100.0,
-        strength = 100.0
-      ),
+      CheeseCaves(),
+      WormNoodleCaves(),
+      CavernRooms(),
+      CathedralChambers()
     )
   ),
   override val decorations: List<Decoration> = listOf(
@@ -58,8 +62,60 @@ class ToxicMireBiome(
       chancePerPoint = 0.26,
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
       leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART))
+    ),
+    /*GrassDecor(
+      chancePerPoint = 0.5,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_SHROOM)),
+      salt = 23892L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MIREHORN)),
+      salt = 33802L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.12,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.TOXSPORE)),
+      salt = 38232L
+    ),*/
+  ),
+
+  override val volumetricDecorations : List<VolumetricDecoration> = listOf(
+    GrassVolDecor(
+      chancePerPoint = 0.6,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_SHROOM)),
+      salt = 3849829L
+    ),
+    GrassVolDecor(
+      chancePerPoint = 0.4,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MIREHORN)),
+      salt = 38294892L
+    ),
+    GrassVolDecor(
+      chancePerPoint = 0.27,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.TOXSPORE)),
+      salt = 837432L
+    ),
+    TallGrassDoubleVolDecor(
+      chancePerPoint = 0.42,
+      minHeight = 2,
+      maxHeight = 3,
+      top = Holder.direct(BukkitBlockAdapter.resolver().resolve(
+        AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.TOP)!!
+      )),
+      bottom = Holder.direct(BukkitBlockAdapter.resolver().resolve(
+        AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.BOTTOM)!!
+      )),
+      chanceSalt = 2839289412L
     )
   ),
+
   override val features: List<PlacedFeature<*>> = listOf(
     ironLow, ironHigh
   ),
@@ -79,8 +135,13 @@ class ToxicMireBiome(
       if (depth == 0) {
         return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_MOSS)
       }
-      if (depth < 4) {
+      if (depth < 5) {
         return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_DIRT)
+      }
+      if(HashUtil.chance(HashUtil.mixSeed(
+        ctx.generateContext.worldContext.seed,
+        x, y, z, 38932L), 0.013)){
+        return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.SEEPING_PLAGUE_STONE)
       }
       return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE)
     }
@@ -112,6 +173,9 @@ class ToxicMireBiome(
   private val terraceBlend: Double = 0.35     // 0..1 (higher = smoother terraces)
 ) : Biome.Noised, BukkitBiome {
   override fun toBukkitBiome() = BiomeManager.TOXIC_MIRE
+
+
+  data class TESTPlaced(val x: Int, val y: Int, val z: Int) : Placement
 
   object Noise : NoiseModule {
     object Warp2D : NoiseKey {

@@ -23,6 +23,7 @@ import killercreepr.crux.core.loot.SimpleLootTable;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxabyss.api.loot.MobWaveGroupLootTable;
 import killercreepr.cruxabyss.api.structure.outpost.AbyssOutpostManager;
@@ -307,7 +308,9 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
               try {
                   levelStorageAccess = LevelStorageSource.createDefault(getServer().getWorldContainer().toPath()).validateAndCreateAccess(name, actualDimension);
               } catch (ContentValidationException | IOException ex) {
-                  throw new RuntimeException(ex);
+                  var seed = CruxMath.random().nextLong();
+                  return new WorldCreator(name).seed(seed).generator(AbyssGeneration.INSTANCE
+                    .buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
               }
 
               WorldLoader.DataLoadContext context = ((CraftServer) getServer()).getServer().worldLoaderContext;
@@ -315,7 +318,11 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
               Registry<LevelStem> contextLevelStemRegistry = registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
               Dynamic<?> dataTag = PaperWorldLoader.getLevelData(levelStorageAccess).dataTag();
               PrimaryLevelData primaryLevelData;
-              if(dataTag == null) throw new RuntimeException("SHOULD NOT HAPPEN!");
+              if(dataTag == null){
+                  var seed = CruxMath.random().nextLong();
+                  return new WorldCreator(name).seed(seed).generator(AbyssGeneration.INSTANCE
+                    .buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
+              }
 
               LevelDataAndDimensions levelDataAndDimensions = LevelStorageSource.getLevelDataAndDimensions(dataTag, context.dataConfiguration(), contextLevelStemRegistry, context.datapackWorldgen());
               primaryLevelData = (PrimaryLevelData)levelDataAndDimensions.worldData();

@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
+import killercreepr.crux.api.data.Holder
+import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
@@ -22,14 +24,16 @@ import killercreepr.cruxworldgen.api.signal.SignalKey
 import killercreepr.cruxworldgen.api.signal.SignalWriter
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
+import killercreepr.cruxworldgen.api.util.HashUtil
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.api.util.NoiseShaper.Point
 import killercreepr.cruxworldgen.api.util.NoiseShaper.ShapingFunction
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
-import killercreepr.cruxworldgen.standard.cave.CheeseCaves
-import killercreepr.cruxworldgen.standard.cave.LavaTubes
-import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
+import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.test.decor.FallenTreeDecor
+import killercreepr.cruxworldgen.test.decor.GrassDecor
+import killercreepr.cruxworldgen.test.decor.SingleDeadTreeDecor
 import org.bukkit.Material
 import kotlin.math.abs
 import kotlin.math.pow
@@ -37,23 +41,33 @@ import kotlin.math.pow
 class CharredWastes(
   override val caves: CaveShape = CaveProfile(
     listOf(
-      CheeseCaves(
-        threshold01 = 0.5,
-        strength = 100.0
-      ),
-      LavaTubes(
-        depthVariationBlocks = 100.0,
-        strength = 100.0
-      ),
-      SpaghettiCaves(
+      /*SpaghettiCaves(
         noodleRadius = 6.0,
         verticalRadiusBlocks = 9.0,
         depthVariationBlocks = 100.0,
         strength = 100.0
-      )
+      )*/
     )
   ),
   override val decorations: List<Decoration> = listOf(
+    SingleDeadTreeDecor(
+      chancePerPoint = 0.26,
+      log = { region, seed ->
+        if(HashUtil.chance(seed xor 23892L, 0.1)) BukkitBlockAdapter.resolver().resolve(AbyssBlocks.EMBER_LOG)
+        else BukkitBlockAdapter.resolver().resolve(AbyssBlocks.CHARRED_LOG)
+      },
+      chanceSalt = 3684523L
+    ),
+    FallenTreeDecor(
+      chancePerPoint = 0.1,
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.CHARRED_LOG),
+      chanceSalt = 652942L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.38,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.EMBERWEED)),
+      chanceSalt = 93274624L
+    )
   ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(context: MaterialContext): BlockData {
