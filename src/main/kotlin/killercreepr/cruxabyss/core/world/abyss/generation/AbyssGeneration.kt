@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.core.world.abyss.generation
 
 import killercreepr.crux.core.util.CruxMath
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.BasaltSpires
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.CharredWastes
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.EldritchWastes
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicMireBiome
@@ -42,8 +43,9 @@ object AbyssGeneration {
   fun register() {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
-        ToxicMireBiome(),
+        //ToxicMireBiome(),
         CharredWastes(),
+        BasaltSpires(),
         //EldritchWastes()
       ),
       biomeCellSizeBlocks = 256,

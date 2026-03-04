@@ -174,9 +174,6 @@ class ToxicMireBiome(
 ) : Biome.Noised, BukkitBiome {
   override fun toBukkitBiome() = BiomeManager.TOXIC_MIRE
 
-
-  data class TESTPlaced(val x: Int, val y: Int, val z: Int) : Placement
-
   object Noise : NoiseModule {
     object Warp2D : NoiseKey {
       override val id = "biome.amplified.warp2D"

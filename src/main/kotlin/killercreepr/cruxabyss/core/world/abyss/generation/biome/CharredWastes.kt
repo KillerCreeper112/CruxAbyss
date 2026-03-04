@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.world.abyss.generation.biome
 import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
@@ -22,18 +23,20 @@ import killercreepr.cruxworldgen.api.noise.NoiseKey
 import killercreepr.cruxworldgen.api.noise.NoiseModule
 import killercreepr.cruxworldgen.api.signal.SignalKey
 import killercreepr.cruxworldgen.api.signal.SignalWriter
+import killercreepr.cruxworldgen.api.util.Curve
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
 import killercreepr.cruxworldgen.api.util.HashUtil
+import killercreepr.cruxworldgen.api.util.HashUtil.hash01
 import killercreepr.cruxworldgen.api.util.NoiseShaper
-import killercreepr.cruxworldgen.api.util.NoiseShaper.Point
-import killercreepr.cruxworldgen.api.util.NoiseShaper.ShapingFunction
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.standard.decor.LavaPondDecoration
 import killercreepr.cruxworldgen.test.decor.FallenTreeDecor
 import killercreepr.cruxworldgen.test.decor.GrassDecor
 import killercreepr.cruxworldgen.test.decor.SingleDeadTreeDecor
+import org.bukkit.Axis
 import org.bukkit.Material
 import kotlin.math.abs
 import kotlin.math.pow
@@ -53,8 +56,14 @@ class CharredWastes(
     SingleDeadTreeDecor(
       chancePerPoint = 0.26,
       log = { region, seed ->
-        if(HashUtil.chance(seed xor 23892L, 0.1)) BukkitBlockAdapter.resolver().resolve(AbyssBlocks.EMBER_LOG)
-        else BukkitBlockAdapter.resolver().resolve(AbyssBlocks.CHARRED_LOG)
+        if(HashUtil.chance(seed xor 23892L, 0.1)) BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.EMBER_LOG.components.get(CruxBlockComponents.DIRECTIONAL_GROUP)!!
+          .getBlock(Axis.Y)!!
+        )
+        else BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.CHARRED_LOG.components.get(CruxBlockComponents.DIRECTIONAL_GROUP)!!
+            .getBlock(Axis.Y)!!
+        )
       },
       chanceSalt = 3684523L
     ),
@@ -67,6 +76,10 @@ class CharredWastes(
       chancePerPoint = 0.38,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.EMBERWEED)),
       chanceSalt = 93274624L
+    ),
+    LavaPondDecoration(
+      chancePerPoint = 0.3,
+      worldSalt = 29302L
     )
   ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
@@ -81,7 +94,7 @@ class CharredWastes(
         x,y+1,z,
         Signal.CRACK_MAGMA, 0.0
       )
-      if (crackMagma > 0.9 && context.depthBelowSurface < 9) {
+      if (crackMagma > 0.8 && context.depthBelowSurface < 9) {
         if(context.generateContext.random.nextDouble() < 0.2)
           return BukkitBlockAdapter.resolver().resolve(Material.LAVA)
         return BukkitBlockAdapter.resolver().resolve(Material.MAGMA_BLOCK)
@@ -99,10 +112,10 @@ class CharredWastes(
   // ===== Plateau knobs =====
   private val baseHeight: Double = 70.0,     // how high above sea level the wastes sit
   private val rollAmp: Double = 18.0,        // broad rolling
-  private val ridgeAmp: Double = 55.0,       // raised ridges/knuckles
+  private val ridgeAmp: Double = 25.0,       // raised ridges/knuckles
 
   // ===== Crack knobs (height depressions) =====
-  private val crackThreshold01: Double = 0.70, // higher => fewer cracks
+  private val crackThreshold01: Double = 0.82, // higher => fewer cracks
   private val crackDepth: Double = 12.0,       // how deep the cracks depress the surface
   private val crackWarpAmp: Double = 14.0,     // meander cracks
 
@@ -110,7 +123,23 @@ class CharredWastes(
   private val fissureThreshold01: Double = 0.83, // higher => rarer/thinner fissures
   private val fissureDepth: Double = 40.0,       // how far down the slit carves
   private val fissureStrength: Double = 26.0,    // how strongly it punches open
-  private val fissureWallSoftness: Double = 1.6  // higher => sharper walls
+  private val fissureWallSoftness: Double = 1.1,  // higher => sharper walls
+  // ===== Ring arch knobs =====
+  private val ringCellSize: Int = 190,             // spacing between possible arch cells
+    private val ringChancePerCell: Double = 0.3,        // lower = rarer
+    private val ringAddStrength: Double = 52.0,          // density added when inside the arch body
+    private val ringBaseHeightMin: Double = 10.0,        // min center above local surface
+    private val ringBaseHeightMax: Double = 24.0,        // max center above local surface
+    private val ringRadiusMin: Double = 9.0,
+    private val ringRadiusMax: Double = 18.0,
+    private val ringTubeRadiusMin: Double = 3.0,
+    private val ringTubeRadiusMax: Double = 6.0,
+    private val ringPlaneThicknessMin: Double = 3.0,     // thickness perpendicular to the ring plane
+    private val ringPlaneThicknessMax: Double = 6.0,
+    private val ringVerticalSquashMin: Double = 0.75,    // <1 squashes vertically, >1 stretches
+    private val ringVerticalSquashMax: Double = 1.15,
+    private val ringSalt: Long = 91824561L,
+
 ) : Biome.Noised, BukkitBiome {
 
   override fun toBukkitBiome() = BiomeManager.CHARRED_WASTES
@@ -134,20 +163,20 @@ class CharredWastes(
     override fun install(bank: NoiseBank) {
       bank.register(Base2D){ seed ->
         NoiseField.Companion.noiseField(seed){
-          frequency(0.0014) // big rolling, ~700 block wavelength
+          frequency(0.0017) // big rolling, ~700 block wavelength
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
             .fractalType(CruxNoise.FractalType.FBm)
-            .fractalOctaves(2)
+            .fractalOctaves(3)
             .fractalGain(0.5)
             .fractalLacunarity(2.0)
         }
       }
       bank.register(Ridge2D){ seed ->
         NoiseField.Companion.noiseField(seed){
-          frequency(0.0024)
+          frequency(0.0019)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
             .fractalType(CruxNoise.FractalType.Ridged)
-            .fractalOctaves(2)
+            .fractalOctaves(3)
             .fractalGain(0.5)
             .fractalLacunarity(2.0)
         }
@@ -226,12 +255,14 @@ class CharredWastes(
 
   val shaper = NoiseShaper(
     listOf(
-      Point(-1.0, ShapingFunction.VALLEY),
-      Point(-0.3, ShapingFunction.FLAT),
-      Point(0.0, ShapingFunction.FLAT),
-      Point(0.7, ShapingFunction.FLAT),
-      Point(0.8, ShapingFunction.HILLS),
-      Point(1.0, ShapingFunction.MOUNTAIN)
+      NoiseShaper.Point(-1.0, NoiseShaper.ShapingFunction.VALLEY),
+      NoiseShaper.Point(-0.55, NoiseShaper.ShapingFunction.VALLEY),
+      NoiseShaper.Point(-0.20, NoiseShaper.ShapingFunction.FLAT),
+      NoiseShaper.Point( 0.35, NoiseShaper.ShapingFunction.FLAT),
+      NoiseShaper.Point( 0.65, NoiseShaper.ShapingFunction.HILLS),
+      NoiseShaper.Point( 0.82, NoiseShaper.ShapingFunction.HILLS),
+      NoiseShaper.Point( 0.92, NoiseShaper.ShapingFunction.FLAT),
+      NoiseShaper.Point( 1.0,  NoiseShaper.ShapingFunction.FLAT)
     )
   )
 
@@ -297,7 +328,7 @@ class CharredWastes(
         val ridge = 1.0 - abs(overhang3D)  // keep linear (no pow)
 
         val baseThreshold = 0.2
-        val strength = 500.0
+        val strength = 38.0
 
         val aboveSurface = (-baseDensity).coerceAtLeast(0.0)
 
@@ -313,9 +344,12 @@ class CharredWastes(
           ((ridge - threshold).coerceAtLeast(0.0)) *
           strength
 
+
+        val arch = ringArchDensity(ctx, worldX, y, worldZ)
+
         return DensityStack.densityStack(
           base = baseDensity,
-          add = overhang,
+          add = overhang + (arch),
           carve = fissureCarve
         )
       }
@@ -346,5 +380,132 @@ class CharredWastes(
     val vertical = smoothstep01(((fissureDepth - d) / fissureDepth).coerceIn(0.0, 1.0))
 
     return (line * vertical).coerceIn(0.0, 1.0)
+  }
+
+  private fun ringArchDensity(
+    ctx: GenerateContext,
+    wx: Int,
+    y: Int,
+    wz: Int
+  ): Double {
+    // optional: only allow these high in the charred plateau
+    //if (localSurfaceY < ctx.chunkContext.seaLevel + 45.0) return 0.0
+
+    val cellX = Math.floorDiv(wx, ringCellSize)
+    val cellZ = Math.floorDiv(wz, ringCellSize)
+
+    var best = 0.0
+
+    // search neighboring cells so arches can affect across borders
+    for (dz in -1..1) {
+      for (dx in -1..1) {
+        val cx = cellX + dx
+        val cz = cellZ + dz
+
+        val seed = HashUtil.hash2D(ctx.worldContext.seed xor ringSalt, cx, cz)
+
+        if (!HashUtil.chance(seed, ringChancePerCell)) continue
+
+        // jitter the arch center inside the cell
+        val jx = ((hash01(seed xor 0x1A2B3C4DL) - 0.5) * ringCellSize * 0.7)
+        val jz = ((hash01(seed xor 0x5E6F7788L) - 0.5) * ringCellSize * 0.7)
+
+        val centerX = cx * ringCellSize + ringCellSize / 2.0 + jx
+        val centerZ = cz * ringCellSize + ringCellSize / 2.0 + jz
+
+        // random orientation in XZ
+        val yaw = hash01(seed xor 0xCAFEBABEL) * Math.PI * 2.0
+        val cosY = kotlin.math.cos(yaw)
+        val sinY = kotlin.math.sin(yaw)
+
+        // shape parameters
+        val radius = Curve.lerp(ringRadiusMin, ringRadiusMax, hash01(seed xor 0x11111111L))
+        val tubeRadius = Curve.lerp(ringTubeRadiusMin, ringTubeRadiusMax, hash01(seed xor 0x22222222L))
+        val planeThickness = Curve.lerp(ringPlaneThicknessMin, ringPlaneThicknessMax, hash01(seed xor 0x33333333L))
+        val verticalSquash = Curve.lerp(ringVerticalSquashMin, ringVerticalSquashMax, hash01(seed xor 0x44444444L))
+
+        val anchorSurfaceY = surfaceYAt(
+          ctx,
+          kotlin.math.round(centerX).toInt(),
+          kotlin.math.round(centerZ).toInt()
+        )
+
+        val centerY = anchorSurfaceY + Curve.lerp(
+          ringBaseHeightMin,
+          ringBaseHeightMax,
+          hash01(seed xor 0x55555555L)
+        )
+        // sink slightly into the local terrain so it feels grounded
+        /*val centerY = localSurfaceY + Curve.lerp(
+          ringBaseHeightMin,
+          ringBaseHeightMax,
+          hash01(seed xor 0x55555555L)
+        )*/
+
+        // local coords relative to ring center
+        val rx = wx - centerX
+        val rz = wz - centerZ
+        val ry = y - centerY
+
+        // rotate into ring-aligned space
+        val u = rx * cosY + rz * sinY        // in ring plane
+        val w = -rx * sinY + rz * cosY       // perpendicular to ring plane
+        val v = ry / verticalSquash          // vertical squash/stretch
+
+        // Vertical torus-ish SDF:
+        // ring loop lives in (u,v), thickness extends along w
+        val q = kotlin.math.sqrt(u * u + v * v) - radius
+
+        // normalize perpendicular thickness so the ring isn't infinitely thin
+        val sdf = kotlin.math.sqrt(q * q + (w / planeThickness) * (w / planeThickness)) - tubeRadius
+
+        // Only contribute if we're inside the body
+        if (sdf < 0.0) {
+          // stronger toward center of stone body
+          var add = (-sdf) * ringAddStrength
+
+          // soften the very bottom so it merges into terrain instead of making a perfect loop outline
+          val bottomFade = smoothstep(-radius * 0.95, -radius * 0.45, v)
+          //add *= bottomFade
+
+          // slight breakup so they aren't too mathematically perfect
+          val breakup = ctx.noise.get(Noise.Overhang3D).noise3D(wx, y, wz) * 0.5 + 0.5
+          //add *= smoothstep(0.20, 0.85, breakup)
+
+          if (add > best) best = add
+        }
+      }
+    }
+
+    return best
+  }
+
+  private fun surfaceYAt(ctx: GenerateContext, worldX: Int, worldZ: Int): Double {
+    val sea = ctx.chunkContext.seaLevel
+
+    val roll = shaper.smoothShape(ctx.noise.get(Noise.Base2D).noise2D(worldX, worldZ))
+    val rollY = roll * rollAmp
+
+    val ridgeN = shaper.smoothShape(ctx.noise.get(Noise.Ridge2D).noise2D(worldX, worldZ))
+    val ridge01 = (1.0 - abs(ridgeN)).pow(3.0)
+    val ridgeY = ridge01 * ridgeAmp
+
+    var surfaceY = sea + baseHeight + rollY + ridgeY
+
+    val x = worldX.toDouble()
+    val z = worldZ.toDouble()
+
+    val crackWarpX = ctx.noise.get(Noise.CrackWarp2D).noise2D(x, z) * crackWarpAmp
+    val crackWarpZ = ctx.noise.get(Noise.CrackWarp2D).noise2D(x + 777.0, z + 777.0) * crackWarpAmp
+    val xw = x + crackWarpX
+    val zw = z + crackWarpZ
+
+    val crackRidge01 = 1.0 - abs(ctx.noise.get(Noise.CrackMask2D).noise2D(xw, zw))
+    val ct = ((crackRidge01 - crackThreshold01) / (1.0 - crackThreshold01)).coerceIn(0.0, 1.0)
+    val crackLine = smoothstep01(ct)
+    val crackShape = crackLine.pow(1.25)
+
+    surfaceY -= crackShape * crackDepth
+    return surfaceY
   }
 }
