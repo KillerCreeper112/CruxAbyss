@@ -17,7 +17,6 @@ import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.decor.Decoration
-import killercreepr.cruxworldgen.api.decor.Placement
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.material.MaterialProvider
@@ -131,11 +130,10 @@ class ToxicMireBiome(
       val y = ctx.y
       val z = ctx.worldZ
 
-      val depth = ctx.depthBelowSurface
-      if (depth == 0) {
+      if(ctx.airRun > 7){
         return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_MOSS)
       }
-      if (depth < 5) {
+      if (ctx.surfaceDepth < 5) {
         return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_DIRT)
       }
       if(HashUtil.chance(HashUtil.mixSeed(

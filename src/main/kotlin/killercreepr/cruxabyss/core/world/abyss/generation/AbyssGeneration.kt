@@ -43,10 +43,10 @@ object AbyssGeneration {
   fun register() {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
-        //ToxicMireBiome(),
+        ToxicMireBiome(),
         CharredWastes(),
         BasaltSpires(),
-        //EldritchWastes()
+        EldritchWastes()
       ),
       biomeCellSizeBlocks = 256,
       blendRadiusBlocks = 32.0

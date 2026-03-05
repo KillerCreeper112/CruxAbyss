@@ -100,15 +100,15 @@ class EldritchWastes(
         return BukkitBlockAdapter.resolver().resolve(Material.BLACKSTONE)
       }
 
-      if (depth == 0) {
+      if(ctx.airRun > 7){
         return BukkitBlockAdapter.resolver().resolve(Material.GRASS_BLOCK)
       }
 
-      if (depth < 3) {
+      if(ctx.surfaceDepth < 4){
         return BukkitBlockAdapter.resolver().resolve(Material.DIRT)
       }
 
-      if (depth < 6) {
+      if (ctx.surfaceDepth < 90) {
         return BukkitBlockAdapter.resolver().resolve(Material.STONE)
       }
 

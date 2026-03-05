@@ -302,7 +302,7 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CruxWorldUtil.CUSTOM_WORLD_CREATORS.put(
           "world_abyss",
           name ->{
-              ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
+              /*ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
 
               LevelStorageSource.LevelStorageAccess levelStorageAccess;
               try {
@@ -325,10 +325,11 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
               }
 
               LevelDataAndDimensions levelDataAndDimensions = LevelStorageSource.getLevelDataAndDimensions(dataTag, context.dataConfiguration(), contextLevelStemRegistry, context.datapackWorldgen());
-              primaryLevelData = (PrimaryLevelData)levelDataAndDimensions.worldData();
+              primaryLevelData = (PrimaryLevelData)levelDataAndDimensions.worldData();*/
+              var seed = CruxMath.random().nextLong();//todo
 
               return new WorldCreator(name).generator(AbyssGeneration.INSTANCE
-                .buildGenerator(primaryLevelData.worldGenOptions().seed(), AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
+                .buildGenerator(seed/*primaryLevelData.worldGenOptions().seed()*/, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
           }
         );
 
