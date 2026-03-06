@@ -38,6 +38,7 @@ import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.CathedralChambers
 import killercreepr.cruxworldgen.standard.cave.CavernRooms
 import killercreepr.cruxworldgen.standard.cave.CheeseCaves
+import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
 import killercreepr.cruxworldgen.standard.cave.WormNoodleCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import killercreepr.cruxworldgen.test.decor.volumetric.GrassVolDecor
@@ -53,7 +54,8 @@ class ToxicMireBiome(
       CheeseCaves(),
       WormNoodleCaves(),
       CavernRooms(),
-      CathedralChambers()
+      CathedralChambers(),
+      CoolLayeredCaves()
     )
   ),
   override val decorations: List<Decoration> = listOf(

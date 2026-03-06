@@ -33,6 +33,7 @@ import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.extension.remap01
+import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
 import killercreepr.cruxworldgen.standard.decor.LavaPondDecoration
 import killercreepr.cruxworldgen.test.decor.FallenTreeDecor
 import killercreepr.cruxworldgen.test.decor.GrassDecor
@@ -55,6 +56,7 @@ class CharredWastes(
         depthVariationBlocks = 100.0,
         strength = 100.0
       )*/
+      CoolLayeredCaves()
     )
   ),
   override val decorations: List<Decoration> = listOf(
