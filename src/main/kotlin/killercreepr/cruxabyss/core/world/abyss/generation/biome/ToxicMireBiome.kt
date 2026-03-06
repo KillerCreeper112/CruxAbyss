@@ -35,11 +35,8 @@ import killercreepr.cruxworldgen.core.feature.PlacedFeature
 import killercreepr.cruxworldgen.core.feature.ironHigh
 import killercreepr.cruxworldgen.core.feature.ironLow
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
-import killercreepr.cruxworldgen.standard.cave.CathedralChambers
-import killercreepr.cruxworldgen.standard.cave.CavernRooms
-import killercreepr.cruxworldgen.standard.cave.CheeseCaves
-import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
-import killercreepr.cruxworldgen.standard.cave.WormNoodleCaves
+import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
+import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import killercreepr.cruxworldgen.test.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.test.decor.volumetric.TallGrassDoubleVolDecor
@@ -51,11 +48,8 @@ import kotlin.math.pow
 class ToxicMireBiome(
   override val caves: CaveShape = CaveProfile(
     listOf(
-      CheeseCaves(),
-      WormNoodleCaves(),
-      CavernRooms(),
-      CathedralChambers(),
-      CoolLayeredCaves()
+      SpaghettiCaves(),
+      Standard3DCaves(),
     )
   ),
   override val decorations: List<Decoration> = listOf(
@@ -395,7 +389,6 @@ class ToxicMireBiome(
         edge: BiomeEdgeContext,
         signalWriter: SignalWriter
       ): DensityStack {
-
         val sea = ctx.chunkContext.seaLevel.toDouble()
         val baseSurface = sea + baseYAboveSea
 

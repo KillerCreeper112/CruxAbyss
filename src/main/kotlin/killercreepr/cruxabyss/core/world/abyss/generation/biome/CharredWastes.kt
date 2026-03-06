@@ -34,6 +34,8 @@ import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
+import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
+import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.decor.LavaPondDecoration
 import killercreepr.cruxworldgen.test.decor.FallenTreeDecor
 import killercreepr.cruxworldgen.test.decor.GrassDecor
@@ -50,13 +52,8 @@ import kotlin.math.sqrt
 class CharredWastes(
   override val caves: CaveShape = CaveProfile(
     listOf(
-      /*SpaghettiCaves(
-        noodleRadius = 6.0,
-        verticalRadiusBlocks = 9.0,
-        depthVariationBlocks = 100.0,
-        strength = 100.0
-      )*/
-      CoolLayeredCaves()
+      SpaghettiCaves(),
+      Standard3DCaves(),
     )
   ),
   override val decorations: List<Decoration> = listOf(
