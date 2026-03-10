@@ -8,12 +8,14 @@ import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
+import killercreepr.cruxworldgen.api.biome.FineBiomeShape
 import killercreepr.cruxworldgen.api.block.BlockData
 import killercreepr.cruxworldgen.api.cave.CaveProfile
 import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
+import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.material.MaterialProvider
@@ -48,6 +50,7 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.times
 
 class CharredWastes(
   override val caves: CaveShape = CaveProfile(
@@ -104,7 +107,7 @@ class CharredWastes(
         return BukkitBlockAdapter.resolver().resolve(Material.MAGMA_BLOCK)
       }
 
-      if(context.airRun > 8){
+      if(context.airRun > 5){
         return BukkitBlockAdapter.resolver().resolve(Material.BLACKSTONE)
       }
 
@@ -297,6 +300,43 @@ class CharredWastes(
     )
   )
 
+  override val fineShape = object: FineBiomeShape{
+    override fun density(
+      ctx: GenerateContext,
+      worldX: Int,
+      y: Int,
+      worldZ: Int,
+      edge: BiomeEdgeContext,
+      volCtx: VolumeEnv,
+      signalWriter: SignalWriter
+    ): DensityStack {
+      val x = worldX.toDouble()
+      val z = worldZ.toDouble()
+
+      val crackWarpX = ctx.noise.get(Noise.CrackWarp2D).noise2D(x, z) * crackWarpAmp
+      val crackWarpZ = ctx.noise.get(Noise.CrackWarp2D).noise2D(x + 777.0, z + 777.0) * crackWarpAmp
+      val xw = x + crackWarpX
+      val zw = z + crackWarpZ
+
+      val crackRidge01 = 1.0 - abs(ctx.noise.get(Noise.CrackMask2D).noise2D(xw, zw))
+      val ct = ((crackRidge01 - crackThreshold01) / (1.0 - crackThreshold01)).coerceIn(0.0, 1.0)
+      val crackLine = smoothstep01(ct) // 0..1 near crack center
+
+      // widen a bit + make cracks feel “broken”
+      val crackShape = crackLine.pow(1.25)
+
+      signalWriter.max(
+        worldX, y, worldZ,
+        Signal.CRACK_MAGMA,
+        crackLine
+      )
+      return DensityStack.densityStack(
+        carve = crackShape * crackDepth
+      )
+    }
+
+  }
+
   override val shape = BiomeShapeProfile(
     object : BiomeShape {
       override fun density(
@@ -320,23 +360,10 @@ class CharredWastes(
         var surfaceY = (sea + baseHeight + rollY + ridgeY)
 
         // ----- 2) Crack depressions (heightfield carving, NOT caves) -----
-        val x = worldX.toDouble()
-        val z = worldZ.toDouble()
 
-        val crackWarpX = ctx.noise.get(Noise.CrackWarp2D).noise2D(x, z) * crackWarpAmp
-        val crackWarpZ = ctx.noise.get(Noise.CrackWarp2D).noise2D(x + 777.0, z + 777.0) * crackWarpAmp
-        val xw = x + crackWarpX
-        val zw = z + crackWarpZ
-
-        val crackRidge01 = 1.0 - abs(ctx.noise.get(Noise.CrackMask2D).noise2D(xw, zw))
-        val ct = ((crackRidge01 - crackThreshold01) / (1.0 - crackThreshold01)).coerceIn(0.0, 1.0)
-        val crackLine = smoothstep01(ct) // 0..1 near crack center
-
-        // widen a bit + make cracks feel “broken”
-        val crackShape = crackLine.pow(1.25)
 
         // depress surface where crack exists
-        surfaceY -= crackShape * crackDepth
+        //surfaceY -= crackShape * crackDepth
 
         // ----- 3) Magma fissure SLITS (macro carve) -----
         // Similar to cracks but used as a density carve so it opens to sky.
@@ -348,11 +375,11 @@ class CharredWastes(
         val gradientBias = aboveSurface * 0.25
         val baseDensity = surfaceY - y.toDouble() - gradientBias
 
-        signalWriter.max(
+        /*signalWriter.max(
           worldX, y, worldZ,
           Signal.CRACK_MAGMA,
           crackLine
-        )
+        )*/
         aboveSurface = (-baseDensity).coerceAtLeast(0.0)
 
         val oh = ctx.noise.get(Noise.Overhang3D).noise3D(worldX, y, worldZ).remap01() * 50.0

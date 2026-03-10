@@ -100,7 +100,7 @@ class EldritchWastes(
         return BukkitBlockAdapter.resolver().resolve(Material.BLACKSTONE)
       }
 
-      if(ctx.airRun > 7){
+      if(ctx.airRun > 4){
         return BukkitBlockAdapter.resolver().resolve(Material.GRASS_BLOCK)
       }
 

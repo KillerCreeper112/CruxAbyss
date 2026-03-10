@@ -38,6 +38,7 @@ import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
+import killercreepr.cruxworldgen.test.decor.GrassDecor
 import killercreepr.cruxworldgen.test.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.test.decor.volumetric.TallGrassDoubleVolDecor
 import org.bukkit.Material
@@ -58,24 +59,24 @@ class ToxicMireBiome(
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
       leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART))
     ),
-    /*GrassDecor(
+    GrassDecor(
       chancePerPoint = 0.5,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_SHROOM)),
-      salt = 23892L
+      chanceSalt = 23892L
     ),
     GrassDecor(
       chancePerPoint = 0.3,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MIREHORN)),
-      salt = 33802L
+      chanceSalt = 33802L
     ),
     GrassDecor(
       chancePerPoint = 0.12,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.TOXSPORE)),
-      salt = 38232L
-    ),*/
+      chanceSalt = 38232L
+    ),
   ),
 
   override val volumetricDecorations : List<VolumetricDecoration> = listOf(
@@ -126,7 +127,7 @@ class ToxicMireBiome(
       val y = ctx.y
       val z = ctx.worldZ
 
-      if(ctx.airRun > 7){
+      if(ctx.airRun > 6){
         return BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_MOSS)
       }
       if (ctx.surfaceDepth < 5) {
