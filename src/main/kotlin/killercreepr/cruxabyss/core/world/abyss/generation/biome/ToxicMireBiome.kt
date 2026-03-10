@@ -37,6 +37,7 @@ import killercreepr.cruxworldgen.core.feature.ironLow
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
+import killercreepr.cruxworldgen.standard.cave.WormCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import killercreepr.cruxworldgen.test.decor.GrassDecor
 import killercreepr.cruxworldgen.test.decor.volumetric.GrassVolDecor
@@ -49,6 +50,7 @@ import kotlin.math.pow
 class ToxicMireBiome(
   override val caves: CaveShape = CaveProfile(
     listOf(
+      WormCaves(),
       SpaghettiCaves(),
       Standard3DCaves(),
     )

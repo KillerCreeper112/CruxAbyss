@@ -91,7 +91,8 @@ object AbyssGeneration {
       features = features,
       chunkSampler = SimpleChunkSampler(
         generationPipeline,
-        noise, worldDetails, 4
+        noise, worldDetails, 4,
+        2
       )
     )
   }

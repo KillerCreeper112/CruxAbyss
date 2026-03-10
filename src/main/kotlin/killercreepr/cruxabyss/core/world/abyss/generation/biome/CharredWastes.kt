@@ -38,6 +38,7 @@ import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
+import killercreepr.cruxworldgen.standard.cave.WormCaves
 import killercreepr.cruxworldgen.standard.decor.LavaPondDecoration
 import killercreepr.cruxworldgen.test.decor.FallenTreeDecor
 import killercreepr.cruxworldgen.test.decor.GrassDecor
@@ -55,6 +56,7 @@ import kotlin.times
 class CharredWastes(
   override val caves: CaveShape = CaveProfile(
     listOf(
+      WormCaves(),
       SpaghettiCaves(),
       Standard3DCaves(),
     )

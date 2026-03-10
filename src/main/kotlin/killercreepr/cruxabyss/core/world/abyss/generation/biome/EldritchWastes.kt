@@ -31,8 +31,11 @@ import killercreepr.cruxworldgen.core.feature.PlacedFeature
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.CathedralChambers
 import killercreepr.cruxworldgen.standard.cave.OffsetTunnels
+import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
+import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.VerticalTears
 import killercreepr.cruxworldgen.standard.cave.VoidPockets
+import killercreepr.cruxworldgen.standard.cave.WormCaves
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import org.bukkit.Material
 import org.bukkit.block.BlockType
@@ -43,7 +46,10 @@ import kotlin.math.pow
 class EldritchWastes(
   override val caves: CaveShape = CaveProfile(
     listOf(
-      CathedralChambers(
+      WormCaves(),
+      SpaghettiCaves(),
+      Standard3DCaves(),
+      /*CathedralChambers(
         threshold01 = 0.82,
         strength = 1.18,
         openMarginBlocks = 22.0
@@ -71,7 +77,7 @@ class EldritchWastes(
         depthVariationBlocks = 100.0,
         strength = 1.14,
         openMarginBlocks = 9.0
-      )
+      )*/
     )
   ),
 
