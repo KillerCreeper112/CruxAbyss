@@ -2,6 +2,7 @@ package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
 import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
+import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
@@ -18,6 +19,7 @@ import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.density.DensityStack
+import killercreepr.cruxworldgen.api.feature.PlacedFeature
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
 import killercreepr.cruxworldgen.api.noise.NoiseField
@@ -35,14 +37,13 @@ import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.extension.remap01
-import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
+import killercreepr.cruxworldgen.standard.decor.FallenTreeDecor
+import killercreepr.cruxworldgen.standard.decor.GrassDecor
 import killercreepr.cruxworldgen.standard.decor.LavaPondDecoration
-import killercreepr.cruxworldgen.test.decor.FallenTreeDecor
-import killercreepr.cruxworldgen.test.decor.GrassDecor
-import killercreepr.cruxworldgen.test.decor.SingleDeadTreeDecor
+import killercreepr.cruxworldgen.standard.decor.SingleDeadTreeDecor
 import org.bukkit.Axis
 import org.bukkit.Material
 import kotlin.math.abs
@@ -54,7 +55,7 @@ import kotlin.math.sqrt
 import kotlin.times
 
 class CharredWastes(
-  override val caves: CaveShape = CaveProfile(
+  override val caves: CaveShape<*, *> = CaveProfile(
     listOf(
       WormCaves(),
       SpaghettiCaves(),
@@ -64,8 +65,9 @@ class CharredWastes(
   override val decorations: List<Decoration> = listOf(
     SingleDeadTreeDecor(
       chancePerPoint = 0.26,
-      log = { region, seed ->
-        if (HashUtil.chance(seed xor 23892L, 0.1)) BukkitBlockAdapter.resolver().resolve(
+      log = { region, x,y,z ->
+        val seed = HashUtil.mixSeed(region.ctx.worldContext.seed, x,y,z, 32894L)
+        if (HashUtil.chance(seed, 0.1)) BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.EMBER_LOG.components.get(CruxBlockComponents.DIRECTIONAL_GROUP)!!
             .getBlock(Axis.Y)!!
         )
@@ -90,6 +92,13 @@ class CharredWastes(
       chancePerPoint = 0.3,
       worldSalt = 29302L
     )
+  ),
+
+  override val features: List<PlacedFeature<*>> = listOf(
+    AbyssFeatures.Ores.FUNGIRE,
+    AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Ores.IRON_LOW,
+    AbyssFeatures.Ores.IRON_HIGH
   ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(context: MaterialContext): BlockData {

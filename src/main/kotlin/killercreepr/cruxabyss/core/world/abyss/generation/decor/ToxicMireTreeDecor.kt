@@ -11,6 +11,7 @@ import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.util.HashUtil.chance
 import killercreepr.cruxworldgen.api.util.HashUtil.chooseInt
 import killercreepr.cruxworldgen.api.util.HashUtil.mixSeed
+import killercreepr.cruxworldgen.bukkit.block.picker.AxisBlockPicker
 import org.bukkit.Axis
 
 class ToxicMireTreeDecor(
@@ -28,7 +29,7 @@ class ToxicMireTreeDecor(
   val wartMaxHeight : Int = 4,
   val maxBranches : Int = 4,
   val maxBranchesOnBranches : Int = 3,
-  val logPicker: (Axis) -> BlockData,
+  val logPicker: AxisBlockPicker,
   val leafPicker: Holder<BlockData>,
 ) : Decoration {
 
@@ -110,7 +111,8 @@ class AbyssTreePlacer(
       val y = p.baseY + dy
       if (y < bounds.minY || y > bounds.maxY) break
       if (queries.isReplaceable(p.worldX, y, p.worldZ)) {
-        region.setBlock(p.worldX, y, p.worldZ, cfg.logPicker.invoke(Axis.Y))
+        val logBlock = cfg.logPicker.pickBlock(region, p.worldX, y, p.worldZ, Axis.Y) ?: break
+        region.setBlock(p.worldX, y, p.worldZ, logBlock)
 
         if (dy == p.height - 1) {
           val wartHeight = cfg.randomWartHeight(seed xor 0x32382)
@@ -187,18 +189,7 @@ class AbyssTreePlacer(
         salt = 1L
       )
 
-      fun fromDirection(xDir: Int, zDir: Int): BlockData {
-        if (xDir == 1 || xDir == -1) {
-          return cfg.logPicker.invoke(Axis.X)
-        }
-        if (zDir == 1 || zDir == -1) {
-          return cfg.logPicker.invoke(Axis.Z)
-        }
-        return cfg.logPicker.invoke(Axis.Y)
-      }
-
       val length = cfg.randomBranchLength(branchSeed xor 0x1111)
-      val block = fromDirection(dirX, dirZ)
 
       var spawnedSubBranches = 0
       val maxSub = cfg.maxBranchesOnBranches
@@ -216,6 +207,17 @@ class AbyssTreePlacer(
         if (!region.isInRegion(xx, yy, zz)) break
         if (!queries.isReplaceable(xx, yy, zz)) break
 
+        fun fromDirection(xDir: Int, zDir: Int): BlockData? {
+          if (xDir == 1 || xDir == -1) {
+            return cfg.logPicker.pickBlock(region, xx, yy, zz,Axis.X)
+          }
+          if (zDir == 1 || zDir == -1) {
+            return cfg.logPicker.pickBlock(region, xx, yy, zz,Axis.Z)
+          }
+          return cfg.logPicker.pickBlock(region, xx, yy, zz,Axis.Y)
+        }
+
+        val block = fromDirection(dirX, dirZ) ?: break
         region.setBlock(xx, yy, zz, block)
 
         if (i == effectiveLength) {

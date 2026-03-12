@@ -1,5 +1,6 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
+import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
@@ -12,6 +13,7 @@ import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.density.DensityStack
+import killercreepr.cruxworldgen.api.feature.PlacedFeature
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
 import killercreepr.cruxworldgen.api.noise.NoiseField
@@ -24,24 +26,29 @@ import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
-import killercreepr.cruxworldgen.standard.cave.CoolLayeredCaves
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
-import killercreepr.cruxworldgen.test.biome.gCaves
-import net.minecraft.data.worldgen.features.AquaticFeatures
-import net.minecraft.world.level.levelgen.Aquifer
+import killercreepr.cruxworldgen.standard.cave.WormCaves
 import org.bukkit.Material
 import kotlin.math.abs
 import kotlin.math.pow
 
 class BasaltSpires(
-  override val caves: CaveShape = CaveProfile(
+  override val caves: CaveShape<*, *> = CaveProfile(
     listOf(
+      WormCaves(),
       SpaghettiCaves(),
       Standard3DCaves(),
     )
   ),
   override val decorations: List<Decoration> = listOf(),
+
+  override val features: List<PlacedFeature<*>> = listOf(
+    AbyssFeatures.Ores.FUNGIRE,
+    AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Ores.IRON_LOW,
+    AbyssFeatures.Ores.IRON_HIGH
+  ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(context: MaterialContext): BlockData {
       if (!context.isSolid) return BlockData.NONE
