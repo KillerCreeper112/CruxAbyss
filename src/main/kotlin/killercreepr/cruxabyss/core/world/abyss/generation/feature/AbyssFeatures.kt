@@ -35,9 +35,14 @@ object AbyssFeatures {
     val FUNGIRE = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
-        ore = OreConfig.BlockGetter.constant(
-          BukkitBlockAdapter.resolver().resolve(AbyssBlocks.FUNGIRE_ORE)
-        ),
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is CruxBlockSection){
+            if(AbyssBlocks.PLAGUE_STONE.containsBlock(block.blockData.block))
+              return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE_FUNGIRE_ORE)
+          }
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.FUNGIRE_ORE)
+        },
         minSize = 2,
         maxSize = 8,
         canReplace = canOreReplace,
@@ -50,6 +55,30 @@ object AbyssFeatures {
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.208),
             order = 2
+          )
+        )
+        )
+      )
+    )
+
+    val RED_ABYSS_CRYSTAL = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = OreConfig.BlockGetter.constant(
+          BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE)
+        ),
+        minSize = 1,
+        maxSize = 2,
+        canReplace = canOreReplace,
+        sizeOrder = -1,
+        discardChanceOnAirExposure = 0.15
+      ),
+      modifiers = listOf(
+        Repeat(
+          4, XZHeight(
+          TriangleHeight(
+            baseHeight = UniformHeightSampler.relative(0.0, 1.0),
+            order = 3
           )
         )
         )
@@ -73,6 +102,150 @@ object AbyssFeatures {
           SkewedHeight(
             baseHeight = UniformHeightSampler.relative(0.125, 1.0), // Y -16 to Y 320
             order = 4,
+          )
+        ))
+      )
+    )
+
+    val GOLD_LOW = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_GOLD_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.GOLD_ORE)
+        },
+        minSize = 1,
+        maxSize = 4,
+        canReplace = canOreReplace,
+        sizeOrder = -2,
+        discardChanceOnAirExposure = 0.3
+      ),
+      modifiers = listOf(
+        Repeat(5, XZHeight(
+          TriangleHeight(
+            baseHeight = UniformHeightSampler.relative(0.05, 0.35)
+          )
+        ))
+      )
+    )
+
+    val REDSTONE_LOW = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_REDSTONE_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.REDSTONE_ORE)
+        },
+        minSize = 1,
+        maxSize = 4,
+        canReplace = canOreReplace,
+        sizeOrder = -2,
+        discardChanceOnAirExposure = 0.0
+      ),
+      modifiers = listOf(
+        Repeat(4, XZHeight(
+          TriangleHeight(
+            baseHeight = UniformHeightSampler.relative(0.0, 0.3)
+          )
+        ))
+      )
+    )
+
+    val LAPIS_LOW = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_LAPIS_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.LAPIS_ORE)
+        },
+        minSize = 1,
+        maxSize = 5,
+        canReplace = canOreReplace,
+        sizeOrder = -2,
+        discardChanceOnAirExposure = 0.0
+      ),
+      modifiers = listOf(
+        Repeat(5, XZHeight(
+          TriangleHeight(
+            baseHeight = UniformHeightSampler.relative(0.0, 0.42)
+          )
+        ))
+      )
+    )
+
+    val COPPER = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_COPPER_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.COPPER_ORE)
+        },
+        minSize = 1,
+        maxSize = 8,
+        canReplace = canOreReplace,
+        sizeOrder = -2,
+        discardChanceOnAirExposure = 0.0
+      ),
+      modifiers = listOf(
+        Repeat(9, XZHeight(
+          TriangleHeight(
+            baseHeight = UniformHeightSampler.relative(0.22, 0.5)
+          )
+        ))
+      )
+    )
+
+    val COAL = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_COAL_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.COAL_ORE)
+        },
+        minSize = 1,
+        maxSize = 8,
+        canReplace = canOreReplace,
+        sizeOrder = -2,
+        discardChanceOnAirExposure = 0.3
+      ),
+      modifiers = listOf(
+        Repeat(9, XZHeight(
+          TriangleHeight(
+            baseHeight = UniformHeightSampler.relative(0.3, 0.7)
+          )
+        ))
+      )
+    )
+
+    val COAL_HIGH = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x,y,z)
+          if(block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_COAL_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.COAL_ORE)
+        },
+        minSize = 1,
+        maxSize = 6,
+        canReplace = canOreReplace,
+        sizeOrder = -2,
+        discardChanceOnAirExposure = 0.0
+      ),
+      modifiers = listOf(
+        Repeat(7, XZHeight(
+          UniformHeight(
+            baseHeight = UniformHeightSampler.relative(0.5, 1.0)
           )
         ))
       )

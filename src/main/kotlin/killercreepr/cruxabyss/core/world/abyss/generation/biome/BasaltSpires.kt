@@ -25,7 +25,9 @@ import killercreepr.cruxworldgen.api.util.Curve
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
+import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
+import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
@@ -44,10 +46,18 @@ class BasaltSpires(
   override val decorations: List<Decoration> = listOf(),
 
   override val features: List<PlacedFeature<*>> = listOf(
-    AbyssFeatures.Ores.FUNGIRE,
     AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Ores.FUNGIRE,
+    AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
+
+    AbyssFeatures.Ores.GOLD_LOW,
+    AbyssFeatures.Ores.REDSTONE_LOW,
+    AbyssFeatures.Ores.LAPIS_LOW,
     AbyssFeatures.Ores.IRON_LOW,
-    AbyssFeatures.Ores.IRON_HIGH
+    AbyssFeatures.Ores.IRON_HIGH,
+    AbyssFeatures.Ores.COPPER,
+    AbyssFeatures.Ores.COAL,
+    AbyssFeatures.Ores.COAL_HIGH,
   ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(context: MaterialContext): BlockData {
@@ -57,7 +67,6 @@ class BasaltSpires(
       val y = context.y
       val z = context.worldZ
 
-      // reuse magma signal idea for continuity
       val crackMagma = context.signalView.getOrDefault(
         x, y + 1, z,
         Signal.CRACK_MAGMA, 0.0
@@ -68,11 +77,48 @@ class BasaltSpires(
         return BukkitBlockResolver.INSTANCE.resolve(Material.MAGMA_BLOCK)
       }
 
-      // Spires: slightly tougher surface look
-      if (context.depthBelowSurface <= 0) return BukkitBlockResolver.INSTANCE.resolve(Material.BASALT)
-      if (context.depthBelowSurface <= 2) return BukkitBlockResolver.INSTANCE.resolve(Material.BLACKSTONE)
+      val spire = context.signalView.getOrDefault(
+        x, y, z,
+        Signal.SPIRE_FIELD, 0.0
+      )
+      if(spire > 0.7){
+        return BukkitBlockResolver.INSTANCE.resolve(Material.BLACKSTONE)
+      }
 
-      return BukkitBlockResolver.INSTANCE.resolve(Material.BASALT)
+      val n = context.generateContext.noise.get(Noise.Material3D).noise3D(x,y,z).remap01()
+      // Spires: slightly tougher surface look
+      //grass
+      if(context.airRun > 4 || context.surfaceDepth < 2){
+        val type = when{
+          n > 0.75 -> Material.MAGMA_BLOCK
+          n > 0.63 -> Material.GRAVEL
+          n > 0.52 -> Material.SMOOTH_BASALT
+          else -> Material.BASALT
+        }
+
+        return BukkitBlockAdapter.resolver().resolve(type)
+      }
+      //dirt
+      if (context.surfaceDepth < 5) {
+        val type = when{
+          //n > 0.78 -> Material.SOUL_SOIL
+          //n > 0.65 -> Material.TUFF
+          n > 0.55 -> Material.GRAVEL
+          else -> Material.BLACKSTONE
+        }
+
+        return BukkitBlockAdapter.resolver().resolve(type)
+      }
+
+      //stone
+      val type = when{
+        //n > 0.78 -> Material.GRAVEL
+        n > 0.65 -> Material.GRAVEL
+        n > 0.55 -> Material.DEEPSLATE
+        else -> Material.BLACKSTONE
+      }
+
+      return BukkitBlockAdapter.resolver().resolve(type)
     }
   },
 
@@ -117,8 +163,18 @@ class BasaltSpires(
     object SpireKnuckle3D : NoiseKey { override val id = "biome.basalt_spires.spire.knuckle3D" }
 
     object Gullies2D : NoiseKey { override val id = "biome.basalt_spires.gullies2D" }
+    object Material3D : NoiseKey { override val id = "biome.basalt_spires.material3D" }
 
     override fun install(bank: NoiseBank) {
+      bank.register(Noise.Material3D) { seed ->
+        NoiseField.Companion.noiseField(seed) {
+          frequency(0.035)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+            .fractalType(CruxNoise.FractalType.FBm)
+            .rotationType3D(CruxNoise.RotationType3D.ImproveXZPlanes)
+            .fractalOctaves(2)
+        }
+      }
       bank.register(Base2D){ seed ->
         NoiseField.noiseField(seed){
           frequency(0.0012)

@@ -95,10 +95,18 @@ class CharredWastes(
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
-    AbyssFeatures.Ores.FUNGIRE,
     AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Ores.FUNGIRE,
+    AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
+
+    AbyssFeatures.Ores.GOLD_LOW,
+    AbyssFeatures.Ores.REDSTONE_LOW,
+    AbyssFeatures.Ores.LAPIS_LOW,
     AbyssFeatures.Ores.IRON_LOW,
-    AbyssFeatures.Ores.IRON_HIGH
+    AbyssFeatures.Ores.IRON_HIGH,
+    AbyssFeatures.Ores.COPPER,
+    AbyssFeatures.Ores.COAL,
+    AbyssFeatures.Ores.COAL_HIGH,
   ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(context: MaterialContext): BlockData {
@@ -118,11 +126,40 @@ class CharredWastes(
         return BukkitBlockAdapter.resolver().resolve(Material.MAGMA_BLOCK)
       }
 
-      if(context.airRun > 5){
-        return BukkitBlockAdapter.resolver().resolve(Material.BLACKSTONE)
+      val n = context.generateContext.noise.get(Noise.Material3D).noise3D(x,y,z).remap01()
+
+      //grass
+      if(context.airRun > 4){
+        val type = when{
+          n > 0.78 -> Material.GRAVEL
+          n > 0.65 -> Material.SMOOTH_BASALT
+          n > 0.55 -> Material.SOUL_SOIL
+          else -> Material.BLACKSTONE
+        }
+
+        return BukkitBlockAdapter.resolver().resolve(type)
+      }
+      //dirt
+      if (context.surfaceDepth < 5) {
+        val type = when{
+          n > 0.78 -> Material.SOUL_SOIL
+          n > 0.65 -> Material.TUFF
+          n > 0.55 -> Material.COBBLED_DEEPSLATE
+          else -> Material.BASALT
+        }
+
+        return BukkitBlockAdapter.resolver().resolve(type)
       }
 
-      return BukkitBlockAdapter.resolver().resolve(Material.BASALT)
+      //stone
+      val type = when{
+        n > 0.78 -> Material.GRAVEL
+        n > 0.65 -> Material.TUFF
+        n > 0.55 -> Material.COBBLED_DEEPSLATE
+        else -> Material.BASALT
+      }
+
+      return BukkitBlockAdapter.resolver().resolve(type)
     }
   },
 
@@ -166,6 +203,9 @@ class CharredWastes(
   }
 
   object Noise : NoiseModule {
+    object Material3D : NoiseKey {
+      override val id = "biome.charred_wastes.material3D"
+    }
     object FissureWarp2D : NoiseKey {
       override val id = "biome.charred_wastes.fissure.warp2D"
     }
@@ -207,6 +247,15 @@ class CharredWastes(
     }
 
     override fun install(bank: NoiseBank) {
+      bank.register(Noise.Material3D) { seed ->
+        NoiseField.Companion.noiseField(seed) {
+          frequency(0.036)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+            .fractalType(CruxNoise.FractalType.FBm)
+            .rotationType3D(CruxNoise.RotationType3D.ImproveXZPlanes)
+            .fractalOctaves(3)
+        }
+      }
       bank.register(Noise.Base2D) { seed ->
         NoiseField.Companion.noiseField(seed) {
           frequency(0.0017) // big rolling, ~700 block wavelength

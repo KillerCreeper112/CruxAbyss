@@ -118,10 +118,18 @@ class ToxicMireBiome(
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
-    AbyssFeatures.Ores.FUNGIRE,
     AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Ores.FUNGIRE,
+    AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
+
+    AbyssFeatures.Ores.GOLD_LOW,
+    AbyssFeatures.Ores.REDSTONE_LOW,
+    AbyssFeatures.Ores.LAPIS_LOW,
     AbyssFeatures.Ores.IRON_LOW,
-    AbyssFeatures.Ores.IRON_HIGH
+    AbyssFeatures.Ores.IRON_HIGH,
+    AbyssFeatures.Ores.COPPER,
+    AbyssFeatures.Ores.COAL,
+    AbyssFeatures.Ores.COAL_HIGH,
   ),
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(ctx: MaterialContext): BlockData {
