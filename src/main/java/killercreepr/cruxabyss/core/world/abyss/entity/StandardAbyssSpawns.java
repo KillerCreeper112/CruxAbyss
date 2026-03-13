@@ -2,9 +2,7 @@ package killercreepr.cruxabyss.core.world.abyss.entity;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.core.data.util.CollectionBuilder;
-import killercreepr.crux.core.util.CruxEntityUtil;
-import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxabyss.core.entity.mob.AbyssMob;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
@@ -48,8 +46,9 @@ public class StandardAbyssSpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return b.getWorld().getNearbyEntities(b.getLocation(), 10D, 10D, 10D,
@@ -71,8 +70,9 @@ public class StandardAbyssSpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return true;
@@ -86,12 +86,12 @@ public class StandardAbyssSpawns {
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             Block b = ctx.getBlock();
             if(b.isSolid()){
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian()) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(!CruxWorldUtil.isLoaded(b, f)) return false;
                     if(!b.getRelative(f).isSolid()) return false;
                 }
                 int amount = 0;
-                for(Block pass : CruxLoc.getNearbyBlocks(b, 3)){
+                for(Block pass : CruxLoc.getNearbyBlocksOrEmptyIfUnloaded(b, 3)){
                     if(pass.isPassable() || pass.isEmpty()) amount++;
                 }
                 return amount > 8 && b.getWorld().getNearbyEntities(b.getLocation(), 10D, 10D, 10D,
@@ -110,8 +110,9 @@ public class StandardAbyssSpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 8;
@@ -133,8 +134,9 @@ public class StandardAbyssSpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, AbyssMob.PLAGUE_STALKER)) < 2;
@@ -155,8 +157,9 @@ public class StandardAbyssSpawns {
             Block b = ctx.getBlock();
             if(!b.isEmpty()) return false;
 
-            for(BlockFace f : BlockFace.values()){
-                if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+            for(BlockFace f : CruxBlockFace.CARTESIAN){
+                if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                if(!CruxWorldUtil.isLoaded(b, f)) return false;
                 if(!b.getRelative(f).isEmpty()) return false;
             }
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 9, e -> CruxMob.is(e, AbyssMob.PLAGUEWING)) < 2;
@@ -182,8 +185,9 @@ public class StandardAbyssSpawns {
 
             Block down = b.getRelative(BlockFace.DOWN);
             if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-            for(BlockFace f : BlockFace.values()){
-                if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+            for(BlockFace f : CruxBlockFace.CARTESIAN){
+                if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                if(!CruxWorldUtil.isLoaded(down, f)) return false;
                 if(!down.getRelative(f).isSolid()) return false;
             }
 
@@ -215,7 +219,10 @@ public class StandardAbyssSpawns {
             Block b = ctx.getBlock();
             if(!isWater(b)) return false;
 
-            for(Block check : CruxLoc.getNearbyBlocks(b, 3)){
+            var blocks = CruxLoc.getNearbyBlocksOrEmptyIfUnloaded(b, 3);
+            if(blocks.isEmpty()) return false;
+
+            for(Block check : blocks){
                 if(!isWater(check)) return false;
             }
             return b.getWorld().getNearbyEntities(b.getLocation(), 28D, 28D, 28D,
@@ -236,8 +243,9 @@ public class StandardAbyssSpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;

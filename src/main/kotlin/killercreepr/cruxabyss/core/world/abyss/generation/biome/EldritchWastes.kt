@@ -2,10 +2,10 @@ package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
 import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
-import killercreepr.cruxabyss.core.world.abyss.generation.decor.GlitchOffsetTreeDecor
-import killercreepr.cruxabyss.core.world.abyss.generation.decor.MangroveTanglesDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
+import killercreepr.cruxblocks.api.block.component.BushType
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
@@ -17,6 +17,7 @@ import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.decor.Decoration
+import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.feature.PlacedFeature
 import killercreepr.cruxworldgen.api.material.MaterialProvider
@@ -28,14 +29,18 @@ import killercreepr.cruxworldgen.api.signal.SignalWriter
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
-import killercreepr.cruxworldgen.bukkit.block.BukkitDataBlockData
-import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
+import killercreepr.cruxworldgen.standard.decor.GrassDecor
+import killercreepr.cruxworldgen.standard.decor.TallGrassDoubleDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import org.bukkit.Material
 import org.bukkit.block.BlockType
+import org.bukkit.block.data.Bisected
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -87,6 +92,59 @@ class EldritchWastes(
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
       leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l -> l.isPersistent = true }))
     )*/
+    GrassDecor(
+      chancePerPoint = 0.8,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.SHORT_GRASS)),
+      chanceSalt = 38948L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.WISPTHISTLE)),
+      chanceSalt = 289824L
+    ),
+    TallGrassDoubleDecor(
+      chancePerPoint = 0.35,
+      minHeight = 2,
+      maxHeight = 2,
+      top = Holder.direct(
+        BukkitBlockResolver.INSTANCE.resolve(
+        BlockType.TALL_GRASS.createBlockData { data -> data.half = Bisected.Half.TOP }
+      )),
+      bottom = Holder.direct(
+        BukkitBlockResolver.INSTANCE.resolve(
+        BlockType.TALL_GRASS.createBlockData { data -> data.half = Bisected.Half.BOTTOM }
+      )),
+      chanceSalt = 904885L
+    ),
+  ),
+
+  override val volumetricDecorations : List<VolumetricDecoration> = listOf(
+    GrassVolDecor(
+      chancePerPoint = 0.2,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.VEILSTARE)),
+      salt = 2839283L
+    ),
+    TallGrassDoubleVolDecor(
+      chancePerPoint = 0.1,
+      minHeight = 2,
+      maxHeight = 2,
+      top = Holder.direct(
+        BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.EYEWITHER.components.getOrThrow(CruxBlockComponents.BUSH_GROUP)
+            .getBlock(BushType.TOP)!!
+        )
+      ),
+      bottom = Holder.direct(
+        BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.EYEWITHER.components.getOrThrow(CruxBlockComponents.BUSH_GROUP)
+            .getBlock(BushType.BOTTOM)!!
+        )
+      ),
+      chanceSalt = 328943L
+    ),
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
