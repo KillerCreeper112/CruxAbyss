@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.AbyssCrownedTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.HangingCanopyAbyssTreeDecor
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.MistwoodTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.api.block.component.BushType
@@ -88,21 +89,13 @@ class EldritchWastes(
   ),
 
   override val decorations: List<Decoration> = listOf(
-    /*GlitchOffsetTreeDecor(
-      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.SHADE_LOG),
-      leafPicker = Holder.direct(BukkitDataBlockData(BlockType.JUNGLE_LEAVES.createBlockData { l -> l.isPersistent = true }))
-    ),
-    MangroveTanglesDecor(
-      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
-      leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l -> l.isPersistent = true }))
-    )*/
     AbyssCrownedTreeDecor(
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.SHADE_LOG),
       leafPicker = Holder.direct(BukkitDataBlockData(BlockType.JUNGLE_LEAVES.createBlockData { l ->
         l.isPersistent = true
       }))
     ),
-    HangingCanopyAbyssTreeDecor(
+    MistwoodTreeDecor(
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
       leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l ->
         l.isPersistent = true
@@ -115,7 +108,7 @@ class EldritchWastes(
       chanceSalt = 38948L
     ),
     GrassDecor(
-      chancePerPoint = 0.3,
+      chancePerPoint = 0.4,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.WISPTHISTLE)),
       chanceSalt = 289824L
@@ -138,7 +131,7 @@ class EldritchWastes(
 
   override val volumetricDecorations : List<VolumetricDecoration> = listOf(
     GrassVolDecor(
-      chancePerPoint = 0.2,
+      chancePerPoint = 0.16,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.VEILSTARE)),
       salt = 2839283L
@@ -166,7 +159,6 @@ class EldritchWastes(
   override val features: List<PlacedFeature<*>> = listOf(
     AbyssFeatures.Ores.EMERALD,
     AbyssFeatures.Ores.FUNGIRE,
-    AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
 
     AbyssFeatures.Ores.GOLD_LOW,
     AbyssFeatures.Ores.REDSTONE_LOW,

@@ -48,7 +48,6 @@ class BasaltSpires(
   override val features: List<PlacedFeature<*>> = listOf(
     AbyssFeatures.Ores.EMERALD,
     AbyssFeatures.Ores.FUNGIRE,
-    AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
 
     AbyssFeatures.Ores.GOLD_LOW,
     AbyssFeatures.Ores.REDSTONE_LOW,

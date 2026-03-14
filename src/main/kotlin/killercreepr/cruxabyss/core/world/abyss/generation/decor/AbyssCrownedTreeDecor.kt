@@ -8,6 +8,7 @@ import killercreepr.cruxworldgen.api.decor.DecorationPass
 import killercreepr.cruxworldgen.api.decor.Placement
 import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
+import killercreepr.cruxworldgen.api.util.HashUtil
 import killercreepr.cruxworldgen.api.util.HashUtil.chance
 import killercreepr.cruxworldgen.api.util.HashUtil.chooseInt
 import killercreepr.cruxworldgen.api.util.HashUtil.mixSeed
@@ -167,6 +168,20 @@ class AbyssCrownedTreeDecor(
     )
   }
 
+  //place trunk so it generally fill to touch the ground
+  fun placeTrunk(region: LimitedRegion, x: Int, y: Int, z: Int) {
+    val randomOffset = chooseInt(mixSeed(region.ctx.worldContext.seed, x, y, z, 84829L), 0, 3)
+    val q = region.terrainQueries
+    for(i in 0..5+randomOffset){
+      val yy = y - i
+      if(!region.isInRegion(x, yy, z)) break
+      if(!q.isReplaceable(x, yy, z)) break
+      val block = logPicker.pickBlock(region, x, yy, z, Axis.Y) ?: break
+      region.setBlock(x, yy, z, block)
+
+    }
+  }
+
   override fun place(
     region: LimitedRegion,
     placement: Placement,
@@ -178,20 +193,14 @@ class AbyssCrownedTreeDecor(
     // Trunk
     for (i in p.trunk.indices) {
       val at = p.trunk[i]
-      if (region.isInRegion(at.x, at.y, at.z) && q.isReplaceable(at.x, at.y, at.z)) {
-        val block = logPicker.pickBlock(region, at.x, at.y, at.z, Axis.Y) ?: return
-        region.setBlock(at.x, at.y, at.z, block)
-      }
+      placeTrunk(region, at.x, at.y, at.z)
 
       // Thicker lower section
       if (i < p.thickBaseHeight) {
         for ((ox, oz) in listOf(1 to 0, 0 to 1)) {
           val tx = at.x + ox
           val tz = at.z + oz
-          if (region.isInRegion(tx, at.y, tz) && q.isReplaceable(tx, at.y, tz)) {
-            val block = logPicker.pickBlock(region, tx, at.y, tz, Axis.Y) ?: return
-            region.setBlock(tx, at.y, tz, block)
-          }
+          placeTrunk(region, tx, at.y, tz)
         }
       }
     }

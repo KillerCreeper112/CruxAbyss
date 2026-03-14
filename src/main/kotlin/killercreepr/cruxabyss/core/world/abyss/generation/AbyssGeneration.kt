@@ -6,6 +6,7 @@ import killercreepr.cruxabyss.core.world.abyss.generation.biome.CharredWastes
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.EldritchWastes
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicMireBiome
 import killercreepr.cruxabyss.core.world.abyss.generation.zone.AbyssZone
+import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeRegistry
 import killercreepr.cruxworldgen.api.decor.DecorationPipeline
 import killercreepr.cruxworldgen.api.generation.GenerationPipeline
@@ -49,7 +50,13 @@ object AbyssGeneration {
         EldritchWastes()
       ),
       biomeCellSizeBlocks = 256,
-      blendRadiusBlocks = 32.0
+      blendRadiusBlocks = 32.0,
+      //selector = SimpleBiomeRegistry.WeightedRaritySelector(),
+      rules = object: SimpleBiomeRegistry.BiomeRuleProvider{
+        override fun ruleFor(biome: Biome): SimpleBiomeRegistry.BiomeRule? {
+          return null//todo
+        }
+      }
     )
 
     abyssZone = AbyssZone(biomeRegistry)

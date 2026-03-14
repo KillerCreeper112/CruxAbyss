@@ -63,6 +63,26 @@ class CharredWastes(
     )
   ),
   override val decorations: List<Decoration> = listOf(
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_FIRE_CORAL)),
+      chanceSalt = 23922L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_HORN_CORAL)),
+      chanceSalt = 4820L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_BRAIN_CORAL)),
+      chanceSalt = 12947L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_BUSH)),
+      chanceSalt = 1920948L
+    ),
     SingleDeadTreeDecor(
       chancePerPoint = 0.26,
       log = { region, x,y,z ->
@@ -97,7 +117,6 @@ class CharredWastes(
   override val features: List<PlacedFeature<*>> = listOf(
     AbyssFeatures.Ores.EMERALD,
     AbyssFeatures.Ores.FUNGIRE,
-    AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
 
     AbyssFeatures.Ores.GOLD_LOW,
     AbyssFeatures.Ores.REDSTONE_LOW,

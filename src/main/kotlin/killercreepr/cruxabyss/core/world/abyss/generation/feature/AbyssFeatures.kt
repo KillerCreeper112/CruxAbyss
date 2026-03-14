@@ -51,7 +51,7 @@ object AbyssFeatures {
       ),
       modifiers = listOf(
         Repeat(
-          7, XZHeight(
+          4, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.208),
             order = 2
@@ -120,10 +120,10 @@ object AbyssFeatures {
         maxSize = 4,
         canReplace = canOreReplace,
         sizeOrder = -2,
-        discardChanceOnAirExposure = 0.3
+        discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
-        Repeat(5, XZHeight(
+        Repeat(6, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.05, 0.35)
           )
@@ -147,7 +147,7 @@ object AbyssFeatures {
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
-        Repeat(4, XZHeight(
+        Repeat(5, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.3)
           )
@@ -171,7 +171,7 @@ object AbyssFeatures {
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
-        Repeat(5, XZHeight(
+        Repeat(6, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.42)
           )
@@ -216,7 +216,7 @@ object AbyssFeatures {
         maxSize = 8,
         canReplace = canOreReplace,
         sizeOrder = -2,
-        discardChanceOnAirExposure = 0.3
+        discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(9, XZHeight(
@@ -240,7 +240,7 @@ object AbyssFeatures {
         maxSize = 6,
         canReplace = canOreReplace,
         sizeOrder = -2,
-        discardChanceOnAirExposure = 0.0
+        discardChanceOnAirExposure = 0.3
       ),
       modifiers = listOf(
         Repeat(7, XZHeight(
@@ -261,10 +261,10 @@ object AbyssFeatures {
         maxSize = 6,
         canReplace = canOreReplace,
         sizeOrder = 0,
-        discardChanceOnAirExposure = 0.3
+        discardChanceOnAirExposure = 0.1
       ),
       modifiers = listOf(
-        Repeat(10, XZHeight(
+        Repeat(8, XZHeight(
           TriangleHeight(                               // triangle, not trapezoid
             baseHeight = UniformHeightSampler.relative(0.104, 0.313)
           )
