@@ -169,19 +169,6 @@ class GlitchOffsetTreeDecor(
           }
         }
       }
-
-      /*for (ox in -2..2) for (oz in -2..2) {
-        if (ox == 0 && oz == 0) continue
-        if (abs(ox) + abs(oz) > 3) continue
-        val tx = x + ox
-        val tz = z + oz
-        val ty = topY
-        if (ty < b.minY || ty > b.maxY) continue
-        if (!region.isInRegion(tx, ty, tz)) continue
-        if (!q.isReplaceable(tx, ty, tz)) continue
-        val s = mixSeed(region.ctx.worldContext.seed, tx, ty, tz, salt = p.seed xor 0x515151L)
-        if (chance(s, 0.25)) region.setBlock(tx, ty, tz, leafPicker.value())
-      }*/
     }
   }
 
