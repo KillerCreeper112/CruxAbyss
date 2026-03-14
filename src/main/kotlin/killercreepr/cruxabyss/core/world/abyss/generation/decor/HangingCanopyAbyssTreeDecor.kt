@@ -11,6 +11,7 @@ import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.util.HashUtil.chance
 import killercreepr.cruxworldgen.api.util.HashUtil.chooseInt
 import killercreepr.cruxworldgen.api.util.HashUtil.mixSeed
+import killercreepr.cruxworldgen.bukkit.block.picker.AxisBlockPicker
 import org.bukkit.Axis
 import kotlin.math.abs
 import kotlin.math.max
@@ -28,7 +29,7 @@ class HangingCanopyAbyssTreeDecor(
   val minCurtains: Int = 4,
   val maxCurtains: Int = 8,
 
-  val logPicker: (Axis) -> BlockData,
+  val logPicker: AxisBlockPicker,
   val leafPicker: Holder<BlockData>,
 ) : Decoration {
 
@@ -183,7 +184,8 @@ class HangingCanopyAbyssTreeDecor(
     // Thick lower base
     for (b in p.baseColumns) {
       if (region.isInRegion(b.x, b.y, b.z) && q.isReplaceable(b.x, b.y, b.z)) {
-        region.setBlock(b.x, b.y, b.z, logPicker(Axis.Y))
+        val block = logPicker.pickBlock(region, b.x, b.y, b.z, Axis.Y) ?: return
+        region.setBlock(b.x, b.y, b.z, block)
       }
     }
 
@@ -191,7 +193,8 @@ class HangingCanopyAbyssTreeDecor(
     for (i in p.trunk.indices) {
       val cur = p.trunk[i]
       if (region.isInRegion(cur.x, cur.y, cur.z) && q.isReplaceable(cur.x, cur.y, cur.z)) {
-        region.setBlock(cur.x, cur.y, cur.z, logPicker(Axis.Y))
+        val block = logPicker.pickBlock(region, cur.x, cur.y, cur.z, Axis.Y) ?: return
+        region.setBlock(cur.x, cur.y, cur.z, block)
       }
 
       // Add extra thickness low on the trunk
@@ -202,7 +205,8 @@ class HangingCanopyAbyssTreeDecor(
         )
         for (e in extra) {
           if (region.isInRegion(e.x, e.y, e.z) && q.isReplaceable(e.x, e.y, e.z)) {
-            region.setBlock(e.x, e.y, e.z, logPicker(Axis.Y))
+            val block = logPicker.pickBlock(region, e.x, e.y, e.z, Axis.Y) ?: return
+            region.setBlock(e.x, e.y, e.z, block)
           }
         }
       }
@@ -221,7 +225,8 @@ class HangingCanopyAbyssTreeDecor(
         }
 
         if (region.isInRegion(cur.x, cur.y, cur.z) && q.isReplaceable(cur.x, cur.y, cur.z)) {
-          region.setBlock(cur.x, cur.y, cur.z, logPicker(axis))
+          val block = logPicker.pickBlock(region, cur.x, cur.y, cur.z, axis) ?: return
+          region.setBlock(cur.x, cur.y, cur.z, block)
         }
       }
     }

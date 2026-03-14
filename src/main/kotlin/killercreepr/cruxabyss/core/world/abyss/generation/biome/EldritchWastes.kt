@@ -2,6 +2,8 @@ package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
 import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.AbyssCrownedTreeDecor
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.HangingCanopyAbyssTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.api.block.component.BushType
@@ -30,6 +32,8 @@ import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
+import killercreepr.cruxworldgen.bukkit.block.BukkitDataBlockData
+import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
@@ -92,6 +96,18 @@ class EldritchWastes(
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
       leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l -> l.isPersistent = true }))
     )*/
+    AbyssCrownedTreeDecor(
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.SHADE_LOG),
+      leafPicker = Holder.direct(BukkitDataBlockData(BlockType.JUNGLE_LEAVES.createBlockData { l ->
+        l.isPersistent = true
+      }))
+    ),
+    HangingCanopyAbyssTreeDecor(
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
+      leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l ->
+        l.isPersistent = true
+      }))
+    ),
     GrassDecor(
       chancePerPoint = 0.8,
       minAirAbove = 1,

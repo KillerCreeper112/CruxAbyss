@@ -11,6 +11,7 @@ import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.util.HashUtil.chance
 import killercreepr.cruxworldgen.api.util.HashUtil.chooseInt
 import killercreepr.cruxworldgen.api.util.HashUtil.mixSeed
+import killercreepr.cruxworldgen.bukkit.block.picker.AxisBlockPicker
 import org.bukkit.Axis
 import kotlin.math.abs
 import kotlin.math.max
@@ -32,7 +33,7 @@ class AbyssCrownedTreeDecor(
   val minBranches: Int = 2,
   val maxBranches: Int = 4,
 
-  val logPicker: (Axis) -> BlockData,
+  val logPicker: AxisBlockPicker,
   val leafPicker: Holder<BlockData>,
 ) : Decoration {
 
@@ -178,7 +179,8 @@ class AbyssCrownedTreeDecor(
     for (i in p.trunk.indices) {
       val at = p.trunk[i]
       if (region.isInRegion(at.x, at.y, at.z) && q.isReplaceable(at.x, at.y, at.z)) {
-        region.setBlock(at.x, at.y, at.z, logPicker(Axis.Y))
+        val block = logPicker.pickBlock(region, at.x, at.y, at.z, Axis.Y) ?: return
+        region.setBlock(at.x, at.y, at.z, block)
       }
 
       // Thicker lower section
@@ -187,7 +189,8 @@ class AbyssCrownedTreeDecor(
           val tx = at.x + ox
           val tz = at.z + oz
           if (region.isInRegion(tx, at.y, tz) && q.isReplaceable(tx, at.y, tz)) {
-            region.setBlock(tx, at.y, tz, logPicker(Axis.Y))
+            val block = logPicker.pickBlock(region, tx, at.y, tz, Axis.Y) ?: return
+            region.setBlock(tx, at.y, tz, block)
           }
         }
       }
@@ -206,7 +209,8 @@ class AbyssCrownedTreeDecor(
         }
 
         if (region.isInRegion(cur.x, cur.y, cur.z) && q.isReplaceable(cur.x, cur.y, cur.z)) {
-          region.setBlock(cur.x, cur.y, cur.z, logPicker(axis))
+          val block = logPicker.pickBlock(region, cur.x, cur.y, cur.z, axis) ?: return
+          region.setBlock(cur.x, cur.y, cur.z, block)
         }
       }
 
