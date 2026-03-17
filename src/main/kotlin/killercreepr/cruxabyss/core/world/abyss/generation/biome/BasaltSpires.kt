@@ -1,6 +1,10 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
+import killercreepr.crux.api.data.Holder
+import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
+import killercreepr.cruxabyss.core.world.abyss.generation.util.GenUtil
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
@@ -23,15 +27,22 @@ import killercreepr.cruxworldgen.api.signal.SignalKey
 import killercreepr.cruxworldgen.api.signal.SignalWriter
 import killercreepr.cruxworldgen.api.util.Curve
 import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
+import killercreepr.cruxworldgen.api.util.HashUtil
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
+import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
+import killercreepr.cruxworldgen.standard.decor.FallenTreeDecor
+import killercreepr.cruxworldgen.standard.decor.GrassDecor
+import killercreepr.cruxworldgen.standard.decor.SingleDeadTreeDecor
+import org.bukkit.Axis
 import org.bukkit.Material
+import org.bukkit.block.BlockType
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -43,7 +54,49 @@ class BasaltSpires(
       Standard3DCaves(),
     )
   ),
-  override val decorations: List<Decoration> = listOf(),
+  override val decorations: List<Decoration> = listOf(
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = GenUtil.waterLoggedBlockData(BlockType.DEAD_FIRE_CORAL),
+      chanceSalt = 239322L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = GenUtil.waterLoggedBlockData(BlockType.DEAD_HORN_CORAL),
+      chanceSalt = 4231820L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = GenUtil.waterLoggedBlockData(BlockType.DEAD_BRAIN_CORAL),
+      chanceSalt = 12321947L
+    ),
+    GrassDecor(
+      chancePerPoint = 0.3,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.EMBERWEED)),
+      chanceSalt = 932746124L
+    ),
+
+    SingleDeadTreeDecor(
+      chancePerPoint = 0.26,
+      log = { region, x,y,z ->
+        val seed = HashUtil.mixSeed(region.ctx.worldContext.seed, x,y,z, 328934L)
+        if (HashUtil.chance(seed, 0.5)) BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.EMBER_LOG.components.get(CruxBlockComponents.DIRECTIONAL_GROUP)!!
+            .getBlock(Axis.Y)!!
+        )
+        else BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.CHARRED_LOG.components.get(CruxBlockComponents.DIRECTIONAL_GROUP)!!
+            .getBlock(Axis.Y)!!
+        )
+      },
+      chanceSalt = 368324523L
+    ),
+    FallenTreeDecor(
+      chancePerPoint = 0.1,
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.EMBER_LOG),
+      chanceSalt = 65291242L
+    ),
+  ),
 
   override val features: List<PlacedFeature<*>> = listOf(
     AbyssFeatures.Ores.EMERALD,

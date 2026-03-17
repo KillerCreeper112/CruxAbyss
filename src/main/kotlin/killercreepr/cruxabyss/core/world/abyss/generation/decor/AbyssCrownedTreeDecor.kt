@@ -1,5 +1,7 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.decor
 
+import dev.kitteh.factions.FLocation
+import dev.kitteh.factions.Faction
 import killercreepr.crux.api.data.Holder
 import killercreepr.cruxworldgen.api.block.BlockData
 import killercreepr.cruxworldgen.api.context.LimitedRegion
@@ -172,7 +174,8 @@ class AbyssCrownedTreeDecor(
   fun placeTrunk(region: LimitedRegion, x: Int, y: Int, z: Int) {
     val randomOffset = chooseInt(mixSeed(region.ctx.worldContext.seed, x, y, z, 84829L), 0, 3)
     val q = region.terrainQueries
-    for(i in 0..5+randomOffset){
+    //todo
+    for(i in 0..0/*5+randomOffset*/){
       val yy = y - i
       if(!region.isInRegion(x, yy, z)) break
       if(!q.isReplaceable(x, yy, z)) break

@@ -3,6 +3,7 @@ package killercreepr.cruxabyss.core.world.abyss.generation.biome
 import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
+import killercreepr.cruxabyss.core.world.abyss.generation.util.GenUtil
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
@@ -46,6 +47,7 @@ import killercreepr.cruxworldgen.standard.decor.LavaPondDecoration
 import killercreepr.cruxworldgen.standard.decor.SingleDeadTreeDecor
 import org.bukkit.Axis
 import org.bukkit.Material
+import org.bukkit.block.BlockType
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.pow
@@ -65,17 +67,17 @@ class CharredWastes(
   override val decorations: List<Decoration> = listOf(
     GrassDecor(
       chancePerPoint = 0.3,
-      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_FIRE_CORAL)),
+      block = GenUtil.waterLoggedBlockData(BlockType.DEAD_FIRE_CORAL),
       chanceSalt = 23922L
     ),
     GrassDecor(
       chancePerPoint = 0.3,
-      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_HORN_CORAL)),
+      block = GenUtil.waterLoggedBlockData(BlockType.DEAD_HORN_CORAL),
       chanceSalt = 4820L
     ),
     GrassDecor(
       chancePerPoint = 0.3,
-      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.DEAD_BRAIN_CORAL)),
+      block = GenUtil.waterLoggedBlockData(BlockType.DEAD_BRAIN_CORAL),
       chanceSalt = 12947L
     ),
     GrassDecor(

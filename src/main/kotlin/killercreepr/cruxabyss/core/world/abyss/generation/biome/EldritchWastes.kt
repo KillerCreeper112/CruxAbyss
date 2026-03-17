@@ -6,6 +6,7 @@ import killercreepr.cruxabyss.core.world.abyss.generation.decor.AbyssCrownedTree
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.HangingCanopyAbyssTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.MistwoodTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
+import killercreepr.cruxabyss.core.world.abyss.generation.util.GenUtil
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.api.block.component.BushType
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
@@ -29,12 +30,15 @@ import killercreepr.cruxworldgen.api.noise.NoiseField
 import killercreepr.cruxworldgen.api.noise.NoiseKey
 import killercreepr.cruxworldgen.api.noise.NoiseModule
 import killercreepr.cruxworldgen.api.signal.SignalWriter
+import killercreepr.cruxworldgen.api.util.Curve.band
+import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
 import killercreepr.cruxworldgen.bukkit.block.BukkitDataBlockData
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
+import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
@@ -43,12 +47,15 @@ import killercreepr.cruxworldgen.standard.decor.TallGrassDoubleDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
+import net.minecraft.core.SectionPos.x
+import net.minecraft.core.SectionPos.z
 import org.bukkit.Material
 import org.bukkit.block.BlockType
 import org.bukkit.block.data.Bisected
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
+import kotlin.text.get
 
 class EldritchWastes(
   override val caves: CaveShape<*, *> = CaveProfile(
@@ -127,6 +134,26 @@ class EldritchWastes(
       )),
       chanceSalt = 904885L
     ),
+    GrassDecor(
+      chancePerPoint = 0.4,
+      minAirAbove = 1,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(BlockType.LILY_OF_THE_VALLEY)),
+      chanceSalt = 283291824L
+    ),
+    TallGrassDoubleDecor(
+      chancePerPoint = 0.37,
+      minHeight = 2,
+      maxHeight = 2,
+      top = Holder.direct(
+        BukkitBlockResolver.INSTANCE.resolve(
+          BlockType.LILAC.createBlockData { data -> data.half = Bisected.Half.TOP }
+        )),
+      bottom = Holder.direct(
+        BukkitBlockResolver.INSTANCE.resolve(
+          BlockType.LILAC.createBlockData { data -> data.half = Bisected.Half.BOTTOM }
+        )),
+      chanceSalt = 9048815L
+    ),
   ),
 
   override val volumetricDecorations : List<VolumetricDecoration> = listOf(
@@ -157,6 +184,13 @@ class EldritchWastes(
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
+    AbyssFeatures.Blobs.GRANITE,
+    AbyssFeatures.Blobs.DIORITE,
+    AbyssFeatures.Blobs.ANDESITE,
+    AbyssFeatures.Blobs.DIRT,
+    AbyssFeatures.Blobs.GRAVEL,
+    AbyssFeatures.Blobs.DEEP_TUFF,
+
     AbyssFeatures.Ores.EMERALD,
     AbyssFeatures.Ores.FUNGIRE,
 
@@ -192,7 +226,6 @@ class EldritchWastes(
       if (ctx.surfaceDepth < 90) {
         return BukkitBlockAdapter.resolver().resolve(Material.STONE)
       }
-
       return BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE)
     }
   },
@@ -260,6 +293,7 @@ class EldritchWastes(
     object OverhangY3D : NoiseKey { override val id = "biome.eldritch.overhangY3D" }
     object OverhangZ3D : NoiseKey { override val id = "biome.eldritch.overhangZ3D" }
     object OverhangCarve3D : NoiseKey { override val id = "biome.eldritch.overhangCarve3D" }
+    object Material3D : NoiseKey { override val id = "biome.eldritch.material3D" }
 
     override fun install(bank: NoiseBank) {
       // ----- Domain warp -----
@@ -269,6 +303,15 @@ class EldritchWastes(
           noiseType(CruxNoise.NoiseType.OpenSimplex2)
           fractalType(CruxNoise.FractalType.FBm)
           fractalOctaves(3)
+        }
+      }
+      bank.register(Noise.Material3D) { seed ->
+        NoiseField.Companion.noiseField(seed) {
+          frequency(0.035)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+            .fractalType(CruxNoise.FractalType.FBm)
+            .rotationType3D(CruxNoise.RotationType3D.ImproveXZPlanes)
+            .fractalOctaves(1)
         }
       }
 
@@ -660,18 +703,4 @@ class EldritchWastes(
       )
     )
   )
-
-  // ---- Utility helpers (keep local if you want this file self-contained) ----
-
-  private fun smoothstep01(t: Double): Double {
-    val c = t.coerceIn(0.0, 1.0)
-    return c * c * (3.0 - 2.0 * c)
-  }
-
-  private fun band(center01: Double, halfWidth01: Double, y01: Double): Double {
-    val hw = halfWidth01.coerceAtLeast(1e-6)
-    val t = (abs(y01 - center01) / hw).coerceIn(0.0, 1.0)
-    val s = t * t * (3.0 - 2.0 * t)
-    return 1.0 - s
-  }
 }

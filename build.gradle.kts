@@ -9,9 +9,11 @@ version = "1.0"
 
 repositories {
   mavenCentral()
+  maven("https://dependency.download/releases")
 }
 
 dependencies {
+  compileOnly("dev.kitteh:factions:4.4.0")
   paperweight.paperDevBundle(libs.versions.paper)
   compileOnly(
     files(
