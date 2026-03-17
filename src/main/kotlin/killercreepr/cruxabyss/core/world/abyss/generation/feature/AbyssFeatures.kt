@@ -107,7 +107,7 @@ object AbyssFeatures {
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
         material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.TUFF)),
-        canReplace = canRockReplace,
+        canReplace = canDeepRockReplace,
         minRadius = 2,
         maxRadius = 8,
         maxRadiusY = 8
@@ -175,6 +175,12 @@ object AbyssFeatures {
         if (MaterialSetTag.STONE_ORE_REPLACEABLES.isTagged(type)) return@CanReplaceBlock true
         if (MaterialSetTag.DEEPSLATE_ORE_REPLACEABLES.isTagged(type)) return@CanReplaceBlock true
         when (type) {//todo
+          Material.BASALT,
+          Material.GRAVEL,
+          Material.TUFF,
+          Material.COBBLED_DEEPSLATE,
+          Material.BLACKSTONE
+             -> return@CanReplaceBlock true
           else -> {}
         }
         return@CanReplaceBlock false

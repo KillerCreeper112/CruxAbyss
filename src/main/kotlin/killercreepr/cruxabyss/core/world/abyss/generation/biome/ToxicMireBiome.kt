@@ -60,6 +60,19 @@ class ToxicMireBiome(
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
       leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART))
     ),
+    ToxicMireTreeDecor(
+      chancePerPoint = 0.1,
+      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
+      leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART)),
+      minHeight = 12,
+      maxHeight = 16,
+      minAirAbove = 16,
+      minBranchLength = 1,
+      maxBranchLength = 8,
+      wartMinHeight = 1,
+      wartMaxHeight = 8,
+      maxBranchesOnBranches = 6
+    ),
     GrassDecor(
       chancePerPoint = 0.5,
       minAirAbove = 1,
