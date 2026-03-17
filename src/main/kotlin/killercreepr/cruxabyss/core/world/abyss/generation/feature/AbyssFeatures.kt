@@ -1,17 +1,21 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.feature
 
 import com.destroystokyo.paper.MaterialSetTag
+import killercreepr.crux.core.Crux
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxworldgen.api.block.BlockGetter
 import killercreepr.cruxworldgen.api.block.CanReplaceBlock
+import killercreepr.cruxworldgen.api.context.LimitedRegion
 import killercreepr.cruxworldgen.api.feature.*
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockSection
+import killercreepr.cruxworldgen.core.feature.BlockPos
 import killercreepr.cruxworldgen.core.feature.CoreFeatures
 import killercreepr.cruxworldgen.core.feature.blob.BlobConfig
 import killercreepr.cruxworldgen.core.feature.ore.OreConfig
 import killercreepr.cruxworldgen.crux.block.CruxBlockSection
 import org.bukkit.Material
+import java.util.Random
 
 object AbyssFeatures {
   object Blobs {
@@ -168,6 +172,7 @@ object AbyssFeatures {
 
   object Ores {
     val canOreReplace: CanReplaceBlock = CanReplaceBlock { region, rng, x, y, z ->
+      if(!region.terrainQueries.isSolid(x, y, z)) return@CanReplaceBlock false
       val block = region.getBlock(x, y, z)
       if (block is BukkitBlockSection) {
         val data = block.blockData()
@@ -193,6 +198,29 @@ object AbyssFeatures {
       return@CanReplaceBlock false
     }
 
+    val MOULDITE_CRUST = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = BlockGetter.constant(
+          BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MOULDITE_CRUST)
+        ),
+        minSize = 0,
+        maxSize = 1,
+        canReplace = canOreReplace,
+        sizeOrder = -9,
+        discardChanceOnAirExposure = 0.0
+      ),
+      modifiers = listOf(
+        Repeat(
+          2, XZHeight(
+          UniformHeight(
+            baseHeight = AddToMinYCenterUniformHeightSampler(0, 4)
+          )
+        )
+        )
+      )
+    )
+
     val FUNGIRE = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
@@ -204,17 +232,17 @@ object AbyssFeatures {
           }
           return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.FUNGIRE_ORE)
         },
-        minSize = 2,
-        maxSize = 8,
+        minSize = 1,
+        maxSize = 7,
         canReplace = canOreReplace,
-        sizeOrder = -1,
+        sizeOrder = -2,
         discardChanceOnAirExposure = 0.3
       ),
       modifiers = listOf(
         Repeat(
           4, XZHeight(
           TriangleHeight(
-            baseHeight = UniformHeightSampler.relative(0.0, 0.208),
+            baseHeight = UniformHeightSampler.relative(0.0, 0.21),
             order = 2
           )
         )
@@ -246,7 +274,7 @@ object AbyssFeatures {
       )
     )
 
-    val EMERALD = PlacedFeature(
+    val EMERALD_HIGH = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
         ore = BlockGetter.constant(
@@ -256,14 +284,41 @@ object AbyssFeatures {
         maxSize = 3,
         canReplace = canOreReplace,
         sizeOrder = -1,
-        discardChanceOnAirExposure = 0.5
+        discardChanceOnAirExposure = 0.35
       ),
       modifiers = listOf(
         Repeat(
-          100, XZHeight(
+          20, XZHeight(
           SkewedHeight(
-            baseHeight = UniformHeightSampler.relative(0.125, 1.0), // Y -16 to Y 320
+            baseHeight = UniformHeightSampler.relative(0.5, 1.0),
             order = 4,
+          )
+        )
+        )
+      )
+    )
+
+    val EMERALD_LOW = PlacedFeature(
+      feature = CoreFeatures.ORE_VEIN,
+      cfg = OreConfig(
+        ore = { region, rng, x, y, z ->
+          val block = region.getBlock(x, y, z)
+          if (block is BukkitBlockSection && block.data.data.material == Material.DEEPSLATE)
+            return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_EMERALD_ORE)
+          return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.EMERALD_ORE)
+        },
+        minSize = 1,
+        maxSize = 3,
+        canReplace = canOreReplace,
+        sizeOrder = -1,
+        discardChanceOnAirExposure = 0.0
+      ),
+      modifiers = listOf(
+        Repeat(
+          20, XZHeight(
+          SkewedHeight(
+            baseHeight = UniformHeightSampler.relative(0.125, 0.4),
+            order = 2,
           )
         )
         )
@@ -282,14 +337,14 @@ object AbyssFeatures {
         minSize = 1,
         maxSize = 4,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = -1,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
-          6, XZHeight(
+          16, XZHeight(
           TriangleHeight(
-            baseHeight = UniformHeightSampler.relative(0.05, 0.35)
+            baseHeight = UniformHeightSampler.relative(0.05, 0.45)
           )
         )
         )
@@ -313,7 +368,7 @@ object AbyssFeatures {
       ),
       modifiers = listOf(
         Repeat(
-          5, XZHeight(
+          12, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.3)
           )
@@ -339,9 +394,9 @@ object AbyssFeatures {
       ),
       modifiers = listOf(
         Repeat(
-          6, XZHeight(
+          14, XZHeight(
           TriangleHeight(
-            baseHeight = UniformHeightSampler.relative(0.0, 0.42)
+            baseHeight = UniformHeightSampler.relative(0.0, 0.6)
           )
         )
         )
@@ -436,7 +491,7 @@ object AbyssFeatures {
         maxSize = 6,
         canReplace = canOreReplace,
         sizeOrder = 0,
-        discardChanceOnAirExposure = 0.1
+        discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
@@ -463,7 +518,7 @@ object AbyssFeatures {
       ),
       modifiers = listOf(
         Repeat(
-          90, XZHeight(                            // vanilla uses ~90 for the upper burst
+          25, XZHeight(                            // vanilla uses ~90 for the upper burst
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.375, 1.0)
           )
@@ -473,5 +528,22 @@ object AbyssFeatures {
     )
   }
 
+  object Misc{
+    val REMOVE_BOTTOM_LATER = PlacedFeature(
+      feature = RemoveBottomLayerFeature(),
+      cfg = RemoveBottomLayerFeature.Config(),
+      modifiers = listOf(object: PlacementModifier{
+        override fun emitPositions(
+          region: LimitedRegion,
+          rng: Random,
+          chunkX: Int,
+          chunkZ: Int,
+          out: MutableList<BlockPos>
+        ) {
+          out.add(BlockPos(0,0,0))
+        }
+      })
+    )
+  }
 
 }

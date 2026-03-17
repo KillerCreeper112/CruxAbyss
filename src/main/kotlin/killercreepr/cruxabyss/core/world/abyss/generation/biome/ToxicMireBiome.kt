@@ -37,7 +37,9 @@ import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
+import killercreepr.cruxworldgen.standard.decor.BlockPicker
 import killercreepr.cruxworldgen.standard.decor.GrassDecor
+import killercreepr.cruxworldgen.standard.decor.HollowSlimeTreeDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
@@ -73,6 +75,18 @@ class ToxicMireBiome(
       wartMaxHeight = 8,
       maxBranchesOnBranches = 6
     ),
+
+    HollowSlimeTreeDecor(
+      chancePerPoint = 0.25,
+      chanceSalt = 209204L,
+      log = BlockPicker{ region, x, y, z ->
+        BukkitBlockAdapter.resolver().resolve(Material.OAK_LOG)
+      },
+      slime = BlockPicker{ region, x, y, z ->
+        BukkitBlockAdapter.resolver().resolve(Material.SLIME_BLOCK)
+      }
+    ),
+
     GrassDecor(
       chancePerPoint = 0.5,
       minAirAbove = 1,
@@ -131,7 +145,10 @@ class ToxicMireBiome(
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
-    AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Misc.REMOVE_BOTTOM_LATER,
+    AbyssFeatures.Ores.MOULDITE_CRUST,
+    AbyssFeatures.Ores.EMERALD_LOW,
+    AbyssFeatures.Ores.EMERALD_HIGH,
     AbyssFeatures.Ores.FUNGIRE,
     AbyssFeatures.Ores.RED_ABYSS_CRYSTAL,
 

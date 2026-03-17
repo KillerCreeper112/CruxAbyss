@@ -65,6 +65,9 @@ class CharredWastes(
     )
   ),
   override val decorations: List<Decoration> = listOf(
+    LavaPondDecoration(
+      worldSalt = 292849L
+    ),
     GrassDecor(
       chancePerPoint = 0.3,
       block = GenUtil.waterLoggedBlockData(BlockType.DEAD_FIRE_CORAL),
@@ -117,7 +120,10 @@ class CharredWastes(
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
-    AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Misc.REMOVE_BOTTOM_LATER,
+    AbyssFeatures.Ores.MOULDITE_CRUST,
+    AbyssFeatures.Ores.EMERALD_LOW,
+    AbyssFeatures.Ores.EMERALD_HIGH,
     AbyssFeatures.Ores.FUNGIRE,
 
     AbyssFeatures.Ores.GOLD_LOW,

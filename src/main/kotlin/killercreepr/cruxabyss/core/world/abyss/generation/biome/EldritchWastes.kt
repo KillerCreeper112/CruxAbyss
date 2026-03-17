@@ -184,6 +184,7 @@ class EldritchWastes(
   ),
 
   override val features: List<PlacedFeature<*>> = listOf(
+    AbyssFeatures.Misc.REMOVE_BOTTOM_LATER,
     AbyssFeatures.Blobs.GRANITE,
     AbyssFeatures.Blobs.DIORITE,
     AbyssFeatures.Blobs.ANDESITE,
@@ -191,7 +192,9 @@ class EldritchWastes(
     AbyssFeatures.Blobs.GRAVEL,
     AbyssFeatures.Blobs.DEEP_TUFF,
 
-    AbyssFeatures.Ores.EMERALD,
+    AbyssFeatures.Ores.MOULDITE_CRUST,
+    AbyssFeatures.Ores.EMERALD_LOW,
+    AbyssFeatures.Ores.EMERALD_HIGH,
     AbyssFeatures.Ores.FUNGIRE,
 
     AbyssFeatures.Ores.GOLD_LOW,
