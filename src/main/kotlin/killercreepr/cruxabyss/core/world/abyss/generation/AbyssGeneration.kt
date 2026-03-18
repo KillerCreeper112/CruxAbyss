@@ -10,6 +10,9 @@ import killercreepr.cruxabyss.core.world.abyss.generation.zone.AbyssZone
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeRegistry
 import killercreepr.cruxworldgen.api.decor.DecorationPipeline
+import killercreepr.cruxworldgen.api.feature.HeightFilter
+import killercreepr.cruxworldgen.api.feature.RelativeHeight
+import killercreepr.cruxworldgen.api.feature.RelativeHeightFilter
 import killercreepr.cruxworldgen.api.generation.GenerationPipeline
 import killercreepr.cruxworldgen.api.noise.NoiseAutoInstaller
 import killercreepr.cruxworldgen.api.structure.StructurePipeline
@@ -28,6 +31,7 @@ import killercreepr.cruxworldgen.core.structure.SimpleStructurePipeline
 import killercreepr.cruxworldgen.core.structure.SimpleStructureRegistry
 import killercreepr.cruxworldgen.core.zone.SimpleZoneRegistry
 import killercreepr.cruxworldgen.core.generation.chunk.SimpleChunkSampler
+import killercreepr.cruxworldgen.test.biome.volumetric.GlacialCaverns
 
 object AbyssGeneration {
   lateinit var abyssZone: AbyssZone
@@ -66,6 +70,9 @@ object AbyssGeneration {
     zones = SimpleZoneRegistry(listOf(abyssZone))
     volBiomes = VolumetricBiomeRegistry(
       listOf(
+        GlacialCaverns(
+          yRange = RelativeHeightFilter(0.0f, 0.5f)
+        )
       )
     )
     val structureRegistry = SimpleStructureRegistry(listOf())
