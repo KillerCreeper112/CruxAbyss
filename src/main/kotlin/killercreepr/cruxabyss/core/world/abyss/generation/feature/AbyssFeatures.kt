@@ -179,12 +179,15 @@ object AbyssFeatures {
         val type = data.data.material
         if (MaterialSetTag.STONE_ORE_REPLACEABLES.isTagged(type)) return@CanReplaceBlock true
         if (MaterialSetTag.DEEPSLATE_ORE_REPLACEABLES.isTagged(type)) return@CanReplaceBlock true
-        when (type) {//todo
+        when (type) {
           Material.BASALT,
           Material.GRAVEL,
           Material.TUFF,
           Material.COBBLED_DEEPSLATE,
-          Material.BLACKSTONE
+          Material.BLACKSTONE,
+          Material.GRANITE,
+          Material.DIORITE,
+          Material.ANDESITE
              -> return@CanReplaceBlock true
           else -> {}
         }
@@ -212,7 +215,7 @@ object AbyssFeatures {
       ),
       modifiers = listOf(
         Repeat(
-          2, XZHeight(
+          1, XZHeight(
           UniformHeight(
             baseHeight = AddToMinYCenterUniformHeightSampler(0, 4)
           )
@@ -225,24 +228,31 @@ object AbyssFeatures {
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
         ore = { region, rng, x, y, z ->
-          val block = region.getBlock(x, y, z)
-          if (block is CruxBlockSection) {
-            if (AbyssBlocks.PLAGUE_STONE.containsBlock(block.blockData.block))
-              return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE_FUNGIRE_ORE)
+          when (val block = region.getBlock(x, y, z)) {
+            is CruxBlockSection -> {
+              if (AbyssBlocks.PLAGUE_STONE.containsBlock(block.blockData.block))
+                return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE_FUNGIRE_ORE)
+            }
+
+            is BukkitBlockSection -> {
+              if(block.data.data.material == Material.DEEPSLATE){
+                return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.DEEPSLATE_FUNGIRE_ORE)
+              }
+            }
           }
           return@OreConfig BukkitBlockAdapter.resolver().resolve(AbyssBlocks.FUNGIRE_ORE)
         },
-        minSize = 1,
-        maxSize = 7,
+        minSize = 0,
+        maxSize = 5,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = -3,
         discardChanceOnAirExposure = 0.3
       ),
       modifiers = listOf(
         Repeat(
-          4, XZHeight(
+          3, XZHeight(
           TriangleHeight(
-            baseHeight = UniformHeightSampler.relative(0.0, 0.21),
+            baseHeight = UniformHeightSampler.relative(0.0, 0.25),
             order = 2
           )
         )
@@ -256,10 +266,10 @@ object AbyssFeatures {
         ore = BlockGetter.constant(
           BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE)
         ),
-        minSize = 1,
-        maxSize = 2,
+        minSize = 0,
+        maxSize = 1,
         canReplace = canOreReplace,
-        sizeOrder = -1,
+        sizeOrder = -2,
         discardChanceOnAirExposure = 0.15
       ),
       modifiers = listOf(
@@ -280,15 +290,15 @@ object AbyssFeatures {
         ore = BlockGetter.constant(
           BukkitBlockAdapter.resolver().resolve(Material.EMERALD_ORE)
         ),
-        minSize = 1,
-        maxSize = 3,
+        minSize = 0,
+        maxSize = 1,
         canReplace = canOreReplace,
-        sizeOrder = -1,
+        sizeOrder = -2,
         discardChanceOnAirExposure = 0.35
       ),
       modifiers = listOf(
         Repeat(
-          20, XZHeight(
+          3, XZHeight(
           SkewedHeight(
             baseHeight = UniformHeightSampler.relative(0.5, 1.0),
             order = 4,
@@ -307,15 +317,15 @@ object AbyssFeatures {
             return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_EMERALD_ORE)
           return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.EMERALD_ORE)
         },
-        minSize = 1,
-        maxSize = 3,
+        minSize = 0,
+        maxSize = 1,
         canReplace = canOreReplace,
-        sizeOrder = -1,
+        sizeOrder = -3,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
-          20, XZHeight(
+          1, XZHeight(
           SkewedHeight(
             baseHeight = UniformHeightSampler.relative(0.125, 0.4),
             order = 2,
@@ -334,7 +344,7 @@ object AbyssFeatures {
             return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_GOLD_ORE)
           return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.GOLD_ORE)
         },
-        minSize = 1,
+        minSize = 0,
         maxSize = 4,
         canReplace = canOreReplace,
         sizeOrder = -1,
@@ -342,7 +352,7 @@ object AbyssFeatures {
       ),
       modifiers = listOf(
         Repeat(
-          16, XZHeight(
+          10, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.05, 0.45)
           )
@@ -360,15 +370,15 @@ object AbyssFeatures {
             return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_REDSTONE_ORE)
           return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.REDSTONE_ORE)
         },
-        minSize = 1,
+        minSize = 0,
         maxSize = 4,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = 0,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
-          12, XZHeight(
+          4, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.3)
           )
@@ -386,15 +396,15 @@ object AbyssFeatures {
             return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_LAPIS_ORE)
           return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.LAPIS_ORE)
         },
-        minSize = 1,
+        minSize = 0,
         maxSize = 5,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = 0,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
-          14, XZHeight(
+          3, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.0, 0.6)
           )
@@ -415,14 +425,14 @@ object AbyssFeatures {
         minSize = 1,
         maxSize = 8,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = -1,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
-          9, XZHeight(
+          12, XZHeight(
           TriangleHeight(
-            baseHeight = UniformHeightSampler.relative(0.22, 0.5)
+            baseHeight = UniformHeightSampler.relative(0.22, 0.67)
           )
         )
         )
@@ -438,10 +448,10 @@ object AbyssFeatures {
             return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_COAL_ORE)
           return@OreConfig BukkitBlockAdapter.resolver().resolve(Material.COAL_ORE)
         },
-        minSize = 1,
+        minSize = 0,
         maxSize = 8,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = -1,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
@@ -467,12 +477,12 @@ object AbyssFeatures {
         minSize = 1,
         maxSize = 6,
         canReplace = canOreReplace,
-        sizeOrder = -2,
+        sizeOrder = -1,
         discardChanceOnAirExposure = 0.3
       ),
       modifiers = listOf(
         Repeat(
-          7, XZHeight(
+          8, XZHeight(
           UniformHeight(
             baseHeight = UniformHeightSampler.relative(0.5, 1.0)
           )
@@ -487,16 +497,16 @@ object AbyssFeatures {
         ore = BlockGetter.constant(
           BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_IRON_ORE)
         ),
-        minSize = 2,
+        minSize = 0,
         maxSize = 6,
         canReplace = canOreReplace,
-        sizeOrder = 0,
+        sizeOrder = -1,
         discardChanceOnAirExposure = 0.0
       ),
       modifiers = listOf(
         Repeat(
           8, XZHeight(
-          TriangleHeight(                               // triangle, not trapezoid
+          TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.104, 0.313)
           )
         )
@@ -504,21 +514,21 @@ object AbyssFeatures {
       )
     )
 
-    val IRON_HIGH = PlacedFeature(                       // second pass for upper iron
+    val IRON_HIGH = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
         ore = BlockGetter.constant(
           BukkitBlockAdapter.resolver().resolve(Material.IRON_ORE)
         ),
-        minSize = 2,
+        minSize = 0,
         maxSize = 8,
         canReplace = canOreReplace,
-        sizeOrder = 0,
+        sizeOrder = -1,
         discardChanceOnAirExposure = 0.4
       ),
       modifiers = listOf(
         Repeat(
-          25, XZHeight(                            // vanilla uses ~90 for the upper burst
+          18, XZHeight(
           TriangleHeight(
             baseHeight = UniformHeightSampler.relative(0.375, 1.0)
           )

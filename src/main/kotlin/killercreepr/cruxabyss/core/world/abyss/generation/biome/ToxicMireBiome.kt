@@ -43,7 +43,9 @@ import killercreepr.cruxworldgen.standard.decor.HollowSlimeTreeDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
+import org.bukkit.Axis
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -77,13 +79,22 @@ class ToxicMireBiome(
     ),
 
     HollowSlimeTreeDecor(
-      chancePerPoint = 0.25,
+      chancePerPoint = 0.1,
       chanceSalt = 209204L,
       log = BlockPicker{ region, x, y, z ->
-        BukkitBlockAdapter.resolver().resolve(Material.OAK_LOG)
+        BukkitBlockAdapter.resolver().resolve(
+          AbyssBlocks.PLAGUE_STEM.components.getOrThrow(CruxBlockComponents.DIRECTIONAL_GROUP)
+            .getBlock(Axis.Y)!!
+        )
       },
       slime = BlockPicker{ region, x, y, z ->
-        BukkitBlockAdapter.resolver().resolve(Material.SLIME_BLOCK)
+        val seed = HashUtil.mixSeed(
+          region.ctx.worldContext.seed, x, y, z, 32793318918032L
+        )
+        if(HashUtil.chance(seed, 0.2)){
+          return@BlockPicker BukkitBlockAdapter.resolver().resolve(Material.SLIME_BLOCK)
+        }
+        BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART)
       }
     ),
 
