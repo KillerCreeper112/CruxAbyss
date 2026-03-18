@@ -31,13 +31,14 @@ class ToxicMireTreeDecor(
   val maxBranchesOnBranches : Int = 3,
   val logPicker: AxisBlockPicker,
   val leafPicker: Holder<BlockData>,
+  val chanceSalt: Long
 ) : Decoration {
 
   override fun shouldTry(region: LimitedRegion, point: PropPoint, biomeBlend: BiomeBlendSample): Boolean {
     val s = mixSeed(
       seed = region.ctx.worldContext.seed,
       x = point.worldX, y = 0, z = point.worldZ,
-      salt = 1L
+      salt = chanceSalt
     )
     return chance(s, chancePerPoint)
   }

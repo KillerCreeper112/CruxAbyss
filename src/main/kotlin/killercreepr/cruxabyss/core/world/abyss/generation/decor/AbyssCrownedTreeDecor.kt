@@ -38,6 +38,7 @@ class AbyssCrownedTreeDecor(
 
   val logPicker: AxisBlockPicker,
   val leafPicker: Holder<BlockData>,
+  val chanceSalt: Long
 ) : Decoration {
 
   override fun shouldTry(
@@ -45,7 +46,7 @@ class AbyssCrownedTreeDecor(
     point: PropPoint,
     biomeBlend: BiomeBlendSample
   ): Boolean {
-    val s = mixSeed(region.ctx.worldContext.seed, point.worldX, 0, point.worldZ, salt = 32894892L)
+    val s = mixSeed(region.ctx.worldContext.seed, point.worldX, 0, point.worldZ, chanceSalt)
     return chance(s, chancePerPoint)
   }
 

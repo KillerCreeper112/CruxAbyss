@@ -37,6 +37,7 @@ class MistwoodTreeDecor(
 
   val logPicker: AxisBlockPicker,
   val leafPicker: Holder<BlockData>,
+  val chanceSalt: Long
 ) : Decoration {
 
   override fun shouldTry(
@@ -44,7 +45,7 @@ class MistwoodTreeDecor(
     point: PropPoint,
     biomeBlend: BiomeBlendSample
   ): Boolean {
-    val s = mixSeed(region.ctx.worldContext.seed, point.worldX, 0, point.worldZ, salt = 0xA61)
+    val s = mixSeed(region.ctx.worldContext.seed, point.worldX, 0, point.worldZ, chanceSalt)
     return chance(s, chancePerPoint)
   }
 

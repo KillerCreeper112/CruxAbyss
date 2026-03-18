@@ -97,16 +97,20 @@ class EldritchWastes(
 
   override val decorations: List<Decoration> = listOf(
     AbyssCrownedTreeDecor(
+      chancePerPoint = 0.18,
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.SHADE_LOG),
       leafPicker = Holder.direct(BukkitDataBlockData(BlockType.JUNGLE_LEAVES.createBlockData { l ->
         l.isPersistent = true
-      }))
+      })),
+      chanceSalt = 32894892L
     ),
     MistwoodTreeDecor(
+      chancePerPoint = 0.15,
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.MISTWOOD_LOG),
       leafPicker = Holder.direct(BukkitDataBlockData(BlockType.OAK_LEAVES.createBlockData { l ->
         l.isPersistent = true
-      }))
+      })),
+      chanceSalt = 0xA61
     ),
     GrassDecor(
       chancePerPoint = 0.8,

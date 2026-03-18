@@ -4,6 +4,7 @@ import killercreepr.crux.core.util.CruxMath
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.BasaltSpires
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.CharredWastes
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.EldritchWastes
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.FungalGrove
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicMireBiome
 import killercreepr.cruxabyss.core.world.abyss.generation.zone.AbyssZone
 import killercreepr.cruxworldgen.api.biome.Biome
@@ -47,7 +48,8 @@ object AbyssGeneration {
         ToxicMireBiome(),
         CharredWastes(),
         BasaltSpires(),
-        EldritchWastes()
+        EldritchWastes(),
+        FungalGrove()
       ),
       biomeCellSizeBlocks = 256,
       blendRadiusBlocks = 32.0,
