@@ -1,14 +1,18 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.volumetric.FungiSpikeVolDecor
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxgeneration.util.CruxNoise
+import killercreepr.cruxgeneration.util.FastNoiseLite
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
 import killercreepr.cruxworldgen.api.block.BlockData
+import killercreepr.cruxworldgen.api.block.BlockGetter
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
+import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
@@ -20,8 +24,13 @@ import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
+import killercreepr.cruxworldgen.standard.decor.BrownMushroomDecor
+import killercreepr.cruxworldgen.standard.decor.PointedMushroomDecor
+import killercreepr.cruxworldgen.standard.decor.RedMushroomDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
+import killercreepr.cruxworldgen.test.biome.CharredWastes
 import org.bukkit.Material
+import kotlin.Double
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -78,7 +87,54 @@ class FungalGrove(
       }
       return BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE)
     }
-  }
+  },
+
+  override val decorations: List<Decoration> = listOf(
+    BrownMushroomDecor(
+      chancePerPoint = 0.1,
+      stemHeightMin = 12,
+      stemHeightMax = 36,
+      capRadiusMin = 8f,
+      capRadiusMax = 16f,
+      capHeightScaleMin = 0.12f,
+      capHeightScaleMax = 0.25f,
+      stemWanderStrength = 0.3f,
+      capNoise = Noise.BrownMushroomCap,
+      stemNoise = Noise.BrownMushroomStem,
+      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
+      stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
+    ),
+    PointedMushroomDecor(
+      chancePerPoint = 0.09,
+      stemHeightMin = 10,
+      stemHeightMax = 28,
+      capRadiusMin = 8f,
+      capRadiusMax = 16f,
+      stemWanderStrength = 0.3f,
+
+      rimCurlMin = 0.5,
+      rimCurlMax = 1.5,
+
+      rimDropFractionMin = 0.5,
+      rimDropFractionMax = 0.8,
+
+      capPointCurveMin = 1.5,
+      capPointCurveMax = 2.5,
+
+      capNoise = Noise.BrownMushroomCap,
+      stemNoise = Noise.BrownMushroomStem,
+      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
+      stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
+    ),
+    FungiSpikeVolDecor(
+      chancePerPoint = 0.3,
+      noise = Noise.Spike,
+      blocks = listOf(
+        BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.RED_MUSHROOM_BLOCK)),
+        BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK))
+      )
+    )
+  )
 ) : Biome.Noised, BukkitBiome {
 
   override fun toBukkitBiome() = BiomeManager.FUNGAL_GROVE
@@ -137,7 +193,42 @@ class FungalGrove(
       override val id = "biome.fungal_groves.overhang_carve3D"
     }
 
+    object Spike : NoiseKey {
+      override val id = "biome.fungal_groves.spike"
+    }
+
+    object BrownMushroomCap : NoiseKey {
+      override val id = "biome.fungal_groves.brown_mushroom.cap"
+    }
+    object BrownMushroomStem : NoiseKey {
+      override val id = "biome.fungal_groves.brown_mushroom.stem"
+    }
+
     override fun install(bank: NoiseBank) {
+      bank.register(Noise.BrownMushroomCap) { seed ->
+        NoiseField.Companion.noiseField(seed) {
+          frequency(0.015)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+            .fractalType(CruxNoise.FractalType.FBm)
+            .fractalOctaves(3)
+        }
+      }
+      bank.register(Noise.BrownMushroomStem) { seed ->
+        NoiseField.Companion.noiseField(seed) {
+          frequency(0.07)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2)
+            .fractalType(CruxNoise.FractalType.FBm)
+            .fractalOctaves(2)
+        }
+      }
+      bank.register(Spike) { seed ->
+        NoiseField.noiseField(seed) {
+          frequency(.09)
+          noiseType(CruxNoise.NoiseType.OpenSimplex2)
+          fractalType(CruxNoise.FractalType.FBm)
+          fractalOctaves(3)
+        }
+      }
       bank.register(Warp2D) { seed ->
         NoiseField.noiseField(seed) {
           frequency(0.0016)
