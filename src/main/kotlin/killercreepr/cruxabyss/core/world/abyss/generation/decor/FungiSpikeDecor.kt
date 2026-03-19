@@ -1,4 +1,4 @@
-package killercreepr.cruxabyss.core.world.abyss.generation.decor.volumetric
+package killercreepr.cruxabyss.core.world.abyss.generation.decor
 
 import killercreepr.crux.core.util.CruxMath
 import killercreepr.cruxworldgen.api.block.BlockGetter
@@ -10,12 +10,10 @@ import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.noise.NoiseKey
 import killercreepr.cruxworldgen.api.util.HashUtil
-import killercreepr.cruxworldgen.api.util.HashUtil.chance
-import killercreepr.cruxworldgen.api.util.HashUtil.mixSeed
 import kotlin.math.cos
 import kotlin.math.sin
 
-class FungiSpikeVolDecor(
+class FungiSpikeDecor(
   val chancePerPoint: Double = 0.5,
 
   val sizeMin: Float = 1f,
@@ -41,8 +39,8 @@ class FungiSpikeVolDecor(
     point: PropPoint,
     biomeBlend: BiomeBlendSample
   ): Boolean {
-    val s = mixSeed(region.ctx.worldContext.seed, point.worldX, point.worldZ, chanceSalt)
-    return chance(s, chancePerPoint)
+    val s = HashUtil.mixSeed(region.ctx.worldContext.seed, point.worldX, point.worldZ, chanceSalt)
+    return HashUtil.chance(s, chancePerPoint)
   }
 
   override fun findPlacement(
@@ -70,16 +68,16 @@ class FungiSpikeVolDecor(
   ) {
     val p = placement as Placed
 
-    var rng = mixSeed(p.seed, chanceSalt)
+    var rng = HashUtil.mixSeed(p.seed, chanceSalt)
 
     val block = blocks[((rng and Long.MAX_VALUE) % blocks.size).toInt()]
-    rng = mixSeed(rng, 3L)
+    rng = HashUtil.mixSeed(rng, 3L)
     val size = HashUtil.chooseFloat(rng, sizeMin, sizeMax)
-    rng = mixSeed(rng, 7L)
+    rng = HashUtil.mixSeed(rng, 7L)
     val taper = HashUtil.chooseFloat(rng, taperMin, taperMax)
-    rng = mixSeed(rng, 11L)
+    rng = HashUtil.mixSeed(rng, 11L)
     val pitch = HashUtil.chooseFloat(rng, pitchMin, pitchMax).toDouble()
-    rng = mixSeed(rng, 13L)
+    rng = HashUtil.mixSeed(rng, 13L)
     val yaw = HashUtil.chooseFloat(rng, -180f, 180f).toDouble()
 
     // Direction vector from pitch/yaw

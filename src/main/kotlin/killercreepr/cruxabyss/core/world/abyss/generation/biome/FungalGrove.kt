@@ -1,9 +1,10 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
-import killercreepr.cruxabyss.core.world.abyss.generation.decor.volumetric.FungiSpikeVolDecor
+import killercreepr.crux.api.data.Holder
+import killercreepr.crux.core.util.CruxMath
+import killercreepr.cruxabyss.core.world.abyss.generation.decor.FungiSpikeDecor
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxgeneration.util.CruxNoise
-import killercreepr.cruxgeneration.util.FastNoiseLite
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
@@ -13,6 +14,7 @@ import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.decor.Decoration
+import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
@@ -26,11 +28,9 @@ import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.standard.decor.BrownMushroomDecor
 import killercreepr.cruxworldgen.standard.decor.PointedMushroomDecor
-import killercreepr.cruxworldgen.standard.decor.RedMushroomDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
-import killercreepr.cruxworldgen.test.biome.CharredWastes
 import org.bukkit.Material
-import kotlin.Double
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -89,9 +89,26 @@ class FungalGrove(
     }
   },
 
+  override val volumetricDecorations: List<VolumetricDecoration> = listOf(
+    GrassVolDecor(
+      chancePerPoint = 0.15,
+      minAirAbove = 0,
+      maxSlope01 = 0.0,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM)),
+      salt = CruxMath.random().nextLong()
+    ),
+    GrassVolDecor(
+      chancePerPoint = 0.15,
+      minAirAbove = 0,
+      maxSlope01 = 0.0,
+      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.RED_MUSHROOM)),
+      salt = CruxMath.random().nextLong()
+    )
+  ),
+
   override val decorations: List<Decoration> = listOf(
     BrownMushroomDecor(
-      chancePerPoint = 0.1,
+      chancePerPoint = 0.05,
       stemHeightMin = 12,
       stemHeightMax = 36,
       capRadiusMin = 8f,
@@ -105,7 +122,7 @@ class FungalGrove(
       stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
     ),
     PointedMushroomDecor(
-      chancePerPoint = 0.09,
+      chancePerPoint = 0.03,
       stemHeightMin = 10,
       stemHeightMax = 28,
       capRadiusMin = 8f,
@@ -126,7 +143,7 @@ class FungalGrove(
       capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
       stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
     ),
-    FungiSpikeVolDecor(
+    FungiSpikeDecor(
       chancePerPoint = 0.3,
       noise = Noise.Spike,
       blocks = listOf(
