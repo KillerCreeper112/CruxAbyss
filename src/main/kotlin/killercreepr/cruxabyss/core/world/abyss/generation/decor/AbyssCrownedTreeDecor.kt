@@ -10,6 +10,7 @@ import killercreepr.cruxworldgen.api.decor.DecorationPass
 import killercreepr.cruxworldgen.api.decor.Placement
 import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
+import killercreepr.cruxworldgen.api.util.GenUtil
 import killercreepr.cruxworldgen.api.util.HashUtil
 import killercreepr.cruxworldgen.api.util.HashUtil.chance
 import killercreepr.cruxworldgen.api.util.HashUtil.chooseInt
@@ -94,7 +95,6 @@ class AbyssCrownedTreeDecor(
       if (!region.isInRegion(p.x, p.y, p.z)) return null
       if (!q.isReplaceable(p.x, p.y, p.z)) return null
 
-      // Slightly thicker lower trunk, like the screenshot
       if (i < thickBaseHeight) {
         for ((ox, oz) in listOf(1 to 0, 0 to 1)) {
           val tx = p.x + ox
@@ -172,18 +172,19 @@ class AbyssCrownedTreeDecor(
   }
 
   //place trunk so it generally fill to touch the ground
-  fun placeTrunk(region: LimitedRegion, x: Int, y: Int, z: Int) {
-    val randomOffset = chooseInt(mixSeed(region.ctx.worldContext.seed, x, y, z, 84829L), 0, 3)
-    val q = region.terrainQueries
+  fun placeTrunk(region: LimitedRegion, x: Int, y: Int, z: Int, p: Placed) {
+    val randomOffset = if(y == p.baseY) chooseInt(mixSeed(region.ctx.worldContext.seed, x, y, z, 84829L), 0, 3)
+    else 0
+    GenUtil.placeTillGround(region, region.ctx.random, x, y, z, logPicker, randomOffset)
     //todo
-    for(i in 0..0/*5+randomOffset*/){
+    /*for(i in 0..0*//*5+randomOffset*//*){
       val yy = y - i
       if(!region.isInRegion(x, yy, z)) break
       if(!q.isReplaceable(x, yy, z)) break
       val block = logPicker.pickBlock(region, x, yy, z, Axis.Y) ?: break
       region.setBlock(x, yy, z, block)
 
-    }
+    }*/
   }
 
   override fun place(
@@ -197,14 +198,14 @@ class AbyssCrownedTreeDecor(
     // Trunk
     for (i in p.trunk.indices) {
       val at = p.trunk[i]
-      placeTrunk(region, at.x, at.y, at.z)
+      placeTrunk(region, at.x, at.y, at.z, p)
 
       // Thicker lower section
       if (i < p.thickBaseHeight) {
         for ((ox, oz) in listOf(1 to 0, 0 to 1)) {
           val tx = at.x + ox
           val tz = at.z + oz
-          placeTrunk(region, tx, at.y, tz)
+          placeTrunk(region, tx, at.y, tz, p)
         }
       }
     }

@@ -12,6 +12,7 @@ import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
 import killercreepr.cruxworldgen.api.block.BlockData
+import killercreepr.cruxworldgen.api.block.BlockPicker
 import killercreepr.cruxworldgen.api.cave.CaveProfile
 import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
@@ -37,7 +38,6 @@ import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
-import killercreepr.cruxworldgen.standard.decor.BlockPicker
 import killercreepr.cruxworldgen.standard.decor.GrassDecor
 import killercreepr.cruxworldgen.standard.decor.HollowSlimeTreeDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
@@ -82,13 +82,13 @@ class ToxicMireBiome(
     HollowSlimeTreeDecor(
       chancePerPoint = 0.1,
       chanceSalt = 209204L,
-      log = BlockPicker{ region, x, y, z ->
+      log = BlockPicker{ region, rng, x, y, z ->
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.PLAGUE_STEM.components.getOrThrow(CruxBlockComponents.DIRECTIONAL_GROUP)
             .getBlock(Axis.Y)!!
         )
       },
-      slime = BlockPicker{ region, x, y, z ->
+      slime = BlockPicker{ region, rng, x, y, z ->
         val seed = HashUtil.mixSeed(
           region.ctx.worldContext.seed, x, y, z, 32793318918032L
         )

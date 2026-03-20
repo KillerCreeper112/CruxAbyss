@@ -1,9 +1,8 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.feature
 
 import com.destroystokyo.paper.MaterialSetTag
-import killercreepr.crux.core.Crux
 import killercreepr.cruxabyss.core.block.AbyssBlocks
-import killercreepr.cruxworldgen.api.block.BlockGetter
+import killercreepr.cruxworldgen.api.block.BlockPicker
 import killercreepr.cruxworldgen.api.block.CanReplaceBlock
 import killercreepr.cruxworldgen.api.context.LimitedRegion
 import killercreepr.cruxworldgen.api.feature.*
@@ -15,7 +14,7 @@ import killercreepr.cruxworldgen.core.feature.blob.BlobConfig
 import killercreepr.cruxworldgen.core.feature.ore.OreConfig
 import killercreepr.cruxworldgen.crux.block.CruxBlockSection
 import org.bukkit.Material
-import java.util.Random
+import java.util.*
 
 object AbyssFeatures {
   object Blobs {
@@ -50,7 +49,7 @@ object AbyssFeatures {
     val GRANITE = PlacedFeature(
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
-        material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.GRANITE)),
+        material = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.GRANITE)),
         canReplace = canRockReplace,
         minRadius = 2,
         maxRadius = 8,
@@ -70,7 +69,7 @@ object AbyssFeatures {
     val DIORITE = PlacedFeature(
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
-        material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.DIORITE)),
+        material = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.DIORITE)),
         canReplace = canRockReplace,
         minRadius = 2,
         maxRadius = 8,
@@ -90,7 +89,7 @@ object AbyssFeatures {
     val ANDESITE = PlacedFeature(
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
-        material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.ANDESITE)),
+        material = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.ANDESITE)),
         canReplace = canRockReplace,
         minRadius = 2,
         maxRadius = 8,
@@ -110,7 +109,7 @@ object AbyssFeatures {
     val DEEP_TUFF = PlacedFeature(
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
-        material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.TUFF)),
+        material = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.TUFF)),
         canReplace = canDeepRockReplace,
         minRadius = 2,
         maxRadius = 8,
@@ -130,7 +129,7 @@ object AbyssFeatures {
     val GRAVEL = PlacedFeature(
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
-        material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.GRAVEL)),
+        material = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.GRAVEL)),
         canReplace = canRockReplace,
         minRadius = 2,
         maxRadius = 6,
@@ -151,7 +150,7 @@ object AbyssFeatures {
     val DIRT = PlacedFeature(
       feature = CoreFeatures.BLOB,
       cfg = BlobConfig(
-        material = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.DIRT)),
+        material = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.DIRT)),
         canReplace = canRockReplace,
         minRadius = 2,
         maxRadius = 4,
@@ -204,7 +203,7 @@ object AbyssFeatures {
     val MOULDITE_CRUST = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
-        ore = BlockGetter.constant(
+        ore = BlockPicker.constant(
           BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MOULDITE_CRUST)
         ),
         minSize = 0,
@@ -263,7 +262,7 @@ object AbyssFeatures {
     val RED_ABYSS_CRYSTAL = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
-        ore = BlockGetter.constant(
+        ore = BlockPicker.constant(
           BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_STONE_RED_ABYSS_CRYSTAL_ORE)
         ),
         minSize = 0,
@@ -287,7 +286,7 @@ object AbyssFeatures {
     val EMERALD_HIGH = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
-        ore = BlockGetter.constant(
+        ore = BlockPicker.constant(
           BukkitBlockAdapter.resolver().resolve(Material.EMERALD_ORE)
         ),
         minSize = 0,
@@ -494,7 +493,7 @@ object AbyssFeatures {
     val IRON_LOW = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
-        ore = BlockGetter.constant(
+        ore = BlockPicker.constant(
           BukkitBlockAdapter.resolver().resolve(Material.DEEPSLATE_IRON_ORE)
         ),
         minSize = 0,
@@ -517,7 +516,7 @@ object AbyssFeatures {
     val IRON_HIGH = PlacedFeature(
       feature = CoreFeatures.ORE_VEIN,
       cfg = OreConfig(
-        ore = BlockGetter.constant(
+        ore = BlockPicker.constant(
           BukkitBlockAdapter.resolver().resolve(Material.IRON_ORE)
         ),
         minSize = 0,

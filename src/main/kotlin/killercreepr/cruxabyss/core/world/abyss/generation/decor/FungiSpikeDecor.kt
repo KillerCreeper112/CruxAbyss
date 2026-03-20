@@ -1,7 +1,7 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.decor
 
 import killercreepr.crux.core.util.CruxMath
-import killercreepr.cruxworldgen.api.block.BlockGetter
+import killercreepr.cruxworldgen.api.block.BlockPicker
 import killercreepr.cruxworldgen.api.context.LimitedRegion
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.decor.DecorationPass
@@ -10,6 +10,7 @@ import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.noise.NoiseKey
 import killercreepr.cruxworldgen.api.util.HashUtil
+import net.minecraft.world.level.BlockGetter
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -28,7 +29,7 @@ class FungiSpikeDecor(
   val noiseStrength: Double = 0.7,
   val maxAirAbove: Int = 5,
 
-  val blocks: List<BlockGetter>,
+  val blocks: List<BlockPicker>,
 
   val noise: NoiseKey,
   val chanceSalt: Long = CruxMath.random().nextLong(),
@@ -123,7 +124,7 @@ class FungiSpikeDecor(
 
             val noiseVal = noiseSource.noise3D(bx, by, bz)
             if (equationResult <= 1.0 + noiseStrength * noiseVal) {
-              val blockData = block.getBlock(region, region.ctx.random, bx, by, bz) ?: continue
+              val blockData = block.pickBlock(region, region.ctx.random, bx, by, bz) ?: continue
               region.setBlock(bx, by, bz, blockData)
             }
           }

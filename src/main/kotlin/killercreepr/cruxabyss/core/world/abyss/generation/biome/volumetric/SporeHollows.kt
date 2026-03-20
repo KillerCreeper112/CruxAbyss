@@ -5,7 +5,7 @@ import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiome
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiomeShape
 import killercreepr.cruxworldgen.api.block.BlockData
-import killercreepr.cruxworldgen.api.block.BlockGetter
+import killercreepr.cruxworldgen.api.block.BlockPicker
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
@@ -22,6 +22,7 @@ import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
 import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.decor.BrownMushroomDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.StalactiteVolDecor
 import org.bukkit.Material
 import org.bukkit.block.Biome
 import kotlin.math.abs
@@ -35,6 +36,17 @@ class SporeHollows(
   override fun allowedIn(surface: BiomeBlendSample): Boolean = surface.primaryBiome() is FungalGrove
 
   override val volumetricDecorations: List<VolumetricDecoration> = listOf(
+    StalactiteVolDecor(
+      chancePerPoint = 0.3,
+      yOffset = -1,
+      minLength = 6,
+      maxLength = 40,
+      baseSizeMin = 1,
+      baseSizeMax = 3,
+      sizeTaperOffMin = 0.2,
+      sizeTaperOffMax = 0.45,
+      block = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
+    ),
     BrownMushroomDecor(
       chancePerPoint = 0.04,
       stemHeightMin = 3,
@@ -48,8 +60,8 @@ class SporeHollows(
       stemWanderStrength = 0.15f,
       capNoise = FungalGrove.Noise.BrownMushroomCap,
       stemNoise = FungalGrove.Noise.BrownMushroomStem,
-      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
-      stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
+      capBlock = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
+      stemBlock = BlockPicker.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
     ),
   )
 

@@ -1,13 +1,12 @@
 package killercreepr.cruxabyss.core.world.abyss.generation
 
 import killercreepr.crux.core.util.CruxMath
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.FungalGrove
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.*
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.SporeHollows
 import killercreepr.cruxabyss.core.world.abyss.generation.zone.AbyssZone
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeRegistry
 import killercreepr.cruxworldgen.api.decor.DecorationPipeline
-import killercreepr.cruxworldgen.api.feature.RelativeHeightFilter
 import killercreepr.cruxworldgen.api.generation.GenerationPipeline
 import killercreepr.cruxworldgen.api.noise.NoiseAutoInstaller
 import killercreepr.cruxworldgen.api.structure.StructurePipeline
@@ -43,12 +42,11 @@ object AbyssGeneration {
   fun register() {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
-        FungalGrove()
-        //ToxicMireBiome(),
-        /*CharredWastes(),
+        ToxicMireBiome(),
+        CharredWastes(),
         BasaltSpires(),
         EldritchWastes(),
-        FungalGrove()*/
+        FungalGrove()
       ),
       biomeCellSizeBlocks = 256,
       blendRadiusBlocks = 32.0,

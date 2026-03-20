@@ -78,7 +78,7 @@ class BasaltSpires(
 
     SingleDeadTreeDecor(
       chancePerPoint = 0.26,
-      log = { region, x,y,z ->
+      log = { region, rng, x,y,z ->
         val seed = HashUtil.mixSeed(region.ctx.worldContext.seed, x,y,z, 328934L)
         if (HashUtil.chance(seed, 0.5)) BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.EMBER_LOG.components.get(CruxBlockComponents.DIRECTIONAL_GROUP)!!
