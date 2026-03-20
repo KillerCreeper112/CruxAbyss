@@ -53,9 +53,9 @@ import kotlin.math.pow
 class ToxicMireBiome(
   override val caves: CaveShape<*, *> = CaveProfile(
     listOf(
-      WormCaves(),
-      SpaghettiCaves(),
-      Standard3DCaves(),
+      //WormCaves(),
+      /*SpaghettiCaves(),
+      Standard3DCaves(),*/
     )
   ),
   override val decorations: List<Decoration> = listOf(

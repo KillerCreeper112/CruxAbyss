@@ -30,6 +30,7 @@ import killercreepr.cruxworldgen.core.structure.SimpleStructureRegistry
 import killercreepr.cruxworldgen.core.zone.SimpleZoneRegistry
 import killercreepr.cruxworldgen.core.generation.chunk.SimpleChunkSampler
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.GlacialCaverns
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.SporeHollows
 
 object AbyssGeneration {
   lateinit var abyssZone: AbyssZone
@@ -48,10 +49,10 @@ object AbyssGeneration {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
         ToxicMireBiome(),
-        CharredWastes(),
+        /*CharredWastes(),
         BasaltSpires(),
         EldritchWastes(),
-        FungalGrove()
+        FungalGrove()*/
       ),
       biomeCellSizeBlocks = 256,
       blendRadiusBlocks = 32.0,
@@ -68,7 +69,10 @@ object AbyssGeneration {
     zones = SimpleZoneRegistry(listOf(abyssZone))
     volBiomes = VolumetricBiomeRegistry(
       listOf(
-        GlacialCaverns(
+        /*GlacialCaverns(
+          yRange = RelativeHeightFilter(0.0f, 0.5f)
+        )*/
+        SporeHollows(
           yRange = RelativeHeightFilter(0.0f, 0.5f)
         )
       )

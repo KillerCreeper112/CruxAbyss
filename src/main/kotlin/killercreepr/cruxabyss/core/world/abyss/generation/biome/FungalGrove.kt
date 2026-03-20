@@ -92,14 +92,14 @@ class FungalGrove(
   override val volumetricDecorations: List<VolumetricDecoration> = listOf(
     GrassVolDecor(
       chancePerPoint = 0.15,
-      minAirAbove = 0,
+      minAirAbove = 1,
       maxSlope01 = 0.0,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM)),
       salt = CruxMath.random().nextLong()
     ),
     GrassVolDecor(
       chancePerPoint = 0.15,
-      minAirAbove = 0,
+      minAirAbove = 1,
       maxSlope01 = 0.0,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.RED_MUSHROOM)),
       salt = CruxMath.random().nextLong()
