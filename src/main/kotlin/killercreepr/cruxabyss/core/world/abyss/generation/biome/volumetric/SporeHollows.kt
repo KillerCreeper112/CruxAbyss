@@ -1,32 +1,57 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric
 
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.FungalGrove
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiome
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiomeShape
 import killercreepr.cruxworldgen.api.block.BlockData
+import killercreepr.cruxworldgen.api.block.BlockGetter
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.VolDensityStack
 import killercreepr.cruxworldgen.api.feature.HeightFilter
+import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.*
 import killercreepr.cruxworldgen.api.signal.SignalWriter
 import killercreepr.cruxworldgen.api.util.Curve
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
+import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
 import killercreepr.cruxworldgen.extension.remap01
+import killercreepr.cruxworldgen.standard.decor.BrownMushroomDecor
+import org.bukkit.Material
 import org.bukkit.block.Biome
 import kotlin.math.abs
 import kotlin.math.max
 
 class SporeHollows(
   val noise: Noise = DefaultNoise,
-  val yRange: HeightFilter,
+  val minDepthBelowSurface: Int,
 ) : VolumetricBiome, Noised, BukkitBiome {
 
-  override val volumetricDecorations: List<VolumetricDecoration> = listOf()
+  override fun allowedIn(surface: BiomeBlendSample): Boolean = surface.primaryBiome() is FungalGrove
+
+  override val volumetricDecorations: List<VolumetricDecoration> = listOf(
+    BrownMushroomDecor(
+      chancePerPoint = 0.04,
+      stemHeightMin = 3,
+      stemHeightMax = 7,
+      stemRadiusMin = 0.5f,
+      stemRadiusMax = 0.5f,
+      capRadiusMin = 4f,
+      capRadiusMax = 7f,
+      capHeightScaleMin = 0.2f,
+      capHeightScaleMax = 0.3f,
+      stemWanderStrength = 0.15f,
+      capNoise = FungalGrove.Noise.BrownMushroomCap,
+      stemNoise = FungalGrove.Noise.BrownMushroomStem,
+      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
+      stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
+    ),
+  )
 
   interface Noise {
     val biomeMask3D: NoiseKey
@@ -218,14 +243,12 @@ class SporeHollows(
     env: VolumeEnv,
     signals: SignalWriter
   ): Double {
-    if (!yRange.isWithinRange(ctx, y)) return 0.0
-
     val depthBelowSurface = (-env.heightAboveSurface.toDouble()).coerceAtLeast(0.0)
-    if (depthBelowSurface <= 4.0) return 0.0
+    if (depthBelowSurface < minDepthBelowSurface) return 0.0
 
     // Main 3D biome placement mask
     val maskRaw = ctx.noise.get(noise.biomeMask3D).noise3D(worldX, y, worldZ).remap01()
-    val biomeMask = Curve.smoothstep(0.54, 0.76, maskRaw)
+    val biomeMask = Curve.smoothstep(0.54, 0.86, maskRaw)
 
     // Broad envelope so the biome doesn't continue forever downward
     val depthIn = Curve.smoothstep(8.0, 18.0, depthBelowSurface)
@@ -263,7 +286,7 @@ class SporeHollows(
       env: VolumeEnv,
       signals: SignalWriter
     ): VolDensityStack? {
-      if (!yRange.isWithinRange(ctx, y)) return VolDensityStack.emptyStack()
+      if(env.depthBelowSurface < minDepthBelowSurface) return null
 
       val suitability = suitability(ctx, worldX, y, worldZ, env, signals)
       if (suitability <= 0.0) return VolDensityStack.emptyStack()

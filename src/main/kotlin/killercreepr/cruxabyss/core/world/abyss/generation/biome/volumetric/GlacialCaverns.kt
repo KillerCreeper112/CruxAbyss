@@ -31,7 +31,7 @@ class GlacialCaverns(
   override val volumetricDecorations = listOf(
     IcicleVolDecor(
       block = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.ICE)),
-      yOffset = 1
+      yOffset = -1
     ),
     IcicleVolDecor(
       block = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.ICE)),

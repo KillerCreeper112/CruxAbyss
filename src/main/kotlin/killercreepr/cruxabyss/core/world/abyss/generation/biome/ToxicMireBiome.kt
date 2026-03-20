@@ -45,7 +45,6 @@ import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDec
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import org.bukkit.Axis
 import org.bukkit.Material
-import org.bukkit.block.BlockFace
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -53,9 +52,9 @@ import kotlin.math.pow
 class ToxicMireBiome(
   override val caves: CaveShape<*, *> = CaveProfile(
     listOf(
-      //WormCaves(),
-      /*SpaghettiCaves(),
-      Standard3DCaves(),*/
+      WormCaves(),
+      SpaghettiCaves(),
+      Standard3DCaves(),
     )
   ),
   override val decorations: List<Decoration> = listOf(

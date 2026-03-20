@@ -2,20 +2,22 @@ package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
 import killercreepr.crux.api.data.Holder
 import killercreepr.crux.core.util.CruxMath
-import killercreepr.cruxabyss.core.world.abyss.generation.decor.FungiSpikeDecor
+import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
 import killercreepr.cruxworldgen.api.block.BlockData
-import killercreepr.cruxworldgen.api.block.BlockGetter
+import killercreepr.cruxworldgen.api.cave.CaveProfile
+import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
+import killercreepr.cruxworldgen.api.feature.PlacedFeature
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
 import killercreepr.cruxworldgen.api.noise.NoiseField
@@ -26,8 +28,9 @@ import killercreepr.cruxworldgen.api.util.Curve.smoothstep01
 import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
-import killercreepr.cruxworldgen.standard.decor.BrownMushroomDecor
-import killercreepr.cruxworldgen.standard.decor.PointedMushroomDecor
+import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
+import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
+import killercreepr.cruxworldgen.standard.cave.WormCaves
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import org.bukkit.Material
@@ -63,6 +66,14 @@ class FungalGrove(
   private val terraceStep: Double = 0.0,
   private val terraceBlend: Double = 0.35,
 
+  override val caves: CaveShape<*, *> = CaveProfile(
+    listOf(
+      WormCaves(),
+      SpaghettiCaves(),
+      Standard3DCaves(),
+    )
+  ),
+
   override val materialProvider: MaterialProvider = object : MaterialProvider {
     override fun chooseMaterial(ctx: MaterialContext): BlockData {
       if (!ctx.isSolid) return BlockData.NONE
@@ -71,11 +82,11 @@ class FungalGrove(
 
       // Sea-floor / basin crust
       if (ctx.depthFromSeaFloor in 0..<3) {
-        return BukkitBlockAdapter.resolver().resolve(Material.BLACKSTONE)
+        return BukkitBlockAdapter.resolver().resolve(Material.SAND)
       }
 
-      if(ctx.airRun > 4){
-        return BukkitBlockAdapter.resolver().resolve(Material.GRASS_BLOCK)
+      if(ctx.airRun > 2){
+        return BukkitBlockAdapter.resolver().resolve(Material.MYCELIUM)
       }
 
       if(ctx.surfaceDepth < 4){
@@ -106,8 +117,41 @@ class FungalGrove(
     )
   ),
 
+  override val features: List<PlacedFeature<*>> = listOf(
+    AbyssFeatures.Misc.REMOVE_BOTTOM_LATER,
+    AbyssFeatures.Ores.MOULDITE_CRUST,
+    AbyssFeatures.Ores.EMERALD_LOW,
+    AbyssFeatures.Ores.EMERALD_HIGH,
+    AbyssFeatures.Ores.FUNGIRE,
+
+    AbyssFeatures.Ores.GOLD_LOW,
+    AbyssFeatures.Ores.REDSTONE_LOW,
+    AbyssFeatures.Ores.LAPIS_LOW,
+    AbyssFeatures.Ores.IRON_LOW,
+    AbyssFeatures.Ores.IRON_HIGH,
+    AbyssFeatures.Ores.COPPER,
+    AbyssFeatures.Ores.COAL,
+    AbyssFeatures.Ores.COAL_HIGH,
+  ),
+
   override val decorations: List<Decoration> = listOf(
-    BrownMushroomDecor(
+    /*BrownMushroomDecor(
+      chancePerPoint = 0.05,
+      stemHeightMin = 3,
+      stemHeightMax = 6,
+      stemRadiusMin = 1f,
+      stemRadiusMax = 1f,
+      capRadiusMin = 3f,
+      capRadiusMax = 5f,
+      capHeightScaleMin = 0.1f,
+      capHeightScaleMax = 0.1f,
+      stemWanderStrength = 0.15f,
+      capNoise = Noise.BrownMushroomCap,
+      stemNoise = Noise.BrownMushroomStem,
+      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
+      stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
+    ),*/
+    /*BrownMushroomDecor(
       chancePerPoint = 0.05,
       stemHeightMin = 12,
       stemHeightMax = 36,
@@ -121,7 +165,7 @@ class FungalGrove(
       capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
       stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
     ),
-    PointedMushroomDecor(
+    RoundedRedMushroomDecor(
       chancePerPoint = 0.03,
       stemHeightMin = 10,
       stemHeightMax = 28,
@@ -135,12 +179,9 @@ class FungalGrove(
       rimDropFractionMin = 0.5,
       rimDropFractionMax = 0.8,
 
-      capPointCurveMin = 1.5,
-      capPointCurveMax = 2.5,
-
       capNoise = Noise.BrownMushroomCap,
       stemNoise = Noise.BrownMushroomStem,
-      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK)),
+      capBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.RED_MUSHROOM_BLOCK)),
       stemBlock = BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.MUSHROOM_STEM))
     ),
     FungiSpikeDecor(
@@ -150,7 +191,7 @@ class FungalGrove(
         BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.RED_MUSHROOM_BLOCK)),
         BlockGetter.constant(BukkitBlockAdapter.resolver().resolve(Material.BROWN_MUSHROOM_BLOCK))
       )
-    )
+    )*/
   )
 ) : Biome.Noised, BukkitBiome {
 

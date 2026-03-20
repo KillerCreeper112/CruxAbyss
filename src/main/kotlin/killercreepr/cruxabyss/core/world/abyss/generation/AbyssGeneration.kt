@@ -1,11 +1,8 @@
 package killercreepr.cruxabyss.core.world.abyss.generation
 
 import killercreepr.crux.core.util.CruxMath
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.BasaltSpires
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.CharredWastes
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.EldritchWastes
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.FungalGrove
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicMireBiome
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.SporeHollows
 import killercreepr.cruxabyss.core.world.abyss.generation.zone.AbyssZone
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeRegistry
@@ -23,14 +20,12 @@ import killercreepr.cruxworldgen.core.decor.SimpleDecorationPipeline
 import killercreepr.cruxworldgen.core.decor.SimplePropPointGrid
 import killercreepr.cruxworldgen.core.feature.SimpleFeaturePipeline
 import killercreepr.cruxworldgen.core.generation.SimpleGenerationPipeline
+import killercreepr.cruxworldgen.core.generation.chunk.SimpleChunkSampler
 import killercreepr.cruxworldgen.core.noise.BaseNoiseModule
 import killercreepr.cruxworldgen.core.noise.SimpleNoiseBank
 import killercreepr.cruxworldgen.core.structure.SimpleStructurePipeline
 import killercreepr.cruxworldgen.core.structure.SimpleStructureRegistry
 import killercreepr.cruxworldgen.core.zone.SimpleZoneRegistry
-import killercreepr.cruxworldgen.core.generation.chunk.SimpleChunkSampler
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.GlacialCaverns
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.SporeHollows
 
 object AbyssGeneration {
   lateinit var abyssZone: AbyssZone
@@ -48,7 +43,8 @@ object AbyssGeneration {
   fun register() {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
-        ToxicMireBiome(),
+        FungalGrove()
+        //ToxicMireBiome(),
         /*CharredWastes(),
         BasaltSpires(),
         EldritchWastes(),
@@ -73,7 +69,7 @@ object AbyssGeneration {
           yRange = RelativeHeightFilter(0.0f, 0.5f)
         )*/
         SporeHollows(
-          yRange = RelativeHeightFilter(0.0f, 0.5f)
+          minDepthBelowSurface = 10
         )
       )
     )
