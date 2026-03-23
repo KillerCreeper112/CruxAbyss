@@ -4,9 +4,12 @@ import killercreepr.crux.api.data.Holder
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
 import killercreepr.cruxabyss.core.world.abyss.generation.util.GenUtil
+import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.Biome
+import killercreepr.cruxworldgen.api.biome.BiomeRule
+import killercreepr.cruxworldgen.api.biome.BiomeRuleHolder
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
 import killercreepr.cruxworldgen.api.block.BlockData
@@ -15,6 +18,7 @@ import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
+import killercreepr.cruxworldgen.api.data.HasRarityWeight
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.feature.PlacedFeature
@@ -32,6 +36,7 @@ import killercreepr.cruxworldgen.api.util.NoiseShaper
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockResolver
+import killercreepr.cruxworldgen.core.biome.SimpleBiomeRegistry
 import killercreepr.cruxworldgen.crux.util.CruxTreeUtil
 import killercreepr.cruxworldgen.extension.remap01
 import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
@@ -46,7 +51,7 @@ import org.bukkit.block.BlockType
 import kotlin.math.abs
 import kotlin.math.pow
 
-class BasaltSpires(
+class CharredSpires(
   override val caves: CaveShape<*, *> = CaveProfile(
     listOf(
       WormCaves(),
@@ -195,9 +200,11 @@ class BasaltSpires(
   private val spireBodyThreshold: Double = 0.50,     // higher => thinner spires
   private val spireTaperPow: Double = 1.45,          // higher => sharper taper
   private val spireArchChance: Double = 0.22         // how often knuckles/arches appear
-) : Biome.Noised, BukkitBiome {
+) : Biome.Noised, BukkitBiome, HasRarityWeight, BiomeRuleHolder {
+  override val rarityWeight = 65.0
+  override val biomeRule = BiomeRule.AnyNeighbour{it is CharredWastes}
 
-  override fun toBukkitBiome(): org.bukkit.block.Biome = org.bukkit.block.Biome.BASALT_DELTAS
+  override fun toBukkitBiome(): org.bukkit.block.Biome = BiomeManager.CHARRED_SPIRES
 
   object Signal {
     val CRACK_MAGMA = SignalKey.doubleSignalKey()

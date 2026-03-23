@@ -2,9 +2,14 @@ package killercreepr.cruxabyss.core.world.biome;
 
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import killercreepr.crux.api.data.tag.Tag;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.key.tag.SimpleKeyTag;
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.CharredSpires;
 import net.kyori.adventure.key.Key;
 import org.bukkit.block.Biome;
+
+import java.util.List;
 
 public class BiomeManager {
     //biomes added via datapack
@@ -13,10 +18,24 @@ public class BiomeManager {
     public static final Biome FUNGAL_GROVE = biome("fungal_grove");
     public static final Biome ELDRITCH_WASTES = biome("eldritch_wastes");
     public static final Biome TOXIC_GRASSLANDS = biome("toxic_grasslands");
+    public static final Biome SPORE_HOLLOWS = biome("spore_hollows");
+    public static final Biome CHARRED_SPIRES = biome("charred_spires");
 
-    public static boolean isToxicMireType(Key k){
-        return k.equals(TOXIC_MIRE.key()) || k.equals(TOXIC_GRASSLANDS.key());
-    }
+    public static final Tag<Key> BIOME_CHARRED = new SimpleKeyTag(Key.key("biome/charred"), List.of(
+      CHARRED_WASTES.key(),
+      CHARRED_SPIRES.key()
+    ));
+    public static final Tag<Key> BIOME_TOXIC_FUNGAL = new SimpleKeyTag(Key.key("biome/toxic_fungal"), List.of(
+      TOXIC_MIRE.key(),
+      TOXIC_GRASSLANDS.key()
+    ));
+    public static final Tag<Key> BIOME_ELDRITCH = new SimpleKeyTag(Key.key("biome/eldritch"), List.of(
+      ELDRITCH_WASTES.key()
+    ));
+    public static final Tag<Key> BIOME_FUNGAL = new SimpleKeyTag(Key.key("biome/fungal"), List.of(
+      FUNGAL_GROVE.key(),
+      SPORE_HOLLOWS.key()
+    ));
 
     public static Biome biome(String id){
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).get(Crux.key(id));

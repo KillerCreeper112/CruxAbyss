@@ -1,6 +1,7 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
 import killercreepr.crux.api.data.Holder
+import killercreepr.crux.core.util.CruxMath
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.ToxicMireTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
@@ -18,6 +19,7 @@ import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
+import killercreepr.cruxworldgen.api.data.HasRarityWeight
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
@@ -49,7 +51,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
 
-class ToxicMireBiome(
+class ToxicGrasslands(
   override val caves: CaveShape<*, *> = CaveProfile(
     listOf(
       WormCaves(),
@@ -59,29 +61,15 @@ class ToxicMireBiome(
   ),
   override val decorations: List<Decoration> = listOf(
     ToxicMireTreeDecor(
-      chancePerPoint = 0.26,
+      chancePerPoint = 0.14,
       logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
       leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART)),
-      chanceSalt = 2478927591L
-    ),
-    ToxicMireTreeDecor(
-      chancePerPoint = 0.1,
-      logPicker = CruxTreeUtil.cachedOrientablePicker(AbyssBlocks.PLAGUE_STEM),
-      leafPicker = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_WART)),
-      minHeight = 12,
-      maxHeight = 16,
-      minAirAbove = 16,
-      minBranchLength = 1,
-      maxBranchLength = 8,
-      wartMinHeight = 1,
-      wartMaxHeight = 8,
-      maxBranchesOnBranches = 6,
-      chanceSalt = 2849284L
+      chanceSalt = CruxMath.random().nextLong()
     ),
 
     HollowSlimeTreeDecor(
-      chancePerPoint = 0.1,
-      chanceSalt = 209204L,
+      chancePerPoint = 0.07,
+      chanceSalt = CruxMath.random().nextLong(),
       log = BlockPicker{ region, rng, x, y, z ->
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.PLAGUE_STEM.components.getOrThrow(CruxBlockComponents.DIRECTIONAL_GROUP)
@@ -103,19 +91,19 @@ class ToxicMireBiome(
       chancePerPoint = 0.5,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_SHROOM)),
-      chanceSalt = 23892L
+      chanceSalt = CruxMath.random().nextLong()
     ),
     GrassDecor(
       chancePerPoint = 0.3,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MIREHORN)),
-      chanceSalt = 33802L
+      chanceSalt = CruxMath.random().nextLong()
     ),
     GrassDecor(
       chancePerPoint = 0.12,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.TOXSPORE)),
-      chanceSalt = 38232L
+      chanceSalt = CruxMath.random().nextLong()
     ),
   ),
 
@@ -124,19 +112,19 @@ class ToxicMireBiome(
       chancePerPoint = 0.6,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.PLAGUE_SHROOM)),
-      salt = 3849829L
+      salt = CruxMath.random().nextLong()
     ),
     GrassVolDecor(
       chancePerPoint = 0.4,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.MIREHORN)),
-      salt = 38294892L
+      salt = CruxMath.random().nextLong()
     ),
     GrassVolDecor(
       chancePerPoint = 0.27,
       minAirAbove = 1,
       block = Holder.direct(BukkitBlockAdapter.resolver().resolve(AbyssBlocks.TOXSPORE)),
-      salt = 837432L
+      salt = CruxMath.random().nextLong()
     ),
     TallGrassDoubleVolDecor(
       chancePerPoint = 0.42,
@@ -152,7 +140,7 @@ class ToxicMireBiome(
           AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.BOTTOM)!!
         )
       ),
-      chanceSalt = 2839289412L
+      chanceSalt = CruxMath.random().nextLong()
     )
   ),
 
@@ -201,7 +189,7 @@ class ToxicMireBiome(
   },
 
   // --- Baseline ---
-  private val baseYAboveSea: Double = 40.0,
+  private val baseYAboveSea: Double = 30.0,
 
   // --- Large-scale shape ---
   private val continentAmp: Double = 1.0,   // big landmass up/down
@@ -224,8 +212,10 @@ class ToxicMireBiome(
   // Optional: adds a subtle “shelf” feel. Set to 0.0 to disable.
   private val terraceStep: Double = 0.0,      // e.g. 6.0 for stylized terracing
   private val terraceBlend: Double = 0.35     // 0..1 (higher = smoother terraces)
-) : Biome.Noised, BukkitBiome {
-  override fun toBukkitBiome() = BiomeManager.TOXIC_MIRE
+) : Biome.Noised, BukkitBiome, HasRarityWeight {
+  override val rarityWeight = 62.0
+
+  override fun toBukkitBiome() = BiomeManager.TOXIC_GRASSLANDS
 
   object Noise : NoiseModule {
     object Warp2D : NoiseKey {

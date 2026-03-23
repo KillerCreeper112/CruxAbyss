@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric
 
+import killercreepr.cruxabyss.core.world.abyss.generation.AbyssGeneration
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.FungalGrove
+import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiome
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiomeShape
@@ -240,10 +242,12 @@ class SporeHollows(
   override val materialProvider = object : MaterialProvider {
     override fun chooseMaterial(context: MaterialContext): BlockData {
       if (!context.isSolid) return BlockData.NONE
+      if(context.airBlocksAbove > 1){
+        return BukkitBlockAdapter.resolver().resolve(Material.GRASS_BLOCK)
+      }
 
-      // Keep this neutral for now so shape is easier to tune.
-      // Later you can swap to a fungal palette block resolver.
-      return BukkitBlockResolver.INSTANCE.resolve("stone")
+      //todo change up stoof
+      return BukkitBlockAdapter.resolver().resolve("stone")
     }
   }
 
@@ -363,5 +367,5 @@ class SporeHollows(
     }
   }
 
-  override fun toBukkitBiome(): Biome = Biome.LUSH_CAVES
+  override fun toBukkitBiome(): Biome = BiomeManager.SPORE_HOLLOWS
 }

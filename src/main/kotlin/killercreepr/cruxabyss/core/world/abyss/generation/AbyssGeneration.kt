@@ -3,9 +3,13 @@ package killercreepr.cruxabyss.core.world.abyss.generation
 import killercreepr.crux.core.util.CruxMath
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.*
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.SporeHollows
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric.ToxicGrasslandsVol
 import killercreepr.cruxabyss.core.world.abyss.generation.zone.AbyssZone
 import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeRegistry
+import killercreepr.cruxworldgen.api.biome.BiomeRule
+import killercreepr.cruxworldgen.api.biome.BiomeRuleHolder
+import killercreepr.cruxworldgen.api.biome.BiomeRuleProvider
 import killercreepr.cruxworldgen.api.decor.DecorationPipeline
 import killercreepr.cruxworldgen.api.generation.GenerationPipeline
 import killercreepr.cruxworldgen.api.noise.NoiseAutoInstaller
@@ -42,18 +46,18 @@ object AbyssGeneration {
   fun register() {
     biomeRegistry = SimpleBiomeRegistry(
       biomes = listOf(
-        ToxicMireBiome(),
+        ToxicMire(),
         CharredWastes(),
-        BasaltSpires(),
+        CharredSpires(),
         EldritchWastes(),
         FungalGrove()
       ),
       biomeCellSizeBlocks = 256,
       blendRadiusBlocks = 32.0,
-      //selector = SimpleBiomeRegistry.WeightedRaritySelector(),
-      rules = object: SimpleBiomeRegistry.BiomeRuleProvider{
-        override fun ruleFor(biome: Biome): SimpleBiomeRegistry.BiomeRule? {
-          return null//todo
+      selector = SimpleBiomeRegistry.WeightedRaritySelector(),
+      rules = object: BiomeRuleProvider{
+        override fun ruleFor(biome: Biome): BiomeRule? {
+          return (biome as? BiomeRuleHolder)?.biomeRule
         }
       }
     )
@@ -68,7 +72,8 @@ object AbyssGeneration {
         )*/
         SporeHollows(
           minDepthBelowSurface = 10
-        )
+        ),
+        ToxicGrasslandsVol()
       )
     )
     val structureRegistry = SimpleStructureRegistry(listOf())

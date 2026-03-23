@@ -16,6 +16,7 @@ import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
+import killercreepr.cruxworldgen.api.data.HasRarityWeight
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
@@ -182,7 +183,8 @@ class FungalGrove(
       )
     )
   )
-) : Biome.Noised, BukkitBiome {
+) : Biome.Noised, BukkitBiome, HasRarityWeight {
+  override val rarityWeight = 69.0
 
   override fun toBukkitBiome() = BiomeManager.FUNGAL_GROVE
 

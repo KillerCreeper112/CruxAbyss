@@ -18,6 +18,7 @@ import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
+import killercreepr.cruxworldgen.api.data.HasRarityWeight
 import killercreepr.cruxworldgen.api.decor.Decoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.feature.PlacedFeature
@@ -221,7 +222,8 @@ class CharredWastes(
   private val ringVerticalSquashMax: Double = 1.15,
   private val ringSalt: Long = 91824561L,
 
-  ) : Biome.Noised, BukkitBiome {
+  ) : Biome.Noised, BukkitBiome, HasRarityWeight {
+  override val rarityWeight = 76.0
 
   override fun toBukkitBiome() = BiomeManager.CHARRED_WASTES
 
