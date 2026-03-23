@@ -130,12 +130,12 @@ class ToxicGrasslands(
       chancePerPoint = 0.42,
       minHeight = 2,
       maxHeight = 3,
-      top = Holder.direct(
+      top = BlockPicker.constant(
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.TOP)!!
         )
       ),
-      bottom = Holder.direct(
+      bottom = BlockPicker.constant(
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.BOTTOM)!!
         )

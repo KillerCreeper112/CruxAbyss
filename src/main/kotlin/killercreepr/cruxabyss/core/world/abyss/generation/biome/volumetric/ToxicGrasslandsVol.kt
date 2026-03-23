@@ -1,22 +1,38 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric
 
+import killercreepr.crux.core.Crux
+import killercreepr.crux.core.util.CruxMath
+import killercreepr.cruxabyss.core.block.AbyssBlocks
+import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicGrasslands
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicMire
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
+import killercreepr.cruxblocks.api.block.component.BushType
+import killercreepr.cruxblocks.core.block.component.CruxBlockComponents
 import killercreepr.cruxgeneration.util.CruxNoise
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiome
 import killercreepr.cruxworldgen.api.biome.volumetric.VolumetricBiomeShape
 import killercreepr.cruxworldgen.api.block.BlockData
+import killercreepr.cruxworldgen.api.block.BlockPicker
 import killercreepr.cruxworldgen.api.context.GenerateContext
+import killercreepr.cruxworldgen.api.context.LimitedRegion
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
+import killercreepr.cruxworldgen.api.decor.Placement
+import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.VolDensityStack
 import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.*
 import killercreepr.cruxworldgen.api.signal.SignalWriter
+import killercreepr.cruxworldgen.api.util.Curve
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
+import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.extension.remap01
+import killercreepr.cruxworldgen.standard.decor.Group2DDecor
+import killercreepr.cruxworldgen.standard.decor.TallGrassTriDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.Group3DDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassTriVolDecor
 import org.bukkit.block.Biome
 
 class ToxicGrasslandsVol(
@@ -33,36 +49,58 @@ class ToxicGrasslandsVol(
     env: VolumeEnv,
     signals: SignalWriter
   ): Double {
-    // Only affect a very small band around the surface
-    //if (env.depthBelowSurface < -3) return 0.0          // above surface
-    //if (env.depthBelowSurface > 3) return 0.0          // too far below surface
-
-    // Rare patch mask across XZ
     val patchNoise = ctx.noise.get(Noise.Patch2D).noise2D(worldX, worldZ)
     val patch01 = patchNoise.remap01()
-
-    // Only some areas of Toxic Mire get this biome
     if (patch01 < 0.6) return 0.0
 
-    // Strongest exactly at surface, fades just below it
-    val surfaceFade = when (env.depthBelowSurface) {
-      -3 -> 0.1
-      -2 -> 0.3
-      -1 -> 0.65
-      0 -> 1.0
-      1 -> 0.65
-      2 -> 0.3
-      3 -> 0.1
-      else -> 0.0
+    val d = env.depthBelowSurface.toDouble()
+
+    val maxAbove = 64.0
+    val maxBelow = 48.0
+
+    val verticalFade = when {
+      d < 0.0 -> 1.0 - Curve.smoothstep(0.0, maxAbove, -d)
+      else -> 1.0 - Curve.smoothstep(0.0, maxBelow, d)
     }
 
-    // Make higher patch values stronger
-    val rarityStrength = ((patch01 - 0.82) / (1.0 - 0.82)).coerceIn(0.0, 1.0)
-
-    return patch01//surfaceFade * rarityStrength
+    val rarityStrength = Curve.smoothstep(0.6, 0.9, patch01)
+    return verticalFade * rarityStrength
   }
 
   override val volumetricDecorations: List<VolumetricDecoration> = listOf(
+    Group3DDecor(
+      chancePerPoint = 1.0,
+      minRadius = 0,
+      maxRadius = 10,
+      minPickAmount = 10,
+      maxPickAmount = 20,
+      minYRadius = 0,
+      maxYRadius = 5,
+      decorations = listOf(
+        TallGrassTriVolDecor(
+          chancePerPoint = 0.42,
+          minHeight = 3,
+          maxHeight = 5,
+          top = BlockPicker.constant(
+            BukkitBlockAdapter.resolver().resolve(
+              AbyssBlocks.PLAGUE_ROOTS.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.TOP)!!
+            )
+          ),
+          middle = BlockPicker.constant(
+            BukkitBlockAdapter.resolver().resolve(
+              AbyssBlocks.PLAGUE_ROOTS.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.MIDDLE)!!
+            )
+          ),
+          bottom = BlockPicker.constant(
+            BukkitBlockAdapter.resolver().resolve(
+              AbyssBlocks.PLAGUE_ROOTS.components.get(CruxBlockComponents.BUSH_GROUP)!!
+                .getBlock(BushType.BOTTOM)!!
+            )
+          ),
+          chanceSalt = CruxMath.random().nextLong()
+        )
+      )
+    )
   )
 
   object Noise : NoiseModule {

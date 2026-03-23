@@ -1,6 +1,8 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome
 
 import killercreepr.crux.api.data.Holder
+import killercreepr.crux.core.Crux
+import killercreepr.crux.core.util.CruxMath
 import killercreepr.cruxabyss.core.block.AbyssBlocks
 import killercreepr.cruxabyss.core.world.abyss.generation.decor.ToxicMireTreeDecor
 import killercreepr.cruxabyss.core.world.abyss.generation.feature.AbyssFeatures
@@ -17,12 +19,16 @@ import killercreepr.cruxworldgen.api.cave.CaveProfile
 import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
 import killercreepr.cruxworldgen.api.context.GenerateContext
+import killercreepr.cruxworldgen.api.context.LimitedRegion
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.data.HasRarityWeight
 import killercreepr.cruxworldgen.api.decor.Decoration
+import killercreepr.cruxworldgen.api.decor.Placement
+import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
 import killercreepr.cruxworldgen.api.density.DensityStack
 import killercreepr.cruxworldgen.api.feature.PlacedFeature
+import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.material.MaterialProvider
 import killercreepr.cruxworldgen.api.noise.NoiseBank
 import killercreepr.cruxworldgen.api.noise.NoiseField
@@ -40,9 +46,13 @@ import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
 import killercreepr.cruxworldgen.standard.decor.GrassDecor
+import killercreepr.cruxworldgen.standard.decor.Group2DDecor
 import killercreepr.cruxworldgen.standard.decor.HollowSlimeTreeDecor
+import killercreepr.cruxworldgen.standard.decor.TallGrassDoubleDecor
+import killercreepr.cruxworldgen.standard.decor.TallGrassTriDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassTriVolDecor
 import killercreepr.cruxworldgen.test.biome.AbyssStartOverhang
 import org.bukkit.Axis
 import org.bukkit.Material
@@ -143,12 +153,12 @@ class ToxicMire(
       chancePerPoint = 0.42,
       minHeight = 2,
       maxHeight = 3,
-      top = Holder.direct(
+      top = BlockPicker.constant(
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.TOP)!!
         )
       ),
-      bottom = Holder.direct(
+      bottom = BlockPicker.constant(
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.TALL_PLAGUE_SHROOM.components.get(CruxBlockComponents.BUSH_GROUP)!!.getBlock(BushType.BOTTOM)!!
         )

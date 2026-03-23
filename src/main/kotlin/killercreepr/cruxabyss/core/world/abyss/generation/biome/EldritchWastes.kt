@@ -15,6 +15,7 @@ import killercreepr.cruxworldgen.api.biome.Biome
 import killercreepr.cruxworldgen.api.biome.BiomeShape
 import killercreepr.cruxworldgen.api.biome.BiomeShapeProfile
 import killercreepr.cruxworldgen.api.block.BlockData
+import killercreepr.cruxworldgen.api.block.BlockPicker
 import killercreepr.cruxworldgen.api.cave.CaveProfile
 import killercreepr.cruxworldgen.api.cave.CaveShape
 import killercreepr.cruxworldgen.api.context.BiomeEdgeContext
@@ -129,11 +130,11 @@ class EldritchWastes(
       chancePerPoint = 0.35,
       minHeight = 2,
       maxHeight = 2,
-      top = Holder.direct(
+      top = BlockPicker.constant(
         BukkitBlockResolver.INSTANCE.resolve(
         BlockType.TALL_GRASS.createBlockData { data -> data.half = Bisected.Half.TOP }
       )),
-      bottom = Holder.direct(
+      bottom = BlockPicker.constant(
         BukkitBlockResolver.INSTANCE.resolve(
         BlockType.TALL_GRASS.createBlockData { data -> data.half = Bisected.Half.BOTTOM }
       )),
@@ -149,11 +150,11 @@ class EldritchWastes(
       chancePerPoint = 0.37,
       minHeight = 2,
       maxHeight = 2,
-      top = Holder.direct(
+      top = BlockPicker.constant(
         BukkitBlockResolver.INSTANCE.resolve(
           BlockType.LILAC.createBlockData { data -> data.half = Bisected.Half.TOP }
         )),
-      bottom = Holder.direct(
+      bottom = BlockPicker.constant(
         BukkitBlockResolver.INSTANCE.resolve(
           BlockType.LILAC.createBlockData { data -> data.half = Bisected.Half.BOTTOM }
         )),
@@ -172,13 +173,13 @@ class EldritchWastes(
       chancePerPoint = 0.1,
       minHeight = 2,
       maxHeight = 2,
-      top = Holder.direct(
+      top = BlockPicker.constant(
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.EYEWITHER.components.getOrThrow(CruxBlockComponents.BUSH_GROUP)
             .getBlock(BushType.TOP)!!
         )
       ),
-      bottom = Holder.direct(
+      bottom = BlockPicker.constant(
         BukkitBlockAdapter.resolver().resolve(
           AbyssBlocks.EYEWITHER.components.getOrThrow(CruxBlockComponents.BUSH_GROUP)
             .getBlock(BushType.BOTTOM)!!
