@@ -45,6 +45,7 @@ class ToxicGrasslandsVol(
     env: VolumeEnv,
     signals: SignalWriter
   ): Double {
+    if(y <= env.seaLevel) return 0.0
     val patchNoise = ctx.noise.get(Noise.Patch2D).noise2D(worldX, worldZ)
     val patch01 = patchNoise.remap01()
     if (patch01 < 0.6) return 0.0
