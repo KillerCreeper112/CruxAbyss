@@ -45,6 +45,7 @@ import killercreepr.cruxworldgen.standard.cave.SpaghettiCaves
 import killercreepr.cruxworldgen.standard.cave.Standard3DCaves
 import killercreepr.cruxworldgen.standard.cave.WormCaves
 import killercreepr.cruxworldgen.standard.decor.GrassDecor
+import killercreepr.cruxworldgen.standard.decor.Group2DDecor
 import killercreepr.cruxworldgen.standard.decor.TallGrassDoubleDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.GrassVolDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassDoubleVolDecor
@@ -114,11 +115,20 @@ class EldritchWastes(
       })),
       chanceSalt = 0xA61
     ),
-    GrassDecor(
-      chancePerPoint = 0.8,
-      minAirAbove = 1,
-      block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.SHORT_GRASS)),
-      chanceSalt = 38948L
+    Group2DDecor(
+      chancePerPoint = 0.73,
+      minRadius = 0,
+      maxRadius = 5,
+      minPickAmount = 1,
+      maxPickAmount = 10,
+      decorations = listOf(
+        GrassDecor(
+          chancePerPoint = 0.8,
+          minAirAbove = 1,
+          block = Holder.direct(BukkitBlockAdapter.resolver().resolve(Material.SHORT_GRASS)),
+          chanceSalt = 38948L
+        ),
+      )
     ),
     GrassDecor(
       chancePerPoint = 0.4,

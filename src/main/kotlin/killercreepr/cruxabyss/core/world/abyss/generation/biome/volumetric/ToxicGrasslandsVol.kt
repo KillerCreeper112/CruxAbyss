@@ -1,9 +1,7 @@
 package killercreepr.cruxabyss.core.world.abyss.generation.biome.volumetric
 
-import killercreepr.crux.core.Crux
 import killercreepr.crux.core.util.CruxMath
 import killercreepr.cruxabyss.core.block.AbyssBlocks
-import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicGrasslands
 import killercreepr.cruxabyss.core.world.abyss.generation.biome.ToxicMire
 import killercreepr.cruxabyss.core.world.biome.BiomeManager
 import killercreepr.cruxblocks.api.block.component.BushType
@@ -18,8 +16,8 @@ import killercreepr.cruxworldgen.api.context.LimitedRegion
 import killercreepr.cruxworldgen.api.context.MaterialContext
 import killercreepr.cruxworldgen.api.context.volumetric.VolumeEnv
 import killercreepr.cruxworldgen.api.decor.Placement
-import killercreepr.cruxworldgen.api.decor.PropPoint
 import killercreepr.cruxworldgen.api.decor.VolumetricDecoration
+import killercreepr.cruxworldgen.api.decor.VolumetricPropPoint
 import killercreepr.cruxworldgen.api.density.VolDensityStack
 import killercreepr.cruxworldgen.api.generation.BiomeBlendSample
 import killercreepr.cruxworldgen.api.material.MaterialProvider
@@ -29,9 +27,7 @@ import killercreepr.cruxworldgen.api.util.Curve
 import killercreepr.cruxworldgen.bukkit.biome.BukkitBiome
 import killercreepr.cruxworldgen.bukkit.block.BukkitBlockAdapter
 import killercreepr.cruxworldgen.extension.remap01
-import killercreepr.cruxworldgen.standard.decor.Group2DDecor
-import killercreepr.cruxworldgen.standard.decor.TallGrassTriDecor
-import killercreepr.cruxworldgen.standard.decor.volumetric.Group3DDecor
+import killercreepr.cruxworldgen.standard.decor.volumetric.DenseGroup3DDecor
 import killercreepr.cruxworldgen.standard.decor.volumetric.TallGrassTriVolDecor
 import org.bukkit.block.Biome
 
@@ -63,19 +59,23 @@ class ToxicGrasslandsVol(
       else -> 1.0 - Curve.smoothstep(0.0, maxBelow, d)
     }
 
-    val rarityStrength = Curve.smoothstep(0.6, 0.9, patch01)
-    return verticalFade * rarityStrength
+    val patchStrength = Curve.smoothstep(0.6, 0.9, patch01)
+
+    val coverage01 = ctx.noise.get(Noise.Coverage2D).noise2D(worldX, worldZ).remap01()
+    val coverageStrength = Curve.smoothstep(0.75, 0.9, coverage01)
+
+    return verticalFade * patchStrength * coverageStrength
   }
 
   override val volumetricDecorations: List<VolumetricDecoration> = listOf(
-    Group3DDecor(
+    object: DenseGroup3DDecor(
       chancePerPoint = 1.0,
-      minRadius = 0,
-      maxRadius = 10,
-      minPickAmount = 10,
-      maxPickAmount = 20,
+      minRadius = 12,
+      maxRadius = 20,
       minYRadius = 0,
-      maxYRadius = 5,
+      maxYRadius = 1,
+      density = 0.67,
+      edgeFalloff = 1.2,
       decorations = listOf(
         TallGrassTriVolDecor(
           chancePerPoint = 0.42,
@@ -100,13 +100,37 @@ class ToxicGrasslandsVol(
           chanceSalt = CruxMath.random().nextLong()
         )
       )
-    )
+    ){
+      override fun findPlacement(
+        region: LimitedRegion,
+        point: VolumetricPropPoint,
+        biomeBlend: BiomeBlendSample,
+        biome: killercreepr.cruxworldgen.api.biome.Biome
+      ): Placement?{
+        val x = point.worldX
+        val z = point.worldZ
+        val y = region.terrainQueries.findNearestSolidWithAirAbove(x, point.worldY, z,
+          aboveRange = 5,
+          belowRange = 5,
+          airAbove = 1) ?: return null
+
+        return Placed(
+          seed = point.seed,
+          x = x,
+          y = y,
+          z = z
+        )
+      }
+    }
   )
 
   object Noise : NoiseModule {
 
     object Patch2D : NoiseKey {
       override val id = "biome.toxic_grasslands.patch2D"
+    }
+    object Coverage2D : NoiseKey {
+      override val id = "biome.toxic_grasslands.coverage2D"
     }
 
     override fun install(bank: NoiseBank) {
@@ -116,6 +140,14 @@ class ToxicGrasslandsVol(
           noiseType(CruxNoise.NoiseType.OpenSimplex2)
           fractalType(CruxNoise.FractalType.FBm)
           fractalOctaves(2)
+        }
+      }
+      bank.register(Coverage2D) { seed ->
+        NoiseField.noiseField(seed) {
+          frequency(0.003)
+          noiseType(CruxNoise.NoiseType.OpenSimplex2)
+          fractalType(CruxNoise.FractalType.FBm)
+          fractalOctaves(1)
         }
       }
     }
