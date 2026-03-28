@@ -302,42 +302,67 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
         CruxWorldUtil.CUSTOM_WORLD_CREATORS.put(
           "world_abyss",
           name ->{
-              try{
+              try {
                   ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
 
-                  LevelStorageSource.LevelStorageAccess levelStorageAccess;
-                  try {
-                      levelStorageAccess = LevelStorageSource.createDefault(getServer().getWorldContainer().toPath())
-                        .validateAndCreateAccess(name, actualDimension);
+                  try (LevelStorageSource.LevelStorageAccess levelStorageAccess =
+                         LevelStorageSource.createDefault(getServer().getWorldContainer().toPath())
+                           .validateAndCreateAccess(name, actualDimension)) {
+
+                      WorldLoader.DataLoadContext context =
+                        ((CraftServer) getServer()).getServer().worldLoaderContext;
+                      RegistryAccess.Frozen registryAccess = context.datapackDimensions();
+                      Registry<LevelStem> contextLevelStemRegistry =
+                        registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
+
+                      Dynamic<?> dataTag = PaperWorldLoader.getLevelData(levelStorageAccess).dataTag();
+                      if (dataTag == null) {
+                          long seed = CruxMath.random().nextLong();
+                          return new WorldCreator(name)
+                            .seed(seed)
+                            .generator(AbyssGeneration.INSTANCE.buildGenerator(
+                              seed,
+                              AbyssGeneration.INSTANCE.getDefaultWorldDetails()
+                            ));
+                      }
+
+                      LevelDataAndDimensions levelDataAndDimensions =
+                        LevelStorageSource.getLevelDataAndDimensions(
+                          dataTag,
+                          context.dataConfiguration(),
+                          contextLevelStemRegistry,
+                          context.datapackWorldgen()
+                        );
+
+                      PrimaryLevelData primaryLevelData =
+                        (PrimaryLevelData) levelDataAndDimensions.worldData();
+
+                      return new WorldCreator(name)
+                        .generator(AbyssGeneration.INSTANCE.buildGenerator(
+                          primaryLevelData.worldGenOptions().seed(),
+                          AbyssGeneration.INSTANCE.getDefaultWorldDetails()
+                        ));
+
                   } catch (ContentValidationException | IOException ex) {
-                      var seed = CruxMath.random().nextLong();
-                      return new WorldCreator(name).seed(seed).generator(AbyssGeneration.INSTANCE
-                        .buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
+                      ex.printStackTrace();
+                      long seed = CruxMath.random().nextLong();
+                      return new WorldCreator(name)
+                        .seed(seed)
+                        .generator(AbyssGeneration.INSTANCE.buildGenerator(
+                          seed,
+                          AbyssGeneration.INSTANCE.getDefaultWorldDetails()
+                        ));
                   }
 
-                  WorldLoader.DataLoadContext context = ((CraftServer) getServer()).getServer().worldLoaderContext;
-                  RegistryAccess.Frozen registryAccess = context.datapackDimensions();
-                  Registry<LevelStem> contextLevelStemRegistry = registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
-                  Dynamic<?> dataTag = PaperWorldLoader.getLevelData(levelStorageAccess).dataTag();
-                  PrimaryLevelData primaryLevelData;
-                  if(dataTag == null){
-                      levelStorageAccess.close();
-                      var seed = CruxMath.random().nextLong();
-                      return new WorldCreator(name).seed(seed).generator(AbyssGeneration.INSTANCE
-                        .buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
-                  }
-
-                  LevelDataAndDimensions levelDataAndDimensions = LevelStorageSource.getLevelDataAndDimensions(dataTag, context.dataConfiguration(), contextLevelStemRegistry, context.datapackWorldgen());
-                  primaryLevelData = (PrimaryLevelData)levelDataAndDimensions.worldData();
-
-                  levelStorageAccess.close();
-                  return new WorldCreator(name).generator(AbyssGeneration.INSTANCE
-                    .buildGenerator(primaryLevelData.worldGenOptions().seed(), AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
               } catch (Exception e) {
                   e.printStackTrace();
-                  var seed = CruxMath.random().nextLong();
-                  return new WorldCreator(name).seed(seed).generator(AbyssGeneration.INSTANCE
-                    .buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
+                  long seed = CruxMath.random().nextLong();
+                  return new WorldCreator(name)
+                    .seed(seed)
+                    .generator(AbyssGeneration.INSTANCE.buildGenerator(
+                      seed,
+                      AbyssGeneration.INSTANCE.getDefaultWorldDetails()
+                    ));
               }
           }
         );
