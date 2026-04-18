@@ -13,6 +13,7 @@ import killercreepr.cruxstatistics.api.statistic.CruxStatisticHolder;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import net.kyori.adventure.key.Key;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -79,6 +80,9 @@ public class AbyssWorldDwellerHolder extends PlayerTickedDataHolder {
         tick++;
         //tick every 1 second
         if(tick % 20 != 0) return;
+      if (e.getGameMode() == GameMode.SPECTATOR) {
+        return;
+      }
 
         if(cacheHolder == null){
             cacheHolder = BukkitStatisticHolder.statisticHolder(e);
