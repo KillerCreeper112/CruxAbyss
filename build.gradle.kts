@@ -1,8 +1,10 @@
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
+
 plugins {
   java
   alias(libs.plugins.paperweight)
   alias(libs.plugins.shadow)
-  kotlin("jvm") version "2.1.0"
+  alias(libs.plugins.kotlin)
 }
 
 version = "1.0"
@@ -39,7 +41,7 @@ dependencies {
   })
 }
 
-paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
+paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 tasks {
   assemble {
