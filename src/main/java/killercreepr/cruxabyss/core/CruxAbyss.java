@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import io.papermc.paper.world.PaperWorldLoader;
+import io.papermc.paper.world.migration.WorldFolderMigration;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
 import killercreepr.crux.api.data.DataExchange;
@@ -127,6 +128,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.WorldLoader;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Difficulty;
@@ -135,6 +137,7 @@ import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.WorldDimensions;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -142,6 +145,7 @@ import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.validation.ContentValidationException;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -298,72 +302,43 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                 return new AbyssOutpost();
             }
         });*/
-
         CruxWorldUtil.CUSTOM_WORLD_CREATORS.put(
           "world_abyss",
           name ->{
               try {
-                  ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
+                  ResourceKey var10000 = LevelStem.OVERWORLD;
+                  ResourceKey<LevelStem> actualDimension = var10000;
+                  ResourceKey<net.minecraft.world.level.Level> dimensionKey = PaperWorldLoader.dimensionKey(var10000);
 
-                  try (LevelStorageSource.LevelStorageAccess levelStorageAccess =
-                         LevelStorageSource.createDefault(getServer().getWorldContainer().toPath())
-                           .validateAndCreateAccess(name, actualDimension)) {
-
-                      WorldLoader.DataLoadContext context =
-                        ((CraftServer) getServer()).getServer().worldLoaderContext;
-                      RegistryAccess.Frozen registryAccess = context.datapackDimensions();
-                      Registry<LevelStem> contextLevelStemRegistry =
-                        registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
-
-                      Dynamic<?> dataTag = PaperWorldLoader.getLevelData(levelStorageAccess).dataTag();
-                      if (dataTag == null) {
-                          long seed = CruxMath.random().nextLong();
-                          return new WorldCreator(name)
-                            .seed(seed)
-                            .generator(AbyssGeneration.INSTANCE.buildGenerator(
-                              seed,
-                              AbyssGeneration.INSTANCE.getDefaultWorldDetails()
-                            ));
-                      }
-
-                      LevelDataAndDimensions levelDataAndDimensions =
-                        LevelStorageSource.getLevelDataAndDimensions(
-                          dataTag,
-                          context.dataConfiguration(),
-                          contextLevelStemRegistry,
-                          context.datapackWorldgen()
-                        );
-
-                      PrimaryLevelData primaryLevelData =
-                        (PrimaryLevelData) levelDataAndDimensions.worldData();
-
-                      return new WorldCreator(name)
-                        .generator(AbyssGeneration.INSTANCE.buildGenerator(
-                          primaryLevelData.worldGenOptions().seed(),
-                          AbyssGeneration.INSTANCE.getDefaultWorldDetails()
-                        ));
-
-                  } catch (ContentValidationException | IOException ex) {
-                      ex.printStackTrace();
-                      long seed = CruxMath.random().nextLong();
-                      return new WorldCreator(name)
-                        .seed(seed)
-                        .generator(AbyssGeneration.INSTANCE.buildGenerator(
-                          seed,
-                          AbyssGeneration.INSTANCE.getDefaultWorldDetails()
-                        ));
+                  DedicatedServer console;
+                  try{
+                      var field = (CraftServer.class.getDeclaredField("console"));
+                      field.setAccessible(true);
+                      console = (DedicatedServer) field
+                        .get(getServer());
+                  } catch (NoSuchFieldException | IllegalAccessException e){
+                      throw new  RuntimeException(e);
                   }
 
+                  LevelStem configuredStem = (LevelStem) console.registryAccess().lookupOrThrow(Registries.LEVEL_STEM).getValue(actualDimension);
+                  if (configuredStem == null) {
+                      throw new IllegalStateException("Missing configured level stem " + String.valueOf(actualDimension));
+                  }
+                  try {
+                      WorldFolderMigration.migrateApiWorld(console.storageSource, console.registryAccess(), name, actualDimension, dimensionKey);
+                  } catch (IOException ex) {
+                      throw new RuntimeException("Failed to migrate legacy world " + name, ex);
+                  }
+                  WorldGenSettings worldGenSettings = (WorldGenSettings) LevelStorageSource.readExistingSavedData(console.storageSource, dimensionKey, console.registryAccess(), WorldGenSettings.TYPE).result().orElse(null);
+                  if(worldGenSettings == null) {
+                      return new WorldCreator(name);
+                  }
+                  return new WorldCreator(name)
+                    .seed(worldGenSettings.options().seed());
               } catch (Exception e) {
                   e.printStackTrace();
-                  long seed = CruxMath.random().nextLong();
-                  return new WorldCreator(name)
-                    .seed(seed)
-                    .generator(AbyssGeneration.INSTANCE.buildGenerator(
-                      seed,
-                      AbyssGeneration.INSTANCE.getDefaultWorldDetails()
-                    ));
               }
+              return new WorldCreator(name);
           }
         );
 

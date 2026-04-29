@@ -1,4 +1,3 @@
-import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 
 plugins {
   java
@@ -41,7 +40,11 @@ dependencies {
   })
 }
 
-paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(25))
+  }
+}
 
 tasks {
   assemble {
