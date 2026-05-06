@@ -331,14 +331,22 @@ public class CruxAbyss extends CruxPlugin implements Listener, LangProvider {
                   }
                   WorldGenSettings worldGenSettings = (WorldGenSettings) LevelStorageSource.readExistingSavedData(console.storageSource, dimensionKey, console.registryAccess(), WorldGenSettings.TYPE).result().orElse(null);
                   if(worldGenSettings == null) {
-                      return new WorldCreator(name);
+                      var seed = CruxMath.random().nextLong();
+                      return new WorldCreator(name)
+                        .seed(seed)
+                        .generator(AbyssGeneration.INSTANCE.buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
                   }
+                  var seed = worldGenSettings.options().seed();
                   return new WorldCreator(name)
-                    .seed(worldGenSettings.options().seed());
+                    .seed(seed)
+                    .generator(AbyssGeneration.INSTANCE.buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
               } catch (Exception e) {
                   e.printStackTrace();
               }
-              return new WorldCreator(name);
+              var seed = CruxMath.random().nextLong();
+              return new WorldCreator(name)
+                .seed(seed)
+                .generator(AbyssGeneration.INSTANCE.buildGenerator(seed, AbyssGeneration.INSTANCE.getDefaultWorldDetails()));
           }
         );
 
